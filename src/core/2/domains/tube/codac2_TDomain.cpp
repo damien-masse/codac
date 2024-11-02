@@ -10,8 +10,9 @@
  */
 
 #include <cassert>
+#include "codac2_TSlice.h"
 #include "codac2_TDomain.h"
-#include "codac2_TubeVector.h"
+#include "codac2_Slice.h"
 #include "codac_predef_values.h"
 
 using namespace std;
@@ -19,24 +20,36 @@ using namespace codac;
 
 namespace codac2
 {
+  TDomain::TDomain(const Interval& t0_tf, bool with_gates) :
+    TDomain(t0_tf, t0_tf.diam(), with_gates)
+  {
+
+  }
+
   TDomain::TDomain(const Interval& t0_tf, double dt, bool with_gates)
   {
     assert(!t0_tf.is_empty());
     assert(dt > 0.);
 
-    double prev_t = -oo;
-    for(double t = t0_tf.lb() ; t < t0_tf.ub()+dt ; t+=dt)
+    if(isinf(dt))
+      _tslices.push_back(TSlice(t0_tf));
+
+    else
     {
-      double t_ = min(t, t0_tf.ub());
+      double prev_t = -oo;
+      for(double t = t0_tf.lb() ; t < t0_tf.ub()+dt ; t+=dt)
+      {
+        double t_ = min(t, t0_tf.ub());
 
-      _tslices.push_back(TSlice(Interval(prev_t,t_)));
-      if(with_gates)
-        _tslices.push_back(TSlice(Interval(t_,t_)));
+        _tslices.push_back(TSlice(Interval(prev_t,t_)));
+        if(with_gates)
+          _tslices.push_back(TSlice(Interval(t_,t_)));
 
-      prev_t = t_;
+        prev_t = t_;
+      }
+
+      _tslices.push_back(TSlice(Interval(t0_tf.ub(),oo)));
     }
-
-    _tslices.push_back(TSlice(Interval(t0_tf.ub(),oo)));
   }
 
   const Interval TDomain::t0_tf() const
@@ -52,7 +65,7 @@ namespace codac2
 
   size_t TDomain::nb_tubes() const
   {
-    return _tslices.front()._slices.size();
+    return _tslices.front().slices().size();
   }
 
   list<TSlice>::iterator TDomain::iterator_tslice(double t)
@@ -88,7 +101,7 @@ namespace codac2
     ++it;
     it = _tslices.insert(it, ts);
     for(auto& [k,s] : it->_slices) // adding the new iterator pointer to the new slices
-      s._it_tslice = it;
+      s->_it_tslice = it;
     
     return it;
   }
@@ -107,5 +120,15 @@ namespace codac2
        << " tube" << (x.nb_tubes() > 1 ? "s" : "")
        << flush;
     return os;
+  }
+
+  shared_ptr<TDomain> create_tdomain(const Interval& t0_tf, bool with_gates)
+  {
+    return make_shared<TDomain>(t0_tf, with_gates);
+  }
+
+  shared_ptr<TDomain> create_tdomain(const Interval& t0_tf, double dt, bool with_gates)
+  {
+    return make_shared<TDomain>(t0_tf, dt, with_gates);
   }
 } // namespace codac

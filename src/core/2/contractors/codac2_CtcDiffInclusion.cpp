@@ -255,11 +255,11 @@ namespace codac2
 
 
 
-  void CtcDiffInclusion::contract(TubeVector& x, const TubeVector* u, TimePropag t_propa)
+  void CtcDiffInclusion::contract(Tube<IParals>& x, const Tube<IParals>* u, TimePropag t_propa)
   {
     // Verifying that x and u share exactly the same tdomain and slicing:
-    if (u!=NULL) {
-       assert(&x.tdomain() == &u->tdomain());
+    if (u!=nullptr) {
+       assert(x.tdomain() == u->tdomain());
     // Verifying that the provided tubes are consistent with the function
        assert((size_t)_f.nb_var() == x.size()+u->size());
     } else 
@@ -273,14 +273,15 @@ namespace codac2
       if (sx.tslice().t0_tf().is_unbounded()) continue;
 
       // su is a SliceVector of the TubeVector u:
-      const SliceVector*su = (u==NULL ? NULL : &(sx.tslice().slices().at(u)));
-//      const double dt = sx.t0_tf().diam();
+      const shared_ptr<Slice<IParals>> su = (u == nullptr ? nullptr : static_pointer_cast<Slice<IParals>>(sx.tslice().slices().at(u)));
+      
+      //const double dt = sx.t0_tf().diam();
 
 
        // sx.set(su.codomain());
 
       // ...
-      contract(sx,su,t_propa);
+      contract(sx,su.get(),t_propa);
 
 /*
       if(t_propa & TimePropag::FORWARD)
@@ -300,11 +301,11 @@ namespace codac2
     }
   }
 
-  void CtcDiffInclusion::contract(SliceVector& x, const SliceVector* u, TimePropag t_propa)
+  void CtcDiffInclusion::contract(Slice<IParals>& x, const Slice<IParals>* u, TimePropag t_propa)
   {
     // Verifying that x and u share exactly the same tdomain
-    if (u!=NULL) {
-       assert(&x.tslice() == &u->tslice());
+    if (u!=nullptr) {
+       assert(&x.tslice() == &(u->tslice()));
     // Verifying that the provided slices are consistent with the function
        assert((size_t)_f.nb_var() == x.size()+u->size());
     } else 
@@ -316,15 +317,15 @@ namespace codac2
 //   double dt = timeslice.diam();
 
     // ...
-    IParals frame = x.codomainI();
-    const IntervalVector* uVect = (u==NULL ? NULL : &(u->codomain()));
+    IParals frame = x.codomain();
+    const IntervalVector* uVect = (u==nullptr ? nullptr : &(u->codomain().box()));
     if((t_propa & TimePropag::FORWARD) && !(x.input_gate().is_unbounded()))
     {
       IParals approxIV(frame);
       bool okreduced=false; /* becomes true when we have a contraction */
       double inflation_f = default_inflation_factor; /* initial inflation factor */
       int nb_tries=0;
-      IParals g_t0 = x.input_gateI();
+      IParals g_t0 = x.input_gate();
       IParals g_t1(g_t0); /* start matrices */
       while (true) {
         if (!okreduced) {
@@ -346,10 +347,10 @@ namespace codac2
       }
       frame &= approxIV;  /* ensure contractance */
       x.set(frame);
-      if (x.next_slice() && x.next_slice()->is_gate()) {
-         IParals end = x.next_slice()->codomainI();
+      if (x.next_slice_ptr() && x.next_slice_ptr()->is_gate()) {
+         IParals end = x.next_slice_ptr()->codomain();
 	 end &= g_t1; /* ensure contractance */
-         x.next_slice()->set(end);
+         x.next_slice_ptr()->set(end);
       }
     }
 
@@ -359,7 +360,7 @@ namespace codac2
       bool okreduced=false; /* becomes true when we have a contraction */
       double inflation_f = default_inflation_factor; /* initial inflation factor */
       int nb_tries=0;
-      IParals g_t1 = x.output_gateI();
+      IParals g_t1 = x.output_gate();
       IParals g_t0(g_t1); /* start matrices */
       while (true) {
         if (!okreduced) {
@@ -381,10 +382,10 @@ namespace codac2
       }
       frame &= approxIV;  /* ensure contractance */
       x.set(frame);
-      if (x.prev_slice() && x.prev_slice()->is_gate()) {
-         IParals beg = x.prev_slice()->codomainI();
+      if (x.prev_slice_ptr() && x.prev_slice_ptr()->is_gate()) {
+         IParals beg = x.prev_slice_ptr()->codomain();
 	 beg &= g_t0; /* ensure contractance */
-         x.prev_slice()->set(beg);
+         x.prev_slice_ptr()->set(beg);
       }
     }
   }
