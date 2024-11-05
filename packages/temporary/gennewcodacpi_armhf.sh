@@ -61,7 +61,7 @@ sudo apt-get -y install libatlas3-base || true && \
 sudo apt-get -y install libopenblas0-pthread || true && \
 sudo apt-get -y install libgfortran5 || true && \
 python3 -m pip install \$PIP_OPTIONS numpy --prefer-binary --extra-index-url https://www.piwheels.org/simple && \
-#python3 -m unittest discover codac.tests && \\
+python3 -m unittest discover codac.tests && \
 \
 if [ \"\$(lsb_release -cs)\" = \"buster\" ]; then \
  echo \"TESTS DISABLED FOR BUSTER DUE TO CATCH2\" ; \

@@ -16,12 +16,13 @@
 #include <codac2_Interval.h>
 #include <codac2_Interval_operations.h>
 #include <codac2_Approx.h>
+#include <codac2_math.h>
 #include <limits>
 
 using namespace std;
 using namespace codac2;
 
-#define PI 3.1415926535897932384626433832795028L // todo: use std::numbers::pi with C++20
+#define PI codac2::pi
 
 const double MAX_DOUBLE = std::numeric_limits<double>::max();
 

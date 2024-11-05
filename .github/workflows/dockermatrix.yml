@@ -1,10 +1,16 @@
 # This file checks that the lib runs on ARM
 on:
     push:
-        branches: 'codac2'
+        branches:
+        - codac1
+        - codac2
+        # The following is implied by above selection...
+        #branches-ignore:
+        #- codac2_codac4matlab
         tags: '' # Restrict to blank tags
     pull_request:
-        branches: 'codac2'
+        branches-ignore:
+        - codac2_codac4matlab
 
 jobs:
  dockermatrix:
@@ -112,4 +118,4 @@ jobs:
         file: "*.zip;*.deb"
         overwrite: true
         tag_name: autotagname-${{ github.sha }}
-      if: (github.event_name != 'pull_request')
+      if: (github.event_name!='pull_request')&&((github.ref_name=='codac1')||(github.ref_name=='codac2')||(github.ref_name=='codac2_codac4matlab'))
