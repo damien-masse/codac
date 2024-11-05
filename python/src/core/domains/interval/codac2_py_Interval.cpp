@@ -77,6 +77,12 @@ py::class_<Interval> export_Interval(py::module& m)
     .def("mid", &Interval::mid,
       DOUBLE_INTERVAL_MID_CONST)
 
+    .def("mag", &Interval::mag,
+      DOUBLE_INTERVAL_UB_CONST)
+
+    .def("mig", &Interval::mig,
+      DOUBLE_INTERVAL_MID_CONST)
+
     .def("rand", &Interval::rand,
       DOUBLE_INTERVAL_RAND_CONST)
 

@@ -46,6 +46,12 @@ void export_IntervalMatrixBase(py::module& m, py::class_<S>& pyclass)
     .def("mid", &S::mid,
       V_INTERVALMATRIXBASE_SV_MID_CONST)
 
+    .def("mag", &S::mag,
+      V_INTERVALMATRIXBASE_SV_UB_CONST)
+
+    .def("mig", &S::mig,
+      V_INTERVALMATRIXBASE_SV_MID_CONST)
+
     .def("rand", &S::rand,
       V_INTERVALMATRIXBASE_SV_RAND_CONST)
 
