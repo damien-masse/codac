@@ -115,6 +115,16 @@ namespace codac2
         degenerate_mat(mid);
       }
 
+      V mag() const
+      {
+        degenerate_mat(mag);
+      }
+
+      V mig() const
+      {
+        degenerate_mat(mig);
+      }
+
       V rand() const
       {
         srand(time(NULL));

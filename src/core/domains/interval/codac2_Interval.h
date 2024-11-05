@@ -164,6 +164,25 @@ namespace codac2
       double mid() const;
 
       /**
+       * \brief Returns the magnitude of this 
+       * i.e. max(|lower bound|, |upper bound|).
+       * 
+       * \return the magnitude of the interval
+       */
+      double mag() const;
+
+      /**
+       * \brief Returns the mignitude of this 
+       * 
+       * +(lower bound) if lower_bound > 0
+       * -(upper bound) if upper_bound < 0
+       * 0 otherwise.
+       * 
+       * \return the mignitude of the interval
+       */
+      double mig() const;
+
+      /**
        * \brief Returns a random value inside the interval
        *
        * \note The seed of the pseudo-random number generator is 
