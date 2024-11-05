@@ -15,12 +15,18 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCartProd.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEllipse.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEllipse.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEmpty.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEmpty.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcFixpoint.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcFixpoint.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcIdentity.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcIdentity.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcInnerOuter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcInter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcInverse.h
@@ -31,6 +37,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcUnion.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolar.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolygon.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolygon.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcProj.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcProj.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcSegment.cpp
