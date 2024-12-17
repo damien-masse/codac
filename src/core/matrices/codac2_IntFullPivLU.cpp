@@ -32,7 +32,7 @@ inline double prodkeepzero(double a, double b) {
 IntervalMatrix IntFullPivLU::buildLUbounds(const IntervalMatrix &E) {
  /* we need rounding up for floating-point operations */
     GAOL_RND_PRESERVE(); /* save the rounding state */
-    round_upward(); /* round up */
+    gaol::round_upward(); /* round up */
 
     const Index nCols = E.cols();
     const Index nRows = E.rows();
