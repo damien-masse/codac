@@ -19,17 +19,18 @@
 
 namespace codac2
 {
-  enum class EvaluationMode
+  enum class EvalMode
   {
     NATURAL = 0x01,
-    CENTERED = 0x02
+    CENTERED = 0x02,
+    DEFAULT = 0x03 // corresponds to (NATURAL|CENTERED)
   };
 
-  inline EvaluationMode operator&(EvaluationMode a, EvaluationMode b)
-  { return static_cast<EvaluationMode>(static_cast<int>(a) & static_cast<int>(b)); }
+  inline EvalMode operator&(EvalMode a, EvalMode b)
+  { return static_cast<EvalMode>(static_cast<int>(a) & static_cast<int>(b)); }
 
-  inline EvaluationMode operator|(EvaluationMode a, EvaluationMode b)
-  { return static_cast<EvaluationMode>(static_cast<int>(a) | static_cast<int>(b)); }
+  inline EvalMode operator|(EvalMode a, EvalMode b)
+  { return static_cast<EvalMode>(static_cast<int>(a) | static_cast<int>(b)); }
   
   template<typename T>
     requires std::is_base_of_v<OpValueBase,T>
@@ -53,56 +54,60 @@ namespace codac2
       { }
 
       template<typename... Args>
-      typename T::Domain eval(const EvaluationMode& m, const Args&... x) const
+      auto real_eval(const Args&... x) const
       {
+        return eval(x...).mid();
+      }
+
+      template<typename... Args>
+      typename T::Domain eval(const EvalMode& m, const Args&... x) const
+      {
+        check_valid_inputs(x...);
+        auto x_ = eval_(x...);
+
         switch(m)
         {
-          case EvaluationMode::NATURAL:
-            return natural_eval(x...);
+          case EvalMode::NATURAL:
+          {
+            return x_.a;
+          }
 
-          case EvaluationMode::CENTERED:
-            return centered_eval(x...);
+          case EvalMode::CENTERED:
+          {
+            auto flatten_x = cart_prod(x...);
+            assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
+            
+            if constexpr(std::is_same_v<typename T::Domain,Interval>)
+              return x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0];
+            else
+              return x_.m + (x_.da*(flatten_x-flatten_x.mid())).col(0);
+          }
 
+          case EvalMode::DEFAULT:
           default:
-            return eval(x...);
+          {
+            if(x_.da.size() == 0) // if the centered form is not available for this expression
+              return eval(EvalMode::NATURAL, x...);
+
+            else
+            {
+              auto flatten_x = cart_prod(x...);
+              if constexpr(std::is_same_v<typename T::Domain,Interval>)
+                return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0]);
+              else
+              {
+                assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
+                return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid())).col(0));
+              }
+            }
+          }
         }
       }
 
       template<typename... Args>
       typename T::Domain eval(const Args&... x) const
       {
-        check_valid_inputs(x...);
-        auto x_ = eval_(x...);
-
-        if(x_.da.size() == 0) // if the centered form is not available for this expression
-          return natural_eval(x...);
-
-        auto flatten_x = cart_prod(x...);
-
-        if constexpr(std::is_same_v<typename T::Domain,Interval>)
-          return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0]);
-        else
-          return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid())).col(0));
-      }
-
-      template<typename... Args>
-      typename T::Domain natural_eval(const Args&... x) const
-      {
-        check_valid_inputs(x...);
-        return eval_(x...).a;
-      }
-
-      template<typename... Args>
-      typename T::Domain centered_eval(const Args&... x) const
-      {
-        check_valid_inputs(x...);
-        auto x_ = eval_(x...);
-        auto flatten_x = cart_prod(x...);
-
-        if constexpr(std::is_same_v<typename T::Domain,Interval>)
-          return x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0];
-        else
-          return x_.m + (x_.da*(flatten_x-flatten_x.mid())).col(0);
+        return eval(EvalMode::NATURAL | EvalMode::CENTERED, x...);
       }
 
       template<typename... Args>
@@ -122,7 +127,7 @@ namespace codac2
           // A dump evaluation is performed to estimate the dimension
           // of the image of this function. A natural evaluation is assumed
           // to be faster.
-          return natural_eval(IntervalVector(this->input_size())).size();
+          return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
         }
 
         else

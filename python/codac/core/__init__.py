@@ -28,14 +28,14 @@ class AnalyticFunction:
   def input_size(self):
     return self.f.input_size()
 
+  def real_eval(self,*args):
+    return self.f.real_eval(*args)
+
+  def eval(self,m,*args):
+    return self.f.eval(m,*args)
+
   def eval(self,*args):
     return self.f.eval(*args)
-
-  def natural_eval(self,*args):
-    return self.f.natural_eval(*args)
-
-  def centered_eval(self,*args):
-    return self.f.centered_eval(*args)
 
   def diff(self,*args):
     return self.f.diff(*args)

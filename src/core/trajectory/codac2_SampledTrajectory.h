@@ -115,11 +115,14 @@ namespace codac2
         if(!this->tdomain().is_superset(t))
           return hull.init(Interval(-oo,oo));
 
-        hull.set_empty();
-        for(auto it = this->lower_bound(t.lb()) ; it != this->upper_bound(t.ub()) ; it++)
-          hull |= it->second;
-        hull |= (*this)(t.ub());
-        return hull;
+        else
+        {
+          hull = (*this)(t.lb());
+          for(auto it = this->lower_bound(t.lb()) ; it != this->upper_bound(t.ub()) ; it++)
+            hull |= it->second;
+          hull |= (*this)(t.ub());
+          return hull;
+        }
       }
 
       virtual SampledTrajectory<T> sampled(double dt) const

@@ -18,10 +18,10 @@ using namespace codac2;
 
 TEST_CASE("AnalyticFunction")
 {
-  std::array<EvaluationMode,3> modes {
-    EvaluationMode::NATURAL,
-    EvaluationMode::CENTERED,
-    EvaluationMode::NATURAL | EvaluationMode::NATURAL
+  std::array<EvalMode,3> modes {
+    EvalMode::NATURAL,
+    EvalMode::CENTERED,
+    EvalMode::NATURAL | EvalMode::NATURAL
   };
 
   for(const auto& m : modes) // try all available evaluation modes
@@ -114,7 +114,7 @@ TEST_CASE("AnalyticFunction")
       // .def("__mul__",  {}(const ScalarVar& e1, const VectorVar& e2);
       CHECK(AnalyticFunction({v1,v2}, v1[0]*v2).eval(m, Vector({5.,10.}),IntervalVector({3,3})) == Vector({15,15}));
       // .def("__mul__",  {}(const ScalarVar& e1, const IntervalVector& e2);
-      CHECK(AnalyticFunction({x1}, x1*IntervalVector({{-2,3},{0,1}})).centered_eval(5.) == IntervalVector({{-10,15},{0,5}}));
+      CHECK(AnalyticFunction({x1}, x1*IntervalVector({{-2,3},{0,1}})).eval(EvalMode::CENTERED,5.) == IntervalVector({{-10,15},{0,5}}));
       // .def("__truediv__",  {}(const ScalarVar& e1, const ScalarVar& e2);
       CHECK(Approx(AnalyticFunction({x1,x2}, x1/x2).eval(m, 1.,10.)) == 0.1);
       // .def("__truediv__",  {}(const ScalarVar& e1, const Interval& e2);
@@ -195,19 +195,19 @@ TEST_CASE("AnalyticFunction")
 
       //.def("__pos__",  {}(const VectorExpr& e1);
       CHECK(Approx(AnalyticFunction({v1}, +(v1+v1)).eval(m, IntervalVector({{0.},{-oo,5}}))) == 
-        (m == EvaluationMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-oo,10}})));
+        (m == EvalMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-oo,10}})));
       //.def(py::self + py::self);
       CHECK(Approx(AnalyticFunction({v1}, v1+v1).eval(m, IntervalVector({{0.},{-oo,5}}))) == 
-        (m == EvaluationMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-oo,10}})));
+        (m == EvalMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-oo,10}})));
       //.def("__radd__", {}(const VectorExpr& e1, const VectorVar& e2);
       CHECK(Approx(AnalyticFunction({v1}, (v1+v1)+v1).eval(m, IntervalVector({{0.},{-oo,5}}))) == 
-        (m == EvaluationMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-oo,15}})));
+        (m == EvalMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-oo,15}})));
       //.def("__radd__", {}(const VectorExpr& e1, const IntervalVector& e2);
       CHECK(Approx(AnalyticFunction({v1}, v1+(v1+v1)).eval(m, IntervalVector({{0.},{-oo,5}}))) == 
-        (m == EvaluationMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-oo,15}})));
+        (m == EvalMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-oo,15}})));
       //.def(- py::self);
       CHECK(Approx(AnalyticFunction({v1}, -(v1+v1)).eval(m, IntervalVector({{0.},{-oo,5}}))) == 
-        (m == EvaluationMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-10,oo}})));
+        (m == EvalMode::CENTERED ? IntervalVector({{0.},{-oo,oo}}) : IntervalVector({{0.},{-10,oo}})));
       //.def(py::self - py::self);
       CHECK(Approx(AnalyticFunction({v1,v2}, (v1-v2)).eval(m, IntervalVector({2,3}),Vector({1,5}))) == IntervalVector({1,-2}));
       //.def("__sub__",  {}(const VectorExpr& e1, const VectorVar& e2);
@@ -256,8 +256,8 @@ TEST_CASE("AnalyticFunction")
   {
     ScalarVar x;
     AnalyticFunction f({x}, x-x);
-    CHECK(f.natural_eval(Interval(-1,1)) == Interval(-2,2));
-    CHECK(f.centered_eval(Interval(-1,1)) == Interval(0));
+    CHECK(f.eval(EvalMode::NATURAL,Interval(-1,1)) == Interval(-2,2));
+    CHECK(f.eval(EvalMode::CENTERED,Interval(-1,1)) == Interval(0));
     CHECK(f.eval(Interval(-1,1)) == Interval(0));
   }
 
@@ -271,13 +271,13 @@ TEST_CASE("AnalyticFunction")
     IntervalVector a(4);
 
     a = IntervalVector({1,2,3,4});
-    CHECK(g.natural_eval(a) == 14);
-    CHECK(g.centered_eval(a) == 14);
+    CHECK(g.eval(EvalMode::NATURAL,a) == 14);
+    CHECK(g.eval(EvalMode::CENTERED,a) == 14);
     CHECK(g.eval(a) == 14);
 
     a = IntervalVector({0,2,5,4});
-    CHECK(g.natural_eval(a) == 20);
-    CHECK(g.centered_eval(a) == 20);
+    CHECK(g.eval(EvalMode::NATURAL,a) == 20);
+    CHECK(g.eval(EvalMode::CENTERED,a) == 20);
     CHECK(g.eval(a) == 20);
   }
 }

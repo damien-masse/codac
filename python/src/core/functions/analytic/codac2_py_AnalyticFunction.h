@@ -25,6 +25,38 @@ using namespace codac2;
 namespace py = pybind11;
 using namespace pybind11::literals;
 
+#define bind_mode_(exported, op_name, op, doc) \
+  \
+  exported \
+  \
+    /* Several cases of scalar inputs */ \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m) { return f.op(m); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1) { return f.op(m,x1); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1, I x2) { return f.op(m,x1,x2); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1, I x2, I x3) { return f.op(m,x1,x2,x3); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1, I x2, I x3, I x4) { return f.op(m,x1,x2,x3,x4); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1, I x2, I x3, I x4, I x5) { return f.op(m,x1,x2,x3,x4,x5); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1, I x2, I x3, I x4, I x5, I x6) { return f.op(m,x1,x2,x3,x4,x5,x6); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1, I x2, I x3, I x4, I x5, I x6, I x7) { return f.op(m,x1,x2,x3,x4,x5,x6,x7); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1, I x2, I x3, I x4, I x5, I x6, I x7, I x8) { return f.op(m,x1,x2,x3,x4,x5,x6,x7,x8); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1, I x2, I x3, I x4, I x5, I x6, I x7, I x8, I x9) { return f.op(m,x1,x2,x3,x4,x5,x6,x7,x8,x9); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, I x1, I x2, I x3, I x4, I x5, I x6, I x7, I x8, I x9, I x10) { return f.op(m,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10); }, doc) \
+  \
+    /* Several cases of vector inputs */ \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m) { return f.op(m); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1) { return f.op(m,x1); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2) { return f.op(m,x1,x2); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3) { return f.op(m,x1,x2,x3); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3, IV x4) { return f.op(m,x1,x2,x3,x4); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3, IV x4, IV x5) { return f.op(m,x1,x2,x3,x4,x5); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3, IV x4, IV x5, IV x6) { return f.op(m,x1,x2,x3,x4,x5,x6); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3, IV x4, IV x5, IV x6, IV x7) { return f.op(m,x1,x2,x3,x4,x5,x6,x7); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3, IV x4, IV x5, IV x6, IV x7, IV x8) { return f.op(m,x1,x2,x3,x4,x5,x6,x7,x8); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3, IV x4, IV x5, IV x6, IV x7, IV x8, IV x9) { return f.op(m,x1,x2,x3,x4,x5,x6,x7,x8,x9); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3, IV x4, IV x5, IV x6, IV x7, IV x8, IV x9, IV x10) { return f.op(m,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10); }, doc) \
+  \
+  ; \
+
 #define bind_(exported, op_name, op, doc) \
   \
   exported \
@@ -103,9 +135,9 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
 
   using I = const Interval&; using IV = const IntervalVector&;
 
+  bind_(exported, "real_eval", real_eval, AUTO_ANALYTICFUNCTION_T_REAL_EVAL_CONST_ARGS_REF_VARIADIC_CONST);
+  bind_mode_(exported, "eval", eval, T_DOMAIN_ANALYTICFUNCTION_T_EVAL_CONST_ARGS_REF_VARIADIC_CONST);
   bind_(exported, "eval", eval, T_DOMAIN_ANALYTICFUNCTION_T_EVAL_CONST_ARGS_REF_VARIADIC_CONST);
-  bind_(exported, "natural_eval", natural_eval, T_DOMAIN_ANALYTICFUNCTION_T_NATURAL_EVAL_CONST_ARGS_REF_VARIADIC_CONST);
-  bind_(exported, "centered_eval", centered_eval, T_DOMAIN_ANALYTICFUNCTION_T_CENTERED_EVAL_CONST_ARGS_REF_VARIADIC_CONST);
   bind_(exported, "diff", diff, AUTO_ANALYTICFUNCTION_T_DIFF_CONST_ARGS_REF_VARIADIC_CONST);
 
   exported

@@ -34,10 +34,10 @@ class TestAnalyticFunction(unittest.TestCase):
       def test_eval(f,*args):
 
         if(i == 0): # natural
-          return f.natural_eval(*args)
+          return f.eval(EvalMode.NATURAL,*args)
 
         elif(i == 1): # centered
-          return f.centered_eval(*args)
+          return f.eval(EvalMode.CENTERED,*args)
 
         else: # centered and natural
           return f.eval(*args)
@@ -232,8 +232,8 @@ class TestAnalyticFunction(unittest.TestCase):
     # Evaluation modes
     x = ScalarVar()
     f = AnalyticFunction([x], x-x)
-    self.assertTrue(f.natural_eval(Interval(-1,1)) == Interval(-2,2))
-    self.assertTrue(f.centered_eval(Interval(-1,1)) == Interval(0))
+    self.assertTrue(f.eval(EvalMode.NATURAL,Interval(-1,1)) == Interval(-2,2))
+    self.assertTrue(f.eval(EvalMode.CENTERED,Interval(-1,1)) == Interval(0))
     self.assertTrue(f.eval(Interval(-1,1)) == Interval(0))
 
     # Subvector on variables
@@ -245,13 +245,13 @@ class TestAnalyticFunction(unittest.TestCase):
     a = IntervalVector(4)
 
     a = IntervalVector([[1],[2],[3],[4]])
-    self.assertTrue(g.natural_eval(a) == 14)
-    self.assertTrue(g.centered_eval(a) == 14)
+    self.assertTrue(g.eval(EvalMode.NATURAL,a) == 14)
+    self.assertTrue(g.eval(EvalMode.CENTERED,a) == 14)
     self.assertTrue(g.eval(a) == 14)
 
     a = IntervalVector([[0],[2],[5],[4]])
-    self.assertTrue(g.natural_eval(a) == 20)
-    self.assertTrue(g.centered_eval(a) == 20)
+    self.assertTrue(g.eval(EvalMode.NATURAL,a) == 20)
+    self.assertTrue(g.eval(EvalMode.CENTERED,a) == 20)
     self.assertTrue(g.eval(a) == 20)
 
 if __name__ ==  '__main__':

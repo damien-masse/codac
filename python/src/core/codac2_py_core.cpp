@@ -185,6 +185,13 @@ PYBIND11_MODULE(_core, m)
   export_Subpaving(m);
 
   // function
+  py::enum_<EvalMode>(m, "EvalMode")
+    .value("NATURAL", EvalMode::NATURAL)
+    .value("CENTERED", EvalMode::CENTERED)
+    .value("DEFAULT", EvalMode::DEFAULT)
+    .def(py::self | py::self, EVALMODE_OPERATOROR_EVALMODE_EVALMODE)
+  ;
+
   export_ExprWrapperBase(m);
   export_ScalarExpr(m);
   export_VectorExpr(m);
