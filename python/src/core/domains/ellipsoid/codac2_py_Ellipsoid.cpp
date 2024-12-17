@@ -13,6 +13,7 @@
 #include <pybind11/stl.h>
 #include <codac2_Ellipsoid.h>
 #include "codac2_py_Ellipsoid_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
+#include "codac2_py_AnalyticFunction.h"
 
 using namespace std;
 using namespace codac2;
@@ -80,11 +81,17 @@ void export_Ellipsoid(py::module& m)
       ELLIPSOID_UNRELIABLE_LINEAR_MAPPING_CONST_ELLIPSOID_REF_CONST_MATRIX_REF_CONST_VECTOR_REF,
       "e"_a, "A"_a, "b"_a)
 
-    .def("nonlinear_mapping_", (Ellipsoid (*)(const Ellipsoid&,const AnalyticFunction<VectorOpValue>&))&codac2::nonlinear_mapping,
+    .def("nonlinear_mapping", [](const Ellipsoid& e, py::object f)
+        {
+          return nonlinear_mapping(e, pyobject_to_AnalyticFunction(f));
+        },
       ELLIPSOID_NONLINEAR_MAPPING_CONST_ELLIPSOID_REF_CONST_ANALYTICFUNCTION_VECTOROPVALUE_REF,
       "e"_a, "f"_a)
 
-    .def("nonlinear_mapping_", (Ellipsoid (*)(const Ellipsoid&,const AnalyticFunction<VectorOpValue>&,const Vector&,const Vector&))&codac2::nonlinear_mapping,
+    .def("nonlinear_mapping", [](const Ellipsoid& e, py::object f, const Vector &trig, const Vector &q)
+        {
+          return nonlinear_mapping(e, pyobject_to_AnalyticFunction(f), trig, q);
+        },
       ELLIPSOID_NONLINEAR_MAPPING_CONST_ELLIPSOID_REF_CONST_ANALYTICFUNCTION_VECTOROPVALUE_REF_CONST_VECTOR_REF_CONST_VECTOR_REF,
       "e"_a, "f"_a, "trig"_a, "q"_a)
 

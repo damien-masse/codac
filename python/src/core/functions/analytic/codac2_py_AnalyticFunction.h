@@ -25,6 +25,22 @@ using namespace codac2;
 namespace py = pybind11;
 using namespace pybind11::literals;
 
+inline AnalyticFunction<VectorOpValue> pyobject_to_AnalyticFunction(py::object f)
+{
+  if(py::isinstance<AnalyticFunction<VectorOpValue>>(f))
+    return f.cast<AnalyticFunction<VectorOpValue>>();
+
+  else
+  {
+    // Trying to extract an AnalyticFunction<VectorOpValue>
+    // from the python wrapper 'AnalyticFunction'
+    py::object f_ = f.attr("f");
+    if(!py::isinstance<AnalyticFunction<VectorOpValue>>(f_))
+      assert_release("invalid argument: AnalyticFunction<VectorOpValue> expected");
+    return f_.cast<AnalyticFunction<VectorOpValue>>();
+  }
+}
+
 #define bind_(exported, op_name, op, doc) \
   \
   exported \
