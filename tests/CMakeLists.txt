@@ -68,6 +68,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/matrices/codac2_tests_Matrix
   core/matrices/codac2_tests_Vector
   core/matrices/codac2_tests_Inversion
+  core/matrices/codac2_tests_IntFullPivLU
 
   core/separators/codac2_tests_SepCartProd
   core/separators/codac2_tests_SepCtcBoundary
