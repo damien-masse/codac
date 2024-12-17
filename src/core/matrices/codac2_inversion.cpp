@@ -8,7 +8,7 @@
  */
 
 #include <ostream>
-#include "codac2_Inversion.h"
+#include "codac2_inversion.h"
 #include "codac2_Matrix.h"
 #include "codac2_IntervalMatrix.h"
 

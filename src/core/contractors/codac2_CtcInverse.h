@@ -27,11 +27,14 @@ namespace codac2
 
       template<typename C>
         requires IsCtcBaseOrPtr<C,Y>
-      CtcInverse(const AnalyticFunction<typename Wrapper<Y>::Domain>& f, const C& ctc_y, bool with_centered_form = true, bool is_not_in = false)
+      CtcInverse(const AnalyticFunction<typename ArgWrapper<Y>::Domain>& f, const C& ctc_y, bool with_centered_form = true, bool is_not_in = false)
         : _f(f), _ctc_y(ctc_y), _with_centered_form(with_centered_form), _is_not_in(is_not_in)
-      { }
+      {
+        assert_release([&]() { return f.output_size() == size_of(ctc_y); }()
+          && "CtcInverse: invalid dimension of image argument ('y' or 'ctc_y')");
+      }
 
-      CtcInverse(const AnalyticFunction<typename Wrapper<Y>::Domain>& f, const Y& y, bool with_centered_form = true, bool is_not_in = false)
+      CtcInverse(const AnalyticFunction<typename ArgWrapper<Y>::Domain>& f, const Y& y, bool with_centered_form = true, bool is_not_in = false)
         : CtcInverse(f, CtcWrapper_<Y>(y), with_centered_form, is_not_in)
       { }
 
@@ -119,14 +122,14 @@ namespace codac2
         _f.intersect_from_args(v, x...); // updating input values
       }
 
-      const AnalyticFunction<typename Wrapper<Y>::Domain>& function() const
+      const AnalyticFunction<typename ArgWrapper<Y>::Domain>& function() const
       {
         return _f;
       }
 
     protected:
 
-      const AnalyticFunction<typename Wrapper<Y>::Domain> _f;
+      const AnalyticFunction<typename ArgWrapper<Y>::Domain> _f;
       const Collection<CtcBase<Y>> _ctc_y;
       bool _with_centered_form;
       bool _is_not_in = false;
@@ -137,7 +140,7 @@ namespace codac2
   {
     public:
 
-      CtcInverse_(const AnalyticFunction<typename Wrapper<Y>::Domain>& f, const Y& y, bool with_centered_form = true, bool is_not_in = false)
+      CtcInverse_(const AnalyticFunction<typename ArgWrapper<Y>::Domain>& f, const Y& y, bool with_centered_form = true, bool is_not_in = false)
         : Ctc<CtcInverse_<Y,X>,X>(f.args()[0]->size() /* f must have only one arg, see following assert */),
           CtcInverse<Y>(f, y, with_centered_form,is_not_in)
       {
@@ -146,7 +149,7 @@ namespace codac2
 
       template<typename C>
         requires IsCtcBaseOrPtr<C,Y>
-      CtcInverse_(const AnalyticFunction<typename Wrapper<Y>::Domain>& f, const C& ctc_y, bool with_centered_form = true, bool is_not_in = false)
+      CtcInverse_(const AnalyticFunction<typename ArgWrapper<Y>::Domain>& f, const C& ctc_y, bool with_centered_form = true, bool is_not_in = false)
         : Ctc<CtcInverse_<Y,X>,X>(f.args()[0]->size() /* f must have only one arg, see following assert */),
           CtcInverse<Y>(f, ctc_y, with_centered_form,is_not_in)
       {

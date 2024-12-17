@@ -112,6 +112,26 @@ namespace codac2
         return eval_(x...).da;
       }
 
+      Index output_size() const
+      {
+        if constexpr(std::is_same_v<typename T::Domain,Interval>)
+          return 1;
+
+        else if constexpr(std::is_same_v<typename T::Domain,IntervalVector>)
+        {
+          // A dump evaluation is performed to estimate the dimension
+          // of the image of this function. A natural evaluation is assumed
+          // to be faster.
+          return natural_eval(IntervalVector(this->input_size())).size();
+        }
+
+        else
+        {
+          assert_release(false && "unable to estimate output size");
+          return 0;
+        }
+      }
+
       friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const AnalyticFunction<T>& f)
       {
         if constexpr(std::is_same_v<typename T::Domain,Interval>) 
@@ -141,7 +161,7 @@ namespace codac2
         for(Index k = p ; k < p+size_of(x) ; k++)
           d(k-p,k) = 1.;
 
-        using D_DOMAIN = typename Wrapper<D>::Domain;
+        using D_DOMAIN = typename ArgWrapper<D>::Domain;
 
         v[this->args()[i]->unique_id()] = 
           std::make_shared<D_DOMAIN>(typename D_DOMAIN::Domain(x).mid(), x, d, true);
@@ -158,7 +178,7 @@ namespace codac2
       void intersect_value_from_arg_map(const ValuesMap& v, D& x, Index i) const
       {
         assert(v.find(this->args()[i]->unique_id()) != v.end() && "argument cannot be found");
-        x &= std::dynamic_pointer_cast<typename Wrapper<D>::Domain>(v.at(this->args()[i]->unique_id()))->a;
+        x &= std::dynamic_pointer_cast<typename ArgWrapper<D>::Domain>(v.at(this->args()[i]->unique_id()))->a;
       }
 
       template<typename... Args>

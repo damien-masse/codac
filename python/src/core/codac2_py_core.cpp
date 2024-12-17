@@ -114,6 +114,10 @@ void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& sep);
 // tools
 void export_Approx(py::module& m);
 
+// trajectory
+void export_AnalyticTrajectory(py::module& m);
+void export_SampledTrajectory(py::module& m);
+
 
 PYBIND11_MODULE(_core, m)
 {
@@ -136,10 +140,10 @@ PYBIND11_MODULE(_core, m)
   export_CtcIdentity(m, py_ctc_iv);
   export_CtcInnerOuter(m, py_ctc_iv);
   export_CtcInter(m, py_ctc_iv);
-  export_CtcInverse<Interval>(m,"CtcInverse_Interval",py_ctc_iv);
-  export_CtcInverse<IntervalVector>(m,"CtcInverse_IntervalVector",py_ctc_iv);
-  export_CtcInverseNotIn<Interval>(m,"CtcInverseNotIn_Interval",py_ctc_iv);
-  export_CtcInverseNotIn<IntervalVector>(m,"CtcInverseNotIn_IntervalVector",py_ctc_iv);
+  export_CtcInverse<double,Interval>(m,"CtcInverse_Interval",py_ctc_iv);
+  export_CtcInverse<Vector,IntervalVector>(m,"CtcInverse_IntervalVector",py_ctc_iv);
+  export_CtcInverseNotIn<double,Interval>(m,"CtcInverseNotIn_Interval",py_ctc_iv);
+  export_CtcInverseNotIn<Vector,IntervalVector>(m,"CtcInverseNotIn_IntervalVector",py_ctc_iv);
   export_CtcLazy(m, py_ctc_iv);
   export_CtcNot(m, py_ctc_iv);
   export_CtcPolar(m, py_ctc_iv);
@@ -205,8 +209,8 @@ PYBIND11_MODULE(_core, m)
   export_SepCtcBoundary(m,py_sep);
   export_SepCtcPair(m,py_sep);
   export_SepInter(m,py_sep);
-  export_SepInverse<Interval>(m,"SepInverse_Interval",py_sep);
-  export_SepInverse<IntervalVector>(m,"SepInverse_IntervalVector",py_sep);
+  export_SepInverse<double,Interval>(m,"SepInverse_Interval",py_sep);
+  export_SepInverse<Vector,IntervalVector>(m,"SepInverse_IntervalVector",py_sep);
   export_SepNot(m,py_sep);
   export_SepPolygon(m,py_sep);
   export_SepProj(m,py_sep);
@@ -216,5 +220,9 @@ PYBIND11_MODULE(_core, m)
 
   // tools
   export_Approx(m);
+
+  // trajectory
+  export_AnalyticTrajectory(m);
+  export_SampledTrajectory(m);
 
 }

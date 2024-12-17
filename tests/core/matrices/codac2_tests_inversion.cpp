@@ -11,7 +11,7 @@
 #include <codac2_Vector.h>
 #include <codac2_Matrix.h>
 #include <codac2_IntervalMatrix.h>
-#include <codac2_Inversion.h>
+#include <codac2_inversion.h>
 #include <codac2_Approx.h>
 
 using namespace std;

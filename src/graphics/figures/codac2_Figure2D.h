@@ -90,7 +90,8 @@ namespace codac2
       void draw_polygone(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
       void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s = StyleProperties());
       void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& s = StyleProperties());
-
+      void draw_trajectory(const SampledTrajectory<Vector>& x, const StyleProperties& s = StyleProperties());
+      void draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s = StyleProperties());
       // Robots
       void draw_tank(const Vector& x, float size, const StyleProperties& s = StyleProperties());
       void draw_AUV(const Vector& x, float size, const StyleProperties& s = StyleProperties());
@@ -203,6 +204,18 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_ellipse(c,ab,theta,s);
+      }
+
+      static void draw_trajectory(const SampledTrajectory<Vector>& x, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_trajectory(x,s);
+      }
+
+      static void draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_trajectory(x,s);
       }
 
       // Robots

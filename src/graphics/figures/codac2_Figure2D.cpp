@@ -197,6 +197,21 @@ void Figure2D::draw_ellipse(const Vector& c, const Vector& ab, double theta, con
     output_fig->draw_ellipse(c,ab,theta,s);
 }
 
+void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const StyleProperties& s)
+{
+  assert_release(this->size() <= x.size());
+  std::vector<Vector> values(x.nb_samples());
+  size_t i = 0;
+  for(const auto& [ti,xi] : x)
+    values[i++] = xi;
+  draw_polyline(values,s);
+}
+
+void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s)
+{
+  draw_trajectory(x.sampled(x.tdomain().diam()/1e4), s);
+}
+
 void Figure2D::draw_tank(const Vector& x, float size, const StyleProperties& s)
 {
   assert_release(this->size() <= x.size()+1);

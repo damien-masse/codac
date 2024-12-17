@@ -12,6 +12,7 @@
 #include <string>
 #include "codac2_analytic_values.h"
 #include "codac2_template_tools.h"
+#include "codac2_IntervalRow.h"
 
 namespace codac2
 {
@@ -86,6 +87,10 @@ namespace codac2
     static IntervalVector fwd(const IntervalVector& x1, const Interval& x2);
     static VectorOpValue fwd(const VectorOpValue& x1, const ScalarOpValue& x2);
     static void bwd(const IntervalVector& y, IntervalVector& x1, Interval& x2);
+
+    static Interval fwd(const IntervalRow& x1, const IntervalVector& x2);
+    //static ScalarOpValue fwd(const RowOpValue& x1, const VectorOpValue& x2); // RowOpValue not yet defined
+    static void bwd(const Interval& y, IntervalRow& x1, IntervalVector& x2);
 
     static IntervalVector fwd(const IntervalMatrix& x1, const IntervalVector& x2);
     static VectorOpValue fwd(const MatrixOpValue& x1, const VectorOpValue& x2);

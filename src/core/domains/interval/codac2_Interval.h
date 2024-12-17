@@ -794,7 +794,10 @@ namespace codac2
 
     double a = std::max<double>(next_float(-oo),lb());
     double b = std::min<double>(previous_float(oo),ub());
-    return a + (((double)std::rand())/(double)RAND_MAX)*(b-a);
+    double r = a + (((double)std::rand())/(double)RAND_MAX)*(b-a);
+    // The above operation may result in a floating point outside the bounds,
+    // due to floating-point errors. Such possible error is corrected below:
+    return std::max<double>(lb(),std::min<double>(r,ub()));
   }
 
   inline double Interval::rad() const

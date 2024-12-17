@@ -13,10 +13,10 @@
 #include <pybind11/stl.h>
 #include <codac2_Matrix.h>
 #include <codac2_IntervalMatrix.h>
-#include <codac2_Inversion.h>
+#include <codac2_inversion.h>
 
 #include "codac2_py_doc.h"
-#include "codac2_py_Inversion_docs.h" // Generated file from Doxygen 
+#include "codac2_py_inversion_docs.h" // Generated file from Doxygen 
 
 
 using namespace std;

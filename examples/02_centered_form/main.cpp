@@ -14,6 +14,6 @@ int main()
     2*x[2]*cos(x[2]*x[0])-sin(x[2]*x[1])
   ));
 
-  CtcInverse_<IntervalVector> ctc(f, {0.,0.});
+  CtcInverse_ ctc(f, IntervalVector::zero(2));
   draw_while_paving({{0,2},{2,4},{0,10}}, ctc, 0.004);
 }

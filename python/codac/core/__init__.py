@@ -140,7 +140,9 @@ class SepInverse(Sep):
 class Approx:
 
   def __init__(self, x, eps = float_info.epsilon*10):
-    if isinstance(x, (float,Interval)):
+    if isinstance(x, (int,float)):
+      self.a = Approx_double(x,eps)
+    elif isinstance(x, (Interval)):
       self.a = Approx_Interval(x,eps)
     elif isinstance(x, (Vector)):
       self.a = Approx_Vector(x,eps)
@@ -151,7 +153,8 @@ class Approx:
     elif isinstance(x, (IntervalMatrix)):
       self.a = Approx_IntervalMatrix(x,eps)
     else:
-      codac_error("Approx: can only build Approx for: Interval, Vector, IntervalVector, Matrix, IntervalMatrix")
+      codac_error("Approx: can only build Approx for: \
+        double, Interval, Vector, IntervalVector, Matrix, IntervalMatrix")
 
   def __eq__(self, x):
     return self.a == x
@@ -225,3 +228,97 @@ def sivia(x,f,y,eps):
 
   else:
     codac_error("sivia: can only compute sivia from scalar or vector functions")
+
+
+class AnalyticTrajectory:
+
+  def __init__(self, f, t):
+    if isinstance(f, AnalyticFunction):
+      self.__init__(f.f,t)
+    elif isinstance(f, AnalyticFunction_Scalar):
+      self.traj = AnalyticTrajectory_Scalar(f,t)
+    elif isinstance(f, AnalyticFunction_Vector):
+      self.traj = AnalyticTrajectory_Vector(f,t)
+    else:
+      codac_error("AnalyticTrajectory: can only build this trajectory from an AnalyticFunction_[Scalar/Vector]")
+
+  # Methods from TrajectoryBase:
+
+  def size(self):
+    return self.traj.size()
+
+  def is_empty(self):
+    return self.traj.is_empty()
+
+  def tdomain(self):
+    return self.traj.tdomain()
+
+  def truncate_tdomain(self, new_tdomain):
+    return self.traj.truncate_tdomain(new_tdomain)
+    
+  def codomain(self):
+    return self.traj.codomain()
+    
+  def __call__(self, t):
+    return self.traj(t)
+    
+  def nan_value(self):
+    return self.traj.nan_value()
+    
+  def sampled(self, dt):
+    return SampledTrajectory(self.traj.sampled(dt))
+    
+  def primitive(self, y0, t):
+    return SampledTrajectory(self.traj.primitive(y0, t))
+    
+  # Methods from AnalyticTrajectory:
+  #   none
+
+
+class SampledTrajectory:
+
+  def __init__(self, m):
+    if isinstance(m, (SampledTrajectory_double,SampledTrajectory_Vector)):
+      self.traj = m
+    elif not isinstance(m,dict):
+      codac_error("SampledTrajectory: can only build this trajectory from a dictionary")
+    elif isinstance(next(iter(m.values())), (int,float)):
+      self.traj = SampledTrajectory_double(m)
+    elif isinstance(next(iter(m.values())), (Vector,list)):
+      self.traj = SampledTrajectory_Vector(m)
+    else:
+      codac_error("SampledTrajectory: can only build this trajectory from maps of scalar or vector values")
+
+  # Methods from TrajectoryBase:
+
+  def size(self):
+    return self.traj.size()
+
+  def is_empty(self):
+    return self.traj.is_empty()
+
+  def tdomain(self):
+    return self.traj.tdomain()
+
+  def truncate_tdomain(self, new_tdomain):
+    return self.traj.truncate_tdomain(new_tdomain)
+    
+  def codomain(self):
+    return self.traj.codomain()
+    
+  def __call__(self, t):
+    return self.traj(t)
+    
+  def nan_value(self):
+    return self.traj.nan_value()
+    
+  def sampled(self, *args):
+    return SampledTrajectory(self.traj.sampled(*args))
+    
+  def primitive(self, y0, t):
+    return SampledTrajectory(self.traj.primitive(y0, t))
+    
+  # Methods from SampledTrajectory:
+  
+  def nb_samples(self):
+    return self.traj.nb_samples()

@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include <codac2_Interval.h>
-#include <codac2_Vector.h>
-#include <codac2_Matrix.h>
-#include <codac2_IntervalVector.h>
-#include <codac2_IntervalMatrix.h>
+#include "codac2_Interval.h"
+#include "codac2_Vector.h"
+#include "codac2_Matrix.h"
+#include "codac2_IntervalVector.h"
+#include "codac2_IntervalMatrix.h"
 
 namespace codac2
 {
@@ -22,9 +22,10 @@ namespace codac2
     virtual ~OpValueBase() = default;
   };
 
-  template<typename T, typename M>
+  template<typename S, typename T, typename M>
   struct OpValue : public OpValueBase
   {
+    using Scalar = S;
     using Domain = T;
 
     T m;
@@ -38,7 +39,7 @@ namespace codac2
       : m(m_), a(a_), da(da_), def_domain(def_domain_)
     { }
 
-    OpValue<T,M>& operator&=(const OpValue<T,M>& x)
+    OpValue<S,T,M>& operator&=(const OpValue<S,T,M>& x)
     {
       a &= x.a;
       // restore this? da &= x.da;
@@ -47,51 +48,51 @@ namespace codac2
     }
   };
 
-  using ScalarOpValue = OpValue<Interval,IntervalMatrix>;
-  using VectorOpValue = OpValue<IntervalVector,IntervalMatrix>;
-  using MatrixOpValue = OpValue<IntervalMatrix,IntervalMatrix>;
+  using ScalarOpValue = OpValue<double,Interval,IntervalMatrix>;
+  using VectorOpValue = OpValue<Vector,IntervalVector,IntervalMatrix>;
+  using MatrixOpValue = OpValue<Matrix,IntervalMatrix,IntervalMatrix>;
 
   template<typename T>
-  struct Wrapper
+  struct ArgWrapper
   { };
 
   template<>
-  struct Wrapper<int> {
+  struct ArgWrapper<int> {
     using Domain = ScalarOpValue;
   };
 
   template<>
-  struct Wrapper<Index> {
+  struct ArgWrapper<Index> {
     using Domain = ScalarOpValue;
   };
 
   template<>
-  struct Wrapper<double> {
+  struct ArgWrapper<double> {
     using Domain = ScalarOpValue;
   };
 
   template<>
-  struct Wrapper<Interval> {
+  struct ArgWrapper<Interval> {
     using Domain = ScalarOpValue;
   };
 
   template<>
-  struct Wrapper<Vector> {
+  struct ArgWrapper<Vector> {
     using Domain = VectorOpValue;
   };
 
   template<>
-  struct Wrapper<IntervalVector> {
+  struct ArgWrapper<IntervalVector> {
     using Domain = VectorOpValue;
   };
 
   template<>
-  struct Wrapper<Matrix> {
+  struct ArgWrapper<Matrix> {
     using Domain = MatrixOpValue;
   };
 
   template<>
-  struct Wrapper<IntervalMatrix> {
+  struct ArgWrapper<IntervalMatrix> {
     using Domain = MatrixOpValue;
   };
 }

@@ -41,7 +41,7 @@ namespace Eigen
  * (this is a standard C++ macro which disables all asserts).
  * https://eigen.tuxfamily.org/dox/TopicPreprocessorDirectives.html
  */
-#define EIGEN_NO_DEBUG
+//#define EIGEN_NO_DEBUG // uncomment to disable Eigen's assertions
 #endif
 
 #include <Eigen/Core>
