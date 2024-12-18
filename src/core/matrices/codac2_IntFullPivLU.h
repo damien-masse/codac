@@ -16,51 +16,88 @@
 
 namespace codac2
 {
-  // Full pivot LU decomposition applied by Eigen on a m*n matrix,
-  // modified afterwards to handle interval of matrices
-
+  /** \brief Full pivot LU decomposition for matrix of interval, 
+   *  based on Eigen decomposition. The decomposition is of the form
+   *  M = P{-1} [L][U] Q{-1} where P and Q are permutation matrices, and
+   *  [L] and [U] are lower and upper interval matrices ([L] diagonal is 1).
+   */
   class IntFullPivLU
   {
      public:
-     /** constructor from Matrix of double 
+     /** \brief constructor from Matrix of double 
+      *  \param M the matrix for which the decomposition is computed
       */
      explicit IntFullPivLU(const Matrix &M);
 
-     /** constructor from Matrix of Intervals */
+     /** \brief constructor from Matrix of intervals. Eigen 
+      *  decomposition is done on M.mid().
+      *
+      *  \param M the matrix of intervals.
+      */
      explicit IntFullPivLU(const IntervalMatrix &M);
 
-     /** determines if the initial matrix is injective */
+     /** \brief check if the matrix is injective,
+      *  i.e. its rank is equal to its number of rows.
+      *  \return TRUE, FALSE or UNKNOWN 
+      */
      BoolInterval isInjective() const;
-     /** determines if the initial matrix is invertible */
+     /** \brief check if the initial matrix is invertible 
+      *  i.e. it is square and full rank
+      * 
+      *  \return TRUE, FALSE or UNKNOWN */
      BoolInterval isInvertible() const;
-     /** determines if the initial matrix is surjective */
+     /** \brief check if the matrix is surjective
+      *  i.e. its rank is equal to its number of cols.
+      *  \return TRUE, FALSE or UNKNOWN 
+      */
      BoolInterval isSurjective() const;
-     /** overapproximation of the determinant. Only for square matrices */
+     /** \brief return an interval enclosing the determinant
+      *  
+      *  \pre the matrix is square
+      * 
+      *  \return the product of the diagonal elements of [U]
+      */
      Interval determinant() const;
-     /** rank **/
+     /** \brief return a interval enclosing the rank. Quite precise
+      *  for square matrix (number of diagonal elements of [U] not
+      *  containing 0). Less for non-square matrices, where each row/column
+      *  outside the top-left part of [U] can change the rank.
+      *  However, if no diagonal element contains 0, the return is 
+      *  unambiguous.
+      *
+      *  \return an interval enclosing the possible ranks.
+      */
      Interval rank() const;
-     /** approximation of the size of the kernel space.
-      *  based on the result of rank(). As such, this is not
-      *  the exact size of the kernel space as build by kernel() */
+     /** \brief approximation of the size of the kernel space.
+      *  based on the result of rank() (number of cols-rank()).
+      *  As such, this is not
+      *  the exact size of the kernel space as build by kernel() 
+      * 
+      *  \return an interval enclosing the possible dimensions.
+      */
      Interval dimensionOfKernel() const;
-     /** overapproximation of the kernel space. vectors
-      *  outside the linear combinations of the columns vectors
-      *  are guaranteed to be outside the kernel of the matrix */
+     /** \brief overapproximation of the kernel space as 
+      *  a matrix of column vectors.
+      *  any vector V which is not a linear combination of the column
+      *  vectors is guaranteed to be outside the kernel ( MV \neq 0 )
+      *
+      *  \return a matrix of column vectors, may be empty
+      */
      IntervalMatrix kernel() const;
-     /** "underapproximation" of the column space of the matrix,
-      *  ie return a set of independant columns of the original matrix
-      *  which is possibly maximal. As with Eigen, you must 
-      *  provide the original matrix used for the decomposition,
-      *  hence two versions of the function are provided */
-     IntervalMatrix image(const IntervalMatrix &M) const;
-     /** "underapproximation" of the column space of the matrix,
+     /** \brief ``underapproximation'' of the column space of the matrix,
       *  ie return a set of independant columns of the original matrix
       *  which is possibly maximal. As for Eigen, you must 
-      *  provide the original matrix used for the decomposition,
-      *  hence the use of a template */
+      *  provide the original matrix used for the decomposition.
+      *
+      *  \pre M is the matrix used to build the decomposition
+      *
+      *  \param M the matrix used to build the decomposition.
+      *  \return a matrix of columns of M, or one vector of 0
+      *  if the rank of M may be 0.
+      */
      template <typename Derived> Derived
 	image(const Eigen::MatrixBase<Derived> &M) const;
-     /** equation solving M X = rhs 
+     /** \brief equation solving M X = rhs 
       *  precisely look for solutions where the only non-zero
       *  values are those on non-zero pivots 
       *  if the matrix is full-rank and surjective (cols >= rows),
@@ -73,26 +110,49 @@ namespace codac2
       *  if the matrix is not full-rank, 
       *     empty means that no solution is possible with the
       *        initial precondition (non-zero values for non-zero pivots)
-      *     non empty presents the possible solutions found */
+      *     non empty presents the possible solutions found 
+      *  
+      *  \param rhs right-hand side of the equation 
+      *  \return a potential solution of the equation M X = rhs
+      */
      IntervalMatrix solve(const IntervalMatrix &rhs) const;
 
 
-     /** rebuilding of the matrix for debug purposes
-      *  (or estimation of the precision of the decomposition) */
+     /** \brief rebuilding of the matrix, ie compute P^{-1}[L][U]Q^{-1}
+      *  can be used to evaluate the precision of the decomposition
+      *
+      *  \return the reconstructed matrix
+      */
      IntervalMatrix ReconstructedMatrix() const;
-     /** maximum magnitude of the diagonal (maximum pivot) */
+     /** \brief maximum magnitude of the diagonal elements of [U]
+      *
+      *  \return the maximum
+      */
      double maxPivot() const;
      
-     /** the permutation P in the decomposition P{-1}LUQ{-1} */
+     /** \brief the permutation P in the decomposition P{-1}LUQ{-1}
+      *
+      * \return the permutation P, as defined by Eigen
+      */
      const Eigen::FullPivLU<Matrix>::PermutationPType 
 			&permutationP () const;
-     /** the permutation Q in the decomposition P{-1}LUQ{-1} */
+     /** \brief the permutation Q in the decomposition P{-1}LUQ{-1}
+      *
+      * \return the permutation Q, as defined by Eigen
+      */
      const Eigen::FullPivLU<Matrix>::PermutationQType 
 			&permutationQ () const;
-     /** the eigen LU decomposition for M.mid() */
+     /** \brief the Eigen decomposition of M.mid()
+      *
+      * \return the Eigen decomposition
+      */
      const Eigen::FullPivLU<Matrix> &eigenLU() const;
 
-     /** Enclosure of the adapted matrix, if possible */
+     /** \brief returns the matrix storing [L] and [U]
+      *  ([L] for strictly lower part, [U] for upper part)
+      *
+      * \return the interval matrix
+      */
      const IntervalMatrix &matrixLU() const;
 
 

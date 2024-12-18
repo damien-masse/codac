@@ -31,8 +31,11 @@ inline double prodkeepzero(double a, double b) {
    algorithm */
 IntervalMatrix IntFullPivLU::buildLUbounds(const IntervalMatrix &E) {
  /* we need rounding up for floating-point operations */
+    {
+    using namespace gaol;
     GAOL_RND_PRESERVE(); /* save the rounding state */
-    gaol::round_upward(); /* round up */
+    round_upward(); /* round up */
+    }
 
     const Index nCols = E.cols();
     const Index nRows = E.rows();
@@ -63,14 +66,21 @@ IntervalMatrix IntFullPivLU::buildLUbounds(const IntervalMatrix &E) {
 			Interval(-1,1)*M(row,col) :
                         Interval());
        }
-       res.block(k+1,k,nRows-k-1,1) +=
-	  E.bottomLeftCorner(nRows-k-1,k+1)*U*E.block(0,k,k+1,1);
-       res.block(k+1,k+1,1,nCols-k-1) +=
-          E.block(k+1,0,1,k+1)*U*E.topRightCorner(k+1,nCols-k-1);
+       if (nRows-k-1>0) {
+         res.block(k+1,k,nRows-k-1,1) +=
+	    E.bottomLeftCorner(nRows-k-1,k+1)*U*E.block(0,k,k+1,1);
+         if (nCols-k-1>0) {
+           res.block(k+1,k+1,1,nCols-k-1) +=
+              E.block(k+1,0,1,k+1)*U*E.topRightCorner(k+1,nCols-k-1);
+         }
+       }
     }
 
  /* restore rounding */
+    {
+    using namespace gaol;
     GAOL_RND_RESTORE();
+    }
     return res;
 }
 
@@ -160,15 +170,14 @@ void IntFullPivLU::computeMatrixLU(const IntervalMatrix &M, double nonzero) {
     else 
       InvL.triangularView<Eigen::StrictlyLower>() = ImLU.leftCols(nRows);
     IntervalMatrix InvU = 
-		IntervalMatrix::Zero(nCols,nCols);
+		IntervalMatrix::Identity(nCols,nCols);
     if (nCols>nRows) 
       InvU.topRows(nRows).triangularView<Eigen::Upper>() = ImLU;
     else 
       InvU.triangularView<Eigen::Upper>() = ImLU.topRows(nCols);
-    IntervalMatrix error = 
+    IntervalMatrix error = IntervalMatrix::Identity(nRows,nCols) - 
        InvL * (_LU.permutationP() * M * 
-       _LU.permutationQ()) * InvU - 
-	  IntervalMatrix::Identity(nRows,nCols);
+       _LU.permutationQ()) * InvU;
 
     IntervalMatrix eps = IntFullPivLU::buildLUbounds(error);
     
@@ -177,16 +186,18 @@ void IntFullPivLU::computeMatrixLU(const IntervalMatrix &M, double nonzero) {
     for (Index r=0;r<nRows;r++) {
        matrixLU_(r,c)=mLU(r,c); /* for Id */
        if (r>c) { /* low part */
-          matrixLU_(r,c)+=eps(r,c); /* Id for L part */
+          matrixLU_(r,c)-=eps(r,c); /* Id for L part */
           for (Index k=c+1;k<r;k++) {
-             if (k>=nCols) continue;
-             matrixLU_(r,c)+=mLU(r,k)*eps(k,c);
+             if (k>=nCols) break;
+             matrixLU_(r,c)-=mLU(r,k)*eps(k,c);
           }
        } else { /* high part */
           for (Index k=r;k<=c;k++) {
-             if (k>=nRows) continue;
-             matrixLU_(r,c)+=eps(r,k)*mLU(k,c);
+             if (k>=nRows) break;
+             matrixLU_(r,c)-=eps(r,k)*mLU(k,c);
           }
+          if (c>=nRows) matrixLU_(r,c)-=eps(r,c); 
+			/* Id for U part outside mLU */
        }
     }
 }
@@ -338,6 +349,7 @@ IntervalMatrix IntFullPivLU::kernel() const {
 }
 
 IntervalMatrix IntFullPivLU::solve(const IntervalMatrix &rhs) const {
+    assert_release(rhs.rows()==matrixLU_.rows());
     IntervalMatrix prhs = _LU.permutationP()*rhs;
     /* inverse L */
     for (Index r = 0; r<matrixLU_.rows()-1; r++) {
@@ -374,6 +386,24 @@ IntervalMatrix IntFullPivLU::solve(const IntervalMatrix &rhs) const {
         }
     }
     return _LU.permutationQ()*res;
+}
+
+IntervalMatrix IntFullPivLU::ReconstructedMatrix() const {
+    Eigen::FullPivLU<Matrix>::PermutationPType Pi = _LU.permutationP().inverse();
+    Eigen::FullPivLU<Matrix>::PermutationPType Qi = _LU.permutationQ().inverse();
+    IntervalMatrix product = matrixLU_.triangularView<Eigen::Upper>();
+    /* for the LU product, we must consider 
+       [-oo,oo]*0 = [-oo,oo] */
+    for (Index c=0;c<matrixLU_.cols();c++)
+    for (Index r=0;r<matrixLU_.rows();r++) {
+       for (Index k=0;k<r && k<=c;k++) {
+          if (matrixLU_(r,k).is_unbounded() || matrixLU_(k,c).is_unbounded()) {
+            product(r,c) = Interval(); break;
+          }
+          product(r,c) += matrixLU_(r,k)*matrixLU_(k,c);
+       }
+    }
+    return Pi*product*Qi;
 }
 
 
