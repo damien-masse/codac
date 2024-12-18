@@ -138,6 +138,16 @@ void Figure2D::draw_ring(const Vector& c, const Interval& r, const StyleProperti
       output_fig->draw_ring(c,r,s);
 }
 
+void Figure2D::draw_line(const Vector& x, const Vector& y, const StyleProperties& s)
+{
+  assert_release(x.size() == y.size());
+  assert_release(x.size() == 2);
+  vector<Vector> points = {x,y};
+
+  for(const auto& output_fig : _output_figures)
+    output_fig->draw_polyline(points,1e-3*scaled_unit(),s);
+}
+
 void Figure2D::draw_polyline(const vector<Vector>& x, const StyleProperties& s)
 {
   draw_polyline(x, 1e-3*scaled_unit(), s);
@@ -210,6 +220,26 @@ void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const StylePr
 void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), s);
+}
+
+void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const ColorMap& cmap)
+{
+  assert_release(this->size() <= x.size());
+
+  std::vector<Vector> values(2);
+  values[0] = x.begin()->second;
+  for (auto it = std::next(x.begin()); it != x.end(); ++it)
+  {
+    values[1] = it->second;
+    Color color = cmap.color((it->first - x.begin()->first) / (x.rbegin()->first - x.begin()->first));
+    draw_polyline(values, color);
+    values[0] = values[1];
+  }
+}
+
+void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const ColorMap& cmap)
+{
+  draw_trajectory(x.sampled(x.tdomain().diam()/1e4), cmap);
 }
 
 void Figure2D::draw_tank(const Vector& x, float size, const StyleProperties& s)

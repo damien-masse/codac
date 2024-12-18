@@ -16,6 +16,7 @@
 #include "codac2_Figure2DInterface.h"
 #include "codac2_OutputFigure2D.h"
 #include "codac2_Paving.h"
+#include "codac2_ColorMap.h"
 
 #define DEFAULT_FIG_NAME "Codac - default view"
 
@@ -85,6 +86,7 @@ namespace codac2
       void draw_box(const IntervalVector& x, const StyleProperties& s = StyleProperties());
       void draw_circle(const Vector& c, double r, const StyleProperties& s = StyleProperties());
       void draw_ring(const Vector& c, const Interval& r, const StyleProperties& s = StyleProperties());
+      void draw_line(const Vector& x1, const Vector& x2, const StyleProperties& s = StyleProperties());
       void draw_polyline(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
       void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& s = StyleProperties());
       void draw_polygone(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
@@ -92,6 +94,9 @@ namespace codac2
       void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& s = StyleProperties());
       void draw_trajectory(const SampledTrajectory<Vector>& x, const StyleProperties& s = StyleProperties());
       void draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s = StyleProperties());
+      void draw_trajectory(const SampledTrajectory<Vector>& x, const ColorMap& cmap);
+      void draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const ColorMap& cmap);
+
       // Robots
       void draw_tank(const Vector& x, float size, const StyleProperties& s = StyleProperties());
       void draw_AUV(const Vector& x, float size, const StyleProperties& s = StyleProperties());
@@ -216,6 +221,18 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_trajectory(x,s);
+      }
+
+      static void draw_trajectory(const SampledTrajectory<Vector>& x, const ColorMap& cmap)
+      {
+        auto_init();
+        selected_fig()->draw_trajectory(x,cmap);
+      }
+
+      static void draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const ColorMap& cmap)
+      {
+        auto_init();
+        selected_fig()->draw_trajectory(x,cmap);
       }
 
       // Robots
