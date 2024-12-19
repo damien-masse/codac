@@ -67,6 +67,11 @@ namespace codac2
         return AnalyticFunction<O>::eval(t);
       }
 
+      /*virtual AnalyticFunction<O> as_function() const
+      {
+        return *this;
+      }*/
+
     protected:
 
       Interval _tdomain;

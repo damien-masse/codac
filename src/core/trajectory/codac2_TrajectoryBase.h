@@ -11,6 +11,7 @@
 
 #include "codac2_Interval.h"
 #include "codac2_Wrapper.h"
+#include "codac2_AnalyticFunction.h"
 
 namespace codac2
 {
@@ -82,5 +83,7 @@ namespace codac2
 
         return p;
       }
+
+      //virtual AnalyticFunction<typename ArgWrapper<T>::Domain> as_function() const = 0;
   };
 }

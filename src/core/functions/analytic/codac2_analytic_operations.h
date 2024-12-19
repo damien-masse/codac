@@ -547,6 +547,12 @@ namespace codac2
       return std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,X...>>(x...);
     }
 
+    inline ScalarExpr_ptr
+    ind(Index i, const VectorExpr_ptr& x1)
+    {
+      return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarOpValue,VectorOpValue>>(x1,i);
+    }
+
     template<typename... X>
     inline MatrixExpr_ptr
     mat(const std::shared_ptr<AnalyticExpr<X>>&... x)
