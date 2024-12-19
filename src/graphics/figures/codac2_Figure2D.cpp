@@ -142,10 +142,20 @@ void Figure2D::draw_line(const Vector& x, const Vector& y, const StyleProperties
 {
   assert_release(x.size() == y.size());
   assert_release(x.size() == 2);
-  vector<Vector> points = {x,y};
+  vector<Vector> values = {x,y};
 
   for(const auto& output_fig : _output_figures)
-    output_fig->draw_polyline(points,1e-3*scaled_unit(),s);
+    output_fig->draw_polyline(values,1e-3*scaled_unit(),s);
+}
+
+void Figure2D::draw_arrow(const Vector& x, const Vector& y, float tip_length, const StyleProperties& s)
+{
+  assert_release(x.size() == y.size());
+  assert_release(x.size() == 2);
+  vector<Vector> values = {x,y};
+
+  for(const auto& output_fig : _output_figures)
+    output_fig->draw_polyline(values,tip_length,s);
 }
 
 void Figure2D::draw_polyline(const vector<Vector>& x, const StyleProperties& s)

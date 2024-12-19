@@ -110,6 +110,10 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_LINE_CONST_VECTOR_REF_CONST_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "c1"_a, "c2"_a, "s"_a=StyleProperties())
 
+    .def("draw_arrow", &Figure2D::draw_arrow,
+      VOID_FIGURE2D_DRAW_ARROW_CONST_VECTOR_REF_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
+      "c1"_a, "c2"_a, "tip_length"_a, "s"_a=StyleProperties())
+
     .def("draw_polyline", (void(Figure2D::*)(const std::vector<Vector>&,const StyleProperties&))&Figure2D::draw_polyline,
       VOID_FIGURE2D_DRAW_POLYLINE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
@@ -238,6 +242,10 @@ void export_Figure2D(py::module& m)
     .def_static("draw_line", &DefaultView::draw_line,
       STATIC_VOID_DEFAULTVIEW_DRAW_LINE_CONST_VECTOR_REF_CONST_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "c1"_a, "c2"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_arrow", &DefaultView::draw_arrow,
+      STATIC_VOID_DEFAULTVIEW_DRAW_ARROW_CONST_VECTOR_REF_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
+      "c1"_a, "c2"_a, "tip_length"_a, "s"_a=StyleProperties())
 
     .def_static("draw_polyline", (void(*)(const std::vector<Vector>&,const StyleProperties&))&DefaultView::draw_polyline,
       STATIC_VOID_DEFAULTVIEW_DRAW_POLYLINE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
