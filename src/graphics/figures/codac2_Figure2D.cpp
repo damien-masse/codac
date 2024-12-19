@@ -138,24 +138,22 @@ void Figure2D::draw_ring(const Vector& c, const Interval& r, const StyleProperti
       output_fig->draw_ring(c,r,s);
 }
 
-void Figure2D::draw_line(const Vector& x, const Vector& y, const StyleProperties& s)
+void Figure2D::draw_line(const Vector& a, const Vector& b, const StyleProperties& s)
 {
-  assert_release(x.size() == y.size());
-  assert_release(x.size() == 2);
-  vector<Vector> values = {x,y};
+  assert_release(a.size() == b.size());
+  assert_release(a.size() == 2);
+  vector<Vector> values = {a,b};
 
-  for(const auto& output_fig : _output_figures)
-    output_fig->draw_polyline(values,1e-3*scaled_unit(),s);
+  draw_polyline(values,s);
 }
 
-void Figure2D::draw_arrow(const Vector& x, const Vector& y, float tip_length, const StyleProperties& s)
+void Figure2D::draw_arrow(const Vector& a, const Vector& b, float tip_length, const StyleProperties& s)
 {
-  assert_release(x.size() == y.size());
-  assert_release(x.size() == 2);
-  vector<Vector> values = {x,y};
+  assert_release(a.size() == b.size());
+  assert_release(a.size() == 2);
+  vector<Vector> values = {a,b};
 
-  for(const auto& output_fig : _output_figures)
-    output_fig->draw_polyline(values,tip_length,s);
+  draw_polyline(values,tip_length,s);
 }
 
 void Figure2D::draw_polyline(const vector<Vector>& x, const StyleProperties& s)
@@ -236,14 +234,13 @@ void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const ColorMa
 {
   assert_release(this->size() <= x.size());
 
-  std::vector<Vector> values(2);
-  values[0] = x.begin()->second;
-  for (auto it = std::next(x.begin()); it != x.end(); ++it)
+  double range = x.rbegin()->first - x.begin()->first;
+
+  for(auto it = x.begin(); std::next(it) != x.end(); ++it)
   {
-    values[1] = it->second;
-    Color color = cmap.color((it->first - x.begin()->first) / (x.rbegin()->first - x.begin()->first));
-    draw_polyline(values, color);
-    values[0] = values[1];
+    draw_polyline(
+    { it->second, std::next(it)->second },
+    cmap.color((it->first - x.begin()->first) / range));
   }
 }
 
