@@ -181,6 +181,12 @@ namespace codac2
         selected_fig()->draw_ring(c,r,s);
       }
 
+      static void draw_line(const Vector& x1, const Vector& x2, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_line(x1,x2,s);
+      }
+
       static void draw_polyline(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
