@@ -159,7 +159,6 @@
 
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTrajectory.h
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTrajectory.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_Trajectory_operator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_Trajectory_operator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_TrajectoryBase.h
   )

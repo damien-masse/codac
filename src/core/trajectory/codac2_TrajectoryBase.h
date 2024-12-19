@@ -84,6 +84,6 @@ namespace codac2
         return p;
       }
 
-      //virtual AnalyticFunction<typename ArgWrapper<T>::Domain> as_function() const = 0;
+      AnalyticFunction<typename ArgWrapper<T>::Domain> as_function() const;
   };
 }

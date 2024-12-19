@@ -15,8 +15,6 @@
 
 namespace codac2
 {
-  struct TrajectoryOp;
-  
   template<typename T>
   class SampledTrajectory : public TrajectoryBase<T>, public std::map<double,T>
   {
@@ -148,13 +146,6 @@ namespace codac2
         }
         
         return straj;
-      }
-
-      auto as_function() const
-      {
-        ScalarVar t;
-        return AnalyticFunction<VectorOpValue>({t},
-          std::make_shared<AnalyticOperationExpr<TrajectoryOp,VectorOpValue,ScalarOpValue>>(*this,t));
       }
   };
 }
