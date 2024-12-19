@@ -27,6 +27,12 @@ inline double prodkeepzero(double a, double b) {
     else return a*b;
 }
 
+inline double prodkeepzero(double a, double b, double c) {
+    if (a==0 || b==0 || c==0) return 0;
+    else if (a==oo || b==oo || c==oo) return oo;
+    else return a*b*c;
+}
+
 /* utility function : compute the bound using Gauss-Jordan successive
    algorithm */
 IntervalMatrix IntFullPivLU::buildLUbounds(const IntervalMatrix &E) {
@@ -39,23 +45,23 @@ IntervalMatrix IntFullPivLU::buildLUbounds(const IntervalMatrix &E) {
 
     const Index nCols = E.cols();
     const Index nRows = E.rows();
-    const Index nC = std::min(nCols,nRows);
+    const Index nC = std::min(nCols,nRows-1);
   
     Matrix M = E.mag();
     IntervalMatrix res = E;
     for (Index k=0;k<nC;k++) {
        
        double pivot = (M(k,k)>=1.0 ? oo : 1.0/(-(M(k,k)-1.0)));
-       Matrix mP = M.block(0,k,k,1) * M.block(k,0,1,k);
-       for (auto coef : mP.reshaped()) {
-           coef=prodkeepzero(coef,pivot);
-       }
-       M.block(0,0,k,k) += mP;
-       for (auto coef : M.block(0,k,k,1).reshaped()) {
-           coef=prodkeepzero(coef,pivot);
-       }
-       for (auto coef : M.block(k,0,1,k).reshaped()) {
-           coef=prodkeepzero(coef,pivot);
+       if (k>0) {
+         for (Index c=0;c<=k-1;c++)
+            for (Index r=0;r<=k-1;r++) 
+               M(r,c) += prodkeepzero(M(r,k),M(k,c),pivot);
+         for (auto coef : M.block(0,k,k,1).reshaped()) {
+             coef=prodkeepzero(coef,pivot);
+         }
+         for (auto coef : M.block(k,0,1,k).reshaped()) {
+             coef=prodkeepzero(coef,pivot);
+         }
        }
        M(k,k) = prodkeepzero(M(k,k),pivot);
 
@@ -66,13 +72,22 @@ IntervalMatrix IntFullPivLU::buildLUbounds(const IntervalMatrix &E) {
 			Interval(-1,1)*M(row,col) :
                         Interval());
        }
-       if (nRows-k-1>0) {
-         res.block(k+1,k,nRows-k-1,1) +=
+       res.block(k+1,k,nRows-k-1,1) +=
 	    E.bottomLeftCorner(nRows-k-1,k+1)*U*E.block(0,k,k+1,1);
-         if (nCols-k-1>0) {
-           res.block(k+1,k+1,1,nCols-k-1) +=
-              E.block(k+1,0,1,k+1)*U*E.topRightCorner(k+1,nCols-k-1);
-         }
+       if (nCols-k-1>0) {
+         res.block(k+1,k+1,1,nCols-k-1) +=
+            E.block(k+1,0,1,k+1)*U*E.topRightCorner(k+1,nCols-k-1);
+       }
+       if (k<nC-1) { /* preparing the next row/column */
+           /* can't use direct matrix product due to prodkeepzero */
+           for (Index c=0;c<=k;c++)
+              for (Index r=0;r<=k;r++) 
+                 M(r,k+1) += prodkeepzero(M(r,c),M(c,k+1));
+           for (Index r=0;r<=k;r++)
+              M(k+1,k+1) += prodkeepzero(M(k+1,r),M(r,k+1));
+           for (Index c=0;c<=k;c++)
+              for (Index r=0;r<=k;r++) 
+                 M(k+1,c) += prodkeepzero(M(k+1,r),M(r,c));
        }
     }
 
