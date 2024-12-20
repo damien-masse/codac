@@ -102,17 +102,7 @@
   option(WITH_CAPD "Using CAPD for accurate integration of ODEs" OFF)
 
   if(WITH_CAPD)
-    execute_process(COMMAND capd-config --cflags OUTPUT_VARIABLE CAPD_CFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-    execute_process(COMMAND capd-config --libs OUTPUT_VARIABLE CAPD_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-    separate_arguments(CAPD_CFLAGS)
-    separate_arguments(CAPD_LIBS)
-
-    message(STATUS "CAPD_CFLAGS: ${CAPD_CFLAGS}")
-    message(STATUS "CAPD_LIBS: ${CAPD_LIBS}")
-
-    add_compile_options(${CAPD_CFLAGS})
-    link_libraries(${CAPD_LIBS})
+    find_package(CAPD REQUIRED)
   endif()
 
 
