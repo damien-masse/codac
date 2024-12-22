@@ -16,6 +16,7 @@
 #include "codac2_FunctionBase.h"
 #include "codac2_template_tools.h"
 #include "codac2_analytic_operations.h"
+#include "codac2_AnalyticExprWrapper.h"
 
 namespace codac2
 {
@@ -52,6 +53,12 @@ namespace codac2
       AnalyticFunction(const AnalyticFunction<T>& f)
         : FunctionBase<AnalyticExpr<T>>(f)
       { }
+
+      template<typename... X>
+      AnalyticExprWrapper<T> test(const X&... x) const
+      {
+        return { this->FunctionBase<AnalyticExpr<T>>::operator()(x...) };
+      }
 
       template<typename... Args>
       auto real_eval(const Args&... x) const
