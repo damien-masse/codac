@@ -19,9 +19,17 @@ class AnalyticFunction:
 
   def __init__(self, args, e):
     if isinstance(e, (int,float,Interval,ScalarVar,ScalarExpr)):
-      self.f = AnalyticFunction_Scalar(args,e)
+      self.f = AnalyticFunction_Scalar(args,ScalarExpr(e))
     elif isinstance(e, (Vector,IntervalVector,VectorVar,VectorExpr)):
-      self.f = AnalyticFunction_Vector(args,e)
+      self.f = AnalyticFunction_Vector(args,VectorExpr(e))
+    elif isinstance(e, list):
+      lst=[]
+      for e_i in e:
+        if isinstance(e_i, (int,float,Interval,ScalarVar,ScalarExpr)):
+          lst.append(ScalarExpr(e_i))
+        else:
+          codac_error("AnalyticFunction: invalid vectorial expression")
+      self.f = AnalyticFunction_Vector(args,lst)
     else:
       codac_error("AnalyticFunction: can only build functions from scalar or vector expressions")
 
@@ -44,9 +52,9 @@ class AnalyticFunction:
     lst=[]
     for arg in args:
       if isinstance(arg, (int,float,Interval,ScalarVar,ScalarExpr)):
-        lst.append(ScalarExpr(arg).raw_copy())
+        lst.append(ScalarExpr(arg))
       elif isinstance(arg, (Vector,IntervalVector,VectorVar,VectorExpr)):
-        lst.append(VectorExpr(arg).raw_copy())
+        lst.append(VectorExpr(arg))
       else:
         codac_error("AnalyticFunction: invalid input arguments")
     return self.f(lst)

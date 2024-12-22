@@ -62,7 +62,6 @@ void export_PavingNode(py::module& m);
 void export_Subpaving(py::module& m);
 
 // functions
-void export_ExprWrapperBase(py::module& m);
 void export_ScalarVar(py::module& m);
 void export_VectorVar(py::module& m);
 void export_expression_operations(py::module& m);
@@ -192,7 +191,6 @@ PYBIND11_MODULE(_core, m)
     .def(py::self | py::self, EVALMODE_OPERATOROR_EVALMODE_EVALMODE)
   ;
 
-  export_ExprWrapperBase(m);
   export_ScalarExpr(m);
   export_VectorExpr(m);
   export_AnalyticFunction<ScalarOpValue>(m,"AnalyticFunction_Scalar");

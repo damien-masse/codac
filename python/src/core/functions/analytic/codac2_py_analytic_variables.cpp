@@ -94,13 +94,13 @@ void export_VectorVar(py::module& m)
     exported.def("__call__", [](const VectorVar& v, Index_type i) -> ScalarExpr
       {
         return get_item(v, i);
-      }, SHARED_PTR_ANALYTICEXPR_SCALAROPVALUE_VECTORVAR_OPERATORCOMPO_INDEX_CONST);
+      }, ANALYTICEXPRWRAPPER_SCALAROPVALUE_VECTORVAR_OPERATORCOMPO_INDEX_CONST);
 
   else
     exported.def("__getitem__", [](const VectorVar& v, Index_type i) -> ScalarExpr
       {
         return get_item(v, i);
-      }, SHARED_PTR_ANALYTICEXPR_SCALAROPVALUE_VECTORVAR_OPERATORCOMPO_INDEX_CONST);
+      }, ANALYTICEXPRWRAPPER_SCALAROPVALUE_VECTORVAR_OPERATORCOMPO_INDEX_CONST);
 
   exported
 
@@ -109,7 +109,7 @@ void export_VectorVar(py::module& m)
         matlab::test_integer(i, j);
         return VectorExpr(std::dynamic_pointer_cast<AnalyticExpr<VectorOpValue>>(
           v.subvector(matlab::input_index(i),matlab::input_index(j))->copy()));
-      }, SHARED_PTR_ANALYTICEXPR_VECTOROPVALUE_VECTORVAR_SUBVECTOR_INDEX_INDEX_CONST)
+      }, ANALYTICEXPRWRAPPER_VECTOROPVALUE_VECTORVAR_SUBVECTOR_INDEX_INDEX_CONST)
 
     .def("__pos__",  [](const VectorVar& e1)                           { return VectorExpr(VectorExpr(e1)); }, py::is_operator())
     .def("__add__",  [](const VectorVar& e1, const VectorVar& e2)      { return VectorExpr(VectorExpr(e1) + VectorExpr(e2)); }, py::is_operator())

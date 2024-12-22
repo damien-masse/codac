@@ -50,6 +50,14 @@ namespace codac2
     public:
 
       AnalyticFunction(const FunctionArgsList& args, const ScalarExprList& y)
+        requires(std::is_same_v<T,VectorOpValue>)
+        : FunctionBase<AnalyticExpr<T>>(args, y)
+      {
+        assert_release(y->belongs_to_args_list(this->args()) && 
+          "Invalid argument: variable not present in input arguments");
+      }
+
+      AnalyticFunction(const FunctionArgsList& args, const AnalyticExprWrapper<T>& y)
         : FunctionBase<AnalyticExpr<T>>(args, y)
       {
         assert_release(y->belongs_to_args_list(this->args()) && 

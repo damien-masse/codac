@@ -310,6 +310,14 @@ namespace codac2
       return { std::make_shared<AnalyticOperationExpr<DivOp,VectorOpValue,VectorOpValue,ScalarOpValue>>(x1,x2) };
     }
 
+    template<typename X2>
+      requires (!IsScalarExprOrVar<X2>)
+    inline VectorExpr
+    operator/(const VectorExpr& x1, const X2& x2)
+    {
+      return operator/(x1, const_value(x2));
+    }
+
   // Other operators
 
     inline ScalarExpr

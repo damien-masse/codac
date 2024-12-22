@@ -20,6 +20,10 @@ namespace codac2
       : std::shared_ptr<AnalyticExpr<T>>(e)
     { }
 
+    explicit AnalyticExprWrapper(const typename T::Domain& e)
+      : std::shared_ptr<AnalyticExpr<T>>(const_value(e))
+    { }
+
     template<typename T_=T>
       requires std::is_same_v<T_,VectorOpValue>
     inline AnalyticExprWrapper<ScalarOpValue> operator[](Index i)

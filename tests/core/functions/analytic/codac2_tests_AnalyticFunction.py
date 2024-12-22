@@ -55,16 +55,16 @@ class TestAnalyticFunction(unittest.TestCase):
       f = AnalyticFunction([x], cos(x))
       self.assertTrue(Approx(test_eval(f,Interval(0))) == 1)    
 
-      f = AnalyticFunction([x], vec(x,x))
+      f = AnalyticFunction([x], [x,x])
 
-      fvec = AnalyticFunction([x], vec(x,x))
+      fvec = AnalyticFunction([x], [x,x])
       self.assertTrue(Approx(test_eval(f,1)) == IntervalVector([[1],[1]]))
 
-      self.assertTrue(test_eval(AnalyticFunction([], +4), ) == 4)
-      self.assertTrue(test_eval(AnalyticFunction([], +4.), ) == 4.)
-      self.assertTrue(test_eval(AnalyticFunction([], +Interval(4,5)), ) == Interval(4,5))
-      self.assertTrue(test_eval(AnalyticFunction([], Vector([2,9])), ) == Vector([2,9]))
-      self.assertTrue(test_eval(AnalyticFunction([], IntervalVector(3)), ) == IntervalVector([[-oo,oo],[-oo,oo],[-oo,oo]]))
+      self.assertTrue(test_eval(AnalyticFunction([], +4)) == 4)
+      self.assertTrue(test_eval(AnalyticFunction([], +4.)) == 4.)
+      self.assertTrue(test_eval(AnalyticFunction([], +Interval(4,5))) == Interval(4,5))
+      self.assertTrue(test_eval(AnalyticFunction([], Vector([2,9]))) == Vector([2,9]))
+      self.assertTrue(test_eval(AnalyticFunction([], IntervalVector(3))) == IntervalVector([[-oo,oo],[-oo,oo],[-oo,oo]]))
 
       x1 = ScalarVar()
       x2 = ScalarVar()

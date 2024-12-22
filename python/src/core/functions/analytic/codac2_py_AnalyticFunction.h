@@ -89,6 +89,52 @@ using namespace pybind11::literals;
   \
   ; \
 
+
+AnalyticExprWrapper<ScalarOpValue> pyobj_to_ScalarExpr(py::object& obj)
+{
+  if(py::isinstance<ScalarExpr>(obj))
+    return obj.cast<ScalarExpr>();
+  assert(false && "unable to convert py::object to ScalarExpr");
+  return { nullptr };
+}
+
+std::shared_ptr<ExprBase> pyobj_to_ExprBase(const py::object& obj)
+{
+  if(obj)
+  {
+    if(py::isinstance<AnalyticExprWrapper<ScalarOpValue>>(obj))
+      return obj.cast<AnalyticExprWrapper<ScalarOpValue>>()->copy();
+
+    else if(py::isinstance<AnalyticExprWrapper<VectorOpValue>>(obj))
+      return obj.cast<AnalyticExprWrapper<VectorOpValue>>()->copy();
+  }
+
+  assert_release("invalid expression");
+  return nullptr;
+}
+
+FunctionArgsList create_FunctionArgsList(const std::vector<py::object>& l)
+{
+  FunctionArgsList args {};
+  Index i = 0;
+
+  for(const auto& li : l)
+  {
+    i++;
+
+    if(py::isinstance<ScalarVar>(li))
+      args.push_back(li.cast<ScalarVar>().arg_copy());
+
+    else if(py::isinstance<VectorVar>(li))
+      args.push_back(li.cast<VectorVar>().arg_copy());
+
+    else
+      throw std::invalid_argument("Argument " + std::to_string(i) + " is invalid. Only variables are accepted.");
+  }
+
+  return args;
+}
+
 template<typename T>
 void export_AnalyticFunction(py::module& m, const std::string& export_name)
 {
@@ -97,38 +143,107 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
   exported
   
     .def(py::init(
-      [](const std::vector<py::object>& l, const ExprWrapper<T>& expr)
+      [](const std::vector<py::object>& l, const AnalyticExprWrapper<T>& expr)
       {
-        FunctionArgsList args {};
-        Index i = 0;
-
-        for(const auto& li : l)
-        {
-          i++;
-
-          if(py::isinstance<ScalarVar>(li))
-            args.push_back(li.cast<ScalarVar>().arg_copy());
-
-          else if(py::isinstance<VectorVar>(li))
-            args.push_back(li.cast<VectorVar>().arg_copy());
-
-          else
-            throw std::invalid_argument("Argument " + std::to_string(i) + " is invalid. Only variables are accepted.");
-        }
-        
-        return std::make_unique<AnalyticFunction<T>>(args, expr.copy());
+        return std::make_unique<AnalyticFunction<T>>(
+          create_FunctionArgsList(l),
+          std::dynamic_pointer_cast<AnalyticExpr<T>>(expr.get()->copy())
+        );
       }
     ), ANALYTICFUNCTION_T_ANALYTICFUNCTION_CONST_FUNCTIONARGSLIST_REF_CONST_SHARED_PTR_ANALYTICEXPR_T_REF)
+  ;
+
+  if constexpr(std::is_same_v<T,VectorOpValue>)
+  {
+    exported.def(py::init(
+      [](const std::vector<py::object>& l, std::vector<py::object>& v_expr)
+      {
+        return std::make_unique<AnalyticFunction<T>>(
+          create_FunctionArgsList(l),
+          [&]() -> VectorExpr {
+            switch(v_expr.size())
+            {
+              case 1:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0])
+                );
+              case 2:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1])
+                );
+              case 3:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
+                  pyobj_to_ScalarExpr(v_expr[2])
+                );
+              case 4:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
+                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3])
+                );
+              case 5:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
+                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
+                  pyobj_to_ScalarExpr(v_expr[4])
+                );
+              case 6:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
+                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
+                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5])
+                );
+              case 7:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
+                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
+                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5]),
+                  pyobj_to_ScalarExpr(v_expr[6])
+                );
+              case 8:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
+                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
+                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5]),
+                  pyobj_to_ScalarExpr(v_expr[6]), pyobj_to_ScalarExpr(v_expr[7])
+                );
+              case 9:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
+                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
+                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5]),
+                  pyobj_to_ScalarExpr(v_expr[6]), pyobj_to_ScalarExpr(v_expr[7]),
+                  pyobj_to_ScalarExpr(v_expr[8])
+                );
+              case 10:
+                return vec(
+                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
+                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
+                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5]),
+                  pyobj_to_ScalarExpr(v_expr[6]), pyobj_to_ScalarExpr(v_expr[7]),
+                  pyobj_to_ScalarExpr(v_expr[8]), pyobj_to_ScalarExpr(v_expr[9])
+                );
+              default:
+                assert_release("cannot create AnalyticFunction with provided vector arguments");
+                return { nullptr };
+            }
+          }()
+        );
+      }
+    ), ANALYTICFUNCTION_T_ANALYTICFUNCTION_CONST_FUNCTIONARGSLIST_REF_CONST_SCALAREXPRLIST_REF);
+  }
+
+  exported
 
     .def("input_size", &AnalyticFunction<T>::input_size,
       INDEX_FUNCTIONBASE_E_INPUT_SIZE_CONST)
 
-    .def("__call__", [](const AnalyticFunction<T>& f, const std::vector<ExprWrapperBase>& x)
+    .def("__call__", [](const AnalyticFunction<T>& f, py::list& x)
       {
         std::vector<std::shared_ptr<ExprBase>> v(x.size());
         for(size_t i = 0 ; i < x.size() ; i++)
-          v[i] = x[i].eb->copy();
-        return ExprWrapper<T>(std::dynamic_pointer_cast<AnalyticExpr<T>>(f(v)->copy()));
+          v[i] = pyobj_to_ExprBase(x[i]);
+        return AnalyticExprWrapper<T>(std::dynamic_pointer_cast<AnalyticExpr<T>>(f(v)->copy()));
       },
       SHARED_PTR_E_FUNCTIONBASE_E_OPERATORCALL_CONST_X_REF_VARIADIC_CONST)
   ;
