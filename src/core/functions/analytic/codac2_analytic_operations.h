@@ -17,19 +17,6 @@
 
 namespace codac2
 {
-  using ScalarExpr = AnalyticExprWrapper<ScalarOpValue>;
-  using VectorExpr = AnalyticExprWrapper<VectorOpValue>;
-  using MatrixExpr = AnalyticExprWrapper<MatrixOpValue>;
-
-  template<class X>
-  concept IsScalarExprOrVar = (std::is_base_of_v<VarBase,X> || std::is_base_of_v<ScalarExpr,X>);
-
-  template<class X>
-  concept IsVectorExprOrVar = (std::is_base_of_v<VarBase,X> || std::is_base_of_v<VectorExpr,X>);
-
-  template<class X>
-  concept IsMatrixExprOrVar = (std::is_base_of_v<VarBase,X> || std::is_base_of_v<MatrixExpr,X>);
-
   // operator+ (unary case)
     
     inline ScalarExpr

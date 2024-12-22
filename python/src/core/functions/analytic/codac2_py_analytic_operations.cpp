@@ -16,7 +16,7 @@
 #include <codac2_analytic_operations.h>
 #include <codac2_AnalyticFunction.h>
 #include "codac2_py_analytic_operations_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
-#include "codac2_py_ExprWrapper.h"
+#include "codac2_py_AnalyticExprWrapper.h"
 
 using namespace codac2;
 namespace py = pybind11;

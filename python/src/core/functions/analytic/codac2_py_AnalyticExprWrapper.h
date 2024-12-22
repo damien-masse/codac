@@ -14,10 +14,10 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
+#include "codac2_AnalyticExprWrapper.h"
 #include "codac2_analytic_operations.h"
-#include "codac2_analytic_variables.h"
-#include "codac2_AnalyticExpr.h"
-#include "codac2_AnalyticFunction.h"
+#include "codac2_py_matlab.h"
+#include "codac2_py_AnalyticExprWrapper_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 
 using namespace codac2;
 namespace py = pybind11;
@@ -75,6 +75,13 @@ inline void export_VectorExpr(py::module& m)
     .def(py::init<VectorExpr>())
     .def(py::init<IntervalVector>())
     .def(py::init<VectorVar>())
+
+    .def("__getitem__", [](const VectorExpr& x, Index_type index)
+        {
+          matlab::test_integer(index);
+          return x[matlab::input_index(index)];
+        }, py::return_value_policy::reference_internal,
+      ANALYTICEXPRWRAPPER_SCALAROPVALUE_ANALYTICEXPRWRAPPER_T_OPERATORCOMPO_INDEX_CONST)
 
     .def("__pos__",  [](const VectorExpr& e1)                           { return e1; }, py::is_operator())
     .def(py::self + py::self)

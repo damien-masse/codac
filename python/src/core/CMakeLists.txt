@@ -47,7 +47,7 @@
     functions/analytic/codac2_py_analytic_operations.cpp
     functions/analytic/codac2_py_analytic_variables.cpp
     functions/analytic/codac2_py_AnalyticFunction.h
-    functions/analytic/codac2_py_ExprWrapper.h
+    functions/analytic/codac2_py_AnalyticExprWrapper.h
 
     geometry/codac2_py_Edge.cpp
     geometry/codac2_py_geometry.cpp

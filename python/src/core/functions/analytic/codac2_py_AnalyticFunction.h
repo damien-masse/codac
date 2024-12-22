@@ -19,7 +19,7 @@
 #include <codac2_AnalyticFunction.h>
 #include "codac2_py_AnalyticFunction_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_FunctionBase_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
-#include "codac2_py_ExprWrapper.h"
+#include "codac2_py_AnalyticExprWrapper.h"
 
 using namespace codac2;
 namespace py = pybind11;
@@ -90,7 +90,7 @@ using namespace pybind11::literals;
   ; \
 
 
-AnalyticExprWrapper<ScalarOpValue> pyobj_to_ScalarExpr(py::object& obj)
+AnalyticExprWrapper<ScalarOpValue> pyobj_to_ScalarExpr(const py::object& obj)
 {
   if(py::isinstance<ScalarExpr>(obj))
     return obj.cast<ScalarExpr>();
@@ -156,7 +156,7 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
   if constexpr(std::is_same_v<T,VectorOpValue>)
   {
     exported.def(py::init(
-      [](const std::vector<py::object>& l, std::vector<py::object>& v_expr)
+      [](const std::vector<py::object>& l, const std::vector<py::object>& v_expr)
       {
         return std::make_unique<AnalyticFunction<T>>(
           create_FunctionArgsList(l),

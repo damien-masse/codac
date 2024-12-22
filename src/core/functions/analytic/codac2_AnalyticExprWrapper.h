@@ -26,9 +26,22 @@ namespace codac2
 
     template<typename T_=T>
       requires std::is_same_v<T_,VectorOpValue>
-    inline AnalyticExprWrapper<ScalarOpValue> operator[](Index i)
+    inline AnalyticExprWrapper<ScalarOpValue> operator[](Index i) const
     {
       return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarOpValue,VectorOpValue>>(*this,i) };
     }
   };
+
+  using ScalarExpr = AnalyticExprWrapper<ScalarOpValue>;
+  using VectorExpr = AnalyticExprWrapper<VectorOpValue>;
+  using MatrixExpr = AnalyticExprWrapper<MatrixOpValue>;
+
+  template<class X>
+  concept IsScalarExprOrVar = (std::is_base_of_v<VarBase,X> || std::is_base_of_v<ScalarExpr,X>);
+
+  template<class X>
+  concept IsVectorExprOrVar = (std::is_base_of_v<VarBase,X> || std::is_base_of_v<VectorExpr,X>);
+
+  template<class X>
+  concept IsMatrixExprOrVar = (std::is_base_of_v<VarBase,X> || std::is_base_of_v<MatrixExpr,X>);
 }

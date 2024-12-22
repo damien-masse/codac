@@ -14,7 +14,7 @@
 #include <codac2_analytic_variables.h>
 #include <codac2_AnalyticExpr.h>
 #include "codac2_py_analytic_variables_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
-#include "codac2_py_ExprWrapper.h"
+#include "codac2_py_AnalyticExprWrapper.h"
 #include "codac2_py_matlab.h"
 
 using namespace codac2;
