@@ -95,11 +95,13 @@ namespace codac2
   template<typename T>
   AnalyticFunction<typename ArgWrapper<T>::Domain> TrajectoryBase<T>::as_function() const
   {
+    using D = typename ArgWrapper<T>::Domain;
+
     ScalarVar t;
     return {{t},
-      std::make_shared<
+      AnalyticExprWrapper<D>(std::make_shared<
         AnalyticOperationExpr
-        <TrajectoryOp<T>, typename ArgWrapper<T>::Domain, ScalarOpValue>>(*this,t)
+        <TrajectoryOp<T>, D, ScalarOpValue>>(*this,t))
     };
   }
 }

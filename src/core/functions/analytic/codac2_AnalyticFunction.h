@@ -32,12 +32,29 @@ namespace codac2
 
   inline EvalMode operator|(EvalMode a, EvalMode b)
   { return static_cast<EvalMode>(static_cast<int>(a) | static_cast<int>(b)); }
+
+  class ScalarExprList : public AnalyticExprWrapper<VectorOpValue>
+  {
+    public:
+
+      template<typename... S>
+      ScalarExprList(const S&... y)
+        : AnalyticExprWrapper<VectorOpValue>(vec(y...))
+      { }
+  };
   
   template<typename T>
     requires std::is_base_of_v<OpValueBase,T>
   class AnalyticFunction : public FunctionBase<AnalyticExpr<T>>
   {
     public:
+
+      AnalyticFunction(const FunctionArgsList& args, const ScalarExprList& y)
+        : FunctionBase<AnalyticExpr<T>>(args, y)
+      {
+        assert_release(y->belongs_to_args_list(this->args()) && 
+          "Invalid argument: variable not present in input arguments");
+      }
 
       AnalyticFunction(const FunctionArgsList& args, const std::shared_ptr<AnalyticExpr<T>>& y)
         : FunctionBase<AnalyticExpr<T>>(args, y)
@@ -55,7 +72,7 @@ namespace codac2
       { }
 
       template<typename... X>
-      AnalyticExprWrapper<T> test(const X&... x) const
+      AnalyticExprWrapper<T> operator()(const X&... x) const
       {
         return { this->FunctionBase<AnalyticExpr<T>>::operator()(x...) };
       }
@@ -225,5 +242,8 @@ namespace codac2
           "Invalid arguments: wrong number of input arguments");
       }
   };
+
+  AnalyticFunction(const FunctionArgsList&, std::initializer_list<AnalyticExprWrapper<ScalarOpValue>>) -> 
+    AnalyticFunction<VectorOpValue>;
 
 }

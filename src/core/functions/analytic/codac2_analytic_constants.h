@@ -61,8 +61,8 @@ namespace codac2
   };
 
   template<typename T>
-  std::shared_ptr<AnalyticExpr<typename ArgWrapper<T>::Domain>> const_value(const T& x)
+  AnalyticExprWrapper<typename ArgWrapper<T>::Domain> const_value(const T& x)
   {
-    return std::make_shared<ConstValueExpr<typename ArgWrapper<T>::Domain>>(x);
+    return { std::make_shared<ConstValueExpr<typename ArgWrapper<T>::Domain>>(x) };
   }
 }
