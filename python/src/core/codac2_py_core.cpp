@@ -214,8 +214,7 @@ PYBIND11_MODULE(_core, m)
   export_SepCtcBoundary(m,py_sep);
   export_SepCtcPair(m,py_sep);
   export_SepInter(m,py_sep);
-  export_SepInverse<ScalarType>(m,"SepInverse_Interval",py_sep);
-  export_SepInverse<VectorType>(m,"SepInverse_IntervalVector",py_sep);
+  export_SepInverse(m,py_sep);
   export_SepNot(m,py_sep);
   export_SepPolygon(m,py_sep);
   export_SepProj(m,py_sep);

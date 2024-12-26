@@ -98,6 +98,20 @@ AnalyticExprWrapper<ScalarType> pyobj_to_ScalarExpr(const py::object& obj)
   return { nullptr };
 }
 
+template<typename T>
+AnalyticFunction<T> cast_to_AnalyticFunction(const py::object& f)
+{
+  py::object f_ = f.attr("f");
+
+  if(!f_)
+    assert_release("cast_function: py::object f has no attribute named 'f'");
+
+  if(!py::isinstance<AnalyticFunction<T>>(f_))
+    assert_release("cast_function: provided analytic function has incorrect type");
+
+  return f_.cast<AnalyticFunction<T>>();
+}
+
 std::shared_ptr<ExprBase> pyobj_to_ExprBase(const py::object& obj)
 {
   if(obj)

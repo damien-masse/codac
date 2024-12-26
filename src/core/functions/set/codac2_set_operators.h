@@ -101,7 +101,7 @@ namespace codac2
 
     static std::shared_ptr<SepBase> create_sep(const AnalyticFunction<VectorType>& f, const std::shared_ptr<SepBase>& s1)
     {
-      return std::make_shared<SepInverse<IntervalVector>>(f,s1);
+      return std::make_shared<SepInverse>(f,s1);
     }
   };
 

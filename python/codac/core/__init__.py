@@ -133,24 +133,6 @@ class CtcInverseNotIn(Ctc):
     return self.c.copy()
 
 
-class SepInverse(Sep):
-
-  def __init__(self, f, y, with_centered_form = True):
-    Sep.__init__(self, f.input_size())
-    if isinstance(f.f, AnalyticFunction_Scalar):
-      self.s = SepInverse_Interval(f.f,Interval(y),with_centered_form)
-    elif isinstance(f.f, AnalyticFunction_Vector):
-      self.s = SepInverse_IntervalVector(f.f,IntervalVector(y),with_centered_form)
-    else:
-      codac_error("SepInverse: can only build SepInverse from scalar or vector functions")
-
-  def separate(self,x):
-    return self.s.separate(x)
-
-  def copy(self):
-    return super().copy()
-
-
 class Approx:
 
   def __init__(self, x, eps = float_info.epsilon*10):
@@ -209,7 +191,7 @@ def cart_prod(*args):
       mode = 1
       lst.append(arg)
 
-    elif isinstance(arg, Sep):
+    elif isinstance(arg, (Sep,SepBase)):
       if mode != -1 and mode != 2:
         codac_error("cart_prod: invalid input arguments, was expecting a " + mode_str[mode] + ", got a separator")
       mode = 2
