@@ -236,6 +236,48 @@ class TestAnalyticFunction(unittest.TestCase):
     self.assertTrue(f.eval(EvalMode.CENTERED,Interval(-1,1)) == Interval(0))
     self.assertTrue(f.eval(Interval(-1,1)) == Interval(0))
 
+    # Scalar outputs
+    f1 = AnalyticFunction([], 3)
+    self.assertTrue(f1.eval() == Interval(3))
+    f2 = AnalyticFunction([], 3.)
+    self.assertTrue(f2.eval() == Interval(3))
+    f3 = AnalyticFunction([], Interval(3.))
+    self.assertTrue(f3.eval() == Interval(3))
+    x = ScalarVar()
+    f4 = AnalyticFunction([x], x*x)
+    self.assertTrue(f4.eval(2.) == Interval(4))
+
+    # Vectorial outputs
+
+    f1 = AnalyticFunction([], [ 3 ])
+    self.assertTrue(f1.eval() == IntervalVector([3]))
+    f2 = AnalyticFunction([], [ 3. ])
+    self.assertTrue(f2.eval() == IntervalVector([3]))
+    f3 = AnalyticFunction([], [ Interval(3.) ])
+    self.assertTrue(f3.eval() == IntervalVector([3]))
+    x = ScalarVar()
+    f4 = AnalyticFunction([x], [ x*x ])
+    self.assertTrue(f4.eval(2.) == IntervalVector([4]))
+
+    f_2args = AnalyticFunction([x], [ x*x,x*x ])
+    self.assertTrue(f_2args.eval(1.) == IntervalVector.constant(2,[1]))
+    f_3args = AnalyticFunction([x], [ x,x*x,1 ])
+    self.assertTrue(f_3args.eval(1.) == IntervalVector.constant(3,[1]))
+    f_4args = AnalyticFunction([x], [ x,x*x,1,x ])
+    self.assertTrue(f_4args.eval(1.) == IntervalVector.constant(4,[1]))
+    f_5args = AnalyticFunction([x], [ x,x*x,1,x,x ])
+    self.assertTrue(f_5args.eval(1.) == IntervalVector.constant(5,[1]))
+    f_6args = AnalyticFunction([x], [ x,x*x,1,x,x,1*x ])
+    self.assertTrue(f_6args.eval(1.) == IntervalVector.constant(6,[1]))
+    f_7args = AnalyticFunction([x], [ x,x*x,1,x,x,1*x,x*x ])
+    self.assertTrue(f_7args.eval(1.) == IntervalVector.constant(7,[1]))
+    f_8args = AnalyticFunction([x], [ x,x*x,1,x,x,1*x,x*x,1 ])
+    self.assertTrue(f_8args.eval(1.) == IntervalVector.constant(8,[1]))
+    f_9args = AnalyticFunction([x], [ x,x*x,1,x,x,1*x,x*x,1,x ])
+    self.assertTrue(f_9args.eval(1.) == IntervalVector.constant(9,[1]))
+    f_10args = AnalyticFunction([x], [ x,x*x,1,x,x,1*x,x*x,1,x,1*x ])
+    self.assertTrue(f_10args.eval(1.) == IntervalVector.constant(10,[1]))
+
     # Subvector on variables
     p = VectorVar(2)
     x = VectorVar(4)

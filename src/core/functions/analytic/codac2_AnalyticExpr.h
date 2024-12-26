@@ -63,10 +63,6 @@ namespace codac2
         : OperationExprBase<AnalyticExpr<X>...>(x...)
       { }
 
-      AnalyticOperationExpr(const AnalyticOperationExpr<C,Y,X...>& e)
-        : OperationExprBase<AnalyticExpr<X>...>(e)
-      { }
-
       std::shared_ptr<ExprBase> copy() const
       {
         return std::make_shared<AnalyticOperationExpr<C,Y,X...>>(*this);
@@ -124,10 +120,6 @@ namespace codac2
         : OperationExprBase<AnalyticExpr<VectorOpValue>>(x1), _i(i)
       { }
 
-      AnalyticOperationExpr(const AnalyticOperationExpr& e)
-        : OperationExprBase<AnalyticExpr<VectorOpValue>>(e), _i(e._i)
-      { }
-
       std::shared_ptr<ExprBase> copy() const
       {
         return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarOpValue,VectorOpValue>>(*this);
@@ -167,10 +159,6 @@ namespace codac2
 
       AnalyticOperationExpr(const std::shared_ptr<AnalyticExpr<VectorOpValue>>& x1, Index i, Index j)
         : OperationExprBase<AnalyticExpr<VectorOpValue>>(x1), _i(i), _j(j)
-      { }
-
-      AnalyticOperationExpr(const AnalyticOperationExpr& e)
-        : OperationExprBase<AnalyticExpr<VectorOpValue>>(e), _i(e._i), _j(e._j)
       { }
 
       std::shared_ptr<ExprBase> copy() const

@@ -10,6 +10,7 @@
 #pragma once
 
 #include "codac2_AnalyticExpr.h"
+#include "codac2_analytic_constants.h"
 
 namespace codac2
 {
@@ -19,14 +20,25 @@ namespace codac2
     AnalyticExprWrapper(const std::shared_ptr<AnalyticExpr<T>>& e)
       : std::shared_ptr<AnalyticExpr<T>>(e)
     { }
-
-    explicit AnalyticExprWrapper(const typename T::Domain& e)
+    
+    AnalyticExprWrapper(const ScalarVar& e)
+      requires std::is_same_v<T,ScalarOpValue>
+      : std::shared_ptr<AnalyticExpr<T>>({ std::dynamic_pointer_cast<AnalyticExpr<T>>(e.copy()) })
+    { }
+    
+    AnalyticExprWrapper(const VectorVar& e)
+      requires std::is_same_v<T,VectorOpValue>
+      : std::shared_ptr<AnalyticExpr<T>>({ std::dynamic_pointer_cast<AnalyticExpr<T>>(e.copy()) })
+    { }
+    
+    template<typename V>
+    AnalyticExprWrapper(const V& e)
+      requires std::is_same_v<typename ArgWrapper<V>::Domain,T>
       : std::shared_ptr<AnalyticExpr<T>>(const_value(e))
     { }
-
-    template<typename T_=T>
-      requires std::is_same_v<T_,VectorOpValue>
+    
     inline AnalyticExprWrapper<ScalarOpValue> operator[](Index i) const
+      requires std::is_same_v<T,VectorOpValue>
     {
       return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarOpValue,VectorOpValue>>(*this,i) };
     }

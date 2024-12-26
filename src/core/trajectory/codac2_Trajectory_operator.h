@@ -11,6 +11,7 @@
 
 #include "codac2_analytic_operations.h"
 #include "codac2_SampledTrajectory.h"
+#include "codac2_AnalyticExprWrapper.h"
 
 namespace codac2
 {
@@ -52,7 +53,7 @@ namespace codac2
 
       using O = typename ArgWrapper<T>::Domain;
 
-      AnalyticOperationExpr(const TrajectoryBase<T>& x1, const std::shared_ptr<AnalyticExpr<ScalarOpValue>>& x2)
+      AnalyticOperationExpr(const TrajectoryBase<T>& x1, const ScalarExpr& x2)
         : OperationExprBase<AnalyticExpr<ScalarOpValue>>(x2), _x1(x1)
       { }
 

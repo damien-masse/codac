@@ -147,10 +147,10 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
       {
         return std::make_unique<AnalyticFunction<T>>(
           create_FunctionArgsList(l),
-          std::dynamic_pointer_cast<AnalyticExpr<T>>(expr.get()->copy())
+          AnalyticExprWrapper<T>{ std::dynamic_pointer_cast<AnalyticExpr<T>>(expr.get()->copy()) }
         );
       }
-    ), ANALYTICFUNCTION_T_ANALYTICFUNCTION_CONST_FUNCTIONARGSLIST_REF_CONST_SHARED_PTR_ANALYTICEXPR_T_REF)
+    ), ANALYTICFUNCTION_T_ANALYTICFUNCTION_CONST_FUNCTIONARGSLIST_REF_CONST_ANALYTICEXPRWRAPPER_T_REF)
   ;
 
   if constexpr(std::is_same_v<T,VectorOpValue>)

@@ -45,64 +45,16 @@ namespace codac2
       return { std::make_shared<AnalyticOperationExpr<AddOp,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
     }
 
-    template<typename X1>
-      requires (!IsScalarExprOrVar<X1>)
-    inline ScalarExpr
-    operator+(const X1& x1, ScalarExpr x2)
-    {
-      return operator+(const_value(x1),x2);
-    }
-
-    template<typename X2>
-      requires (!IsScalarExprOrVar<X2>)
-    inline ScalarExpr
-    operator+(ScalarExpr x1, const X2& x2)
-    {
-      return operator+(x1, const_value(x2));
-    }
-
     inline VectorExpr
     operator+(VectorExpr x1, VectorExpr x2)
     {
       return { std::make_shared<AnalyticOperationExpr<AddOp,VectorOpValue,VectorOpValue,VectorOpValue>>(x1,x2) };
     }
 
-    template<typename X1>
-      requires (!IsVectorExprOrVar<X1>)
-    inline VectorExpr
-    operator+(const X1& x1, VectorExpr x2)
-    {
-      return operator+(const_value(x1),x2);
-    }
-
-    template<typename X2>
-      requires (!IsVectorExprOrVar<X2>)
-    inline VectorExpr
-    operator+(VectorExpr x1, const X2& x2)
-    {
-      return operator+(x1, const_value(x2));
-    }
-
     inline MatrixExpr
     operator+(MatrixExpr x1, MatrixExpr x2)
     {
       return { std::make_shared<AnalyticOperationExpr<AddOp,MatrixOpValue,MatrixOpValue,MatrixOpValue>>(x1,x2) };
-    }
-
-    template<typename X1>
-      requires (!IsMatrixExprOrVar<X1>)
-    inline MatrixExpr
-    operator+(const X1& x1, MatrixExpr x2)
-    {
-      return operator+(const_value(x1),x2);
-    }
-
-    template<typename X2>
-      requires (!IsMatrixExprOrVar<X2>)
-    inline MatrixExpr
-    operator+(MatrixExpr x1, const X2& x2)
-    {
-      return operator+(x1, const_value(x2));
     }
 
   // operator- (unary case)
@@ -133,64 +85,16 @@ namespace codac2
       return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
     }
 
-    template<typename X1>
-      requires (!IsScalarExprOrVar<X1>)
-    inline ScalarExpr
-    operator-(const X1& x1, const ScalarExpr& x2)
-    {
-      return operator-(const_value(x1),x2);
-    }
-
-    template<typename X2>
-      requires (!IsScalarExprOrVar<X2>)
-    inline ScalarExpr
-    operator-(const ScalarExpr& x1, const X2& x2)
-    {
-      return operator-(x1, const_value(x2));
-    }
-
     inline VectorExpr
     operator-(const VectorExpr& x1, const VectorExpr& x2)
     {
       return { std::make_shared<AnalyticOperationExpr<SubOp,VectorOpValue,VectorOpValue,VectorOpValue>>(x1,x2) };
     }
 
-    template<typename X1>
-      requires (!IsVectorExprOrVar<X1>)
-    inline VectorExpr
-    operator-(const X1& x1, const VectorExpr& x2)
-    {
-      return operator-(const_value(x1),x2);
-    }
-
-    template<typename X2>
-      requires (!IsVectorExprOrVar<X2>)
-    inline VectorExpr
-    operator-(const VectorExpr& x1, const X2& x2)
-    {
-      return operator-(x1, const_value(x2));
-    }
-
     inline MatrixExpr
     operator-(const MatrixExpr& x1, const MatrixExpr& x2)
     {
       return { std::make_shared<AnalyticOperationExpr<SubOp,MatrixOpValue,MatrixOpValue,MatrixOpValue>>(x1,x2) };
-    }
-
-    template<typename X1>
-      requires (!IsMatrixExprOrVar<X1>)
-    inline MatrixExpr
-    operator-(const X1& x1, const MatrixExpr& x2)
-    {
-      return operator-(const_value(x1),x2);
-    }
-
-    template<typename X2>
-      requires (!IsMatrixExprOrVar<X2>)
-    inline MatrixExpr
-    operator-(const MatrixExpr& x1, const X2& x2)
-    {
-      return operator-(x1, const_value(x2));
     }
 
   // operator*
@@ -213,58 +117,10 @@ namespace codac2
       return { std::make_shared<AnalyticOperationExpr<MulOp,VectorOpValue,VectorOpValue,ScalarOpValue>>(x1,x2) };
     }
 
-    inline ScalarExpr
-    operator*(const Interval& x1, const ScalarExpr& x2)
-    {
-      return operator*(const_value(x1),x2);
-    }
-
-    inline ScalarExpr
-    operator*(const ScalarExpr& x1, const Interval& x2)
-    {
-      return operator*(x1,const_value(x2));
-    }
-
-    inline VectorExpr
-    operator*(const Interval& x1, const VectorExpr& x2)
-    {
-      return operator*(const_value(x1),x2);
-    }
-
-    inline VectorExpr
-    operator*(const VectorExpr& x1, const Interval& x2)
-    {
-      return operator*(x1,const_value(x2));
-    }
-
-    inline VectorExpr
-    operator*(const ScalarExpr& x1, const IntervalVector& x2)
-    {
-      return operator*(x1,const_value(x2));
-    }
-
-    inline VectorExpr
-    operator*(const IntervalVector& x1, const ScalarExpr& x2)
-    {
-      return operator*(const_value(x1),x2);
-    }
-
     inline VectorExpr
     operator*(const MatrixExpr& x1, const VectorExpr& x2)
     {
       return { std::make_shared<AnalyticOperationExpr<MulOp,VectorOpValue,MatrixOpValue,VectorOpValue>>(x1,x2) };
-    }
-
-    inline VectorExpr
-    operator*(const MatrixExpr& x1, const IntervalVector& x2)
-    {
-      return { std::make_shared<AnalyticOperationExpr<MulOp,VectorOpValue,MatrixOpValue,VectorOpValue>>(x1,const_value(x2)) };
-    }
-
-    inline VectorExpr
-    operator*(const IntervalMatrix& x1, const VectorExpr& x2)
-    {
-      return { std::make_shared<AnalyticOperationExpr<MulOp,VectorOpValue,MatrixOpValue,VectorOpValue>>(const_value(x1),x2) };
     }
 
   // operator/
@@ -274,35 +130,11 @@ namespace codac2
     {
       return { std::make_shared<AnalyticOperationExpr<DivOp,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
     }
-
-    template<typename X1>
-      requires (!IsScalarExprOrVar<X1>)
-    inline ScalarExpr
-    operator/(const X1& x1, const ScalarExpr& x2)
-    {
-      return operator/(const_value(x1),x2);
-    }
-
-    template<typename X2>
-      requires (!IsScalarExprOrVar<X2>)
-    inline ScalarExpr
-    operator/(const ScalarExpr& x1, const X2& x2)
-    {
-      return operator/(x1, const_value(x2));
-    }
     
     inline VectorExpr
     operator/(const VectorExpr& x1, const ScalarExpr& x2)
     {
       return { std::make_shared<AnalyticOperationExpr<DivOp,VectorOpValue,VectorOpValue,ScalarOpValue>>(x1,x2) };
-    }
-
-    template<typename X2>
-      requires (!IsScalarExprOrVar<X2>)
-    inline VectorExpr
-    operator/(const VectorExpr& x1, const X2& x2)
-    {
-      return operator/(x1, const_value(x2));
     }
 
   // Other operators
@@ -311,22 +143,6 @@ namespace codac2
     pow(const ScalarExpr& x1, const ScalarExpr& x2)
     {
       return { std::make_shared<AnalyticOperationExpr<PowOp,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
-    }
-
-    template<typename X1>
-      requires (!IsScalarExprOrVar<X1>)
-    inline ScalarExpr
-    pow(const X1& x1, const ScalarExpr& x2)
-    {
-      return pow(const_value(x1),x2);
-    }
-
-    template<typename X2>
-      requires (!IsScalarExprOrVar<X2>)
-    inline ScalarExpr
-    pow(const ScalarExpr& x1, const X2& x2)
-    {
-      return pow(x1,const_value(x2));
     }
 
     inline ScalarExpr
@@ -541,12 +357,6 @@ namespace codac2
     vec(const AnalyticExprWrapper<X>&... x)
     {
       return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,X...>>(x...) };
-    }
-
-    inline ScalarExpr
-    ind(Index i, const VectorExpr& x1)
-    {
-      return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarOpValue,VectorOpValue>>(x1,i) };
     }
 
     template<typename... X>

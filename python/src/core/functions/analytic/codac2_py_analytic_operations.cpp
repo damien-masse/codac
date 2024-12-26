@@ -31,14 +31,6 @@ void export_expression_operations(py::module& m)
     SCALAREXPR_POW_CONST_SCALAREXPR_REF_CONST_SCALAREXPR_REF,
     "x1"_a, "x2"_a)
 
-  .def("pow", [](const Interval& e1, const ScalarExpr& e2) { return ScalarExpr(pow(e1,e2)); },
-    SCALAREXPR_POW_CONST_X1_REF_CONST_SCALAREXPR_REF,
-    "x1"_a, "x2"_a)
-
-  .def("pow", [](const ScalarExpr& e1, const Interval& e2) { return ScalarExpr(pow(e1,e2)); },
-    SCALAREXPR_POW_CONST_SCALAREXPR_REF_CONST_X2_REF,
-    "x1"_a, "x2"_a)
-
   .def("sqr", [](const ScalarExpr& e1) { return ScalarExpr(sqr(e1)); },
     SCALAREXPR_SQR_CONST_SCALAREXPR_REF,
     "x1"_a)

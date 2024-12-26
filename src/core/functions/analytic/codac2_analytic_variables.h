@@ -41,17 +41,6 @@ namespace codac2
 
       void replace_expr([[maybe_unused]] const ExprID& old_expr_id, [[maybe_unused]] const std::shared_ptr<ExprBase>& new_expr)
       { }
-      
-      // to remove
-      operator std::shared_ptr<AnalyticExpr<T>>() const
-      {
-        return std::dynamic_pointer_cast<AnalyticExpr<T>>(this->copy());
-      }
-      
-      operator AnalyticExprWrapper<T>() const
-      {
-        return { std::dynamic_pointer_cast<AnalyticExpr<T>>(this->copy()) };
-      }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
       {
@@ -67,7 +56,6 @@ namespace codac2
     public:
 
       ScalarVar();
-      ScalarVar(const ScalarVar& x);
 
       std::shared_ptr<VarBase> arg_copy() const;
       std::shared_ptr<ExprBase> copy() const;
@@ -81,7 +69,6 @@ namespace codac2
     public:
 
       explicit VectorVar(Index n);
-      VectorVar(const VectorVar& x);
 
       std::shared_ptr<VarBase> arg_copy() const;
       std::shared_ptr<ExprBase> copy() const;

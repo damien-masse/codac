@@ -75,12 +75,11 @@ TEST_CASE("AnalyticFunction")
     }
 
     {
-      // todo: remove call to "const_value" method
-      CHECK(AnalyticFunction({}, const_value(+Interval(4,5))).eval(m) == Interval(4,5));
-      CHECK(AnalyticFunction({}, const_value(+4)).eval(m) == 4);
-      CHECK(AnalyticFunction({}, const_value(+4.)).eval(m) == 4.);
-      CHECK(AnalyticFunction({}, const_value(Vector({2,9}))).eval(m) == Vector({2,9}));
-      CHECK(AnalyticFunction({}, const_value(IntervalVector(3))).eval(m) == IntervalVector({{-oo,oo},{-oo,oo},{-oo,oo}}));
+      CHECK(AnalyticFunction({}, +Interval(4,5)).eval(m) == Interval(4,5));
+      CHECK(AnalyticFunction({}, +4).eval(m) == 4);
+      CHECK(AnalyticFunction({}, +4.).eval(m) == 4.);
+      CHECK(AnalyticFunction({}, Vector({2,9})).eval(m) == Vector({2,9}));
+      CHECK(AnalyticFunction({}, IntervalVector(3)).eval(m) == IntervalVector({{-oo,oo},{-oo,oo},{-oo,oo}}));
 
       ScalarVar x1;
       ScalarVar x2;
@@ -259,6 +258,59 @@ TEST_CASE("AnalyticFunction")
     CHECK(f.eval(EvalMode::NATURAL,Interval(-1,1)) == Interval(-2,2));
     CHECK(f.eval(EvalMode::CENTERED,Interval(-1,1)) == Interval(0));
     CHECK(f.eval(Interval(-1,1)) == Interval(0));
+  }
+
+  {
+    // Scalar outputs
+    {
+      AnalyticFunction f1({}, (int)3);
+      CHECK(f1.eval() == Interval(3));
+
+      AnalyticFunction f2({}, (double)3.);
+      CHECK(f2.eval() == Interval(3));
+
+      AnalyticFunction f3({}, Interval(3.));
+      CHECK(f3.eval() == Interval(3));
+
+      ScalarVar x;
+      AnalyticFunction f4({x}, x*x);
+      CHECK(f4.eval(2.) == Interval(4));
+    }
+
+    // Vectorial outputs
+    {
+      AnalyticFunction f1({}, { (int)3 });
+      CHECK(f1.eval() == IntervalVector({3}));
+
+      AnalyticFunction f2({}, { (double)3. });
+      CHECK(f2.eval() == IntervalVector({3}));
+
+      AnalyticFunction f3({}, { Interval(3.) });
+      CHECK(f3.eval() == IntervalVector({3}));
+
+      ScalarVar x;
+      AnalyticFunction f4({x}, { x*x });
+      CHECK(f4.eval(2.) == IntervalVector({4}));
+
+      AnalyticFunction f_2args({x}, { x*x,x*x });
+      CHECK(f_2args.eval(1.) == IntervalVector::constant(2,{1}));
+      AnalyticFunction f_3args({x}, { x,x*x,1 });
+      CHECK(f_3args.eval(1.) == IntervalVector::constant(3,{1}));
+      AnalyticFunction f_4args({x}, { x,x*x,1,x });
+      CHECK(f_4args.eval(1.) == IntervalVector::constant(4,{1}));
+      AnalyticFunction f_5args({x}, { x,x*x,1,x,x });
+      CHECK(f_5args.eval(1.) == IntervalVector::constant(5,{1}));
+      AnalyticFunction f_6args({x}, { x,x*x,1,x,x,1*x });
+      CHECK(f_6args.eval(1.) == IntervalVector::constant(6,{1}));
+      AnalyticFunction f_7args({x}, { x,x*x,1,x,x,1*x,x*x });
+      CHECK(f_7args.eval(1.) == IntervalVector::constant(7,{1}));
+      AnalyticFunction f_8args({x}, { x,x*x,1,x,x,1*x,x*x,1 });
+      CHECK(f_8args.eval(1.) == IntervalVector::constant(8,{1}));
+      AnalyticFunction f_9args({x}, { x,x*x,1,x,x,1*x,x*x,1,x });
+      CHECK(f_9args.eval(1.) == IntervalVector::constant(9,{1}));
+      AnalyticFunction f_10args({x}, { x,x*x,1,x,x,1*x,x*x,1,x,1*x });
+      CHECK(f_10args.eval(1.) == IntervalVector::constant(10,{1}));
+    }
   }
 
   // Subvector on variables

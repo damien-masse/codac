@@ -88,11 +88,22 @@ TEST_CASE("SampledTrajectory as operator (nd case)")
   auto sampled_traj = analytic_traj.sampled(1e-2);
   auto g = sampled_traj.as_function();
 
-  AnalyticFunction h {
-    {t},
-    vec(1.*ind(0,g(t)),1.*ind(1,g(t)))
-  };
+  {
+    AnalyticFunction h {
+      {t},
+      g(t)
+    };
 
-  for(double t = 0 ; t < 5 ; t+=1e-2)
-    CHECK(Approx(h.real_eval(t)) == Vector({2*cos(t),sin(2*t)}));
+    for(double t = 0 ; t < 5 ; t+=1e-2)
+      CHECK(Approx(h.real_eval(t)) == Vector({2*cos(t),sin(2*t)}));
+  }
+  {
+    AnalyticFunction h {
+      {t},
+      { g(t)[0],g(t)[1] }
+    };
+
+    for(double t = 0 ; t < 5 ; t+=1e-2)
+      CHECK(Approx(h.real_eval(t)) == Vector({2*cos(t),sin(2*t)}));
+  }
 }

@@ -17,6 +17,7 @@
 #include "codac2_template_tools.h"
 #include "codac2_analytic_operations.h"
 #include "codac2_AnalyticExprWrapper.h"
+#include "codac2_ScalarExprList.h"
 
 namespace codac2
 {
@@ -33,16 +34,6 @@ namespace codac2
   inline EvalMode operator|(EvalMode a, EvalMode b)
   { return static_cast<EvalMode>(static_cast<int>(a) | static_cast<int>(b)); }
 
-  class ScalarExprList : public AnalyticExprWrapper<VectorOpValue>
-  {
-    public:
-
-      template<typename... S>
-      ScalarExprList(const S&... y)
-        : AnalyticExprWrapper<VectorOpValue>(vec(y...))
-      { }
-  };
-  
   template<typename T>
     requires std::is_base_of_v<OpValueBase,T>
   class AnalyticFunction : public FunctionBase<AnalyticExpr<T>>
@@ -64,19 +55,8 @@ namespace codac2
           "Invalid argument: variable not present in input arguments");
       }
 
-      AnalyticFunction(const FunctionArgsList& args, const std::shared_ptr<AnalyticExpr<T>>& y)
-        : FunctionBase<AnalyticExpr<T>>(args, y)
-      {
-        assert_release(y->belongs_to_args_list(this->args()) && 
-          "Invalid argument: variable not present in input arguments");
-      }
-
       AnalyticFunction(const FunctionArgsList& args, const AnalyticVarExpr<T>& y)
-        : AnalyticFunction(args, y.operator std::shared_ptr<AnalyticExpr<T>>())
-      { }
-
-      AnalyticFunction(const AnalyticFunction<T>& f)
-        : FunctionBase<AnalyticExpr<T>>(f)
+        : AnalyticFunction(args, { std::dynamic_pointer_cast<AnalyticExpr<T>>(y.copy()) })
       { }
 
       template<typename... X>
@@ -251,7 +231,29 @@ namespace codac2
       }
   };
 
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<AnalyticExprWrapper<ScalarOpValue>>) -> 
+  AnalyticFunction(const FunctionArgsList&, double) -> 
+    AnalyticFunction<ScalarOpValue>;
+
+  AnalyticFunction(const FunctionArgsList&, const Interval&) -> 
+    AnalyticFunction<ScalarOpValue>;
+
+  AnalyticFunction(const FunctionArgsList&, std::initializer_list<int>) -> 
     AnalyticFunction<VectorOpValue>;
+
+  AnalyticFunction(const FunctionArgsList&, std::initializer_list<double>) -> 
+    AnalyticFunction<VectorOpValue>;
+
+  AnalyticFunction(const FunctionArgsList&, std::initializer_list<Interval>) -> 
+    AnalyticFunction<VectorOpValue>;
+
+  AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarExpr>) -> 
+    AnalyticFunction<VectorOpValue>;
+
+  AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarVar>) -> 
+    AnalyticFunction<VectorOpValue>;
+
+  template<typename T>
+  AnalyticFunction(const FunctionArgsList&, const T&) -> 
+    AnalyticFunction<typename ArgWrapper<T>::Domain>;
 
 }

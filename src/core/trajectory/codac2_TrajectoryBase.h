@@ -84,6 +84,7 @@ namespace codac2
         return p;
       }
 
+      // Implementation in codac2_Trajectory_operator.h
       AnalyticFunction<typename ArgWrapper<T>::Domain> as_function() const;
   };
 }

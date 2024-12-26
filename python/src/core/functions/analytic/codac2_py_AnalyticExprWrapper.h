@@ -30,30 +30,28 @@ inline void export_ScalarExpr(py::module& m)
 
   exported
 
-    .def(py::init<ScalarExpr>())
+    .def(py::init<int>())
+    .def(py::init<double>())
     .def(py::init<Interval>())
+    .def(py::init<ScalarExpr>())
     .def(py::init<ScalarVar>())
 
     .def("__pos__",  [](const ScalarExpr& e1) { return e1; }, py::is_operator())
     .def(py::self + py::self)
-    .def("__radd__", [](const ScalarExpr& e1, const ScalarVar& e2)  { return e2+e1; }, py::is_operator())
     .def("__add__",  [](const ScalarExpr& e1, const Interval& e2)   { return e1+e2; }, py::is_operator())
     .def("__radd__", [](const ScalarExpr& e1, const Interval& e2)   { return e2+e1; }, py::is_operator())
 
     .def(- py::self)
     .def(py::self - py::self)
-    .def("__sub__",  [](const ScalarExpr& e1, const ScalarVar& e2)  { return e1-e2; }, py::is_operator())
     .def("__sub__",  [](const ScalarExpr& e1, const Interval& e2)   { return e1-e2; }, py::is_operator())
     .def("__rsub__", [](const ScalarExpr& e1, const Interval& e2)   { return e2-e1; }, py::is_operator())
 
     .def(py::self * py::self)
-    .def("__mul__",  [](const ScalarExpr& e1, const ScalarVar& e2)  { return e1*e2; }, py::is_operator())
     .def("__mul__",  [](const ScalarExpr& e1, const Interval& e2)   { return e1*e2; }, py::is_operator())
     .def("__rmul__", [](const ScalarExpr& e1, const Interval& e2)   { return e2*e1; }, py::is_operator())
     .def("__mul__",  [](const ScalarExpr& e1, const VectorExpr& e2) { return e1*e2; }, py::is_operator())
 
     .def("__truediv__",  [](const ScalarExpr& e1, const ScalarExpr& e2) { return e1/e2; }, py::is_operator())
-    .def("__truediv__",  [](const ScalarExpr& e1, const ScalarVar& e2)  { return e1/e2; }, py::is_operator())
     .def("__truediv__",  [](const ScalarExpr& e1, const Interval& e2)   { return e1/e2; }, py::is_operator())
     .def("__rtruediv__", [](const ScalarExpr& e1, const Interval& e2)   { return e2/e1; }, py::is_operator())
 
@@ -72,8 +70,9 @@ inline void export_VectorExpr(py::module& m)
 
   exported
 
-    .def(py::init<VectorExpr>())
+    .def(py::init<Vector>())
     .def(py::init<IntervalVector>())
+    .def(py::init<VectorExpr>())
     .def(py::init<VectorVar>())
 
     .def("__getitem__", [](const VectorExpr& x, Index_type index)
@@ -85,13 +84,11 @@ inline void export_VectorExpr(py::module& m)
 
     .def("__pos__",  [](const VectorExpr& e1)                           { return e1; }, py::is_operator())
     .def(py::self + py::self)
-    .def("__add__",  [](const VectorExpr& e1, const VectorVar& e2)      { return e1+e2; }, py::is_operator())
     .def("__add__",  [](const VectorExpr& e1, const IntervalVector& e2) { return e1+e2; }, py::is_operator())
     .def("__radd__", [](const VectorExpr& e1, const IntervalVector& e2) { return e1+e2; }, py::is_operator())
 
     .def(- py::self)
     .def(py::self - py::self)
-    .def("__sub__",  [](const VectorExpr& e1, const VectorVar& e2)      { return e1-e2; }, py::is_operator())
     .def("__sub__",  [](const VectorExpr& e1, const IntervalVector& e2) { return e1-e2; }, py::is_operator())
     .def("__rsub__", [](const VectorExpr& e1, const IntervalVector& e2) { return e2-e1; }, py::is_operator())
 

@@ -19,10 +19,6 @@ using namespace codac2;
   ScalarVar::ScalarVar()
   { }
 
-  ScalarVar::ScalarVar(const ScalarVar& x)
-    : AnalyticVarExpr<ScalarOpValue>(x)
-  { }
-
   std::shared_ptr<VarBase> ScalarVar::arg_copy() const
   {
     return std::make_shared<ScalarVar>(*this);
@@ -40,7 +36,8 @@ using namespace codac2;
 
   AnalyticExprWrapper<ScalarOpValue> ScalarVar::operator-() const
   {
-    return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarOpValue,ScalarOpValue>>(*this) };
+    return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarOpValue,ScalarOpValue>>(
+      std::dynamic_pointer_cast<AnalyticExpr<ScalarOpValue>>(this->copy())) };
   }
 
 
@@ -51,10 +48,6 @@ using namespace codac2;
   {
     assert_release(n > 0);
   }
-
-  VectorVar::VectorVar(const VectorVar& x)
-    : AnalyticVarExpr<VectorOpValue>(x), _n(x._n)
-  { }
 
   std::shared_ptr<VarBase> VectorVar::arg_copy() const
   {

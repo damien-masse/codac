@@ -22,8 +22,6 @@ namespace codac2
         : _x(x)
       { }
 
-      ConstValueExpr(const ConstValueExpr<T>& e) = default;
-
       std::shared_ptr<ExprBase> copy() const
       {
         return std::make_shared<ConstValueExpr<T>>(*this);
