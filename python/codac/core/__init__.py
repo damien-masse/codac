@@ -17,21 +17,27 @@ You need help? Submit an issue on: https://github.com/codac-team/codac/issues
 
 class AnalyticFunction:
 
-  def __init__(self, args, e):
-    if isinstance(e, (int,float,Interval,ScalarVar,ScalarExpr)):
-      self.f = AnalyticFunction_Scalar(args,ScalarExpr(e))
-    elif isinstance(e, (Vector,IntervalVector,VectorVar,VectorExpr)):
-      self.f = AnalyticFunction_Vector(args,VectorExpr(e))
-    elif isinstance(e, list):
-      lst=[]
-      for e_i in e:
-        if isinstance(e_i, (int,float,Interval,ScalarVar,ScalarExpr)):
-          lst.append(ScalarExpr(e_i))
-        else:
-          codac_error("AnalyticFunction: invalid vectorial expression")
-      self.f = AnalyticFunction_Vector(args,lst)
+  def __init__(self, args, e=None):
+    if e:
+      if isinstance(e, (int,float,Interval,ScalarVar,ScalarExpr)):
+        self.f = AnalyticFunction_Scalar(args,ScalarExpr(e))
+      elif isinstance(e, (Vector,IntervalVector,VectorVar,VectorExpr)):
+        self.f = AnalyticFunction_Vector(args,VectorExpr(e))
+      elif isinstance(e, list):
+        lst=[]
+        for e_i in e:
+          if isinstance(e_i, (int,float,Interval,ScalarVar,ScalarExpr)):
+            lst.append(ScalarExpr(e_i))
+          else:
+            codac_error("AnalyticFunction: invalid vectorial expression")
+        self.f = AnalyticFunction_Vector(args,lst)
+      else:
+        codac_error("AnalyticFunction: can only build functions from scalar or vector expressions")
     else:
-      codac_error("AnalyticFunction: can only build functions from scalar or vector expressions")
+      if isinstance(args, (AnalyticFunction_Scalar,AnalyticFunction_Vector)):
+        self.f = args
+      else:
+        codac_error("AnalyticFunction: invalid function argument")
 
   def input_size(self):
     return self.f.input_size()
@@ -279,6 +285,9 @@ class AnalyticTrajectory:
   def primitive(self, y0, t):
     return SampledTrajectory(self.traj.primitive(y0, t))
     
+  def as_function(self):
+    return AnalyticFunction(self.traj.as_function())
+    
   # Methods from AnalyticTrajectory:
   #   none
 
@@ -296,6 +305,14 @@ class SampledTrajectory:
       self.traj = SampledTrajectory_Vector(m)
     else:
       codac_error("SampledTrajectory: can only build this trajectory from maps of scalar or vector values")
+      
+  # Methods from std::map:
+
+  def __setitem__(self, t, y):
+    self.traj[t] = y
+
+  def __getitem__(self, t):
+    return self.traj[t]
 
   # Methods from TrajectoryBase:
 
@@ -325,6 +342,9 @@ class SampledTrajectory:
     
   def primitive(self, y0, t):
     return SampledTrajectory(self.traj.primitive(y0, t))
+    
+  def as_function(self):
+    return AnalyticFunction(self.traj.as_function())
     
   # Methods from SampledTrajectory:
   

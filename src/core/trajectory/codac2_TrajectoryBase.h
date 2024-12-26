@@ -24,7 +24,7 @@ namespace codac2
   {
     public:
 
-      using Type = ValueType<T>::Type;
+      using TrajType = ValueType<T>::Type;
 
       TrajectoryBase()
       { }
@@ -39,7 +39,7 @@ namespace codac2
 
       auto nan_value() const
       {
-        if constexpr(std::is_same_v<typename ValueType<T>::Type,ScalarType>)
+        if constexpr(std::is_same_v<TrajType,ScalarType>)
           return std::numeric_limits<double>::quiet_NaN();
 
         else
@@ -86,6 +86,6 @@ namespace codac2
       }
 
       // Implementation in codac2_Trajectory_operator.h
-      AnalyticFunction<typename ValueType<T>::Type> as_function() const;
+      AnalyticFunction<TrajType> as_function() const;
   };
 }

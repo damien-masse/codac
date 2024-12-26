@@ -16,6 +16,7 @@
 #include "codac2_py_AnalyticTrajectory_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_TrajectoryBase_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_TrajectoryBase.h"
+#include "codac2_Trajectory_operator.h"
 #include "codac2_py_doc.h"
 
 using namespace std;

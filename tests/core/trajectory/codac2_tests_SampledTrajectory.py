@@ -9,7 +9,7 @@
 
 import unittest
 from codac import *
-import sys
+import sys, math
 
 class TestSampledTrajectory(unittest.TestCase):
 
@@ -57,6 +57,57 @@ class TestSampledTrajectory(unittest.TestCase):
     #DefaultView.set_window_properties([75,75],[700,700])
     #DefaultView.draw_trajectory(x, Color.blue())
     #DefaultView.draw_trajectory(x_sampled, Color.red())
+
+    # SampledTrajectory as operator (1d case)
+    
+    t = ScalarVar()
+    f = AnalyticFunction(
+      [t], cos(t)
+    )
+    analytic_traj = AnalyticTrajectory(f, [-math.pi,math.pi])
+    sampled_traj = analytic_traj.sampled(1e-2)
+    g = sampled_traj.as_function()
+
+    h = AnalyticFunction(
+      [t], g(t)
+    )
+
+    t_ = -math.pi
+    while t_ < math.pi:
+      self.assertTrue(Approx(h.real_eval(t_)) == math.cos(t_))
+      t_=t_+1e-2
+
+    # SampledTrajectory as operator (nd case)
+
+    t = ScalarVar()
+    f = AnalyticFunction(
+      [t],
+      vec(2*cos(t),sin(2*t))
+    )
+
+    analytic_traj = AnalyticTrajectory(f, [0,5])
+    sampled_traj = analytic_traj.sampled(1e-2)
+    g = sampled_traj.as_function()
+
+    h = AnalyticFunction(
+      [t],
+      g(t)
+    )
+
+    t_ = 0
+    while t_ < 5:
+      self.assertTrue(Approx(h.real_eval(t_)) == Vector([2*math.cos(t_),math.sin(2*t_)]))
+      t_=t_+1e-2
+
+    h = AnalyticFunction(
+      [t],
+      [ g(t)[0],g(t)[1] ]
+    )
+
+    t_ = 0
+    while t_ < 5:
+      self.assertTrue(Approx(h.real_eval(t_)) == Vector([2*math.cos(t_),math.sin(2*t_)]))
+      t_=t_+1e-2
 
 if __name__ ==  '__main__':
   unittest.main()
