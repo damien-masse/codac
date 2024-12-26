@@ -90,7 +90,7 @@ using namespace pybind11::literals;
   ; \
 
 
-AnalyticExprWrapper<ScalarOpValue> pyobj_to_ScalarExpr(const py::object& obj)
+AnalyticExprWrapper<ScalarType> pyobj_to_ScalarExpr(const py::object& obj)
 {
   if(py::isinstance<ScalarExpr>(obj))
     return obj.cast<ScalarExpr>();
@@ -102,11 +102,11 @@ std::shared_ptr<ExprBase> pyobj_to_ExprBase(const py::object& obj)
 {
   if(obj)
   {
-    if(py::isinstance<AnalyticExprWrapper<ScalarOpValue>>(obj))
-      return obj.cast<AnalyticExprWrapper<ScalarOpValue>>()->copy();
+    if(py::isinstance<AnalyticExprWrapper<ScalarType>>(obj))
+      return obj.cast<AnalyticExprWrapper<ScalarType>>()->copy();
 
-    else if(py::isinstance<AnalyticExprWrapper<VectorOpValue>>(obj))
-      return obj.cast<AnalyticExprWrapper<VectorOpValue>>()->copy();
+    else if(py::isinstance<AnalyticExprWrapper<VectorType>>(obj))
+      return obj.cast<AnalyticExprWrapper<VectorType>>()->copy();
   }
 
   assert_release("invalid expression");
@@ -153,7 +153,7 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
     ), ANALYTICFUNCTION_T_ANALYTICFUNCTION_CONST_FUNCTIONARGSLIST_REF_CONST_ANALYTICEXPRWRAPPER_T_REF)
   ;
 
-  if constexpr(std::is_same_v<T,VectorOpValue>)
+  if constexpr(std::is_same_v<T,VectorType>)
   {
     exported.def(py::init(
       [](const std::vector<py::object>& l, const std::vector<py::object>& v_expr)

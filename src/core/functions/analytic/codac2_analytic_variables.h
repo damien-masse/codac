@@ -51,7 +51,7 @@ namespace codac2
       }
   };
 
-  class ScalarVar : public AnalyticVarExpr<ScalarOpValue>
+  class ScalarVar : public AnalyticVarExpr<ScalarType>
   {
     public:
 
@@ -61,10 +61,10 @@ namespace codac2
       std::shared_ptr<ExprBase> copy() const;
       Index size() const;
 
-      AnalyticExprWrapper<ScalarOpValue> operator-() const;
+      AnalyticExprWrapper<ScalarType> operator-() const;
   };
 
-  class VectorVar : public AnalyticVarExpr<VectorOpValue>
+  class VectorVar : public AnalyticVarExpr<VectorType>
   {
     public:
 
@@ -74,8 +74,8 @@ namespace codac2
       std::shared_ptr<ExprBase> copy() const;
       Index size() const;
 
-      AnalyticExprWrapper<ScalarOpValue> operator[](Index i) const;
-      AnalyticExprWrapper<VectorOpValue> subvector(Index i, Index j) const;
+      AnalyticExprWrapper<ScalarType> operator[](Index i) const;
+      AnalyticExprWrapper<VectorType> subvector(Index i, Index j) const;
 
     protected:
 

@@ -84,7 +84,7 @@ void export_TrajectoryBase(py::class_<S>& pyclass)
       VIRTUAL_SAMPLEDTRAJECTORY_T_TRAJECTORYBASE_T_SAMPLED_DOUBLE_CONST,
       "dt"_a)
 
-    .def("primitive", [](const S& x, const typename S::ScalarType& y0, double dt)
+    .def("primitive", [](const S& x, const typename S::Type::Scalar& y0, double dt)
         {
           return x.primitive(y0,dt);
         },

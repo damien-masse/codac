@@ -69,13 +69,14 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_VarBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_constants.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_operations.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_values.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExpr.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExprWrapper.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticFunction.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ScalarExprList.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ValueType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_operations.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_operators.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_variables.h

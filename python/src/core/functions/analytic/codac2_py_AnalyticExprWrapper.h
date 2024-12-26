@@ -80,7 +80,7 @@ inline void export_VectorExpr(py::module& m)
           matlab::test_integer(index);
           return x[matlab::input_index(index)];
         }, py::return_value_policy::reference_internal,
-      ANALYTICEXPRWRAPPER_SCALAROPVALUE_ANALYTICEXPRWRAPPER_T_OPERATORCOMPO_INDEX_CONST)
+      ANALYTICEXPRWRAPPER_SCALARTYPE_ANALYTICEXPRWRAPPER_T_OPERATORCOMPO_INDEX_CONST)
 
     .def("__pos__",  [](const VectorExpr& e1)                           { return e1; }, py::is_operator())
     .def(py::self + py::self)

@@ -207,7 +207,7 @@ void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const StylePr
   draw_polyline(values,s);
 }
 
-void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s)
+void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorType>& x, const StyleProperties& s)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), s);
 }

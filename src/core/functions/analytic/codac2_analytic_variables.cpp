@@ -34,10 +34,10 @@ using namespace codac2;
     return 1;
   }
 
-  AnalyticExprWrapper<ScalarOpValue> ScalarVar::operator-() const
+  AnalyticExprWrapper<ScalarType> ScalarVar::operator-() const
   {
-    return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarOpValue,ScalarOpValue>>(
-      std::dynamic_pointer_cast<AnalyticExpr<ScalarOpValue>>(this->copy())) };
+    return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarType,ScalarType>>(
+      std::dynamic_pointer_cast<AnalyticExpr<ScalarType>>(this->copy())) };
   }
 
 
@@ -64,16 +64,16 @@ using namespace codac2;
     return _n;
   }
 
-  AnalyticExprWrapper<ScalarOpValue> VectorVar::operator[](Index i) const
+  AnalyticExprWrapper<ScalarType> VectorVar::operator[](Index i) const
   {
     assert_release(i >= 0 && i < _n);
-    return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarOpValue,VectorOpValue>>(
-      std::dynamic_pointer_cast<AnalyticExpr<VectorOpValue>>(this->copy()), i) };
+    return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,VectorType>>(
+      std::dynamic_pointer_cast<AnalyticExpr<VectorType>>(this->copy()), i) };
   }
 
-  AnalyticExprWrapper<VectorOpValue> VectorVar::subvector(Index i, Index j) const
+  AnalyticExprWrapper<VectorType> VectorVar::subvector(Index i, Index j) const
   {
     assert_release(i >= 0 && i < _n && j >= i && j < _n);
-    return { std::make_shared<AnalyticOperationExpr<SubvectorOp,VectorOpValue,VectorOpValue>>(
-      std::dynamic_pointer_cast<AnalyticExpr<VectorOpValue>>(this->copy()), i, j) };
+    return { std::make_shared<AnalyticOperationExpr<SubvectorOp,VectorType,VectorType>>(
+      std::dynamic_pointer_cast<AnalyticExpr<VectorType>>(this->copy()), i, j) };
   }

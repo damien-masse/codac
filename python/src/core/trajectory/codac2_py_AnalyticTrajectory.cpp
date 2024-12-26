@@ -40,6 +40,6 @@ void _export_AnalyticTrajectory(py::module& m, const string& class_name)
 
 void export_AnalyticTrajectory(py::module& m)
 {
-  _export_AnalyticTrajectory<ScalarOpValue>(m, "AnalyticTrajectory_Scalar");
-  _export_AnalyticTrajectory<VectorOpValue>(m, "AnalyticTrajectory_Vector");
+  _export_AnalyticTrajectory<ScalarType>(m, "AnalyticTrajectory_Scalar");
+  _export_AnalyticTrajectory<VectorType>(m, "AnalyticTrajectory_Vector");
 }

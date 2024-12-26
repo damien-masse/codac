@@ -31,7 +31,7 @@ namespace codac2
       // size is not the std::map<double,T>::size() !
       virtual Index size() const
       {
-        if constexpr(std::is_same_v<typename Wrapper<T>::Domain,Interval>) // if type is scalar: int,double,etc.
+        if constexpr(std::is_same_v<typename ValueType<T>::Type,ScalarType>)
           return 1;
 
         else

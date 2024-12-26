@@ -28,11 +28,11 @@ void export_pave(py::module& m)
     PAVINGINOUT_PAVE_CONST_INTERVALVECTOR_REF_CONST_SEPBASE_REF_DOUBLE,
     "x"_a, "s"_a, "eps"_a);
 
-  m.def("sivia_", (PavingInOut (*)(const IntervalVector&,const AnalyticFunction<ScalarOpValue>&,const Interval&,double))&codac2::sivia,
+  m.def("sivia_", (PavingInOut (*)(const IntervalVector&,const AnalyticFunction<ScalarType>&,const Interval&,double))&codac2::sivia,
     PAVINGINOUT_SIVIA_CONST_INTERVALVECTOR_REF_CONST_ANALYTICFUNCTION_Y_REF_CONST_TYPENAME_Y_DOMAIN_REF_DOUBLE,
     "x"_a, "f"_a, "y"_a, "eps"_a);
 
-  m.def("sivia_", (PavingInOut (*)(const IntervalVector&,const AnalyticFunction<VectorOpValue>&,const IntervalVector&,double))&codac2::sivia,
+  m.def("sivia_", (PavingInOut (*)(const IntervalVector&,const AnalyticFunction<VectorType>&,const IntervalVector&,double))&codac2::sivia,
     PAVINGINOUT_SIVIA_CONST_INTERVALVECTOR_REF_CONST_ANALYTICFUNCTION_Y_REF_CONST_TYPENAME_Y_DOMAIN_REF_DOUBLE,
     "x"_a, "f"_a, "y"_a, "eps"_a);
 }

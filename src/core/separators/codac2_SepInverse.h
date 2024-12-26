@@ -27,13 +27,13 @@ namespace codac2
 
     public:
 
-      SepInverse(const AnalyticFunction<typename ArgWrapper<Y>::Domain>& f, const Y& y, bool with_centered_form = true)
+      SepInverse(const AnalyticFunction<typename ValueType<Y>::Type>& f, const Y& y, bool with_centered_form = true)
         : SepCtcPair(CtcInverseNotIn<Y,X>(f,y,with_centered_form), CtcInverse_<Y,X>(f,y,with_centered_form))
       { }
 
       template<typename S>
         requires (std::is_same_v<IntervalVector,Y> && IsSepBaseOrPtr<S>)
-      SepInverse(const AnalyticFunction<typename ArgWrapper<Y>::Domain>& f, const S& sep_y, bool with_centered_form = true)
+      SepInverse(const AnalyticFunction<typename ValueType<Y>::Type>& f, const S& sep_y, bool with_centered_form = true)
         : SepCtcPair(CtcInverseNotIn<Y,X>(f,CtcInner(sep_y),with_centered_form), CtcInverse_<Y,X>(f,CtcOuter(sep_y),with_centered_form))
       { }
   };

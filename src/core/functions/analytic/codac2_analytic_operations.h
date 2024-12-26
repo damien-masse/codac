@@ -11,7 +11,7 @@
 
 #include <memory>
 #include "codac2_AnalyticExpr.h"
-#include "codac2_analytic_variables.h"
+#include "codac2_AnalyticType.h"
 #include "codac2_analytic_constants.h"
 #include "codac2_AnalyticExprWrapper.h"
 
@@ -22,19 +22,19 @@ namespace codac2
     inline ScalarExpr
     operator+(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<AddOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<AddOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline VectorExpr
     operator+(const VectorExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<AddOp,VectorOpValue,VectorOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<AddOp,VectorType,VectorType>>(x1) };
     }
 
     inline MatrixExpr
     operator+(const MatrixExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<AddOp,MatrixOpValue,MatrixOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<AddOp,MatrixType,MatrixType>>(x1) };
     }
 
   // operator+
@@ -42,19 +42,19 @@ namespace codac2
     inline ScalarExpr
     operator+(ScalarExpr x1, ScalarExpr x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<AddOp,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<AddOp,ScalarType,ScalarType,ScalarType>>(x1,x2) };
     }
 
     inline VectorExpr
     operator+(VectorExpr x1, VectorExpr x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<AddOp,VectorOpValue,VectorOpValue,VectorOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<AddOp,VectorType,VectorType,VectorType>>(x1,x2) };
     }
 
     inline MatrixExpr
     operator+(MatrixExpr x1, MatrixExpr x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<AddOp,MatrixOpValue,MatrixOpValue,MatrixOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<AddOp,MatrixType,MatrixType,MatrixType>>(x1,x2) };
     }
 
   // operator- (unary case)
@@ -62,19 +62,19 @@ namespace codac2
     inline ScalarExpr
     operator-(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline VectorExpr
     operator-(const VectorExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<SubOp,VectorOpValue,VectorOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<SubOp,VectorType,VectorType>>(x1) };
     }
 
     inline MatrixExpr
     operator-(const MatrixExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<SubOp,MatrixOpValue,MatrixOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<SubOp,MatrixType,MatrixType>>(x1) };
     }
 
   // operator-
@@ -82,19 +82,19 @@ namespace codac2
     inline ScalarExpr
     operator-(const ScalarExpr& x1, const ScalarExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarType,ScalarType,ScalarType>>(x1,x2) };
     }
 
     inline VectorExpr
     operator-(const VectorExpr& x1, const VectorExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<SubOp,VectorOpValue,VectorOpValue,VectorOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<SubOp,VectorType,VectorType,VectorType>>(x1,x2) };
     }
 
     inline MatrixExpr
     operator-(const MatrixExpr& x1, const MatrixExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<SubOp,MatrixOpValue,MatrixOpValue,MatrixOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<SubOp,MatrixType,MatrixType,MatrixType>>(x1,x2) };
     }
 
   // operator*
@@ -102,25 +102,25 @@ namespace codac2
     inline ScalarExpr
     operator*(const ScalarExpr& x1, const ScalarExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<MulOp,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<MulOp,ScalarType,ScalarType,ScalarType>>(x1,x2) };
     }
     
     inline VectorExpr
     operator*(const ScalarExpr& x1, const VectorExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<MulOp,VectorOpValue,ScalarOpValue,VectorOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<MulOp,VectorType,ScalarType,VectorType>>(x1,x2) };
     }
     
     inline VectorExpr
     operator*(const VectorExpr& x1, const ScalarExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<MulOp,VectorOpValue,VectorOpValue,ScalarOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<MulOp,VectorType,VectorType,ScalarType>>(x1,x2) };
     }
 
     inline VectorExpr
     operator*(const MatrixExpr& x1, const VectorExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<MulOp,VectorOpValue,MatrixOpValue,VectorOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<MulOp,VectorType,MatrixType,VectorType>>(x1,x2) };
     }
 
   // operator/
@@ -128,13 +128,13 @@ namespace codac2
     inline ScalarExpr
     operator/(const ScalarExpr& x1, const ScalarExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<DivOp,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<DivOp,ScalarType,ScalarType,ScalarType>>(x1,x2) };
     }
     
     inline VectorExpr
     operator/(const VectorExpr& x1, const ScalarExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<DivOp,VectorOpValue,VectorOpValue,ScalarOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<DivOp,VectorType,VectorType,ScalarType>>(x1,x2) };
     }
 
   // Other operators
@@ -142,97 +142,97 @@ namespace codac2
     inline ScalarExpr
     pow(const ScalarExpr& x1, const ScalarExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<PowOp,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<PowOp,ScalarType,ScalarType,ScalarType>>(x1,x2) };
     }
 
     inline ScalarExpr
     sqr(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<SqrOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<SqrOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr 
     sqrt(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<SqrtOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<SqrtOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     exp(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<ExpOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<ExpOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     log(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<LogOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<LogOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     cos(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<CosOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<CosOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     sin(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<SinOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<SinOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     tan(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<TanOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<TanOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     acos(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<AcosOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<AcosOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     asin(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<AsinOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<AsinOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     atan(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<AtanOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<AtanOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     atan2(const ScalarExpr& x1, const ScalarExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<Atan2Op,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<Atan2Op,ScalarType,ScalarType,ScalarType>>(x1,x2) };
     }
 
     inline ScalarExpr
     cosh(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<CoshOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<CoshOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     sinh(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<SinhOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<SinhOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     tanh(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<TanhOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<TanhOp,ScalarType,ScalarType>>(x1) };
     }
 
     inline ScalarExpr
     abs(const ScalarExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<AbsOp,ScalarOpValue,ScalarOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<AbsOp,ScalarType,ScalarType>>(x1) };
     }
 
   // Structural operators
@@ -255,8 +255,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType>>(
           _add_to_vec(x1)) };
     }
 
@@ -265,8 +265,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1, const X2& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue,ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType,ScalarType>>(
           _add_to_vec(x1),_add_to_vec(x2)) };
     }
 
@@ -275,8 +275,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1, const X2& x2, const X3& x3)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue,ScalarOpValue,ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType,ScalarType,ScalarType>>(
           _add_to_vec(x1),_add_to_vec(x2),_add_to_vec(x3)) };
     }
 
@@ -285,8 +285,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1, const X2& x2, const X3& x3, const X4& x4)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType,ScalarType,ScalarType,ScalarType>>(
           _add_to_vec(x1),_add_to_vec(x2),_add_to_vec(x3),_add_to_vec(x4)) };
     }
 
@@ -295,8 +295,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1, const X2& x2, const X3& x3, const X4& x4, const X5& x5)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType,ScalarType,ScalarType,ScalarType,ScalarType>>(
           _add_to_vec(x1),_add_to_vec(x2),_add_to_vec(x3),_add_to_vec(x4),_add_to_vec(x5)) };
     }
 
@@ -305,8 +305,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1, const X2& x2, const X3& x3, const X4& x4, const X5& x5, const X6& x6)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType>>(
           _add_to_vec(x1),_add_to_vec(x2),_add_to_vec(x3),_add_to_vec(x4),_add_to_vec(x5),_add_to_vec(x6)) };
     }
 
@@ -315,8 +315,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1, const X2& x2, const X3& x3, const X4& x4, const X5& x5, const X6& x6, const X7& x7)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType>>(
           _add_to_vec(x1),_add_to_vec(x2),_add_to_vec(x3),_add_to_vec(x4),_add_to_vec(x5),_add_to_vec(x6),_add_to_vec(x7)) };
     }
 
@@ -325,8 +325,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1, const X2& x2, const X3& x3, const X4& x4, const X5& x5, const X6& x6, const X7& x7, const X8& x8)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType>>(
           _add_to_vec(x1),_add_to_vec(x2),_add_to_vec(x3),_add_to_vec(x4),_add_to_vec(x5),_add_to_vec(x6),_add_to_vec(x7),_add_to_vec(x8)) };
     }
 
@@ -335,8 +335,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1, const X2& x2, const X3& x3, const X4& x4, const X5& x5, const X6& x6, const X7& x7, const X8& x8, const X9& x9)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType>>(
           _add_to_vec(x1),_add_to_vec(x2),_add_to_vec(x3),_add_to_vec(x4),_add_to_vec(x5),_add_to_vec(x6),_add_to_vec(x7),_add_to_vec(x8),_add_to_vec(x9)) };
     }
 
@@ -345,8 +345,8 @@ namespace codac2
     inline VectorExpr
     vec(const X1& x1, const X2& x2, const X3& x3, const X4& x4, const X5& x5, const X6& x6, const X7& x7, const X8& x8, const X9& x9, const X10& x10)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,
-        ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue,ScalarOpValue>>(
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,
+        ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType,ScalarType>>(
           _add_to_vec(x1),_add_to_vec(x2),_add_to_vec(x3),_add_to_vec(x4),_add_to_vec(x5),_add_to_vec(x6),_add_to_vec(x7),_add_to_vec(x8),_add_to_vec(x9),_add_to_vec(x10)) };
     }
 
@@ -356,15 +356,15 @@ namespace codac2
     inline VectorExpr
     vec(const AnalyticExprWrapper<X>&... x)
     {
-      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorOpValue,X...>>(x...) };
+      return { std::make_shared<AnalyticOperationExpr<VectorOp,VectorType,X...>>(x...) };
     }
 
     template<typename... X>
     inline MatrixExpr
     mat(const std::shared_ptr<AnalyticExpr<X>>&... x)
     {
-      return { std::make_shared<AnalyticOperationExpr<MatrixOp,MatrixOpValue,X...>>(
-        AnalyticOperationExpr<MatrixOp,MatrixOpValue,X...>(x...)) };
+      return { std::make_shared<AnalyticOperationExpr<MatrixOp,MatrixType,X...>>(
+        AnalyticOperationExpr<MatrixOp,MatrixType,X...>(x...)) };
     }
 
   // Vectorial operations
@@ -372,18 +372,18 @@ namespace codac2
     inline ScalarExpr
     det(const MatrixExpr& x1)
     {
-      return { std::make_shared<AnalyticOperationExpr<DetOp,ScalarOpValue,MatrixOpValue>>(x1) };
+      return { std::make_shared<AnalyticOperationExpr<DetOp,ScalarType,MatrixType>>(x1) };
     }
 
     inline ScalarExpr
     det(const VectorExpr& x1, const VectorExpr& x2)
     {
-      return { std::make_shared<AnalyticOperationExpr<DetOp,ScalarOpValue,VectorOpValue,VectorOpValue>>(x1,x2) };
+      return { std::make_shared<AnalyticOperationExpr<DetOp,ScalarType,VectorType,VectorType>>(x1,x2) };
     }
 
     inline ScalarExpr
     det(const VectorExpr& x1, const VectorExpr& x2, const VectorExpr& x3)
     {
-      return { std::make_shared<AnalyticOperationExpr<DetOp,ScalarOpValue,VectorOpValue,VectorOpValue,VectorOpValue>>(x1,x2,x3) };
+      return { std::make_shared<AnalyticOperationExpr<DetOp,ScalarType,VectorType,VectorType,VectorType>>(x1,x2,x3) };
     }
 }

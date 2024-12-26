@@ -35,13 +35,13 @@ namespace codac2
   { return static_cast<EvalMode>(static_cast<int>(a) | static_cast<int>(b)); }
 
   template<typename T>
-    requires std::is_base_of_v<OpValueBase,T>
+    requires std::is_base_of_v<AnalyticTypeBase,T>
   class AnalyticFunction : public FunctionBase<AnalyticExpr<T>>
   {
     public:
 
       AnalyticFunction(const FunctionArgsList& args, const ScalarExprList& y)
-        requires(std::is_same_v<T,VectorOpValue>)
+        requires(std::is_same_v<T,VectorType>)
         : FunctionBase<AnalyticExpr<T>>(args, y)
       {
         assert_release(y->belongs_to_args_list(this->args()) && 
@@ -89,7 +89,7 @@ namespace codac2
             auto flatten_x = cart_prod(x...);
             assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
             
-            if constexpr(std::is_same_v<typename T::Domain,Interval>)
+            if constexpr(std::is_same_v<T,ScalarType>)
               return x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0];
             else
               return x_.m + (x_.da*(flatten_x-flatten_x.mid())).col(0);
@@ -104,7 +104,7 @@ namespace codac2
             else
             {
               auto flatten_x = cart_prod(x...);
-              if constexpr(std::is_same_v<typename T::Domain,Interval>)
+              if constexpr(std::is_same_v<T,ScalarType>)
                 return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0]);
               else
               {
@@ -131,10 +131,10 @@ namespace codac2
 
       Index output_size() const
       {
-        if constexpr(std::is_same_v<typename T::Domain,Interval>)
+        if constexpr(std::is_same_v<T,ScalarType>)
           return 1;
 
-        else if constexpr(std::is_same_v<typename T::Domain,IntervalVector>)
+        else if constexpr(std::is_same_v<T,VectorType>)
         {
           // A dump evaluation is performed to estimate the dimension
           // of the image of this function. A natural evaluation is assumed
@@ -151,9 +151,9 @@ namespace codac2
 
       friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const AnalyticFunction<T>& f)
       {
-        if constexpr(std::is_same_v<typename T::Domain,Interval>) 
+        if constexpr(std::is_same_v<T,ScalarType>) 
           os << "scalar function";
-        else if constexpr(std::is_same_v<typename T::Domain,IntervalVector>) 
+        else if constexpr(std::is_same_v<T,VectorType>) 
           os << "vector function";
         return os;
       }
@@ -178,7 +178,7 @@ namespace codac2
         for(Index k = p ; k < p+size_of(x) ; k++)
           d(k-p,k) = 1.;
 
-        using D_DOMAIN = typename ArgWrapper<D>::Domain;
+        using D_DOMAIN = typename ValueType<D>::Type;
 
         v[this->args()[i]->unique_id()] = 
           std::make_shared<D_DOMAIN>(typename D_DOMAIN::Domain(x).mid(), x, d, true);
@@ -195,7 +195,7 @@ namespace codac2
       void intersect_value_from_arg_map(const ValuesMap& v, D& x, Index i) const
       {
         assert(v.find(this->args()[i]->unique_id()) != v.end() && "argument cannot be found");
-        x &= std::dynamic_pointer_cast<typename ArgWrapper<D>::Domain>(v.at(this->args()[i]->unique_id()))->a;
+        x &= std::dynamic_pointer_cast<typename ValueType<D>::Type>(v.at(this->args()[i]->unique_id()))->a;
       }
 
       template<typename... Args>
@@ -232,28 +232,28 @@ namespace codac2
   };
 
   AnalyticFunction(const FunctionArgsList&, double) -> 
-    AnalyticFunction<ScalarOpValue>;
+    AnalyticFunction<ScalarType>;
 
   AnalyticFunction(const FunctionArgsList&, const Interval&) -> 
-    AnalyticFunction<ScalarOpValue>;
+    AnalyticFunction<ScalarType>;
 
   AnalyticFunction(const FunctionArgsList&, std::initializer_list<int>) -> 
-    AnalyticFunction<VectorOpValue>;
+    AnalyticFunction<VectorType>;
 
   AnalyticFunction(const FunctionArgsList&, std::initializer_list<double>) -> 
-    AnalyticFunction<VectorOpValue>;
+    AnalyticFunction<VectorType>;
 
   AnalyticFunction(const FunctionArgsList&, std::initializer_list<Interval>) -> 
-    AnalyticFunction<VectorOpValue>;
+    AnalyticFunction<VectorType>;
 
   AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarExpr>) -> 
-    AnalyticFunction<VectorOpValue>;
+    AnalyticFunction<VectorType>;
 
   AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarVar>) -> 
-    AnalyticFunction<VectorOpValue>;
+    AnalyticFunction<VectorType>;
 
   template<typename T>
   AnalyticFunction(const FunctionArgsList&, const T&) -> 
-    AnalyticFunction<typename ArgWrapper<T>::Domain>;
+    AnalyticFunction<typename ValueType<T>::Type>;
 
 }

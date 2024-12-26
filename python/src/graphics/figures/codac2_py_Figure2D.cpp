@@ -132,9 +132,9 @@ void export_Figure2D(py::module& m)
 
           if(x_traj)
           {
-            if(py::isinstance<AnalyticTrajectory<VectorOpValue>>(x_traj))
+            if(py::isinstance<AnalyticTrajectory<VectorType>>(x_traj))
             {
-              fig.draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorOpValue>>(),s);
+              fig.draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorType>>(),s);
               return;
             }
 
@@ -146,9 +146,9 @@ void export_Figure2D(py::module& m)
           }
 
           assert_release(false &&
-            "provided trajectory is not of type AnalyticTrajectory<VectorOpValue> or SampledTrajectory<Vector>");
+            "provided trajectory is not of type AnalyticTrajectory<VectorType> or SampledTrajectory<Vector>");
         },
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTOROPVALUE_REF_CONST_STYLEPROPERTIES_REF,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
     // Robots
@@ -228,9 +228,9 @@ void export_Figure2D(py::module& m)
 
           if(x_traj)
           {
-            if(py::isinstance<AnalyticTrajectory<VectorOpValue>>(x_traj))
+            if(py::isinstance<AnalyticTrajectory<VectorType>>(x_traj))
             {
-              DefaultView::draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorOpValue>>(),s);
+              DefaultView::draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorType>>(),s);
               return;
             }
 
@@ -242,9 +242,9 @@ void export_Figure2D(py::module& m)
           }
 
           assert_release(false &&
-            "provided trajectory is not of type AnalyticTrajectory<VectorOpValue> or SampledTrajectory<Vector>");
+            "provided trajectory is not of type AnalyticTrajectory<VectorType> or SampledTrajectory<Vector>");
         },
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTOROPVALUE_REF_CONST_STYLEPROPERTIES_REF,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
     // Robots
