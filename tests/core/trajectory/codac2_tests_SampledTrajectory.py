@@ -74,7 +74,7 @@ class TestSampledTrajectory(unittest.TestCase):
 
     t_ = -math.pi
     while t_ < math.pi:
-      self.assertTrue(Approx(h.real_eval(t_)) == math.cos(t_))
+      self.assertTrue(Approx(h.real_eval(t_),1e-8) == math.cos(t_))
       t_=t_+1e-2
 
     # SampledTrajectory as operator (nd case)

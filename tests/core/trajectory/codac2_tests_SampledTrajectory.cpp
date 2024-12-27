@@ -66,13 +66,13 @@ TEST_CASE("SampledTrajectory as operator (1d case)")
 {
   ScalarVar t;
   AnalyticFunction f { {t}, cos(t) };
-  AnalyticTrajectory analytic_traj(f, {-M_PI,M_PI});
+  AnalyticTrajectory analytic_traj(f, {-pi,pi});
   auto sampled_traj = analytic_traj.sampled(1e-2);
   auto g = sampled_traj.as_function();
 
   AnalyticFunction h { {t}, g(t) };
 
-  for(double t = -M_PI ; t < M_PI ; t+=1e-2)
+  for(double t = -pi ; t < pi ; t+=1e-2)
     CHECK(Approx(h.real_eval(t)) == cos(t));
 }
 
