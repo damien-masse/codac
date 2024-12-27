@@ -12,6 +12,7 @@
 #include <codac2_Trajectory_operator.h>
 #include <codac2_Approx.h>
 #include <codac2_Figure2D.h>
+#include <codac2_math.h>
 
 using namespace std;
 using namespace codac2;

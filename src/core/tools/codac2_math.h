@@ -13,5 +13,8 @@
 
 namespace codac2
 {
-  constexpr double pi = std::numbers::pi; // Need C++20
+  // As long as GAOL defines pi in common namespace,
+  // we use it as default pi value instead of the pi
+  // from the standard library.
+  //constexpr double pi = std::numbers::pi; // Need C++20
 }
