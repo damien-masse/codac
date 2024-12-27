@@ -11,6 +11,8 @@
 
 #include "codac2_Interval.h"
 #include "codac2_Wrapper.h"
+#include "codac2_AnalyticFunction.h"
+#include "codac2_ValueType.h"
 
 namespace codac2
 {
@@ -22,7 +24,7 @@ namespace codac2
   {
     public:
 
-      using ScalarType = T;
+      using TrajType = ValueType<T>::Type;
 
       TrajectoryBase()
       { }
@@ -37,7 +39,7 @@ namespace codac2
 
       auto nan_value() const
       {
-        if constexpr(std::is_same_v<typename Wrapper<T>::Domain,Interval>) // if type is int,double,etc.
+        if constexpr(std::is_same_v<TrajType,ScalarType>)
           return std::numeric_limits<double>::quiet_NaN();
 
         else
@@ -82,5 +84,8 @@ namespace codac2
 
         return p;
       }
+
+      // Implementation in codac2_Trajectory_operator.h
+      AnalyticFunction<TrajType> as_function() const;
   };
 }

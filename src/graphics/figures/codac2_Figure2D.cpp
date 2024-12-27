@@ -178,7 +178,7 @@ void Figure2D::draw_pie(const Vector& c, const Interval& r, const Interval& thet
 
   Interval theta_(theta);
   if(theta.is_unbounded())
-    theta_ = Interval(0,2.*codac2::pi);
+    theta_ = Interval(0,2.*PI);
 
   Interval r_(r);
   if(r.is_unbounded())
@@ -207,7 +207,7 @@ void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const StylePr
   draw_polyline(values,s);
 }
 
-void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s)
+void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorType>& x, const StyleProperties& s)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), s);
 }

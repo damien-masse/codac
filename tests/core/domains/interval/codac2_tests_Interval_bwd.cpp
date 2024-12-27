@@ -22,8 +22,6 @@
 using namespace std;
 using namespace codac2;
 
-#define PI codac2::pi
-
 const double MAX_DOUBLE = std::numeric_limits<double>::max();
 
 void CHECK_bwd_trigo(const Interval& y, const Interval& x, const Interval& expected_x)

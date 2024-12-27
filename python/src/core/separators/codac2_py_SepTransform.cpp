@@ -22,7 +22,7 @@ using namespace pybind11::literals;
 
 void export_SepTransform(py::module& m, py::class_<SepBase,pySep>& pysep)
 {
-  using FNC = AnalyticFunction<VectorOpValue>;
+  using FNC = AnalyticFunction<VectorType>;
 
   py::class_<SepTransform> exported(m, "SepTransform", pysep, SEPTRANSFORM_MAIN);
   exported
@@ -36,7 +36,7 @@ void export_SepTransform(py::module& m, py::class_<SepBase,pySep>& pysep)
 
           return std::make_unique<SepTransform>(s.copy(), _f.cast<FNC>(), _f_inv.cast<FNC>());
         }),
-      SEPTRANSFORM_SEPTRANSFORM_CONST_S_REF_CONST_ANALYTICFUNCTION_VECTOROPVALUE_REF_CONST_ANALYTICFUNCTION_VECTOROPVALUE_REF,
+      SEPTRANSFORM_SEPTRANSFORM_CONST_S_REF_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_CONST_ANALYTICFUNCTION_VECTORTYPE_REF,
       "s"_a, "f"_a, "f_inv"_a)
 
     .def("separate", &SepTransform::separate,

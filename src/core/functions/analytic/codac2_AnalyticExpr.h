@@ -19,7 +19,7 @@
 
 namespace codac2
 {
-  using ValuesMap = std::map<ExprID,std::shared_ptr<OpValueBase>>;
+  using ValuesMap = std::map<ExprID,std::shared_ptr<AnalyticTypeBase>>;
 
   template<typename T>
   class AnalyticExpr : public ExprBase
@@ -61,10 +61,6 @@ namespace codac2
 
       AnalyticOperationExpr(std::shared_ptr<AnalyticExpr<X>>... x)
         : OperationExprBase<AnalyticExpr<X>...>(x...)
-      { }
-
-      AnalyticOperationExpr(const AnalyticOperationExpr<C,Y,X...>& e)
-        : OperationExprBase<AnalyticExpr<X>...>(e)
       { }
 
       std::shared_ptr<ExprBase> copy() const
@@ -116,37 +112,33 @@ namespace codac2
   };
 
   template<>
-  class AnalyticOperationExpr<ComponentOp,ScalarOpValue,VectorOpValue> : public AnalyticExpr<ScalarOpValue>, public OperationExprBase<AnalyticExpr<VectorOpValue>>
+  class AnalyticOperationExpr<ComponentOp,ScalarType,VectorType> : public AnalyticExpr<ScalarType>, public OperationExprBase<AnalyticExpr<VectorType>>
   {
     public:
 
-      AnalyticOperationExpr(const std::shared_ptr<AnalyticExpr<VectorOpValue>>& x1, Index i)
-        : OperationExprBase<AnalyticExpr<VectorOpValue>>(x1), _i(i)
-      { }
-
-      AnalyticOperationExpr(const AnalyticOperationExpr& e)
-        : OperationExprBase<AnalyticExpr<VectorOpValue>>(e), _i(e._i)
+      AnalyticOperationExpr(const std::shared_ptr<AnalyticExpr<VectorType>>& x1, Index i)
+        : OperationExprBase<AnalyticExpr<VectorType>>(x1), _i(i)
       { }
 
       std::shared_ptr<ExprBase> copy() const
       {
-        return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarOpValue,VectorOpValue>>(*this);
+        return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,VectorType>>(*this);
       }
 
       void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<AnalyticExpr<VectorOpValue>>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<AnalyticExpr<VectorType>>::replace_expr(old_expr_id, new_expr);
       }
       
-      ScalarOpValue fwd_eval(ValuesMap& v, Index total_input_size) const
+      ScalarType fwd_eval(ValuesMap& v, Index total_input_size) const
       {
-        return AnalyticExpr<ScalarOpValue>::init_value(
+        return AnalyticExpr<ScalarType>::init_value(
           v, ComponentOp::fwd(std::get<0>(this->_x)->fwd_eval(v, total_input_size), _i));
       }
       
       void bwd_eval(ValuesMap& v) const
       {
-        ComponentOp::bwd(AnalyticExpr<ScalarOpValue>::value(v).a, std::get<0>(this->_x)->value(v).a, _i);
+        ComponentOp::bwd(AnalyticExpr<ScalarType>::value(v).a, std::get<0>(this->_x)->value(v).a, _i);
         std::get<0>(this->_x)->bwd_eval(v);
       }
 
@@ -161,37 +153,33 @@ namespace codac2
   };
 
   template<>
-  class AnalyticOperationExpr<SubvectorOp,VectorOpValue,VectorOpValue> : public AnalyticExpr<VectorOpValue>, public OperationExprBase<AnalyticExpr<VectorOpValue>>
+  class AnalyticOperationExpr<SubvectorOp,VectorType,VectorType> : public AnalyticExpr<VectorType>, public OperationExprBase<AnalyticExpr<VectorType>>
   {
     public:
 
-      AnalyticOperationExpr(const std::shared_ptr<AnalyticExpr<VectorOpValue>>& x1, Index i, Index j)
-        : OperationExprBase<AnalyticExpr<VectorOpValue>>(x1), _i(i), _j(j)
-      { }
-
-      AnalyticOperationExpr(const AnalyticOperationExpr& e)
-        : OperationExprBase<AnalyticExpr<VectorOpValue>>(e), _i(e._i), _j(e._j)
+      AnalyticOperationExpr(const std::shared_ptr<AnalyticExpr<VectorType>>& x1, Index i, Index j)
+        : OperationExprBase<AnalyticExpr<VectorType>>(x1), _i(i), _j(j)
       { }
 
       std::shared_ptr<ExprBase> copy() const
       {
-        return std::make_shared<AnalyticOperationExpr<SubvectorOp,VectorOpValue,VectorOpValue>>(*this);
+        return std::make_shared<AnalyticOperationExpr<SubvectorOp,VectorType,VectorType>>(*this);
       }
 
       void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<AnalyticExpr<VectorOpValue>>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<AnalyticExpr<VectorType>>::replace_expr(old_expr_id, new_expr);
       }
       
-      VectorOpValue fwd_eval(ValuesMap& v, Index total_input_size) const
+      VectorType fwd_eval(ValuesMap& v, Index total_input_size) const
       {
-        return AnalyticExpr<VectorOpValue>::init_value(
+        return AnalyticExpr<VectorType>::init_value(
           v, SubvectorOp::fwd(std::get<0>(this->_x)->fwd_eval(v, total_input_size), _i, _j));
       }
       
       void bwd_eval(ValuesMap& v) const
       {
-        SubvectorOp::bwd(AnalyticExpr<VectorOpValue>::value(v).a, std::get<0>(this->_x)->value(v).a, _i, _j);
+        SubvectorOp::bwd(AnalyticExpr<VectorType>::value(v).a, std::get<0>(this->_x)->value(v).a, _i, _j);
         std::get<0>(this->_x)->bwd_eval(v);
       }
 

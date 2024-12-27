@@ -10,6 +10,8 @@
 #pragma once
 
 #include "codac2_Index.h"
+#include "codac2_ValueType.h"
+#include "codac2_AnalyticExprWrapper.h"
 
 namespace codac2
 {
@@ -21,8 +23,6 @@ namespace codac2
       ConstValueExpr(const typename T::Domain& x)
         : _x(x)
       { }
-
-      ConstValueExpr(const ConstValueExpr<T>& e) = default;
 
       std::shared_ptr<ExprBase> copy() const
       {
@@ -61,8 +61,8 @@ namespace codac2
   };
 
   template<typename T>
-  std::shared_ptr<AnalyticExpr<typename ArgWrapper<T>::Domain>> const_value(const T& x)
+  AnalyticExprWrapper<typename ValueType<T>::Type> const_value(const T& x)
   {
-    return std::make_shared<ConstValueExpr<typename ArgWrapper<T>::Domain>>(x);
+    return { std::make_shared<ConstValueExpr<typename ValueType<T>::Type>>(x) };
   }
 }

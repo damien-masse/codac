@@ -17,25 +17,39 @@ You need help? Submit an issue on: https://github.com/codac-team/codac/issues
 
 class AnalyticFunction:
 
-  def __init__(self, args, e):
-    if isinstance(e, (int,float,Interval,ScalarVar,ScalarExpr)):
-      self.f = AnalyticFunction_Scalar(args,e)
-    elif isinstance(e, (Vector,IntervalVector,VectorVar,VectorExpr)):
-      self.f = AnalyticFunction_Vector(args,e)
+  def __init__(self, args, e=None):
+    if e:
+      if isinstance(e, (int,float,Interval,ScalarVar,ScalarExpr)):
+        self.f = AnalyticFunction_Scalar(args,ScalarExpr(e))
+      elif isinstance(e, (Vector,IntervalVector,VectorVar,VectorExpr)):
+        self.f = AnalyticFunction_Vector(args,VectorExpr(e))
+      elif isinstance(e, list):
+        lst=[]
+        for e_i in e:
+          if isinstance(e_i, (int,float,Interval,ScalarVar,ScalarExpr)):
+            lst.append(ScalarExpr(e_i))
+          else:
+            codac_error("AnalyticFunction: invalid vectorial expression")
+        self.f = AnalyticFunction_Vector(args,lst)
+      else:
+        codac_error("AnalyticFunction: can only build functions from scalar or vector expressions")
     else:
-      codac_error("AnalyticFunction: can only build functions from scalar or vector expressions")
+      if isinstance(args, (AnalyticFunction_Scalar,AnalyticFunction_Vector)):
+        self.f = args
+      else:
+        codac_error("AnalyticFunction: invalid function argument")
 
   def input_size(self):
     return self.f.input_size()
 
+  def real_eval(self,*args):
+    return self.f.real_eval(*args)
+
+  def eval(self,m,*args):
+    return self.f.eval(m,*args)
+
   def eval(self,*args):
     return self.f.eval(*args)
-
-  def natural_eval(self,*args):
-    return self.f.natural_eval(*args)
-
-  def centered_eval(self,*args):
-    return self.f.centered_eval(*args)
 
   def diff(self,*args):
     return self.f.diff(*args)
@@ -44,9 +58,9 @@ class AnalyticFunction:
     lst=[]
     for arg in args:
       if isinstance(arg, (int,float,Interval,ScalarVar,ScalarExpr)):
-        lst.append(ScalarExpr(arg).raw_copy())
+        lst.append(ScalarExpr(arg))
       elif isinstance(arg, (Vector,IntervalVector,VectorVar,VectorExpr)):
-        lst.append(VectorExpr(arg).raw_copy())
+        lst.append(VectorExpr(arg))
       else:
         codac_error("AnalyticFunction: invalid input arguments")
     return self.f(lst)
@@ -119,24 +133,6 @@ class CtcInverseNotIn(Ctc):
     return self.c.copy()
 
 
-class SepInverse(Sep):
-
-  def __init__(self, f, y, with_centered_form = True):
-    Sep.__init__(self, f.input_size())
-    if isinstance(f.f, AnalyticFunction_Scalar):
-      self.s = SepInverse_Interval(f.f,Interval(y),with_centered_form)
-    elif isinstance(f.f, AnalyticFunction_Vector):
-      self.s = SepInverse_IntervalVector(f.f,IntervalVector(y),with_centered_form)
-    else:
-      codac_error("SepInverse: can only build SepInverse from scalar or vector functions")
-
-  def separate(self,x):
-    return self.s.separate(x)
-
-  def copy(self):
-    return super().copy()
-
-
 class Approx:
 
   def __init__(self, x, eps = float_info.epsilon*10):
@@ -195,7 +191,7 @@ def cart_prod(*args):
       mode = 1
       lst.append(arg)
 
-    elif isinstance(arg, Sep):
+    elif isinstance(arg, (Sep,SepBase)):
       if mode != -1 and mode != 2:
         codac_error("cart_prod: invalid input arguments, was expecting a " + mode_str[mode] + ", got a separator")
       mode = 2
@@ -271,6 +267,9 @@ class AnalyticTrajectory:
   def primitive(self, y0, t):
     return SampledTrajectory(self.traj.primitive(y0, t))
     
+  def as_function(self):
+    return AnalyticFunction(self.traj.as_function())
+    
   # Methods from AnalyticTrajectory:
   #   none
 
@@ -288,6 +287,14 @@ class SampledTrajectory:
       self.traj = SampledTrajectory_Vector(m)
     else:
       codac_error("SampledTrajectory: can only build this trajectory from maps of scalar or vector values")
+      
+  # Methods from std::map:
+
+  def __setitem__(self, t, y):
+    self.traj[t] = y
+
+  def __getitem__(self, t):
+    return self.traj[t]
 
   # Methods from TrajectoryBase:
 
@@ -317,6 +324,9 @@ class SampledTrajectory:
     
   def primitive(self, y0, t):
     return SampledTrajectory(self.traj.primitive(y0, t))
+    
+  def as_function(self):
+    return AnalyticFunction(self.traj.as_function())
     
   # Methods from SampledTrajectory:
   
