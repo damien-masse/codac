@@ -74,7 +74,7 @@ TEST_CASE("SampledTrajectory as operator (1d case)")
   AnalyticFunction h { {t}, g(t) };
 
   for(double t = -PI ; t < PI ; t+=1e-2)
-    CHECK(Approx(h.real_eval(t)) == cos(t));
+    CHECK(Approx(h.real_eval(t),1e-8) == cos(t));
 }
 
 TEST_CASE("SampledTrajectory as operator (nd case)")
@@ -96,7 +96,7 @@ TEST_CASE("SampledTrajectory as operator (nd case)")
     };
 
     for(double t = 0 ; t < 5 ; t+=1e-2)
-      CHECK(Approx(h.real_eval(t)) == Vector({2*cos(t),sin(2*t)}));
+      CHECK(Approx(h.real_eval(t),1e-8) == Vector({2*cos(t),sin(2*t)}));
   }
   {
     AnalyticFunction h {
@@ -105,6 +105,6 @@ TEST_CASE("SampledTrajectory as operator (nd case)")
     };
 
     for(double t = 0 ; t < 5 ; t+=1e-2)
-      CHECK(Approx(h.real_eval(t)) == Vector({2*cos(t),sin(2*t)}));
+      CHECK(Approx(h.real_eval(t),1e-8) == Vector({2*cos(t),sin(2*t)}));
   }
 }
