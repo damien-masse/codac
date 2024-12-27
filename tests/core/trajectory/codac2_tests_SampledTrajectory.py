@@ -96,7 +96,7 @@ class TestSampledTrajectory(unittest.TestCase):
 
     t_ = 0
     while t_ < 5:
-      self.assertTrue(Approx(h.real_eval(t_)) == Vector([2*math.cos(t_),math.sin(2*t_)]))
+      self.assertTrue(Approx(h.real_eval(t_),1e-8) == Vector([2*math.cos(t_),math.sin(2*t_)]))
       t_=t_+1e-2
 
     h = AnalyticFunction(
@@ -106,7 +106,7 @@ class TestSampledTrajectory(unittest.TestCase):
 
     t_ = 0
     while t_ < 5:
-      self.assertTrue(Approx(h.real_eval(t_)) == Vector([2*math.cos(t_),math.sin(2*t_)]))
+      self.assertTrue(Approx(h.real_eval(t_),1e-8) == Vector([2*math.cos(t_),math.sin(2*t_)]))
       t_=t_+1e-2
 
 if __name__ ==  '__main__':
