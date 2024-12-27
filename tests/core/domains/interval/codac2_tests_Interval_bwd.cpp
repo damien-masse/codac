@@ -261,25 +261,25 @@ TEST_CASE("Interval bwd operations")
 
   Interval a, y;
 
-  a = Interval(pi/6.,pi/3.); y = Interval(.5,10.); x = Interval(.5,2.);             
+  a = Interval(PI/6.,PI/3.); y = Interval(.5,10.); x = Interval(.5,2.);             
   bwd_atan2(a,y,x); CHECK(Approx(y) == Interval(.5,2.*sqrt(3.))); CHECK(Approx(x) == Interval(.5,2.));
-  a = Interval(pi/6.,pi/3.); y = Interval(.5,2.); x = Interval(.5,10.);            
+  a = Interval(PI/6.,PI/3.); y = Interval(.5,2.); x = Interval(.5,10.);            
   bwd_atan2(a,y,x); CHECK(Approx(y) == Interval(.5,2.)); CHECK(Approx(x) == Interval(.5,2.*sqrt(3.)));
-  a = Interval(-pi/4.,pi/4.); y = Interval(1.,2.); x = Interval(.5,2.);             
+  a = Interval(-PI/4.,PI/4.); y = Interval(1.,2.); x = Interval(.5,2.);             
   bwd_atan2(a,y,x); CHECK(Approx(y) == Interval(1.,2.)); CHECK(Approx(x) == Interval(1.,2.));
-  a = Interval(-pi/2.,0.); y = Interval(.5,2.); x = Interval(.5,10.);            
+  a = Interval(-PI/2.,0.); y = Interval(.5,2.); x = Interval(.5,10.);            
   bwd_atan2(a,y,x); CHECK(Approx(y) == Interval::empty()); CHECK(Approx(x) == Interval::empty());
-  a = Interval(2.*pi,3.*pi); y = Interval(-.5,2.); x = Interval(.5,10.);            
+  a = Interval(2.*PI,3.*PI); y = Interval(-.5,2.); x = Interval(.5,10.);            
   bwd_atan2(a,y,x); CHECK(Approx(y) == Interval::empty()); CHECK(Approx(x) == Interval::empty());
-  a = Interval(2*pi/3.,5.*pi/6.); y = Interval(0.,100.); x = Interval(-20.,-sqrt(3.)/2.); 
+  a = Interval(2*PI/3.,5.*PI/6.); y = Interval(0.,100.); x = Interval(-20.,-sqrt(3.)/2.); 
   bwd_atan2(a,y,x); CHECK(Approx(y,1e-10) == Interval(.5,20.*sqrt(3.))); CHECK(Approx(x) == Interval(-20.,-sqrt(3.)/2));
-  a = Interval(-3*pi/4.,-2*pi/3.); y = Interval(-sqrt(3.)/2.,2.); x = Interval(-sqrt(2.)/2.,0.);   
+  a = Interval(-3*PI/4.,-2*PI/3.); y = Interval(-sqrt(3.)/2.,2.); x = Interval(-sqrt(2.)/2.,0.);   
   bwd_atan2(a,y,x); CHECK(Approx(y) == Interval(-sqrt(3.)/2.,0.)); CHECK(Approx(x) == Interval(-sqrt(2.)/2.,0.));
-  a = Interval(-3*pi/4.,-2*pi/3.); y = Interval(-sqrt(3.)/2.,2.); x = Interval(-1.,-.5);           
+  a = Interval(-3*PI/4.,-2*PI/3.); y = Interval(-sqrt(3.)/2.,2.); x = Interval(-1.,-.5);           
   bwd_atan2(a,y,x); CHECK(Approx(y) == Interval(-sqrt(3.)/2.,-.5)); CHECK(Approx(x) == Interval(-sqrt(3.)/2.,-.5));
-  a = Interval(-3*pi/4.,-pi/4.); y = Interval(-5.,-.5); x = Interval(-oo,oo);            
+  a = Interval(-3*PI/4.,-PI/4.); y = Interval(-5.,-.5); x = Interval(-oo,oo);            
   bwd_atan2(a,y,x); CHECK(Approx(y) == Interval(-5.,-.5)); CHECK(Approx(x) == Interval(-5.,5.));
-  a = Interval(-pi/3.,pi/4.); y = Interval(-oo,oo); x = Interval(sqrt(3.)/2.);       
+  a = Interval(-PI/3.,PI/4.); y = Interval(-oo,oo); x = Interval(sqrt(3.)/2.);       
   bwd_atan2(a,y,x); CHECK(Approx(y) == Interval(-1.5,sqrt(3.)/2.)); CHECK(Approx(x) == Interval(sqrt(3.)/2.));
   a = Interval::half_pi(); y = Interval(1); x = 0.;                          
   bwd_atan2(a,y,x); CHECK(Approx(y) == 1.); CHECK(Approx(x) == 0.);
@@ -292,15 +292,15 @@ TEST_CASE("Interval bwd operations")
   x = Interval(-1,5);   bwd_sqrt(Interval(2,5), x);   CHECK(x == Interval(4,5));
   x = Interval(-oo,oo); bwd_sqrt(Interval(-4,-2), x); CHECK(x == Interval::empty());
 
-  x = Interval(-1.,3.);       bwd_atan(Interval(0.,pi/6.),x);             CHECK(x == tan(Interval(0.,pi/6.)));
-  x = Interval(0,5*pi/2.0); bwd_atan(Interval(-pi,1.5),x);              CHECK(x == Interval(0,5*pi/2.0));
-  x = Interval(.2,.5);        bwd_atan(Interval(0.,pi/6.),x);             CHECK(x == Interval(.2,.5));
-  x = Interval(-100,100);     bwd_atan(Interval(-pi/2-0.1,pi/2+0.1),x); CHECK(x == Interval(-100,100));
-  x = Interval(-100,100);     bwd_atan(Interval(pi/2+0.1,pi),x);        CHECK(x == Interval::empty());
-  x = Interval(-100,100);     bwd_atan(Interval(-pi,-pi/2-0.1),x);      CHECK(x == Interval::empty());
+  x = Interval(-1.,3.);       bwd_atan(Interval(0.,PI/6.),x);             CHECK(x == tan(Interval(0.,PI/6.)));
+  x = Interval(0,5*PI/2.0); bwd_atan(Interval(-PI,1.5),x);              CHECK(x == Interval(0,5*PI/2.0));
+  x = Interval(.2,.5);        bwd_atan(Interval(0.,PI/6.),x);             CHECK(x == Interval(.2,.5));
+  x = Interval(-100,100);     bwd_atan(Interval(-PI/2-0.1,PI/2+0.1),x); CHECK(x == Interval(-100,100));
+  x = Interval(-100,100);     bwd_atan(Interval(PI/2+0.1,PI),x);        CHECK(x == Interval::empty());
+  x = Interval(-100,100);     bwd_atan(Interval(-PI,-PI/2-0.1),x);      CHECK(x == Interval::empty());
 
-  x = Interval(-oo,oo); bwd_atan(Interval(-pi/4,pi/2.), x); CHECK(x.lb() == -1); CHECK(x.ub() > 1000);
-  x = Interval(-oo,oo); bwd_atan(Interval(-pi/2,pi/4.), x); CHECK(x.ub() == +1); CHECK(x.lb() < -1000);
+  x = Interval(-oo,oo); bwd_atan(Interval(-PI/4,PI/2.), x); CHECK(x.lb() == -1); CHECK(x.ub() > 1000);
+  x = Interval(-oo,oo); bwd_atan(Interval(-PI/2,PI/4.), x); CHECK(x.ub() == +1); CHECK(x.lb() < -1000);
 
   CHECK_bwd_add(Interval(1,3),Interval(1,2),Interval(-10,5),Interval(1,2),Interval(-1,2));
   CHECK_bwd_add(Interval::empty(),Interval(0.1,2.0),Interval(-10,2),Interval::empty(),Interval::empty());
@@ -317,11 +317,11 @@ TEST_CASE("Interval bwd operations")
   CHECK_bwd_imod(3.,Interval(3.,5.),Interval(1.,2.),Interval(4.,5.),Interval(1.,2.));
   CHECK_bwd_imod(2.,Interval(7.,8.),Interval(.5,2.),Interval(7.,8.),Interval(1.,2.));
   CHECK_bwd_imod(2.,Interval(7.,8.),Interval(0.,2.),Interval(7.,8.),Interval(0.,2.));
-  CHECK_bwd_imod(2.*pi,Interval(2.*pi,3.*pi),Interval(pi/6,pi/2.),Interval(13.*pi/6.,5.*pi/2.),Interval(pi/6,pi/2.));
-  CHECK_bwd_imod(2.*pi,Interval(3.*pi,4.*pi),Interval(pi/3,pi/2.),Interval::empty(),Interval::empty());
-  CHECK_bwd_imod(2.*pi,Interval(3.*pi,4.*pi),Interval(0.,pi/2.),Interval(4*pi),Interval(0.));
-  CHECK_bwd_imod(2.*pi,Interval(2.*pi,4.*pi),Interval(-pi/6,pi/2.),Interval(2.*pi,4.*pi),Interval(-pi/6,pi/2.));
-  CHECK_bwd_imod(2.*pi,Interval(7.*pi/4.,8.*pi/3),Interval(-pi/2,pi/2.),Interval(7.*pi/4.,5.*pi/2.),Interval(-pi/4,pi/2.));
+  CHECK_bwd_imod(2.*PI,Interval(2.*PI,3.*PI),Interval(PI/6,PI/2.),Interval(13.*PI/6.,5.*PI/2.),Interval(PI/6,PI/2.));
+  CHECK_bwd_imod(2.*PI,Interval(3.*PI,4.*PI),Interval(PI/3,PI/2.),Interval::empty(),Interval::empty());
+  CHECK_bwd_imod(2.*PI,Interval(3.*PI,4.*PI),Interval(0.,PI/2.),Interval(4*PI),Interval(0.));
+  CHECK_bwd_imod(2.*PI,Interval(2.*PI,4.*PI),Interval(-PI/6,PI/2.),Interval(2.*PI,4.*PI),Interval(-PI/6,PI/2.));
+  CHECK_bwd_imod(2.*PI,Interval(7.*PI/4.,8.*PI/3),Interval(-PI/2,PI/2.),Interval(7.*PI/4.,5.*PI/2.),Interval(-PI/4,PI/2.));
 
   x = Interval(-oo,oo);        bwd_floor(Interval::empty(),x);   CHECK(x == Interval::empty());
   x = Interval(-oo,-0.000001); bwd_floor(Interval(-oo,-1),x);        CHECK(x == Interval(-oo,-0.000001));

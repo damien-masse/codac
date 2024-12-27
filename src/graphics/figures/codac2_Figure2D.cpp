@@ -178,7 +178,7 @@ void Figure2D::draw_pie(const Vector& c, const Interval& r, const Interval& thet
 
   Interval theta_(theta);
   if(theta.is_unbounded())
-    theta_ = Interval(0,2.*pi);
+    theta_ = Interval(0,2.*PI);
 
   Interval r_(r);
   if(r.is_unbounded())

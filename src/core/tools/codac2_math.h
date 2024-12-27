@@ -9,13 +9,9 @@
 
 #pragma once
 
-//#include <numbers>
-#include <3rd/gaol/gaol_port.h>
+#include <numbers>
 
 namespace codac2
 {
-  // As long as GAOL defines pi in common namespace,
-  // we use it as default pi value instead of the pi
-  // from the standard library.
-  //constexpr double pi = std::numbers::pi; // Need C++20
+  constexpr double PI = std::numbers::pi; // Need C++20
 }
