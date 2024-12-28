@@ -16,6 +16,7 @@
 #include "codac2_py_SepInverse_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_SepCtcPair_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_AnalyticFunction.h"
+#include "codac2_py_cast.h"
 
 using namespace std;
 using namespace codac2;
@@ -29,7 +30,9 @@ void export_SepInverse_type(py::class_<SepInverse>& exported)
     .def(py::init(
         [](const py::object& f, const typename T::Domain& y, bool with_centered_form)
         {
-          return std::make_unique<SepInverse>(cast_to_AnalyticFunction<T>(f), y, with_centered_form);
+          return std::make_unique<SepInverse>(
+            cast<AnalyticFunction<T>>(f),
+            y, with_centered_form);
         }
       ),
       SEPINVERSE_SEPINVERSE_CONST_ANALYTICFUNCTION_T_REF_CONST_TYPENAME_T_DOMAIN_REF_BOOL,
@@ -41,7 +44,9 @@ void export_SepInverse_type(py::class_<SepInverse>& exported)
     .def(py::init(
         [](const py::object& f, const pySep& s, bool with_centered_form)
         {
-          return std::make_unique<SepInverse>(cast_to_AnalyticFunction<T>(f), s, with_centered_form);
+          return std::make_unique<SepInverse>(
+            cast<AnalyticFunction<T>>(f),
+            s, with_centered_form);
         }
       ),
       SEPINVERSE_SEPINVERSE_CONST_ANALYTICFUNCTION_T_REF_CONST_S_REF_BOOL,

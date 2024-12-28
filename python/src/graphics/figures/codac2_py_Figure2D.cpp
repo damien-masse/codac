@@ -13,6 +13,7 @@
 #include <codac2_Figure2D.h>
 #include "codac2_py_Figure2D_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_matlab.h"
+#include "codac2_py_cast.h"
 #include <codac2_Paving.h>
 
 using namespace std;
@@ -136,50 +137,24 @@ void export_Figure2D(py::module& m)
 
     .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const StyleProperties& s)
         {
-          py::object x_traj = x.attr("traj");
-
-          if(x_traj)
-          {
-            if(py::isinstance<AnalyticTrajectory<VectorType>>(x_traj))
-            {
-              fig.draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorType>>(),s);
-              return;
-            }
-
-            else if(py::isinstance<SampledTrajectory<Vector>>(x_traj))
-            {
-              fig.draw_trajectory(x_traj.cast<SampledTrajectory<Vector>>(),s);
-              return;
-            }
-          }
-
-          assert_release(false &&
-            "provided trajectory is not of type AnalyticTrajectory<VectorType> or SampledTrajectory<Vector>");
+          if(is_instance<AnalyticTrajectory<VectorType>>(x))
+            return fig.draw_trajectory(cast<AnalyticTrajectory<VectorType>>(x),s);
+          else if(is_instance<SampledTrajectory<Vector>>(x))
+            return fig.draw_trajectory(cast<SampledTrajectory<Vector>>(x),s);
+          else
+            assert_release(false && "invalid provided trajectory");
         },
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
-    .def("draw_trajectory", [](Figure2D& fig, py::object x, const ColorMap& cmap)
+    .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const ColorMap& cmap)
         {
-          py::object x_traj = x.attr("traj");
-
-          if(x_traj)
-          {
-            if(py::isinstance<AnalyticTrajectory<VectorType>>(x_traj))
-            {
-              fig.draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorType>>(),cmap);
-              return;
-            }
-
-            else if(py::isinstance<SampledTrajectory<Vector>>(x_traj))
-            {
-              fig.draw_trajectory(x_traj.cast<SampledTrajectory<Vector>>(),cmap);
-              return;
-            }
-          }
-
-          assert_release(false &&
-            "provided trajectory is not of type AnalyticTrajectory<VectorType> or SampledTrajectory<Vector>");
+          if(is_instance<AnalyticTrajectory<VectorType>>(x))
+            return fig.draw_trajectory(cast<AnalyticTrajectory<VectorType>>(x),cmap);
+          else if(is_instance<SampledTrajectory<Vector>>(x))
+            return fig.draw_trajectory(cast<SampledTrajectory<Vector>>(x),cmap);
+          else
+            assert_release(false && "invalid provided trajectory");
         },
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "cmap"_a)
@@ -265,50 +240,24 @@ void export_Figure2D(py::module& m)
     
     .def_static("draw_trajectory", [](const py::object& x, const StyleProperties& s)
         {
-          py::object x_traj = x.attr("traj");
-
-          if(x_traj)
-          {
-            if(py::isinstance<AnalyticTrajectory<VectorType>>(x_traj))
-            {
-              DefaultView::draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorType>>(),s);
-              return;
-            }
-
-            else if(py::isinstance<SampledTrajectory<Vector>>(x_traj))
-            {
-              DefaultView::draw_trajectory(x_traj.cast<SampledTrajectory<Vector>>(),s);
-              return;
-            }
-          }
-
-          assert_release(false &&
-            "provided trajectory is not of type AnalyticTrajectory<VectorType> or SampledTrajectory<Vector>");
+          if(is_instance<AnalyticTrajectory<VectorType>>(x))
+            return DefaultView::draw_trajectory(cast<AnalyticTrajectory<VectorType>>(x),s);
+          else if(is_instance<SampledTrajectory<Vector>>(x))
+            return DefaultView::draw_trajectory(cast<SampledTrajectory<Vector>>(x),s);
+          else
+            assert_release(false && "invalid provided trajectory");
         },
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
     .def_static("draw_trajectory", [](py::object x, const ColorMap& cmap)
         {
-          py::object x_traj = x.attr("traj");
-
-          if(x_traj)
-          {
-            if(py::isinstance<AnalyticTrajectory<VectorType>>(x_traj))
-            {
-              DefaultView::draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorType>>(),cmap);
-              return;
-            }
-
-            else if(py::isinstance<SampledTrajectory<Vector>>(x_traj))
-            {
-              DefaultView::draw_trajectory(x_traj.cast<SampledTrajectory<Vector>>(),cmap);
-              return;
-            }
-          }
-
-          assert_release(false &&
-            "provided trajectory is not of type AnalyticTrajectory<VectorType> or SampledTrajectory<Vector>");
+          if(is_instance<AnalyticTrajectory<VectorType>>(x))
+            return DefaultView::draw_trajectory(cast<AnalyticTrajectory<VectorType>>(x),cmap);
+          else if(is_instance<SampledTrajectory<Vector>>(x))
+            return DefaultView::draw_trajectory(cast<SampledTrajectory<Vector>>(x),cmap);
+          else
+            assert_release(false && "invalid provided trajectory");
         },
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "cmap"_a)

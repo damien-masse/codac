@@ -20,6 +20,7 @@
 #include "codac2_py_AnalyticFunction_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_FunctionBase_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_AnalyticExprWrapper.h"
+#include "codac2_py_cast.h"
 
 using namespace codac2;
 namespace py = pybind11;
@@ -89,44 +90,6 @@ using namespace pybind11::literals;
   \
   ; \
 
-
-AnalyticExprWrapper<ScalarType> pyobj_to_ScalarExpr(const py::object& obj)
-{
-  if(py::isinstance<ScalarExpr>(obj))
-    return obj.cast<ScalarExpr>();
-  assert(false && "unable to convert py::object to ScalarExpr");
-  return { nullptr };
-}
-
-template<typename T>
-AnalyticFunction<T> cast_to_AnalyticFunction(const py::object& f)
-{
-  py::object f_ = f.attr("f");
-
-  if(!f_)
-    assert_release("cast_function: py::object f has no attribute named 'f'");
-
-  if(!py::isinstance<AnalyticFunction<T>>(f_))
-    assert_release("cast_function: provided analytic function has incorrect type");
-
-  return f_.cast<AnalyticFunction<T>>();
-}
-
-std::shared_ptr<ExprBase> pyobj_to_ExprBase(const py::object& obj)
-{
-  if(obj)
-  {
-    if(py::isinstance<AnalyticExprWrapper<ScalarType>>(obj))
-      return obj.cast<AnalyticExprWrapper<ScalarType>>()->copy();
-
-    else if(py::isinstance<AnalyticExprWrapper<VectorType>>(obj))
-      return obj.cast<AnalyticExprWrapper<VectorType>>()->copy();
-  }
-
-  assert_release("invalid expression");
-  return nullptr;
-}
-
 FunctionArgsList create_FunctionArgsList(const std::vector<py::object>& l)
 {
   FunctionArgsList args {};
@@ -179,63 +142,63 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
             {
               case 1:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0])
+                  cast<ScalarExpr>(v_expr[0])
                 );
               case 2:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1])
+                  cast<ScalarExpr>(v_expr[0]), cast<ScalarExpr>(v_expr[1])
                 );
               case 3:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
-                  pyobj_to_ScalarExpr(v_expr[2])
+                  cast<ScalarExpr>(v_expr[0]), cast<ScalarExpr>(v_expr[1]),
+                  cast<ScalarExpr>(v_expr[2])
                 );
               case 4:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
-                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3])
+                  cast<ScalarExpr>(v_expr[0]), cast<ScalarExpr>(v_expr[1]),
+                  cast<ScalarExpr>(v_expr[2]), cast<ScalarExpr>(v_expr[3])
                 );
               case 5:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
-                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
-                  pyobj_to_ScalarExpr(v_expr[4])
+                  cast<ScalarExpr>(v_expr[0]), cast<ScalarExpr>(v_expr[1]),
+                  cast<ScalarExpr>(v_expr[2]), cast<ScalarExpr>(v_expr[3]),
+                  cast<ScalarExpr>(v_expr[4])
                 );
               case 6:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
-                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
-                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5])
+                  cast<ScalarExpr>(v_expr[0]), cast<ScalarExpr>(v_expr[1]),
+                  cast<ScalarExpr>(v_expr[2]), cast<ScalarExpr>(v_expr[3]),
+                  cast<ScalarExpr>(v_expr[4]), cast<ScalarExpr>(v_expr[5])
                 );
               case 7:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
-                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
-                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5]),
-                  pyobj_to_ScalarExpr(v_expr[6])
+                  cast<ScalarExpr>(v_expr[0]), cast<ScalarExpr>(v_expr[1]),
+                  cast<ScalarExpr>(v_expr[2]), cast<ScalarExpr>(v_expr[3]),
+                  cast<ScalarExpr>(v_expr[4]), cast<ScalarExpr>(v_expr[5]),
+                  cast<ScalarExpr>(v_expr[6])
                 );
               case 8:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
-                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
-                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5]),
-                  pyobj_to_ScalarExpr(v_expr[6]), pyobj_to_ScalarExpr(v_expr[7])
+                  cast<ScalarExpr>(v_expr[0]), cast<ScalarExpr>(v_expr[1]),
+                  cast<ScalarExpr>(v_expr[2]), cast<ScalarExpr>(v_expr[3]),
+                  cast<ScalarExpr>(v_expr[4]), cast<ScalarExpr>(v_expr[5]),
+                  cast<ScalarExpr>(v_expr[6]), cast<ScalarExpr>(v_expr[7])
                 );
               case 9:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
-                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
-                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5]),
-                  pyobj_to_ScalarExpr(v_expr[6]), pyobj_to_ScalarExpr(v_expr[7]),
-                  pyobj_to_ScalarExpr(v_expr[8])
+                  cast<ScalarExpr>(v_expr[0]), cast<ScalarExpr>(v_expr[1]),
+                  cast<ScalarExpr>(v_expr[2]), cast<ScalarExpr>(v_expr[3]),
+                  cast<ScalarExpr>(v_expr[4]), cast<ScalarExpr>(v_expr[5]),
+                  cast<ScalarExpr>(v_expr[6]), cast<ScalarExpr>(v_expr[7]),
+                  cast<ScalarExpr>(v_expr[8])
                 );
               case 10:
                 return vec(
-                  pyobj_to_ScalarExpr(v_expr[0]), pyobj_to_ScalarExpr(v_expr[1]),
-                  pyobj_to_ScalarExpr(v_expr[2]), pyobj_to_ScalarExpr(v_expr[3]),
-                  pyobj_to_ScalarExpr(v_expr[4]), pyobj_to_ScalarExpr(v_expr[5]),
-                  pyobj_to_ScalarExpr(v_expr[6]), pyobj_to_ScalarExpr(v_expr[7]),
-                  pyobj_to_ScalarExpr(v_expr[8]), pyobj_to_ScalarExpr(v_expr[9])
+                  cast<ScalarExpr>(v_expr[0]), cast<ScalarExpr>(v_expr[1]),
+                  cast<ScalarExpr>(v_expr[2]), cast<ScalarExpr>(v_expr[3]),
+                  cast<ScalarExpr>(v_expr[4]), cast<ScalarExpr>(v_expr[5]),
+                  cast<ScalarExpr>(v_expr[6]), cast<ScalarExpr>(v_expr[7]),
+                  cast<ScalarExpr>(v_expr[8]), cast<ScalarExpr>(v_expr[9])
                 );
               default:
                 assert_release("cannot create AnalyticFunction with provided vector arguments");
@@ -256,7 +219,7 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
       {
         std::vector<std::shared_ptr<ExprBase>> v(x.size());
         for(size_t i = 0 ; i < x.size() ; i++)
-          v[i] = pyobj_to_ExprBase(x[i]);
+          v[i] = cast<std::shared_ptr<ExprBase>>(x[i]);
         return AnalyticExprWrapper<T>(std::dynamic_pointer_cast<AnalyticExpr<T>>(f(v)->copy()));
       },
       SHARED_PTR_E_FUNCTIONBASE_E_OPERATORCALL_CONST_X_REF_VARIADIC_CONST)

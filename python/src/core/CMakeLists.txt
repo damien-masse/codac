@@ -6,6 +6,7 @@
 
   pybind11_add_module(_core SHARED
     codac2_py_core.cpp
+    codac2_py_cast.h
     
     actions/codac2_py_OctaSym.cpp
     
