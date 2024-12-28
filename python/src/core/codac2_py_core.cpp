@@ -14,6 +14,7 @@
 #include <codac2_ValueType.h>
 #include <codac2_Row.h>
 #include <codac2_IntervalRow.h>
+#include <codac2_math.h>
 #include "codac2_py_AnalyticFunction.h"
 #include "codac2_py_CtcInverse.h"
 #include "codac2_py_CtcInverseNotIn.h"
@@ -122,6 +123,7 @@ PYBIND11_MODULE(_core, m)
 {
   m.doc() = string(FOR_MATLAB ? "Matlab" : "Python") + " binding of Codac (core)";
   m.attr("oo") = oo;
+  m.attr("PI") = PI;
 
   // 3rd
 
