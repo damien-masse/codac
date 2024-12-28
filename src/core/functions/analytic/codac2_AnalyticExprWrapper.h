@@ -24,6 +24,10 @@ namespace codac2
   template<typename T>
   struct AnalyticExprWrapper : public std::shared_ptr<AnalyticExpr<T>>
   {
+    AnalyticExprWrapper(const AnalyticExprWrapper& e)
+      : std::shared_ptr<AnalyticExpr<T>>(e)
+    { }
+    
     AnalyticExprWrapper(const std::shared_ptr<AnalyticExpr<T>>& e)
       : std::shared_ptr<AnalyticExpr<T>>(e)
     { }

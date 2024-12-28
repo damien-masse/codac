@@ -59,6 +59,10 @@ namespace codac2
         : AnalyticFunction(args, { std::dynamic_pointer_cast<AnalyticExpr<T>>(y.copy()) })
       { }
 
+      AnalyticFunction(const AnalyticFunction<T>& f)
+        : FunctionBase<AnalyticExpr<T>>(f)
+      { }
+
       template<typename... X>
       AnalyticExprWrapper<T> operator()(const X&... x) const
       {
