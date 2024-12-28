@@ -58,7 +58,7 @@ namespace codac2
         if(this->empty())
           return Interval::empty();
         else
-          return { this->begin()->first, std::prev(this->end())->first };
+          return { this->begin()->first, this->rbegin()->first };
       }
 
       virtual void truncate_tdomain(const Interval& new_tdomain)

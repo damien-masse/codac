@@ -2,7 +2,7 @@
  *  Codac binding (core)
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -108,11 +108,11 @@ void export_Figure2D(py::module& m)
 
     .def("draw_line", &Figure2D::draw_line,
       VOID_FIGURE2D_DRAW_LINE_CONST_VECTOR_REF_CONST_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
-      "a"_a, "b"_a, "s"_a=StyleProperties())
+      "p1"_a, "p2"_a, "s"_a=StyleProperties())
 
     .def("draw_arrow", &Figure2D::draw_arrow,
       VOID_FIGURE2D_DRAW_ARROW_CONST_VECTOR_REF_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
-      "a"_a, "b"_a, "tip_length"_a, "s"_a=StyleProperties())
+      "p1"_a, "p2"_a, "tip_length"_a, "s"_a=StyleProperties())
 
     .def("draw_polyline", (void(Figure2D::*)(const std::vector<Vector>&,const StyleProperties&))&Figure2D::draw_polyline,
       VOID_FIGURE2D_DRAW_POLYLINE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
@@ -241,11 +241,11 @@ void export_Figure2D(py::module& m)
 
     .def_static("draw_line", &DefaultView::draw_line,
       STATIC_VOID_DEFAULTVIEW_DRAW_LINE_CONST_VECTOR_REF_CONST_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
-      "a"_a, "b"_a, "s"_a=StyleProperties())
+      "p1"_a, "p2"_a, "s"_a=StyleProperties())
 
     .def_static("draw_arrow", &DefaultView::draw_arrow,
       STATIC_VOID_DEFAULTVIEW_DRAW_ARROW_CONST_VECTOR_REF_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
-      "a"_a, "b"_a, "tip_length"_a, "s"_a=StyleProperties())
+      "p1"_a, "p2"_a, "tip_length"_a, "s"_a=StyleProperties())
 
     .def_static("draw_polyline", (void(*)(const std::vector<Vector>&,const StyleProperties&))&DefaultView::draw_polyline,
       STATIC_VOID_DEFAULTVIEW_DRAW_POLYLINE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
