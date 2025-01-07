@@ -27,11 +27,6 @@
   find_package(CODAC REQUIRED)
   message(STATUS "Found Codac version ${CODAC_VERSION}")
 
-# Adding CAPD
-
-  # In case Codac was compiled with CAPD, you need to find it.
-  # find_package(CAPD REQUIRED)
-
 # Compilation
 
   if(FAST_RELEASE)
@@ -43,6 +38,3 @@
   target_compile_options(${PROJECT_NAME} PUBLIC ${CODAC_CXX_FLAGS})
   target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CODAC_INCLUDE_DIRS})
   target_link_libraries(${PROJECT_NAME} PUBLIC ${CODAC_LIBRARIES} Ibex::ibex)
-
-  # Link with CAPD if needed
-  # target_link_libraries(${PROJECT_NAME} PUBLIC capd::capd)
