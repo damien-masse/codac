@@ -103,3 +103,13 @@ foreach(SRC_TEST ${SRC_TESTS})
   endif()
 
 endforeach()
+
+# CAPD test
+if (WITH_CAPD)
+  add_executable(capd_tests capd/codac2_tests_capd.cpp)
+  set(CODAC_HEADERS_DIR ${CMAKE_CURRENT_BINARY_DIR}/../include)
+  target_include_directories(capd_tests SYSTEM PUBLIC ${CODAC_HEADERS_DIR})
+  target_link_libraries(capd_tests PUBLIC Ibex::ibex capd::capd ${PROJECT_NAME}-core ${PROJECT_NAME}-capd PRIVATE Catch2::Catch2WithMain)
+  add_dependencies(check capd_tests)
+  add_test(NAME capd_tests_cpp COMMAND capd_tests)
+endif()
