@@ -196,17 +196,9 @@ void Figure2D_IPE::draw_polygone(const std::vector<Vector>& x, const StyleProper
 {
   assert(x.size() > 1);
 
-  begin_path(s, 0);
-
-  for(size_t k = 0 ; k < x.size() ; k++)
-  {
-    assert(_fig.size() <= x[k].size());
-    _f_temp_content << scale_x(x[k][i()]) << " " << scale_y(x[k][j()]) << ((k == 0 ? " m \n" : " l \n"));
-  }
-
-  _f_temp_content << scale_x(x[0][i()]) << " " << scale_y(x[0][j()]) << " l \n"; // Close the polygon
-
-  _f_temp_content << "</path>";
+  std::vector<Vector> x_temp = x;
+  x_temp.push_back(x[0]);
+  draw_polyline(x_temp, 0., s);
 }
 
 void Figure2D_IPE::draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s)
