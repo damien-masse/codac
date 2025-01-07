@@ -18,14 +18,12 @@ namespace codac2
 {
   capd::Interval to_capd(const Interval &x)
   {
-    capd::Interval y(x.lb(), x.ub());
-    return y;
+    return {x.lb(), x.ub()};
   }
 
   Interval to_codac(const capd::Interval &x)
   {
-    Interval y(x.leftBound(), x.rightBound());
-    return y;
+    return {x.leftBound(), x.rightBound()};
   }
 
   capd::IVector to_capd(const IntervalVector &x)
@@ -51,13 +49,9 @@ namespace codac2
   capd::IMatrix to_capd(const IntervalMatrix &x)
   {
     capd::IMatrix y(x.rows(), x.cols());
-    for (Index i = 0; i < (Index)x.rows(); i++)
-    {
-      for (Index j = 0; j < (Index)x.cols(); j++)
-      {
+    for (Index i = 0; i < x.rows(); i++)
+      for (Index j = 0; j < x.cols(); j++)
         y[i][j] = to_capd(x(i, j));
-      }
-    }
     return y;
   }
 
@@ -65,12 +59,8 @@ namespace codac2
   {
     IntervalMatrix y(x.numberOfRows(), x.numberOfColumns());
     for (Index i = 0; i < (Index)x.numberOfRows(); i++)
-    {
       for (Index j = 0; j < (Index)x.numberOfColumns(); j++)
-      {
         y(i, j) = to_codac(x[i][j]);
-      }
-    }
     return y;
   }
 

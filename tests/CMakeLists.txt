@@ -84,6 +84,16 @@ list(APPEND SRC_TESTS # listing files without extension
   graphics/styles/codac2_tests_Color
 )
 
+set(CODAC_LIBRARIES ${PROJECT_NAME}-core)
+
+# CAPD test
+if (WITH_CAPD)
+  list(APPEND SRC_TESTS
+    capd/codac2_tests_capd
+  )
+  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-capd capd::capd)
+endif()
+
 foreach(SRC_TEST ${SRC_TESTS})
   string(REPLACE "/" "_" TEST_NAME ${SRC_TEST})
   string(REPLACE "codac2_tests_" "" TEST_NAME ${TEST_NAME})
@@ -93,7 +103,7 @@ foreach(SRC_TEST ${SRC_TESTS})
   add_executable(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_TEST}.cpp)
   set(CODAC_HEADERS_DIR ${CMAKE_CURRENT_BINARY_DIR}/../include)
   target_include_directories(${TEST_NAME} SYSTEM PUBLIC ${CODAC_HEADERS_DIR})
-  target_link_libraries(${TEST_NAME} PUBLIC Ibex::ibex ${PROJECT_NAME}-core PRIVATE Catch2::Catch2WithMain)
+  target_link_libraries(${TEST_NAME} PUBLIC Ibex::ibex ${CODAC_LIBRARIES} PRIVATE Catch2::Catch2WithMain)
   add_dependencies(check ${TEST_NAME})
   add_test(NAME ${TEST_NAME}_cpp COMMAND ${TEST_NAME})
 
@@ -103,13 +113,3 @@ foreach(SRC_TEST ${SRC_TESTS})
   endif()
 
 endforeach()
-
-# CAPD test
-if (WITH_CAPD)
-  add_executable(capd_tests capd/codac2_tests_capd.cpp)
-  set(CODAC_HEADERS_DIR ${CMAKE_CURRENT_BINARY_DIR}/../include)
-  target_include_directories(capd_tests SYSTEM PUBLIC ${CODAC_HEADERS_DIR})
-  target_link_libraries(capd_tests PUBLIC Ibex::ibex capd::capd ${PROJECT_NAME}-core ${PROJECT_NAME}-capd PRIVATE Catch2::Catch2WithMain)
-  add_dependencies(check capd_tests)
-  add_test(NAME capd_tests_cpp COMMAND capd_tests)
-endif()

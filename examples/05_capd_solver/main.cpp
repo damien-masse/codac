@@ -51,9 +51,7 @@ int main()
   DefaultView::set_axes(axis(0,{-2,1.5}),axis(1,{-2,3}));
 
   for (float t=0.;t<20.;t+=0.05)
-  {
     DefaultView::draw_box(to_codac(solution(t)));
-  }
 
   DefaultView::draw_box(to_codac(c),Color::green());
   DefaultView::draw_box(to_codac(result),Color::red());

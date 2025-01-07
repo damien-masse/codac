@@ -75,7 +75,6 @@
     set(CODAC_CXX_FLAGS \"\")
   ")
 
-
   #if(WITH_PYTHON)
   #  
   #  file(APPEND ${CODAC_CMAKE_CONFIG_FILE} "
@@ -93,7 +92,6 @@
   #  ")
   #
   #endif()
-
 
   if(WITH_CAPD)
 
@@ -113,7 +111,6 @@
     ")
 
   endif()
-
 
   install(FILES ${CODAC_CMAKE_CONFIG_FILE} DESTINATION ${CMAKE_INSTALL_CMAKE})
 
