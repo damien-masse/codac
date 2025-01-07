@@ -1,8 +1,11 @@
+// Author : Maël GODARD
+// Adapted from CAPD examples
+
 #include <codac>
 using namespace std;
 using namespace codac2;
 
-// Adapted from CAPD examples
+
  
 int main()
 {
