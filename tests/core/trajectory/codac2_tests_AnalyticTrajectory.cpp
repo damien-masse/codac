@@ -50,7 +50,7 @@ TEST_CASE("AnalyticTrajectory")
   CHECK(Approx(sampled_traj(9.),1e-2) == 81.);
 
   // Testing primitive computation from analytic trajectory
-  double x0 = f.eval(-1).mid(); // == 1.
+  double x0 = f.real_eval(-1); // == 1.
   auto sampled_prim_traj = traj.primitive(x0,0.01);
   CHECK(sampled_prim_traj.tdomain() == Interval(-1,10));
   CHECK(Approx(sampled_prim_traj.codomain(),4e-1) == Interval(prim_value(0),prim_value(10.)));

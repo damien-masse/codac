@@ -9,8 +9,10 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <codac2_SampledTrajectory.h>
+#include <codac2_Trajectory_operator.h>
 #include <codac2_Approx.h>
 #include <codac2_Figure2D.h>
+#include <codac2_math.h>
 
 using namespace std;
 using namespace codac2;
@@ -59,4 +61,50 @@ TEST_CASE("SampledTrajectory")
   //DefaultView::set_window_properties({75,75},{700,700});
   //DefaultView::draw_trajectory(x, Color::blue());
   //DefaultView::draw_trajectory(x_sampled, Color::red());
+}
+
+TEST_CASE("SampledTrajectory as operator (1d case)")
+{
+  ScalarVar t;
+  AnalyticFunction f { {t}, cos(t) };
+  AnalyticTrajectory analytic_traj(f, {-PI,PI});
+  auto sampled_traj = analytic_traj.sampled(1e-2);
+  auto g = sampled_traj.as_function();
+
+  AnalyticFunction h { {t}, g(t) };
+
+  for(double t = -PI ; t < PI ; t+=1e-2)
+    CHECK(Approx(h.real_eval(t),1e-8) == cos(t));
+}
+
+TEST_CASE("SampledTrajectory as operator (nd case)")
+{
+  ScalarVar t;
+  AnalyticFunction f {
+    {t},
+    vec(2*cos(t),sin(2*t))
+  };
+
+  auto analytic_traj = AnalyticTrajectory(f, {0,5});
+  auto sampled_traj = analytic_traj.sampled(1e-2);
+  auto g = sampled_traj.as_function();
+
+  {
+    AnalyticFunction h {
+      {t},
+      g(t)
+    };
+
+    for(double t = 0 ; t < 5 ; t+=1e-2)
+      CHECK(Approx(h.real_eval(t),1e-8) == Vector({2*cos(t),sin(2*t)}));
+  }
+  {
+    AnalyticFunction h {
+      {t},
+      { g(t)[0],g(t)[1] }
+    };
+
+    for(double t = 0 ; t < 5 ; t+=1e-2)
+      CHECK(Approx(h.real_eval(t),1e-8) == Vector({2*cos(t),sin(2*t)}));
+  }
 }

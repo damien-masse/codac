@@ -22,7 +22,7 @@ using namespace codac2;
     return x1;
   }
 
-  ScalarOpValue AddOp::fwd(const ScalarOpValue& x1)
+  ScalarType AddOp::fwd(const ScalarType& x1)
   {
     return {
       fwd(x1.m),
@@ -40,7 +40,7 @@ using namespace codac2;
     return x1;
   }
 
-  VectorOpValue AddOp::fwd(const VectorOpValue& x1)
+  VectorType AddOp::fwd(const VectorType& x1)
   {
     return {
       fwd(x1.m),
@@ -60,7 +60,7 @@ using namespace codac2;
     return x1;
   }
 
-  MatrixOpValue AddOp::fwd(const MatrixOpValue& x1)
+  MatrixType AddOp::fwd(const MatrixType& x1)
   {
     return {
       fwd(x1.m),
@@ -83,7 +83,7 @@ using namespace codac2;
     return x1 + x2;
   }
 
-  ScalarOpValue AddOp::fwd(const ScalarOpValue& x1, const ScalarOpValue& x2)
+  ScalarType AddOp::fwd(const ScalarType& x1, const ScalarType& x2)
   {
     assert(x1.da.size() == x2.da.size());
     return {
@@ -105,7 +105,7 @@ using namespace codac2;
     return x1 + x2;
   }
 
-  VectorOpValue AddOp::fwd(const VectorOpValue& x1, const VectorOpValue& x2)
+  VectorType AddOp::fwd(const VectorType& x1, const VectorType& x2)
   {
     assert(x1.da.rows() == x2.da.rows() && x1.da.cols() == x2.da.cols());
     return {
@@ -129,7 +129,7 @@ using namespace codac2;
     return x1 + x2;
   }
 
-  MatrixOpValue AddOp::fwd(const MatrixOpValue& x1, const MatrixOpValue& x2)
+  MatrixType AddOp::fwd(const MatrixType& x1, const MatrixType& x2)
   {
     return {
       fwd(x1.m, x2.m),
@@ -154,7 +154,7 @@ using namespace codac2;
     return -x1;
   }
 
-  ScalarOpValue SubOp::fwd(const ScalarOpValue& x1)
+  ScalarType SubOp::fwd(const ScalarType& x1)
   {
     return {
       fwd(x1.m),
@@ -175,7 +175,7 @@ using namespace codac2;
     return -x1;
   }
 
-  VectorOpValue SubOp::fwd(const VectorOpValue& x1)
+  VectorType SubOp::fwd(const VectorType& x1)
   {
     return {
       fwd(x1.m),
@@ -197,7 +197,7 @@ using namespace codac2;
     return -x1;
   }
 
-  MatrixOpValue SubOp::fwd(const MatrixOpValue& x1)
+  MatrixType SubOp::fwd(const MatrixType& x1)
   {
     return {
       fwd(x1.m),
@@ -222,7 +222,7 @@ using namespace codac2;
     return x1 - x2;
   }
 
-  ScalarOpValue SubOp::fwd(const ScalarOpValue& x1, const ScalarOpValue& x2)
+  ScalarType SubOp::fwd(const ScalarType& x1, const ScalarType& x2)
   {
     assert(x1.da.rows() == x2.da.rows() && x1.da.cols() == x2.da.cols());
     return {
@@ -244,7 +244,7 @@ using namespace codac2;
     return x1 - x2;
   }
 
-  VectorOpValue SubOp::fwd(const VectorOpValue& x1, const VectorOpValue& x2)
+  VectorType SubOp::fwd(const VectorType& x1, const VectorType& x2)
   {
     assert(x1.da.rows() == x2.da.rows() && x1.da.cols() == x2.da.cols());
     return {
@@ -268,7 +268,7 @@ using namespace codac2;
     return x1 - x2;
   }
 
-  MatrixOpValue SubOp::fwd(const MatrixOpValue& x1, const MatrixOpValue& x2)
+  MatrixType SubOp::fwd(const MatrixType& x1, const MatrixType& x2)
   {
     assert(x1.a.cols() == x2.a.cols() && x1.a.rows() == x2.a.rows());
     return {
@@ -294,7 +294,7 @@ using namespace codac2;
     return x1 * x2;
   }
 
-  ScalarOpValue MulOp::fwd(const ScalarOpValue& x1, const ScalarOpValue& x2)
+  ScalarType MulOp::fwd(const ScalarType& x1, const ScalarType& x2)
   {
     assert(x1.da.rows() == 1);
     assert(x1.da.rows() == x2.da.rows() && x1.da.cols() == x2.da.cols());
@@ -321,7 +321,7 @@ using namespace codac2;
     return x1 * x2;
   }
 
-  VectorOpValue MulOp::fwd(const ScalarOpValue& x1, const VectorOpValue& x2)
+  VectorType MulOp::fwd(const ScalarType& x1, const VectorType& x2)
   {
     assert(x1.da.rows() == 1);
     assert(x1.da.cols() == x2.da.cols());
@@ -352,7 +352,7 @@ using namespace codac2;
     return MulOp::fwd(x2,x1);
   }
 
-  VectorOpValue MulOp::fwd(const VectorOpValue& x1, const ScalarOpValue& x2)
+  VectorType MulOp::fwd(const VectorType& x1, const ScalarType& x2)
   {
     return MulOp::fwd(x2,x1);
   }
@@ -371,9 +371,9 @@ using namespace codac2;
     return s;
   }
 
-  //ScalarOpValue MulOp::fwd(const RowOpValue& x1, const VectorOpValue& x2)
+  //ScalarType MulOp::fwd(const RowType& x1, const VectorType& x2)
   //{
-  //  // RowOpValue not yet defined
+  //  // RowType not yet defined
   //}
 
   void MulOp::bwd(const Interval& y, IntervalRow& x1, IntervalVector& x2)
@@ -410,7 +410,7 @@ using namespace codac2;
     return x1 * x2;
   }
 
-  VectorOpValue MulOp::fwd(const MatrixOpValue& x1, const VectorOpValue& x2)
+  VectorType MulOp::fwd(const MatrixType& x1, const VectorType& x2)
   {
     return {
       fwd(x1.a, /* <<----- x1.m */ x2.m),
@@ -507,7 +507,7 @@ using namespace codac2;
     return x1 / x2;
   }
 
-  ScalarOpValue DivOp::fwd(const ScalarOpValue& x1, const ScalarOpValue& x2)
+  ScalarType DivOp::fwd(const ScalarType& x1, const ScalarType& x2)
   {
     assert(x1.da.size() == x2.da.size());
 
@@ -533,7 +533,7 @@ using namespace codac2;
     return x1 / x2;
   }
 
-  VectorOpValue DivOp::fwd(const VectorOpValue& x1, const ScalarOpValue& x2)
+  VectorType DivOp::fwd(const VectorType& x1, const ScalarType& x2)
   {
     assert(x1.da.size() == x2.da.size());
 
@@ -563,7 +563,7 @@ using namespace codac2;
     return pow(x1,x2);
   }
 
-  ScalarOpValue PowOp::fwd(const ScalarOpValue& x1, const ScalarOpValue& x2)
+  ScalarType PowOp::fwd(const ScalarType& x1, const ScalarType& x2)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -590,7 +590,7 @@ using namespace codac2;
     return sqr(x1);
   }
 
-  ScalarOpValue SqrOp::fwd(const ScalarOpValue& x1)
+  ScalarType SqrOp::fwd(const ScalarType& x1)
   {
     assert(x1.da.rows() == 1);
 
@@ -619,7 +619,7 @@ using namespace codac2;
     return sqrt(x1);
   }
 
-  ScalarOpValue SqrtOp::fwd(const ScalarOpValue& x1)
+  ScalarType SqrtOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -648,7 +648,7 @@ using namespace codac2;
     return exp(x1);
   }
 
-  ScalarOpValue ExpOp::fwd(const ScalarOpValue& x1)
+  ScalarType ExpOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -675,7 +675,7 @@ using namespace codac2;
     return log(x1);
   }
 
-  ScalarOpValue LogOp::fwd(const ScalarOpValue& x1)
+  ScalarType LogOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -704,7 +704,7 @@ using namespace codac2;
     return cos(x1);
   }
 
-  ScalarOpValue CosOp::fwd(const ScalarOpValue& x1)
+  ScalarType CosOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -731,7 +731,7 @@ using namespace codac2;
     return sin(x1);
   }
 
-  ScalarOpValue SinOp::fwd(const ScalarOpValue& x1)
+  ScalarType SinOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -758,7 +758,7 @@ using namespace codac2;
     return tan(x1);
   }
 
-  ScalarOpValue TanOp::fwd(const ScalarOpValue& x1)
+  ScalarType TanOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -785,7 +785,7 @@ using namespace codac2;
     return acos(x1);
   }
 
-  ScalarOpValue AcosOp::fwd(const ScalarOpValue& x1)
+  ScalarType AcosOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -814,7 +814,7 @@ using namespace codac2;
     return asin(x1);
   }
 
-  ScalarOpValue AsinOp::fwd(const ScalarOpValue& x1)
+  ScalarType AsinOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -843,7 +843,7 @@ using namespace codac2;
     return atan(x1);
   }
 
-  ScalarOpValue AtanOp::fwd(const ScalarOpValue& x1)
+  ScalarType AtanOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -870,7 +870,7 @@ using namespace codac2;
     return atan2(x1,x2);
   }
 
-  ScalarOpValue Atan2Op::fwd(const ScalarOpValue& x1, const ScalarOpValue& x2)
+  ScalarType Atan2Op::fwd(const ScalarType& x1, const ScalarType& x2)
   {
     assert(x1.da.rows() == 1);
     assert(x1.da.rows() == x2.da.rows() && x1.da.cols() == x2.da.cols());
@@ -901,7 +901,7 @@ using namespace codac2;
     return cosh(x1);
   }
 
-  ScalarOpValue CoshOp::fwd(const ScalarOpValue& x1)
+  ScalarType CoshOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -928,7 +928,7 @@ using namespace codac2;
     return sinh(x1);
   }
 
-  ScalarOpValue SinhOp::fwd(const ScalarOpValue& x1)
+  ScalarType SinhOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -955,7 +955,7 @@ using namespace codac2;
     return tanh(x1);
   }
 
-  ScalarOpValue TanhOp::fwd(const ScalarOpValue& x1)
+  ScalarType TanhOp::fwd(const ScalarType& x1)
   {    
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -982,7 +982,7 @@ using namespace codac2;
     return abs(x1);
   }
 
-  ScalarOpValue AbsOp::fwd(const ScalarOpValue& x1)
+  ScalarType AbsOp::fwd(const ScalarType& x1)
   {
     IntervalMatrix d(1,x1.da.size());
     for(Index i = 0 ; i < d.size() ; i++)
@@ -1010,7 +1010,7 @@ using namespace codac2;
     return x1[i];
   }
 
-  ScalarOpValue ComponentOp::fwd(const VectorOpValue& x1, Index i)
+  ScalarType ComponentOp::fwd(const VectorType& x1, Index i)
   {
     assert(i >= 0 && i < x1.a.rows());
     return {
@@ -1036,7 +1036,7 @@ using namespace codac2;
     return x1.subvector(i,j);
   }
 
-  VectorOpValue SubvectorOp::fwd(const VectorOpValue& x1, Index i, Index j)
+  VectorType SubvectorOp::fwd(const VectorType& x1, Index i, Index j)
   {
     assert(i >= 0 && i < x1.a.rows() && j >= i && j < x1.a.rows());
     return {
@@ -1085,7 +1085,7 @@ using namespace codac2;
       return Interval::empty(); // unhandled case
   }
 
-  ScalarOpValue DetOp::fwd(const MatrixOpValue& x)
+  ScalarType DetOp::fwd(const MatrixType& x)
   {
     return {
       fwd(x.m),
@@ -1127,7 +1127,7 @@ using namespace codac2;
     return DetOp::fwd(m);
   }
 
-  ScalarOpValue DetOp::fwd(const VectorOpValue& x1, const VectorOpValue& x2)
+  ScalarType DetOp::fwd(const VectorType& x1, const VectorType& x2)
   {
     IntervalMatrix m(2,2);
     m.col(0) = x1.m; m.col(1) = x2.m;
@@ -1162,7 +1162,7 @@ using namespace codac2;
     return DetOp::fwd(m);
   }
 
-  ScalarOpValue DetOp::fwd(const VectorOpValue& x1, const VectorOpValue& x2, const VectorOpValue& x3)
+  ScalarType DetOp::fwd(const VectorType& x1, const VectorType& x2, const VectorType& x3)
   {
     IntervalMatrix m(3,3);
     m.col(0) = x1.m; m.col(1) = x2.m; m.col(2) = x3.m;

@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_Wrapper.h
+ *  \file codac2_ValueType.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -14,50 +14,51 @@
 #include "codac2_Matrix.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_IntervalMatrix.h"
+#include "codac2_AnalyticType.h"
 
 namespace codac2
 {
   template<typename T>
-  struct Wrapper
+  struct ValueType
   { };
 
   template<>
-  struct Wrapper<int> {
-    using Domain = Interval;
+  struct ValueType<int> {
+    using Type = ScalarType;
   };
 
   template<>
-  struct Wrapper<Index> {
-    using Domain = Interval;
+  struct ValueType<Index> {
+    using Type = ScalarType;
   };
 
   template<>
-  struct Wrapper<double> {
-    using Domain = Interval;
+  struct ValueType<double> {
+    using Type = ScalarType;
   };
 
   template<>
-  struct Wrapper<Interval> {
-    using Domain = Interval;
+  struct ValueType<Interval> {
+    using Type = ScalarType;
   };
 
   template<>
-  struct Wrapper<Vector> {
-    using Domain = IntervalVector;
+  struct ValueType<Vector> {
+    using Type = VectorType;
   };
 
   template<>
-  struct Wrapper<IntervalVector> {
-    using Domain = IntervalVector;
+  struct ValueType<IntervalVector> {
+    using Type = VectorType;
   };
 
   template<>
-  struct Wrapper<Matrix> {
-    using Domain = IntervalMatrix;
+  struct ValueType<Matrix> {
+    using Type = MatrixType;
   };
 
   template<>
-  struct Wrapper<IntervalMatrix> {
-    using Domain = IntervalMatrix;
+  struct ValueType<IntervalMatrix> {
+    using Type = MatrixType;
   };
 }

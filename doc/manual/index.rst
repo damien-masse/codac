@@ -13,15 +13,23 @@ Codac manual
 
 .. toctree::
    :caption: User manual
-   :maxdepth: 3
+   :maxdepth: 2
 
    installation/index.rst
    intervals/index.rst
    linear/index.rst
    functions/index.rst
    tubes/index.rst
+
+.. toctree::
+   :maxdepth: 3
+
    contractors/index.rst
    separators/index.rst
+
+.. toctree::
+   :maxdepth: 2
+
    pavers/index.rst
    cn/index.rst
    geometry/index.rst

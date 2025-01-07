@@ -13,5 +13,5 @@
 
 namespace codac2
 {
-  constexpr double pi = std::numbers::pi; // Need C++20
+  constexpr double PI = std::numbers::pi; // Need C++20
 }

@@ -84,12 +84,18 @@ void export_TrajectoryBase(py::class_<S>& pyclass)
       VIRTUAL_SAMPLEDTRAJECTORY_T_TRAJECTORYBASE_T_SAMPLED_DOUBLE_CONST,
       "dt"_a)
 
-    .def("primitive", [](const S& x, const typename S::ScalarType& y0, double dt)
+    .def("primitive", [](const S& x, const typename S::TrajType::Scalar& y0, double dt)
         {
           return x.primitive(y0,dt);
         },
       SAMPLEDTRAJECTORY_T_TRAJECTORYBASE_T_PRIMITIVE_CONST_T_REF_DOUBLE_CONST,
       "y0"_a, "dt"_a)
+
+    .def("as_function", [](const S& x)
+        {
+          return x.as_function();
+        },
+      ANALYTICFUNCTION_TYPENAME_VALUETYPE_T_TYPE_TRAJECTORYBASE_T_AS_FUNCTION_CONST)
 
   ;
 }

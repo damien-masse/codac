@@ -6,6 +6,7 @@
 
   pybind11_add_module(_core SHARED
     codac2_py_core.cpp
+    codac2_py_cast.h
     
     actions/codac2_py_OctaSym.cpp
     
@@ -47,7 +48,7 @@
     functions/analytic/codac2_py_analytic_operations.cpp
     functions/analytic/codac2_py_analytic_variables.cpp
     functions/analytic/codac2_py_AnalyticFunction.h
-    functions/analytic/codac2_py_ExprWrapper.h
+    functions/analytic/codac2_py_AnalyticExprWrapper.h
 
     geometry/codac2_py_Edge.cpp
     geometry/codac2_py_geometry.cpp

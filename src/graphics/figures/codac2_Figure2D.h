@@ -2,7 +2,7 @@
  *  \file codac2_Figure2D.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -86,17 +86,17 @@ namespace codac2
       void draw_box(const IntervalVector& x, const StyleProperties& s = StyleProperties());
       void draw_circle(const Vector& c, double r, const StyleProperties& s = StyleProperties());
       void draw_ring(const Vector& c, const Interval& r, const StyleProperties& s = StyleProperties());
-      void draw_line(const Vector& a, const Vector& b, const StyleProperties& s = StyleProperties());
-      void draw_arrow(const Vector& a, const Vector& b, float tip_length, const StyleProperties& s = StyleProperties());
+      void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s = StyleProperties());
+      void draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s = StyleProperties());
       void draw_polyline(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
       void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& s = StyleProperties());
       void draw_polygone(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
       void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s = StyleProperties());
       void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& s = StyleProperties());
       void draw_trajectory(const SampledTrajectory<Vector>& x, const StyleProperties& s = StyleProperties());
-      void draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s = StyleProperties());
+      void draw_trajectory(const AnalyticTrajectory<VectorType>& x, const StyleProperties& s = StyleProperties());
       void draw_trajectory(const SampledTrajectory<Vector>& x, const ColorMap& cmap);
-      void draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const ColorMap& cmap);
+      void draw_trajectory(const AnalyticTrajectory<VectorType>& x, const ColorMap& cmap);
 
       // Robots
       void draw_tank(const Vector& x, float size, const StyleProperties& s = StyleProperties());
@@ -182,16 +182,16 @@ namespace codac2
         selected_fig()->draw_ring(c,r,s);
       }
 
-      static void draw_line(const Vector& x1, const Vector& x2, const StyleProperties& s = StyleProperties())
+      static void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_line(x1,x2,s);
+        selected_fig()->draw_line(p1,p2,s);
       }
 
-      static void draw_arrow(const Vector& x1, const Vector& x2, float tip_length, const StyleProperties& s = StyleProperties())
+      static void draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_arrow(x1,x2,tip_length,s);
+        selected_fig()->draw_arrow(p1,p2,tip_length,s);
       }
 
       static void draw_polyline(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties())
@@ -230,7 +230,7 @@ namespace codac2
         selected_fig()->draw_trajectory(x,s);
       }
 
-      static void draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s = StyleProperties())
+      static void draw_trajectory(const AnalyticTrajectory<VectorType>& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
         selected_fig()->draw_trajectory(x,s);
@@ -242,7 +242,7 @@ namespace codac2
         selected_fig()->draw_trajectory(x,cmap);
       }
 
-      static void draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const ColorMap& cmap)
+      static void draw_trajectory(const AnalyticTrajectory<VectorType>& x, const ColorMap& cmap)
       {
         auto_init();
         selected_fig()->draw_trajectory(x,cmap);

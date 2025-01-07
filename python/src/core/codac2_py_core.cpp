@@ -11,9 +11,10 @@
 #include <pybind11/pybind11.h>
 #include <codac2_Interval.h>
 #include <codac2_AnalyticFunction.h>
-#include <codac2_analytic_values.h>
+#include <codac2_ValueType.h>
 #include <codac2_Row.h>
 #include <codac2_IntervalRow.h>
+#include <codac2_math.h>
 #include "codac2_py_AnalyticFunction.h"
 #include "codac2_py_CtcInverse.h"
 #include "codac2_py_CtcInverseNotIn.h"
@@ -62,7 +63,6 @@ void export_PavingNode(py::module& m);
 void export_Subpaving(py::module& m);
 
 // functions
-void export_ExprWrapperBase(py::module& m);
 void export_ScalarVar(py::module& m);
 void export_VectorVar(py::module& m);
 void export_expression_operations(py::module& m);
@@ -123,6 +123,7 @@ PYBIND11_MODULE(_core, m)
 {
   m.doc() = string(FOR_MATLAB ? "Matlab" : "Python") + " binding of Codac (core)";
   m.attr("oo") = oo;
+  m.attr("PI") = PI;
 
   // 3rd
 
@@ -140,10 +141,10 @@ PYBIND11_MODULE(_core, m)
   export_CtcIdentity(m, py_ctc_iv);
   export_CtcInnerOuter(m, py_ctc_iv);
   export_CtcInter(m, py_ctc_iv);
-  export_CtcInverse<double,Interval>(m,"CtcInverse_Interval",py_ctc_iv);
-  export_CtcInverse<Vector,IntervalVector>(m,"CtcInverse_IntervalVector",py_ctc_iv);
-  export_CtcInverseNotIn<double,Interval>(m,"CtcInverseNotIn_Interval",py_ctc_iv);
-  export_CtcInverseNotIn<Vector,IntervalVector>(m,"CtcInverseNotIn_IntervalVector",py_ctc_iv);
+  export_CtcInverse<ScalarType>(m,"CtcInverse_Interval",py_ctc_iv);
+  export_CtcInverse<VectorType>(m,"CtcInverse_IntervalVector",py_ctc_iv);
+  export_CtcInverseNotIn<ScalarType>(m,"CtcInverseNotIn_Interval",py_ctc_iv);
+  export_CtcInverseNotIn<VectorType>(m,"CtcInverseNotIn_IntervalVector",py_ctc_iv);
   export_CtcLazy(m, py_ctc_iv);
   export_CtcNot(m, py_ctc_iv);
   export_CtcPolar(m, py_ctc_iv);
@@ -185,11 +186,17 @@ PYBIND11_MODULE(_core, m)
   export_Subpaving(m);
 
   // function
-  export_ExprWrapperBase(m);
+  py::enum_<EvalMode>(m, "EvalMode")
+    .value("NATURAL", EvalMode::NATURAL)
+    .value("CENTERED", EvalMode::CENTERED)
+    .value("DEFAULT", EvalMode::DEFAULT)
+    .def(py::self | py::self, EVALMODE_OPERATOROR_EVALMODE_EVALMODE)
+  ;
+
   export_ScalarExpr(m);
   export_VectorExpr(m);
-  export_AnalyticFunction<ScalarOpValue>(m,"AnalyticFunction_Scalar");
-  export_AnalyticFunction<VectorOpValue>(m,"AnalyticFunction_Vector");
+  export_AnalyticFunction<ScalarType>(m,"AnalyticFunction_Scalar");
+  export_AnalyticFunction<VectorType>(m,"AnalyticFunction_Vector");
   export_ScalarVar(m);
   export_VectorVar(m);
   export_expression_operations(m);
@@ -209,8 +216,7 @@ PYBIND11_MODULE(_core, m)
   export_SepCtcBoundary(m,py_sep);
   export_SepCtcPair(m,py_sep);
   export_SepInter(m,py_sep);
-  export_SepInverse<double,Interval>(m,"SepInverse_Interval",py_sep);
-  export_SepInverse<Vector,IntervalVector>(m,"SepInverse_IntervalVector",py_sep);
+  export_SepInverse(m,py_sep);
   export_SepNot(m,py_sep);
   export_SepPolygon(m,py_sep);
   export_SepProj(m,py_sep);

@@ -56,7 +56,7 @@ namespace codac2
       {
         if(!this->tdomain().contains(t))
           return this->nan_value();
-        return AnalyticFunction<O>::eval(t).mid();
+        return AnalyticFunction<O>::real_eval(t);
       }
 
       virtual typename Wrapper<S>::Domain operator()(const Interval& t) const

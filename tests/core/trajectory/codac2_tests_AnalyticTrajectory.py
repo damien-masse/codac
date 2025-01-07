@@ -48,7 +48,7 @@ class TestAnalyticTrajectory(unittest.TestCase):
     self.assertTrue(Approx(sampled_traj(9.),1e-2) == 81.)
 
     # Testing primitive computation from analytic trajectory
-    x0 = f.eval(-1).mid() # == 1.
+    x0 = f.real_eval(-1) # == 1.
     sampled_prim_traj = traj.primitive(x0,0.01)
     self.assertTrue(sampled_prim_traj.tdomain() == Interval(-1,10))
     self.assertTrue(Approx(sampled_prim_traj.codomain(),4e-1) == Interval(prim_value(0),prim_value(10.)))

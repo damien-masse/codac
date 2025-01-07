@@ -2,7 +2,7 @@
  *  codac2_Figure2D.cpp
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -138,22 +138,18 @@ void Figure2D::draw_ring(const Vector& c, const Interval& r, const StyleProperti
       output_fig->draw_ring(c,r,s);
 }
 
-void Figure2D::draw_line(const Vector& a, const Vector& b, const StyleProperties& s)
+void Figure2D::draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s)
 {
-  assert_release(a.size() == b.size());
-  assert_release(a.size() == 2);
-  vector<Vector> values = {a,b};
-
-  draw_polyline(values,s);
+  assert_release(p1.size() == p2.size());
+  assert_release(this->size() <= p1.size());
+  draw_polyline({p1,p2}, s);
 }
 
-void Figure2D::draw_arrow(const Vector& a, const Vector& b, float tip_length, const StyleProperties& s)
+void Figure2D::draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s)
 {
-  assert_release(a.size() == b.size());
-  assert_release(a.size() == 2);
-  vector<Vector> values = {a,b};
-
-  draw_polyline(values,tip_length,s);
+  assert_release(p1.size() == p2.size());
+  assert_release(this->size() <= p1.size());
+  draw_polyline({p1,p2}, tip_length, s);
 }
 
 void Figure2D::draw_polyline(const vector<Vector>& x, const StyleProperties& s)
@@ -196,7 +192,7 @@ void Figure2D::draw_pie(const Vector& c, const Interval& r, const Interval& thet
 
   Interval theta_(theta);
   if(theta.is_unbounded())
-    theta_ = Interval(0,2.*codac2::pi);
+    theta_ = Interval(0,2.*PI);
 
   Interval r_(r);
   if(r.is_unbounded())
@@ -225,7 +221,7 @@ void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const StylePr
   draw_polyline(values,s);
 }
 
-void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s)
+void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorType>& x, const StyleProperties& s)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), s);
 }
@@ -234,17 +230,17 @@ void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const ColorMa
 {
   assert_release(this->size() <= x.size());
 
-  double range = x.rbegin()->first - x.begin()->first;
+  double range = x.tdomain().diam();
 
   for(auto it = x.begin(); std::next(it) != x.end(); ++it)
   {
     draw_polyline(
-    { it->second, std::next(it)->second },
-    cmap.color((it->first - x.begin()->first) / range));
+      { it->second, std::next(it)->second },
+      cmap.color((it->first - x.begin()->first) / range));
   }
 }
 
-void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const ColorMap& cmap)
+void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorType>& x, const ColorMap& cmap)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), cmap);
 }

@@ -15,6 +15,7 @@
 #include "codac2_py_SampledTrajectory_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_TrajectoryBase_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_TrajectoryBase.h"
+#include "codac2_Trajectory_operator.h"
 #include "codac2_py_doc.h"
 
 using namespace std;
@@ -47,6 +48,17 @@ void _export_SampledTrajectory(py::module& m, const string& class_name)
       SAMPLEDTRAJECTORY_T_SAMPLEDTRAJECTORY_T_SAMPLED_DOUBLE_BOOL_CONST,
       "dt"_a, "keep_original_values"_a)
 
+    .def("__getitem__", [](const SampledTrajectory<T>& x, Index_type index) -> const T&
+        {
+          matlab::test_integer(index);
+          return x.at(matlab::input_index(index));
+        }, py::return_value_policy::reference_internal)
+
+    .def("__setitem__", [](SampledTrajectory<T>& x, Index_type index, const T& a)
+        {
+          matlab::test_integer(index);
+          x[matlab::input_index(index)] = a;
+        })
   ;
 }
 

@@ -11,6 +11,7 @@
 
 #include <map>
 #include "codac2_TrajectoryBase.h"
+#include "codac2_analytic_variables.h"
 
 namespace codac2
 {
@@ -30,7 +31,7 @@ namespace codac2
       // size is not the std::map<double,T>::size() !
       virtual Index size() const
       {
-        if constexpr(std::is_same_v<typename Wrapper<T>::Domain,Interval>) // if type is scalar: int,double,etc.
+        if constexpr(std::is_same_v<typename ValueType<T>::Type,ScalarType>)
           return 1;
 
         else
@@ -57,7 +58,7 @@ namespace codac2
         if(this->empty())
           return Interval::empty();
         else
-          return { this->begin()->first, std::prev(this->end())->first };
+          return { this->begin()->first, this->rbegin()->first };
       }
 
       virtual void truncate_tdomain(const Interval& new_tdomain)
@@ -115,11 +116,14 @@ namespace codac2
         if(!this->tdomain().is_superset(t))
           return hull.init(Interval(-oo,oo));
 
-        hull.set_empty();
-        for(auto it = this->lower_bound(t.lb()) ; it != this->upper_bound(t.ub()) ; it++)
-          hull |= it->second;
-        hull |= (*this)(t.ub());
-        return hull;
+        else
+        {
+          hull = (*this)(t.lb());
+          for(auto it = this->lower_bound(t.lb()) ; it != this->upper_bound(t.ub()) ; it++)
+            hull |= it->second;
+          hull |= (*this)(t.ub());
+          return hull;
+        }
       }
 
       virtual SampledTrajectory<T> sampled(double dt) const
