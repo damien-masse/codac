@@ -6,7 +6,6 @@ using namespace std;
 using namespace codac2;
 
 
- 
 int main()
 {
   // Equation of the pendulum with friction
