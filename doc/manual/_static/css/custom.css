@@ -11,3 +11,9 @@ a.sidebar-brand {
   padding: 2rem 0rem;
   padding-right: 1rem;
 }
+
+.sidebar-logo
+{
+  max-width: 120%;
+  float: right;
+}

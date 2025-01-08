@@ -58,11 +58,12 @@ Welcome to the Codac website.
 ..    howto/dynamical/index.rst
 
 
-.. .. toctree::
-..    :hidden:
-..    :caption: Development
-..    :maxdepth: 3
+.. toctree::
+   :hidden:
+   :caption: Development
+   :maxdepth: 3
+
+   development/info_dev.rst
 .. 
 ..    Changelog <http://codac.io>
 ..    C++ API <http://codac.io>
-..    Information for developers <http://codac.io>

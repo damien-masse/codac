@@ -1,3 +1,5 @@
+.. _sec-start-cpp-project:
+
 C++ installation
 ================
 
@@ -21,3 +23,5 @@ C++ installation
 
 Using Codac in CMake projects
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+...
