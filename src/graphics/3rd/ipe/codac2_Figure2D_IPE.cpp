@@ -194,7 +194,11 @@ void Figure2D_IPE::draw_polyline(const std::vector<Vector>& x, float tip_length,
 
 void Figure2D_IPE::draw_polygone(const std::vector<Vector>& x, const StyleProperties& s)
 {
-  draw_polyline(x,0.,s);
+  assert(x.size() > 1);
+
+  std::vector<Vector> x_temp = x;
+  x_temp.push_back(x[0]);
+  draw_polyline(x_temp, 0., s);
 }
 
 void Figure2D_IPE::draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s)
