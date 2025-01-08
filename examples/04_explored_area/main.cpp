@@ -19,12 +19,12 @@ int main()
 
   Interval tdomain(0,5);
   auto sampled_f = AnalyticTrajectory(f,tdomain).sampled(0.8);
-  sampled_f[6] = {0,-1};
+  sampled_f[6] = {0,-1}; // appending the position (0,-1) at t=6
 
   VectorVar w(3);
   auto g = sampled_f.as_function();
   AnalyticFunction h {
-    {w},
+    {w}, // w=(t,x,y)
     sqr(w[0]-g(w[2])[0])+sqr(w[1]-g(w[2])[1])
   };
 

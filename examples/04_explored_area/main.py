@@ -15,12 +15,12 @@ f = AnalyticFunction(
 
 tdomain = [0,5]
 sampled_f = AnalyticTrajectory(f,tdomain).sampled(0.8)
-sampled_f[6] = [0,-1]
+sampled_f[6] = [0,-1] # appending the position (0,-1) at t=6
 
 w = VectorVar(3)
 g = sampled_f.as_function()
 h = AnalyticFunction(
-  [w],
+  [w], # w=(t,x,y)
   sqr(w[0]-g(w[2])[0])+sqr(w[1]-g(w[2])[1])
 )
 
