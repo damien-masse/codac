@@ -8,13 +8,15 @@
 
 project = 'Codac'
 copyright = 'Codac Team'
-author = 'Codac Team'
+author = 'Simon Rohou, Benoît Desrochers, Fabrice Le Bars and others'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
     'sphinx_rtd_theme',
+    'sphinx_math_dollar',
+    'sphinx.ext.mathjax'
 ]
 
 templates_path = ['_templates']
@@ -25,7 +27,7 @@ exclude_patterns = []
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_static_path = ['_static']
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 html_logo = "_static/logos/logo_codac.svg"
 
 # These paths are either relative to html_static_path
@@ -35,6 +37,31 @@ html_css_files = [
 ]
 
 html_theme_options = {
-    'logo_only': True,
-    'display_version': True,
+
+    "sidebar_hide_name": True,
+
+    "light_css_variables": {
+        "color-brand-primary": "white",
+        "color-brand-content": "#1F506B",
+
+        "color-sidebar-background": "#3281AC",
+        "color-sidebar-caption-text": "white",
+        "color-sidebar-item-background--current": "var(--color-brand-content)",
+        "color-sidebar-item-background--hover": "#3B9ACC",
+        "color-sidebar-item-expander-background--hover": "#3B9ACC",
+        "color-sidebar-link-text": "white",
+        "sidebar-caption-font-size": "120%",
+
+        "color-link--visited": "var(--color-link)",
+    },
+
+    "announcement": "You are currently reading the new Codac documentation, which is currently in preparation.",
+}
+
+# See https://www.sympy.org/sphinx-math-dollar/
+mathjax3_config = {
+  "tex": {
+    "inlineMath": [['\\(', '\\)']],
+    "displayMath": [["\\[", "\\]"]],
+  }
 }

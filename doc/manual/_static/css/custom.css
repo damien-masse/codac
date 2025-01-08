@@ -1,10 +1,19 @@
-div.rst-content a:visited
-{
-  color: #2980b9;
-  text-decoration: none;
+.sidebar-tree .current > .reference {
+  background: none;
 }
 
-div.rst-content li.toctree-l1 > a
+.sidebar-tree .current-page > .reference {
+  background: var(--color-sidebar-item-background--current);
+  font-weight: normal;
+}
+
+a.sidebar-brand {
+  padding: 2rem 0rem;
+  padding-right: 1rem;
+}
+
+.sidebar-logo
 {
-  font-weight: bold;
+  max-width: 120%;
+  float: right;
 }
