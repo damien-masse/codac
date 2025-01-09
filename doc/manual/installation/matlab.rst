@@ -1,3 +1,5 @@
+.. _sec-install-matlab:
+
 MATLAB installation
 ===================
 

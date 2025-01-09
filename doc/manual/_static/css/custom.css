@@ -1,3 +1,7 @@
+.strike {
+  text-decoration: line-through;
+}
+
 .sidebar-tree .current > .reference {
   background: none;
 }
@@ -12,8 +16,11 @@ a.sidebar-brand {
   padding-right: 1rem;
 }
 
-.sidebar-logo
-{
+.sidebar-logo {
   max-width: 120%;
   float: right;
+}
+
+.announcement-content {
+  font-size: 0.8rem;
 }
