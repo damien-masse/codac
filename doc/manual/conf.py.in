@@ -9,6 +9,7 @@
 project = 'Codac'
 copyright = 'Codac Team'
 author = 'Simon Rohou, Benoît Desrochers, Fabrice Le Bars and others'
+version = u'${PROJECT_VERSION}'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -53,6 +54,8 @@ html_theme_options = {
         "sidebar-caption-font-size": "120%",
 
         "color-link--visited": "var(--color-link)",
+
+        "header-height": "2rem",
     },
 
     "announcement": "You are currently reading the new Codac documentation, which is currently in preparation.",
