@@ -3,7 +3,7 @@
 
 #include <codac>
 #include <codac-capd.h>
-#include "capd/capdlib.h"
+#include <capd/capdlib.h>
 
 using namespace std;
 using namespace codac2;

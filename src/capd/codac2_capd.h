@@ -9,7 +9,9 @@
 
 #pragma once
 
-#include "capd/capdlib.h"
+// #include "capd/capdlib.h"
+#include <capd/intervals/lib.h>
+#include <capd/vectalg/lib.h>
 #include "codac2_IntervalVector.h"
 #include "codac2_Matrix.h"
 #include "codac2_IntervalMatrix.h"

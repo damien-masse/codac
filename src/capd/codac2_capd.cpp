@@ -12,8 +12,6 @@
 
 using namespace std;
 
-#include <iostream>
-
 namespace codac2
 {
   capd::Interval to_capd(const Interval &x)
