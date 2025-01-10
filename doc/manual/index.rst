@@ -21,6 +21,9 @@ Welcome to the Codac website.
    :maxdepth: 2
 
    installation/index.rst
+   visualization/index.rst
+   extensions/index.rst
+
 ..    intervals/index.rst
 ..    linear/index.rst
 ..    functions/index.rst
@@ -42,8 +45,6 @@ Welcome to the Codac website.
 ..    geometry/index.rst
 ..    ellipsoids/index.rst
 ..    topology/index.rst
-..    visualization/index.rst
-..    extensions/index.rst
 ..    seealso/index.rst
 ..    references/index.rst
 
