@@ -2,6 +2,9 @@
 // Adapted from CAPD examples
 
 #include <codac>
+#include <codac-capd.h>
+#include "capd/capdlib.h"
+
 using namespace std;
 using namespace codac2;
 
