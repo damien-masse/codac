@@ -1,4 +1,4 @@
-.. _sec-start-py-project:
+.. _sec-install-py:
 
 Python installation
 ===================
