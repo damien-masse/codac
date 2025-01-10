@@ -1,6 +1,6 @@
 from codac._core import *
 from sys import float_info
-
+import numpy
 
 def codac_error(message):
   print(f'''
@@ -272,6 +272,16 @@ class SampledTrajectory:
     else:
       codac_error("SampledTrajectory: can only build this trajectory from maps of scalar or vector values")
       
+  def __init__(self, l_t, l_x):
+    if not isinstance(l_t,(list,numpy.ndarray)) or not isinstance(l_x,(list,numpy.ndarray)):
+      codac_error("SampledTrajectory: can only build this trajectory from two lists")
+    elif isinstance(next(iter(l_x)), (int,float,numpy.float64)):
+      self.traj = SampledTrajectory_double(l_t,l_x)
+    elif isinstance(next(iter(l_x)), (Vector,list,tuple,numpy.ndarray)):
+      self.traj = SampledTrajectory_Vector(l_t,l_x)
+    else:
+      codac_error("SampledTrajectory: can only build this trajectory from a list of dates and a list of scalar or vector values")
+
   # Methods from std::map:
 
   def __setitem__(self, t, y):
@@ -316,3 +326,6 @@ class SampledTrajectory:
   
   def nb_samples(self):
     return self.traj.nb_samples()
+
+  def __repr__(self):
+    return str(self.traj)
