@@ -24,6 +24,18 @@ namespace codac2
         : TrajectoryBase<T>(), std::map<double,T>()
       { }
 
+      SampledTrajectory(const std::list<double>& l_t, const std::list<T>& l_x)
+        : SampledTrajectory()
+      {
+        assert_release(l_t.size() == l_x.size());
+        auto it_t = l_t.begin(); auto it_x = l_x.begin();
+        while(it_t != l_t.end())
+        {
+          (*this)[*(it_t)] = *(it_x);
+          it_t++; it_x++;
+        }
+      }
+
       SampledTrajectory(const std::map<double,T>& m)
         : TrajectoryBase<T>(), std::map<double,T>(m)
       { }
@@ -148,4 +160,11 @@ namespace codac2
         return straj;
       }
   };
+  
+  template<typename T>
+  inline std::ostream& operator<<(std::ostream& os, const SampledTrajectory<T>& x)
+  {
+    os << "SampledTraj. " << x.tdomain() << "↦" << x.codomain() << ", " << x.nb_samples() << " pts";
+    return os;
+  }
 }

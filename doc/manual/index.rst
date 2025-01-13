@@ -21,10 +21,10 @@ Welcome to the Codac website.
    :maxdepth: 2
 
    installation/index.rst
+   intervals/index.rst
    visualization/index.rst
    extensions/index.rst
-
-..    intervals/index.rst
+   
 ..    linear/index.rst
 ..    functions/index.rst
 ..    tubes/index.rst

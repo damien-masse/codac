@@ -24,3 +24,10 @@ a.sidebar-brand {
 .announcement-content {
   font-size: 0.8rem;
 }
+
+
+/* Removes empty space below blocks of code in tabs */
+.sphinx-tabs-panel div[class^="highlight"] {
+  margin-bottom: 0;
+  margin-top: 0;
+}
