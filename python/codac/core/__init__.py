@@ -1,6 +1,5 @@
 from codac._core import *
-from sys import float_info
-import numpy
+import sys
 
 def codac_error(message):
   print(f'''
@@ -135,7 +134,7 @@ class CtcInverseNotIn(Ctc):
 
 class Approx:
 
-  def __init__(self, x, eps = float_info.epsilon*10):
+  def __init__(self, x, eps = sys.float_info.epsilon*10):
     if isinstance(x, (int,float)):
       self.a = Approx_double(x,eps)
     elif isinstance(x, (Interval)):
@@ -260,27 +259,41 @@ class AnalyticTrajectory:
 
 class SampledTrajectory:
 
-  def __init__(self, m):
-    if isinstance(m, (SampledTrajectory_double,SampledTrajectory_Vector)):
-      self.traj = m
-    elif not isinstance(m,dict):
-      codac_error("SampledTrajectory: can only build this trajectory from a dictionary")
-    elif isinstance(next(iter(m.values())), (int,float)):
-      self.traj = SampledTrajectory_double(m)
-    elif isinstance(next(iter(m.values())), (Vector,list)):
-      self.traj = SampledTrajectory_Vector(m)
-    else:
-      codac_error("SampledTrajectory: can only build this trajectory from maps of scalar or vector values")
-      
-  def __init__(self, l_t, l_x):
-    if not isinstance(l_t,(list,numpy.ndarray)) or not isinstance(l_x,(list,numpy.ndarray)):
+  def __init__(self, l_t, l_x=[]):
+
+    if isinstance(l_t, (SampledTrajectory_double,SampledTrajectory_Vector)):
+      self.traj = l_t
+      return
+
+    elif isinstance(l_t,dict):
+      if isinstance(next(iter(l_t.values())), (int,float)):
+        self.traj = SampledTrajectory_double(l_t)
+      elif isinstance(next(iter(l_t.values())), (Vector,list)):
+        self.traj = SampledTrajectory_Vector(l_t)
+      else:
+        codac_error("SampledTrajectory: invalid input")
+      return
+
+    elif 'numpy' in sys.modules: # a SampledTrajectory object can be built from numpy arrays
+
+      if not isinstance(l_t,(list,sys.modules['numpy'].ndarray)) or not isinstance(l_x,(list,sys.modules['numpy'].ndarray)):
+        codac_error("SampledTrajectory: can only build this trajectory from two lists")
+        return
+      elif isinstance(next(iter(l_x)), sys.modules['numpy'].float64):
+        self.traj = SampledTrajectory_double(l_t,l_x)
+        return
+      elif isinstance(next(iter(l_x)), sys.modules['numpy'].ndarray):
+        self.traj = SampledTrajectory_Vector(l_t,l_x)
+        return
+
+    if not isinstance(l_t,list) or not isinstance(l_x,list):
       codac_error("SampledTrajectory: can only build this trajectory from two lists")
-    elif isinstance(next(iter(l_x)), (int,float,numpy.float64)):
+    elif isinstance(next(iter(l_x)), (int,float)):
       self.traj = SampledTrajectory_double(l_t,l_x)
-    elif isinstance(next(iter(l_x)), (Vector,list,tuple,numpy.ndarray)):
+    elif isinstance(next(iter(l_x)), (Vector,list,tuple)):
       self.traj = SampledTrajectory_Vector(l_t,l_x)
     else:
-      codac_error("SampledTrajectory: can only build this trajectory from a list of dates and a list of scalar or vector values")
+      codac_error("SampledTrajectory: invalid input")
 
   # Methods from std::map:
 
