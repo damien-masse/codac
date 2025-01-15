@@ -209,19 +209,19 @@ def cart_prod(*args):
     codac_error("cart_prod: invalid input arguments")
 
 
-class AnalyticTrajectory:
+class AnalyticTraj:
 
   def __init__(self, f, t):
     if isinstance(f, AnalyticFunction):
       self.__init__(f.f,t)
     elif isinstance(f, AnalyticFunction_Scalar):
-      self.traj = AnalyticTrajectory_Scalar(f,t)
+      self.traj = AnalyticTraj_Scalar(f,t)
     elif isinstance(f, AnalyticFunction_Vector):
-      self.traj = AnalyticTrajectory_Vector(f,t)
+      self.traj = AnalyticTraj_Vector(f,t)
     else:
-      codac_error("AnalyticTrajectory: can only build this trajectory from an AnalyticFunction_[Scalar/Vector]")
+      codac_error("AnalyticTraj: can only build this trajectory from an AnalyticFunction_[Scalar/Vector]")
 
-  # Methods from TrajectoryBase:
+  # Methods from TrajBase:
 
   def size(self):
     return self.traj.size()
@@ -245,100 +245,13 @@ class AnalyticTrajectory:
     return self.traj.nan_value()
     
   def sampled(self, dt):
-    return SampledTrajectory(self.traj.sampled(dt))
+    return self.traj.sampled(dt)
     
   def primitive(self, y0, t):
-    return SampledTrajectory(self.traj.primitive(y0, t))
+    return self.traj.primitive(y0, t)
     
   def as_function(self):
     return AnalyticFunction(self.traj.as_function())
     
-  # Methods from AnalyticTrajectory:
+  # Methods from AnalyticTraj:
   #   none
-
-
-class SampledTrajectory:
-
-  def __init__(self, l_t, l_x=[]):
-
-    if isinstance(l_t, (SampledTrajectory_double,SampledTrajectory_Vector)):
-      self.traj = l_t
-      return
-
-    elif isinstance(l_t,dict):
-      if isinstance(next(iter(l_t.values())), (int,float)):
-        self.traj = SampledTrajectory_double(l_t)
-      elif isinstance(next(iter(l_t.values())), (Vector,list)):
-        self.traj = SampledTrajectory_Vector(l_t)
-      else:
-        codac_error("SampledTrajectory: invalid input")
-      return
-
-    elif 'numpy' in sys.modules: # a SampledTrajectory object can be built from numpy arrays
-
-      if not isinstance(l_t,(list,sys.modules['numpy'].ndarray)) or not isinstance(l_x,(list,sys.modules['numpy'].ndarray)):
-        codac_error("SampledTrajectory: can only build this trajectory from two lists")
-        return
-      elif isinstance(next(iter(l_x)), sys.modules['numpy'].float64):
-        self.traj = SampledTrajectory_double(l_t,l_x)
-        return
-      elif isinstance(next(iter(l_x)), sys.modules['numpy'].ndarray):
-        self.traj = SampledTrajectory_Vector(l_t,l_x)
-        return
-
-    if not isinstance(l_t,list) or not isinstance(l_x,list):
-      codac_error("SampledTrajectory: can only build this trajectory from two lists")
-    elif isinstance(next(iter(l_x)), (int,float)):
-      self.traj = SampledTrajectory_double(l_t,l_x)
-    elif isinstance(next(iter(l_x)), (Vector,list,tuple)):
-      self.traj = SampledTrajectory_Vector(l_t,l_x)
-    else:
-      codac_error("SampledTrajectory: invalid input")
-
-  # Methods from std::map:
-
-  def __setitem__(self, t, y):
-    self.traj[t] = y
-
-  def __getitem__(self, t):
-    return self.traj[t]
-
-  # Methods from TrajectoryBase:
-
-  def size(self):
-    return self.traj.size()
-
-  def is_empty(self):
-    return self.traj.is_empty()
-
-  def tdomain(self):
-    return self.traj.tdomain()
-
-  def truncate_tdomain(self, new_tdomain):
-    return self.traj.truncate_tdomain(new_tdomain)
-    
-  def codomain(self):
-    return self.traj.codomain()
-    
-  def __call__(self, t):
-    return self.traj(t)
-    
-  def nan_value(self):
-    return self.traj.nan_value()
-    
-  def sampled(self, *args):
-    return SampledTrajectory(self.traj.sampled(*args))
-    
-  def primitive(self, y0, t):
-    return SampledTrajectory(self.traj.primitive(y0, t))
-    
-  def as_function(self):
-    return AnalyticFunction(self.traj.as_function())
-    
-  # Methods from SampledTrajectory:
-  
-  def nb_samples(self):
-    return self.traj.nb_samples()
-
-  def __repr__(self):
-    return str(self.traj)

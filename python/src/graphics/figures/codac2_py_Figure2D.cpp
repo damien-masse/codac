@@ -135,28 +135,20 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_ELLIPSE_CONST_VECTOR_REF_CONST_VECTOR_REF_DOUBLE_CONST_STYLEPROPERTIES_REF,
       "c"_a, "ab"_a, "theta"_a, "s"_a=StyleProperties())
 
-    .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const StyleProperties& s)
-        {
-          if(is_instance<AnalyticTrajectory<VectorType>>(x))
-            return fig.draw_trajectory(cast<AnalyticTrajectory<VectorType>>(x),s);
-          else if(is_instance<SampledTrajectory<Vector>>(x))
-            return fig.draw_trajectory(cast<SampledTrajectory<Vector>>(x),s);
-          else
-            assert_release(false && "invalid provided trajectory");
-        },
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
+    .def("draw_trajectory", (void(Figure2D::*)(const AnalyticTraj<VectorType>&,const StyleProperties&))&Figure2D::draw_trajectory,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
-    .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const ColorMap& cmap)
-        {
-          if(is_instance<AnalyticTrajectory<VectorType>>(x))
-            return fig.draw_trajectory(cast<AnalyticTrajectory<VectorType>>(x),cmap);
-          else if(is_instance<SampledTrajectory<Vector>>(x))
-            return fig.draw_trajectory(cast<SampledTrajectory<Vector>>(x),cmap);
-          else
-            assert_release(false && "invalid provided trajectory");
-        },
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
+    .def("draw_trajectory", (void(Figure2D::*)(const SampledTraj<Vector>&,const StyleProperties&))&Figure2D::draw_trajectory,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
+
+    .def("draw_trajectory", (void(Figure2D::*)(const AnalyticTraj<VectorType>&,const ColorMap&))&Figure2D::draw_trajectory,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
+      "x"_a, "cmap"_a)
+
+    .def("draw_trajectory", (void(Figure2D::*)(const SampledTraj<Vector>&,const ColorMap&))&Figure2D::draw_trajectory,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_COLORMAP_REF,
       "x"_a, "cmap"_a)
 
     // Robots
@@ -237,29 +229,21 @@ void export_Figure2D(py::module& m)
     .def_static("draw_pie", &DefaultView::draw_pie,
       STATIC_VOID_DEFAULTVIEW_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "theta"_a, "s"_a=StyleProperties())
-    
-    .def_static("draw_trajectory", [](const py::object& x, const StyleProperties& s)
-        {
-          if(is_instance<AnalyticTrajectory<VectorType>>(x))
-            return DefaultView::draw_trajectory(cast<AnalyticTrajectory<VectorType>>(x),s);
-          else if(is_instance<SampledTrajectory<Vector>>(x))
-            return DefaultView::draw_trajectory(cast<SampledTrajectory<Vector>>(x),s);
-          else
-            assert_release(false && "invalid provided trajectory");
-        },
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
+
+    .def_static("draw_trajectory", (void(*)(const AnalyticTraj<VectorType>&,const StyleProperties&))&DefaultView::draw_trajectory,
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
-    .def_static("draw_trajectory", [](py::object x, const ColorMap& cmap)
-        {
-          if(is_instance<AnalyticTrajectory<VectorType>>(x))
-            return DefaultView::draw_trajectory(cast<AnalyticTrajectory<VectorType>>(x),cmap);
-          else if(is_instance<SampledTrajectory<Vector>>(x))
-            return DefaultView::draw_trajectory(cast<SampledTrajectory<Vector>>(x),cmap);
-          else
-            assert_release(false && "invalid provided trajectory");
-        },
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
+    .def_static("draw_trajectory", (void(*)(const SampledTraj<Vector>&,const StyleProperties&))&DefaultView::draw_trajectory,
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_trajectory", (void(*)(const AnalyticTraj<VectorType>&,const ColorMap&))&DefaultView::draw_trajectory,
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
+      "x"_a, "cmap"_a)
+
+    .def_static("draw_trajectory", (void(*)(const SampledTraj<Vector>&,const ColorMap&))&DefaultView::draw_trajectory,
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_COLORMAP_REF,
       "x"_a, "cmap"_a)
 
     // Robots

@@ -84,9 +84,9 @@
 
     tools/codac2_py_Approx.cpp
 
-    trajectory/codac2_py_AnalyticTrajectory.cpp
-    trajectory/codac2_py_SampledTrajectory.cpp
-    trajectory/codac2_py_TrajectoryBase.h
+    trajectory/codac2_py_AnalyticTraj.cpp
+    trajectory/codac2_py_SampledTraj.cpp
+    trajectory/codac2_py_TrajBase.h
   )
 
   target_include_directories(_core

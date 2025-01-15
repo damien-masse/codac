@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_Trajectory_operator.h
+ *  \file codac2_Traj_operator.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -10,7 +10,7 @@
 #pragma once
 
 #include "codac2_analytic_operations.h"
-#include "codac2_SampledTrajectory.h"
+#include "codac2_SampledTraj.h"
 #include "codac2_AnalyticExprWrapper.h"
 #include "codac2_ValueType.h"
 #include "codac2_Wrapper.h"
@@ -21,12 +21,12 @@ namespace codac2
     requires (std::is_same_v<typename ValueType<T>::Type,ScalarType> || std::is_same_v<typename ValueType<T>::Type,VectorType>)
   struct TrajectoryOp
   {
-    static typename Wrapper<T>::Domain fwd(const TrajectoryBase<T>& x1, const Interval& x2)
+    static typename Wrapper<T>::Domain fwd(const TrajBase<T>& x1, const Interval& x2)
     {
       return x1(x2);
     }
 
-    static typename ValueType<T>::Type fwd(const TrajectoryBase<T>& x1, const ScalarType& x2)
+    static typename ValueType<T>::Type fwd(const TrajBase<T>& x1, const ScalarType& x2)
     {
       IntervalMatrix d(x1.size(),x2.da.cols());
 
@@ -39,7 +39,7 @@ namespace codac2
     }
 
     static void bwd(
-      [[maybe_unused]] const TrajectoryBase<T>& x1,
+      [[maybe_unused]] const TrajBase<T>& x1,
       [[maybe_unused]] const typename Wrapper<T>::Domain& y,
       [[maybe_unused]] Interval& x2)
     {
@@ -55,7 +55,7 @@ namespace codac2
 
       using O = typename ValueType<T>::Type;
 
-      AnalyticOperationExpr(const TrajectoryBase<T>& x1, const ScalarExpr& x2)
+      AnalyticOperationExpr(const TrajBase<T>& x1, const ScalarExpr& x2)
         : OperationExprBase<AnalyticExpr<ScalarType>>(x2), _x1(x1)
       { }
 
@@ -88,11 +88,11 @@ namespace codac2
 
     protected:
 
-      const TrajectoryBase<T>& _x1;
+      const TrajBase<T>& _x1;
   };
   
   template<typename T>
-  AnalyticFunction<typename ValueType<T>::Type> TrajectoryBase<T>::as_function() const
+  AnalyticFunction<typename ValueType<T>::Type> TrajBase<T>::as_function() const
   {
     using D = typename ValueType<T>::Type;
 

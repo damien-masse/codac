@@ -22,6 +22,7 @@ Welcome to the Codac website.
 
    installation/index.rst
    intervals/index.rst
+   ellipsoids/index.rst
    visualization/index.rst
    extensions/index.rst
    
@@ -43,7 +44,6 @@ Welcome to the Codac website.
 ..    pavers/index.rst
 ..    cn/index.rst
 ..    geometry/index.rst
-..    ellipsoids/index.rst
 ..    topology/index.rst
 ..    seealso/index.rst
 ..    references/index.rst
