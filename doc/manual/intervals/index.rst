@@ -5,7 +5,7 @@ Intervals
 
 .. toctree::
 
-   class.rst
+   Interval_class.rst
 
 ..    What is an interval? <http://codac.io>
    The Interval class <http://codac.io>

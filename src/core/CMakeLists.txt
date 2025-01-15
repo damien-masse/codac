@@ -161,10 +161,11 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_template_tools.h
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTrajectory.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTrajectory.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_Trajectory_operator.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_TrajectoryBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTraj.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj_operations.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_Traj_operator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_TrajBase.h
   )
 
 ################################################################################

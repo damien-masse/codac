@@ -215,6 +215,22 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
     .def("input_size", &AnalyticFunction<T>::input_size,
       INDEX_FUNCTIONBASE_E_INPUT_SIZE_CONST)
 
+    .def("__call__", [](const AnalyticFunction<T>& f, const ScalarExpr& x)
+      {
+        return AnalyticExprWrapper<T>(
+          std::dynamic_pointer_cast<AnalyticExpr<T>>(
+            f(x)->copy()));
+      },
+      SHARED_PTR_E_FUNCTIONBASE_E_OPERATORCALL_CONST_X_REF_VARIADIC_CONST)
+
+    .def("__call__", [](const AnalyticFunction<T>& f, const ScalarVar& x)
+      {
+        return AnalyticExprWrapper<T>(
+          std::dynamic_pointer_cast<AnalyticExpr<T>>(
+            f(x)->copy()));
+      },
+      SHARED_PTR_E_FUNCTIONBASE_E_OPERATORCALL_CONST_X_REF_VARIADIC_CONST)
+
     .def("__call__", [](const AnalyticFunction<T>& f, py::list& x)
       {
         std::vector<std::shared_ptr<ExprBase>> v(x.size());

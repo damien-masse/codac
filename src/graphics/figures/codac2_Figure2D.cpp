@@ -211,7 +211,7 @@ void Figure2D::draw_ellipse(const Vector& c, const Vector& ab, double theta, con
     output_fig->draw_ellipse(c,ab,theta,s);
 }
 
-void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const StyleProperties& s)
+void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s)
 {
   assert_release(this->size() <= x.size());
   std::vector<Vector> values(x.nb_samples());
@@ -221,12 +221,12 @@ void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const StylePr
   draw_polyline(values,s);
 }
 
-void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorType>& x, const StyleProperties& s)
+void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), s);
 }
 
-void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const ColorMap& cmap)
+void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap)
 {
   assert_release(this->size() <= x.size());
 
@@ -240,7 +240,7 @@ void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const ColorMa
   }
 }
 
-void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorType>& x, const ColorMap& cmap)
+void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), cmap);
 }

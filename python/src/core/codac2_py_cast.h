@@ -11,8 +11,6 @@
 #pragma once
 
 #include <pybind11/pybind11.h>
-#include <codac2_SampledTrajectory.h>
-#include <codac2_AnalyticTrajectory.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -33,25 +31,6 @@ namespace codac2
       if(!is_instance<T>(x))
       { assert_release("cast error"); }
       return x.cast<const T&>();
-    }
-
-  // Casting to trajectory types
-
-    template<typename Tr>
-      requires std::is_same_v<typename Tr::TrajType,VectorType>
-    bool is_instance(const py::object& x)
-    {
-      const py::object& x_traj = x.attr("traj");
-      return x_traj && py::isinstance<Tr>(x_traj);
-    }
-
-    template<typename Tr>
-      requires std::is_same_v<typename Tr::TrajType,VectorType>
-    const Tr& cast(const py::object& x)
-    {
-      assert(is_instance<Tr>(x));
-      const py::object& x_traj = x.attr("traj");
-      return x_traj.cast<const Tr&>();
     }
 
   // Casting to function/expression types
