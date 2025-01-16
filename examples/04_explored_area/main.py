@@ -20,7 +20,7 @@ sampled_f[6] = [0,-1] # appending the position (0,-1) at t=6
 w = VectorVar(3)
 g = sampled_f.as_function()
 h = AnalyticFunction(
-  [w], # w=(t,x,y)
+  [w], # w=(x,y,t)
   sqr(w[0]-g(w[2])[0])+sqr(w[1]-g(w[2])[1])
 )
 

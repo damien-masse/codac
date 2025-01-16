@@ -11,7 +11,6 @@
 
 #include "codac2_SampledTraj.h"
 #include "codac2_math.h"
-#include "codac2_template_tools.h"
 
 namespace codac2
 {
@@ -26,15 +25,15 @@ namespace codac2
   #define macro_binary_traj_traj(f) \
   { \
     assert_release(x1.nb_samples() == x2.nb_samples()); \
-    auto y = x1; \
+    auto y = x2; \
     auto it_y = y.begin(); \
-    auto it_x2 = x2.begin(); \
+    auto it_x1 = x1.begin(); \
     while(it_y != y.end()) \
     { \
-      assert_release(it_y->first == it_x2->first \
+      assert_release(it_y->first == it_x1->first \
         && "inconsistent dates between the two trajectories"); \
-      it_y->second = f((double)it_y->second,(double)it_x2->second); \
-      it_y++; it_x2++; \
+      it_y->second = f(it_x1->second,it_y->second); \
+      it_y++; it_x1++; \
     } \
     return y; \
   } \
@@ -42,26 +41,43 @@ namespace codac2
   #define macro_binary_real_traj(f) \
   { \
     auto y = x2; \
-    for(auto& [ti,xi] : y) \
-      xi = f((double)x1,(double)xi); \
+    for(auto it_y = y.begin() ; it_y != y.end() ; it_y++) \
+      it_y->second = f(x1,it_y->second); \
     return y; \
   } \
 
   #define macro_binary_traj_real(f) \
   { \
     auto y = x1; \
-    for(auto& [ti,xi] : y) \
-      xi = f((double)xi,(double)x2); \
+    for(auto it_y = y.begin() ; it_y != y.end() ; it_y++) \
+      it_y->second = f(it_y->second,x2); \
     return y; \
   } \
+
+  template<typename T>
+  inline T operator_add(const T& x1, const T& x2) { return x1 + x2; }
+  template<typename T>
+  inline T operator_sub(const T& x1, const T& x2) { return x1 - x2; }
+  template<typename T>
+  inline T operator_mul(const T& x1, const T& x2) { return x1 * x2; }
+  template<typename T>
+  inline T operator_mul_scal(double x1, const T& x2) { return x1 * x2; }
+  template<typename T>
+  inline T operator_mul_scal(const T& x1, double x2) { return x1 * x2; }
+  inline Matrix operator_mul_vec(const Matrix& x1, const Vector& x2) { return x1 * x2; }
+  template<typename T>
+  inline T operator_div(const T& x1, const T& x2) { return x1 / x2; }
+  template<typename T>
+  inline T operator_div_scal(const T& x1, double x2) { return x1 / x2; }
 
   /** \brief \f$x1(\cdot)\f$
     * \param x1
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator+(const SampledTraj<T>& x1);
+  inline const SampledTraj<T>& operator+(const SampledTraj<T>& x1) {
+    return x1;
+  }
 
   /** \brief \f$x_1(\cdot)+x_2(\cdot)\f$
     * \param x1
@@ -69,8 +85,8 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator+(const SampledTraj<T>& x1, const SampledTraj<T>& x2);
+  inline SampledTraj<T> operator+(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_binary_traj_traj(operator_add);
 
   /** \brief \f$x_1(\cdot)+x_2\f$
     * \param x1
@@ -78,8 +94,8 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator+(const SampledTraj<T>& x1, const T& x2);
+  inline SampledTraj<T> operator+(const SampledTraj<T>& x1, const T& x2)
+    macro_binary_traj_real(operator_add);
 
   /** \brief \f$x+x_2(\cdot)\f$
     * \param x1
@@ -87,16 +103,17 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator+(const T& x1, const SampledTraj<T>& x2);
+  inline SampledTraj<T> operator+(const T& x1, const SampledTraj<T>& x2)
+    macro_binary_real_traj(operator_add);
 
   /** \brief \f$-x_1(\cdot)\f$
     * \param x1
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator-(const SampledTraj<T>& x1);
+  inline SampledTraj<T> operator-(const SampledTraj<T>& x1) {
+    return -1.*x1;
+  }
 
   /** \brief \f$x_1(\cdot)-x_2(\cdot)\f$
     * \param x1
@@ -104,8 +121,8 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator-(const SampledTraj<T>& x1, const SampledTraj<T>& x2);
+  inline SampledTraj<T> operator-(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_binary_traj_traj(operator_sub);
 
   /** \brief \f$x_1(\cdot)-x_2\f$
     * \param x1
@@ -113,8 +130,8 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator-(const SampledTraj<T>& x1, const T& x2);
+  inline SampledTraj<T> operator-(const SampledTraj<T>& x1, const T& x2)
+    macro_binary_traj_real(operator_sub);
 
   /** \brief \f$x-x_2(\cdot)\f$
     * \param x1
@@ -122,15 +139,18 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator-(const T& x1, const SampledTraj<T>& x2);
+  inline SampledTraj<T> operator-(const T& x1, const SampledTraj<T>& x2)
+    macro_binary_real_traj(operator_sub);
 
-  /** \brief \f$x_1(\cdot)\cdot x_2(\cdot)\f$
+  /** \brief \f$x_1\cdot x_2(\cdot)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  SampledTraj<double> operator*(const SampledTraj<double>& x1, const SampledTraj<double>& x2);
+  template<typename T>
+    requires (!std::is_same_v<T,double>)
+  inline SampledTraj<T> operator*(double x1, const SampledTraj<T>& x2)
+    macro_binary_real_traj(operator_mul_scal);
 
   /** \brief \f$x_1(\cdot)\cdot x_2\f$
     * \param x1
@@ -138,8 +158,27 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator*(const SampledTraj<T>& x1, const T& x2);
+    requires (!std::is_same_v<T,double>)
+  inline SampledTraj<T> operator*(const SampledTraj<T>& x1, double x2)
+    macro_binary_traj_real(operator_mul_scal);
+
+  /** \brief \f$x_1(\cdot)\cdot x_2(\cdot)\f$
+    * \param x1
+    * \param x2
+    * \return trajectory output
+    */
+  template<typename T>
+  inline SampledTraj<T> operator*(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_binary_traj_traj(operator_mul);
+
+  /** \brief \f$x_1(\cdot)\cdot x_2\f$
+    * \param x1
+    * \param x2
+    * \return trajectory output
+    */
+  template<typename T>
+  inline SampledTraj<T> operator*(const SampledTraj<T>& x1, const T& x2)
+    macro_binary_traj_real(operator_mul);
 
   /** \brief \f$x\cdot x_2(\cdot)\f$
     * \param x1
@@ -147,9 +186,26 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator*(const T& x1, const SampledTraj<T>& x2);
+  inline SampledTraj<T> operator*(const T& x1, const SampledTraj<T>& x2)
+    macro_binary_real_traj(operator_mul);
 
+  /** \brief \f$x_1(\cdot)\cdot x_2\f$
+    * \param x1
+    * \param x2
+    * \return trajectory output
+    */
+  inline SampledTraj<Vector> operator*(const SampledTraj<Matrix>& x1, const SampledTraj<Vector>& x2)
+    macro_binary_traj_traj(operator_mul_vec);
+
+  /** \brief \f$x_2(\cdot)/x_1\f$
+    * \param x1
+    * \param x2
+    * \return trajectory output
+    */
+  template<typename T>
+    requires (!std::is_same_v<T,double>)
+  inline SampledTraj<T> operator/(const SampledTraj<T>& x1, double x2)
+    macro_binary_traj_real(operator_div_scal);
 
   /** \brief \f$x_1(\cdot)/x_2(\cdot)\f$
     * \param x1
@@ -157,8 +213,8 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator/(const SampledTraj<T>& x1, const SampledTraj<T>& x2);
+  inline SampledTraj<T> operator/(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_binary_traj_traj(operator_div);
 
   /** \brief \f$x_1(\cdot)/x_2\f$
     * \param x1
@@ -166,8 +222,8 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator/(const SampledTraj<T>& x1, const T& x2);
+  inline SampledTraj<T> operator/(const SampledTraj<T>& x1, const T& x2)
+    macro_binary_traj_real(operator_div);
 
   /** \brief \f$x/x_2(\cdot)\f$
     * \param x1
@@ -175,413 +231,200 @@ namespace codac2
     * \return trajectory output
     */
   template<typename T>
-    requires IsRealType<T>
-  SampledTraj<T> operator/(const T& x1, const SampledTraj<T>& x2);
+  inline SampledTraj<T> operator/(const T& x1, const SampledTraj<T>& x2)
+    macro_binary_real_traj(operator_div);
 
   /** \brief \f$x^2(\cdot)\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> sqr(const SampledTraj<T>& x1)
-  {
-    return pow(x1,2);
-  }
+  SampledTraj<double> sqr(const SampledTraj<double>& x1);
 
   /** \brief \f$\sqrt{x_1(\cdot)}\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> sqrt(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::sqrt)
-  /// \endcond
-  ;
+  SampledTraj<double> sqrt(const SampledTraj<double>& x1);
 
   /** \brief \f$x^x_2(\cdot)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> pow(const SampledTraj<T>& x1, int x2)
-  /// \cond
-    macro_binary_traj_real(codac2::pow)
-  /// \endcond
-  ;
+  SampledTraj<double> pow(const SampledTraj<double>& x1, int x2);
 
   /** \brief \f$x^x_2(\cdot)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> pow(const SampledTraj<T>& x1, double x2)
-  /// \cond
-    macro_binary_traj_real(codac2::pow)
-  /// \endcond
-  ;
+  SampledTraj<double> pow(const SampledTraj<double>& x1, double x2);
 
   /** \brief \f$x^x_2(\cdot)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> root(const SampledTraj<T>& x1, int x2)
-  /// \cond
-    macro_binary_traj_real(codac2::root)
-  /// \endcond
-  ;
+  SampledTraj<double> root(const SampledTraj<double>& x1, int x2);
 
   /** \brief \f$\exp(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> exp(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::exp)
-  /// \endcond
-  ;
+  SampledTraj<double> exp(const SampledTraj<double>& x1);
 
   /** \brief \f$\log(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> log(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::log)
-  /// \endcond
-  ;
+  SampledTraj<double> log(const SampledTraj<double>& x1);
 
   /** \brief \f$\cos(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> cos(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::cos)
-  /// \endcond
-  ;
+  SampledTraj<double> cos(const SampledTraj<double>& x1);
 
   /** \brief \f$\sin(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> sin(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::sin)
-  /// \endcond
-  ;
+  SampledTraj<double> sin(const SampledTraj<double>& x1);
 
   /** \brief \f$\tan(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> tan(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::tan)
-  /// \endcond
-  ;
+  SampledTraj<double> tan(const SampledTraj<double>& x1);
 
   /** \brief \f$\arccos(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> acos(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::acos)
-  /// \endcond
-  ;
+  SampledTraj<double> acos(const SampledTraj<double>& x1);
 
   /** \brief \f$\arcsin(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> asin(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::asin)
-  /// \endcond
-  ;
+  SampledTraj<double> asin(const SampledTraj<double>& x1);
 
   /** \brief \f$\arctan(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> atan(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::atan)
-  /// \endcond
-  ;
+  SampledTraj<double> atan(const SampledTraj<double>& x1);
 
   /** \brief \f$\mathrm{arctan2}(x_1(\cdot),x_2(\cdot))\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> atan2(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-  /// \cond
-    macro_binary_traj_traj(std::atan2)
-  /// \endcond
-  ;
+  SampledTraj<double> atan2(const SampledTraj<double>& x1, const SampledTraj<double>& x2);
 
   /** \brief \f$\mathrm{arctan2}(x_1(\cdot),x_2)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> atan2(const SampledTraj<T>& x1, const T& x2)
-  /// \cond
-    macro_binary_traj_real(std::atan2)
-  /// \endcond
-  ;
+  SampledTraj<double> atan2(const SampledTraj<double>& x1, double x2);
 
   /** \brief \f$\mathrm{arctan2}(x_1, x_2(\cdot))\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> atan2(const T& x1, const SampledTraj<T>& x2)
-  /// \cond
-    macro_binary_real_traj(std::atan2)
-  /// \endcond
-  ;
+  SampledTraj<double> atan2(double x1, const SampledTraj<double>& x2);
 
   /** \brief \f$\cosh(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> cosh(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::cosh)
-  /// \endcond
-  ;
+  SampledTraj<double> cosh(const SampledTraj<double>& x1);
 
   /** \brief \f$\sinh(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> sinh(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::sinh)
-  /// \endcond
-  ;
+  SampledTraj<double> sinh(const SampledTraj<double>& x1);
 
   /** \brief \f$\tanh(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> tanh(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::tanh)
-  /// \endcond
-  ;
+  SampledTraj<double> tanh(const SampledTraj<double>& x1);
 
   /** \brief \f$\mathrm{arccosh}(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> acosh(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::acosh)
-  /// \endcond
-  ;
+  SampledTraj<double> acosh(const SampledTraj<double>& x1);
 
   /** \brief \f$\mathrm{arcsinh}(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> asinh(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::asinh)
-  /// \endcond
-  ;
+  SampledTraj<double> asinh(const SampledTraj<double>& x1);
 
   /** \brief \f$\mathrm{arctanh}(x_1(\cdot))\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> atanh(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::atanh)
-  /// \endcond
-  ;
+  SampledTraj<double> atanh(const SampledTraj<double>& x1);
 
   /** \brief \f$\mid x_1(\cdot)\mid\f$
     * \param x1
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> abs(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::abs)
-  /// \endcond
-  ;
+  SampledTraj<double> abs(const SampledTraj<double>& x1);
 
   /** \brief \f$\min(x_1(\cdot),x_2(\cdot))\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> min(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-  /// \cond
-    macro_binary_traj_traj(std::min)
-  /// \endcond
-  ;
+  SampledTraj<double> min(const SampledTraj<double>& x1, const SampledTraj<double>& x2);
 
   /** \brief \f$\min(x_1(\cdot),x_2)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> min(const SampledTraj<T>& x1, const T& x2)
-  /// \cond
-    macro_binary_traj_real(min)
-  /// \endcond
-  ;
+  SampledTraj<double> min(const SampledTraj<double>& x1, double x2);
 
   /** \brief \f$\min(x_1, x_2(\cdot))\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> min(const T& x1, const SampledTraj<T>& x2)
-  /// \cond
-    macro_binary_real_traj(min)
-  /// \endcond
-  ;
+  SampledTraj<double> min(double x1, const SampledTraj<double>& x2);
 
   /** \brief \f$\max(x_1(\cdot),x_2(\cdot))\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> max(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-  /// \cond
-    macro_binary_traj_traj(std::max)
-  /// \endcond
-  ;
+  SampledTraj<double> max(const SampledTraj<double>& x1, const SampledTraj<double>& x2);
 
   /** \brief \f$\max(x_1(\cdot),x_2)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> max(const SampledTraj<T>& x1, const T& x2)
-  /// \cond
-    macro_binary_traj_real(max)
-  /// \endcond
-  ;
+  SampledTraj<double> max(const SampledTraj<double>& x1, double x2);
 
   /** \brief \f$\max(x_1, x_2(\cdot))\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> max(const T& x1, const SampledTraj<T>& x2)
-  /// \cond
-    macro_binary_real_traj(max)
-  /// \endcond
-  ;
+  SampledTraj<double> max(double x1, const SampledTraj<double>& x2);
 
-  /** \brief \f$\mid x_1(\cdot)\mid\f$
-    * \param x1
-    * \return trajectory output
-    */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> sign(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(codac2::sign)
-  /// \endcond
-  ;
+  SampledTraj<double> sign(const SampledTraj<double>& x1);
 
-  /** \brief \f$\mid x_1(\cdot)\mid\f$
-    * \param x1
-    * \return trajectory output
-    */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> integer(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(codac2::integer)
-  /// \endcond
-  ;
+  SampledTraj<double> integer(const SampledTraj<double>& x1);
 
-  /** \brief \f$\mid x_1(\cdot)\mid\f$
-    * \param x1
-    * \return trajectory output
-    */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> floor(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::floor)
-  /// \endcond
-  ;
+  SampledTraj<double> floor(const SampledTraj<double>& x1);
 
-  /** \brief \f$\mid x_1(\cdot)\mid\f$
-    * \param x1
-    * \return trajectory output
-    */
-  template<typename T>
-    requires IsRealType<T>
-  inline SampledTraj<T> ceil(const SampledTraj<T>& x1)
-  /// \cond
-    macro_unary_traj(std::ceil)
-  /// \endcond
-  ;
+  SampledTraj<double> ceil(const SampledTraj<double>& x1);
 }

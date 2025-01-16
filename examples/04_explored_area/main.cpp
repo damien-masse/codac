@@ -24,7 +24,7 @@ int main()
   VectorVar w(3);
   auto g = sampled_f.as_function();
   AnalyticFunction h {
-    {w}, // w=(t,x,y)
+    {w}, // w=(x,y,t)
     sqr(w[0]-g(w[2])[0])+sqr(w[1]-g(w[2])[1])
   };
 

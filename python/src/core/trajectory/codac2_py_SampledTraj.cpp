@@ -13,6 +13,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 #include <codac2_SampledTraj.h>
+#include <codac2_Traj_operator.h>
 #include <codac2_SampledTraj_operations.h>
 #include "codac2_py_SampledTraj_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_TrajBase_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
@@ -25,7 +26,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 template<typename T>
-void _export_SampledTraj(py::module& m, const string& class_name)
+py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& class_name)
 {
   py::class_<SampledTraj<T>> exported_class(m, class_name.c_str(), SAMPLEDTRAJ_MAIN);
   export_TrajBase<SampledTraj<T>>(exported_class);
@@ -122,104 +123,239 @@ void _export_SampledTraj(py::module& m, const string& class_name)
         },
       OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_SAMPLEDTRAJ_T_REF)
   ;
+
+  return exported_class;
+}
+
+template<typename T>
+void add_operators(py::class_<SampledTraj<T>>& pyclass)
+{
+  pyclass
+
+    .def("__add__", [](const SampledTraj<T>& x1) { return x1; },
+      CONST_SAMPLEDTRAJ_T_REF_OPERATORPLUS_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def("__add__", [](const SampledTraj<T>& x1, const SampledTraj<T>& x2) { return x1+x2; },
+      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_SAMPLEDTRAJ_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def("__add__", [](const SampledTraj<T>& x1, const T& x2) { return x1+x2; },
+      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_SAMPLEDTRAJ_T_REF_CONST_T_REF,
+      py::is_operator())
+
+    .def("__add__", [](const T& x1, const SampledTraj<T>& x2) { return x1+x2; },
+      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def("__sub__", [](const SampledTraj<T>& x1) { return -x1; },
+      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def("__sub__", [](const SampledTraj<T>& x1, const SampledTraj<T>& x2) { return x1-x2; },
+      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_SAMPLEDTRAJ_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def("__sub__", [](const SampledTraj<T>& x1, const T& x2) { return x1-x2; },
+      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_SAMPLEDTRAJ_T_REF_CONST_T_REF,
+      py::is_operator())
+
+    .def("__sub__", [](const T& x1, const SampledTraj<T>& x2) { return x1-x2; },
+      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def("__mul__", [](const SampledTraj<T>& x1, const SampledTraj<T>& x2) { return x1*x2; },
+      SAMPLEDTRAJ_T_OPERATORMUL_CONST_SAMPLEDTRAJ_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def("__mul__", [](double x1, const SampledTraj<T>& x2) { return x1*x2; },
+      SAMPLEDTRAJ_T_OPERATORMUL_DOUBLE_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def("__mul__", [](const SampledTraj<T>& x1, double x2) { return x1*x2; },
+      SAMPLEDTRAJ_T_OPERATORMUL_CONST_SAMPLEDTRAJ_T_REF_DOUBLE,
+      py::is_operator())
+
+    .def("__mul__", [](const T& x1, const SampledTraj<T>& x2) { return x1*x2; },
+      SAMPLEDTRAJ_T_OPERATORMUL_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def("__truediv__", [](const SampledTraj<T>& x1, double x2) { return x1/x2; },
+      SAMPLEDTRAJ_T_OPERATORDIV_CONST_SAMPLEDTRAJ_T_REF_DOUBLE,
+      py::is_operator())
+  ;
 }
 
 void export_SampledTraj(py::module& m)
 {
-  _export_SampledTraj<double>(m, "SampledTraj");
-  _export_SampledTraj<Vector>(m, "SampledVectorTraj");
+  auto py_SampledTraj_double = _export_SampledTraj<double>(m, "SampledScalarTraj");
+  auto py_SampledTraj_Vector = _export_SampledTraj<Vector>(m, "SampledVectorTraj");
+  auto py_SampledTraj_Matrix = _export_SampledTraj<Matrix>(m, "SampledMatrixTraj");
+
+  add_operators<double>(py_SampledTraj_double);
+
+  py_SampledTraj_double
+
+    .def(py::self * py::self,
+      SAMPLEDTRAJ_T_OPERATORMUL_CONST_SAMPLEDTRAJ_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def(py::self / py::self,
+      SAMPLEDTRAJ_T_OPERATORDIV_CONST_SAMPLEDTRAJ_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+    .def(double() / py::self,
+      SAMPLEDTRAJ_T_OPERATORDIV_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+  ;
+
+  add_operators<Matrix>(py_SampledTraj_Matrix);
+  add_operators<Vector>(py_SampledTraj_Vector);
+  py_SampledTraj_Matrix
+
+    .def("__mul__", [](const SampledTraj<Matrix>& x1, const SampledTraj<Vector>& x2) { return x1*x2; },
+      SAMPLEDTRAJ_VECTOR_OPERATORMUL_CONST_SAMPLEDTRAJ_MATRIX_REF_CONST_SAMPLEDTRAJ_VECTOR_REF,
+      py::is_operator())
+
+    .def("__mul__", [](const SampledTraj<Matrix>& x1, const SampledTraj<Matrix>& x2) { return x1*x2; },
+      SAMPLEDTRAJ_T_OPERATORMUL_CONST_SAMPLEDTRAJ_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      py::is_operator())
+
+  ;
 
   m
 
     .def("sqr", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::sqr,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_SQR_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_SQR_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
     .def("sqrt", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::sqrt,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_SQRT_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_SQRT_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
     .def("pow", (SampledTraj<double> (*)(const SampledTraj<double>&,int)) &codac2::pow,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_POW_CONST_SAMPLEDTRAJ_T_REF_INT,
-      "x1"_a, "x2"_a)
+      SAMPLEDTRAJ_DOUBLE_POW_CONST_SAMPLEDTRAJ_DOUBLE_REF_INT,
+      "x1"_a, "x2"_a, py::is_operator())
 
     .def("pow", (SampledTraj<double> (*)(const SampledTraj<double>&,double)) &codac2::pow,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_POW_CONST_SAMPLEDTRAJ_T_REF_DOUBLE,
-      "x1"_a, "x2"_a)
+      SAMPLEDTRAJ_DOUBLE_POW_CONST_SAMPLEDTRAJ_DOUBLE_REF_DOUBLE,
+      "x1"_a, "x2"_a, py::is_operator())
 
     .def("root", (SampledTraj<double> (*)(const SampledTraj<double>&,int)) &codac2::root,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_ROOT_CONST_SAMPLEDTRAJ_T_REF_INT,
-      "x1"_a, "x2"_a)
+      SAMPLEDTRAJ_DOUBLE_ROOT_CONST_SAMPLEDTRAJ_DOUBLE_REF_INT,
+      "x1"_a, "x2"_a, py::is_operator())
 
     .def("exp", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::exp,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_EXP_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_EXP_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
     .def("log", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::log,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_LOG_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_LOG_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
     .def("cos", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::cos,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_COS_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_COS_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
     .def("sin", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::sin,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_SIN_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_SIN_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
     .def("tan", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::tan,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_TAN_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_TAN_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
     .def("acos", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::acos,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_ACOS_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_ACOS_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
     .def("asin", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::asin,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_ASIN_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_ASIN_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
     .def("atan", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::atan,
-      py::is_operator(),
-      SAMPLEDTRAJ_T_ATAN_CONST_SAMPLEDTRAJ_T_REF,
-      "x1"_a)
+      SAMPLEDTRAJ_DOUBLE_ATAN_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
 
-#if 0
-  20
-  inline SampledTraj<T> atan2(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-  inline SampledTraj<T> atan2(const SampledTraj<T>& x1, const T& x2)
-  inline SampledTraj<T> atan2(const T& x1, const SampledTraj<T>& x2)
-  inline SampledTraj<T> cosh(const SampledTraj<T>& x1)
-  inline SampledTraj<T> sinh(const SampledTraj<T>& x1)
-  inline SampledTraj<T> tanh(const SampledTraj<T>& x1)
-  inline SampledTraj<T> acosh(const SampledTraj<T>& x1)
-  inline SampledTraj<T> asinh(const SampledTraj<T>& x1)
-  inline SampledTraj<T> atanh(const SampledTraj<T>& x1)
-  inline SampledTraj<T> abs(const SampledTraj<T>& x1)
-  inline SampledTraj<T> min(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-  inline SampledTraj<T> min(const SampledTraj<T>& x1, const T& x2)
-  inline SampledTraj<T> min(const T& x1, const SampledTraj<T>& x2)
-  inline SampledTraj<T> max(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-  inline SampledTraj<T> max(const SampledTraj<T>& x1, const T& x2)
-  inline SampledTraj<T> max(const T& x1, const SampledTraj<T>& x2)
-  inline SampledTraj<T> sign(const SampledTraj<T>& x1)
-  inline SampledTraj<T> integer(const SampledTraj<T>& x1)
-  inline SampledTraj<T> floor(const SampledTraj<T>& x1)
-  inline SampledTraj<T> ceil(const SampledTraj<T>& x1)
+    .def("atan2", (SampledTraj<double> (*)(const SampledTraj<double>&,const SampledTraj<double>&)) &codac2::atan2,
+      SAMPLEDTRAJ_DOUBLE_ATAN2_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, "x2"_a, py::is_operator())
 
-  #endif
+    .def("atan2", (SampledTraj<double> (*)(const SampledTraj<double>&,double)) &codac2::atan2,
+      SAMPLEDTRAJ_DOUBLE_ATAN2_CONST_SAMPLEDTRAJ_DOUBLE_REF_DOUBLE,
+      "x1"_a, "x2"_a, py::is_operator())
+
+    .def("atan2", (SampledTraj<double> (*)(double,const SampledTraj<double>&)) &codac2::atan2,
+      SAMPLEDTRAJ_DOUBLE_ATAN2_DOUBLE_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, "x2"_a, py::is_operator())
+
+    .def("cosh", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::cosh,
+      SAMPLEDTRAJ_DOUBLE_COSH_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("sinh", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::sinh,
+      SAMPLEDTRAJ_DOUBLE_SINH_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("tanh", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::tanh,
+      SAMPLEDTRAJ_DOUBLE_TANH_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("acosh", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::acosh,
+      SAMPLEDTRAJ_DOUBLE_ACOSH_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("asinh", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::asinh,
+      SAMPLEDTRAJ_DOUBLE_ASINH_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("atanh", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::atanh,
+      SAMPLEDTRAJ_DOUBLE_ATANH_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("abs", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::abs,
+      SAMPLEDTRAJ_DOUBLE_ABS_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("min", (SampledTraj<double> (*)(const SampledTraj<double>&,const SampledTraj<double>&)) &codac2::min,
+      SAMPLEDTRAJ_DOUBLE_MIN_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, "x2"_a, py::is_operator())
+
+    .def("min", (SampledTraj<double> (*)(const SampledTraj<double>&,double)) &codac2::min,
+      SAMPLEDTRAJ_DOUBLE_MIN_CONST_SAMPLEDTRAJ_DOUBLE_REF_DOUBLE,
+      "x1"_a, "x2"_a, py::is_operator())
+
+    .def("min", (SampledTraj<double> (*)(double,const SampledTraj<double>&)) &codac2::min,
+      SAMPLEDTRAJ_DOUBLE_MIN_DOUBLE_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, "x2"_a, py::is_operator())
+
+    .def("max", (SampledTraj<double> (*)(const SampledTraj<double>&,const SampledTraj<double>&)) &codac2::max,
+      SAMPLEDTRAJ_DOUBLE_MAX_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, "x2"_a, py::is_operator())
+
+    .def("max", (SampledTraj<double> (*)(const SampledTraj<double>&,double)) &codac2::max,
+      SAMPLEDTRAJ_DOUBLE_MAX_CONST_SAMPLEDTRAJ_DOUBLE_REF_DOUBLE,
+      "x1"_a, "x2"_a, py::is_operator())
+
+    .def("max", (SampledTraj<double> (*)(double,const SampledTraj<double>&)) &codac2::max,
+      SAMPLEDTRAJ_DOUBLE_MAX_DOUBLE_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, "x2"_a, py::is_operator())
+
+    .def("sign", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::sign,
+      SAMPLEDTRAJ_DOUBLE_SIGN_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("integer", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::integer,
+      SAMPLEDTRAJ_DOUBLE_INTEGER_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("floor", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::floor,
+      SAMPLEDTRAJ_DOUBLE_FLOOR_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
+    .def("ceil", (SampledTraj<double> (*)(const SampledTraj<double>&)) &codac2::ceil,
+      SAMPLEDTRAJ_DOUBLE_CEIL_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+      "x1"_a, py::is_operator())
+
   ;
-
 }
