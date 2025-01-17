@@ -146,7 +146,7 @@ namespace codac2
    * \param f non-linear analytical function
    * \return a (rigorous?) outer enclosure of the non-linear mapping
    */
-  Ellipsoid nonlinear_mapping(const Ellipsoid& e, const AnalyticFunction<VectorOpValue>& f);
+  Ellipsoid nonlinear_mapping(const Ellipsoid& e, const AnalyticFunction<VectorType>& f);
 
   /**
    * \brief (Rigorous?) non-linear evaluation f(e), with parameters
@@ -157,7 +157,7 @@ namespace codac2
    * \param q (?)
    * \return a (rigorous?) outer enclosure of the non-linear mapping
    */
-  Ellipsoid nonlinear_mapping(const Ellipsoid& e, const AnalyticFunction<VectorOpValue>& f,
+  Ellipsoid nonlinear_mapping(const Ellipsoid& e, const AnalyticFunction<VectorType>& f,
                               const Vector& trig, const Vector& q);
 
   /**

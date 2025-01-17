@@ -73,10 +73,14 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_VarBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_constants.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_operations.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_values.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExpr.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExprWrapper.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticFunction.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticType.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ScalarExprList.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ValueType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_operations.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_operators.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_variables.h
@@ -161,9 +165,12 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_template_tools.h
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTrajectory.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTrajectory.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_TrajectoryBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTraj.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj_operations.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj_operations.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_Traj_operator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_TrajBase.h
   )
 
 ################################################################################

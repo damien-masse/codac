@@ -33,7 +33,7 @@ namespace codac2
         return Matrix(x.reshaped(Q.rows(),Q.cols()));
     }
 
-    BoolInterval stability_analysis(const AnalyticFunction<VectorOpValue> &f, unsigned int alpha_max, Ellipsoid &e, Ellipsoid &e_out, bool verbose)
+    BoolInterval stability_analysis(const AnalyticFunction<VectorType> &f, unsigned int alpha_max, Ellipsoid &e, Ellipsoid &e_out, bool verbose)
     {
         assert_release(f.args().size() == 1 && "f must have only one arg");
 

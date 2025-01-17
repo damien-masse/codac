@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_TrajectoryBase.h
+ *  \file codac2_TrajBase.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -11,20 +11,22 @@
 
 #include "codac2_Interval.h"
 #include "codac2_Wrapper.h"
+#include "codac2_AnalyticFunction.h"
+#include "codac2_ValueType.h"
 
 namespace codac2
 {
   template<typename T>
-  class SampledTrajectory;
+  class SampledTraj;
 
   template<typename T>
-  class TrajectoryBase
+  class TrajBase
   {
     public:
 
-      using ScalarType = T;
+      using TrajType = ValueType<T>::Type;
 
-      TrajectoryBase()
+      TrajBase()
       { }
 
       virtual Index size() const = 0;
@@ -37,7 +39,7 @@ namespace codac2
 
       auto nan_value() const
       {
-        if constexpr(std::is_same_v<typename Wrapper<T>::Domain,Interval>) // if type is int,double,etc.
+        if constexpr(std::is_same_v<TrajType,ScalarType>)
           return std::numeric_limits<double>::quiet_NaN();
 
         else
@@ -45,25 +47,25 @@ namespace codac2
             .init(std::numeric_limits<double>::quiet_NaN());
       }
 
-      virtual SampledTrajectory<T> sampled(double dt) const
+      virtual SampledTraj<T> sampled(double dt) const
       {
         assert_release(dt > 0.);
         assert_release(!is_empty());
 
         auto tdom = tdomain();
-        SampledTrajectory<T> straj;
+        SampledTraj<T> straj;
         for(double t = tdom.lb() ; t < tdom.ub() ; t+=dt)
           straj[t] = (*this)(t);
         straj[tdom.ub()] = (*this)(tdom.ub());
         return straj;
       }
 
-      SampledTrajectory<T> primitive(const T& y0, double dt) const
+      SampledTraj<T> primitive(const T& y0, double dt) const
       {
         assert_release(dt > 0.);
         assert_release(!is_empty());
 
-        SampledTrajectory<T> p;
+        SampledTraj<T> p;
         double t = tdomain().lb(), last_t = t;
         p[t] = y0; t += dt;
         T y = y0;
@@ -82,5 +84,8 @@ namespace codac2
 
         return p;
       }
+
+      // Implementation in codac2_Trajectory_operator.h
+      AnalyticFunction<TrajType> as_function() const;
   };
 }

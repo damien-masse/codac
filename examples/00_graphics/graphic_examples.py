@@ -44,6 +44,8 @@ fig2.draw_polyline([[2,-0.5],[4,0.5],[3,1.5],[4,2.5],[3,3]], Color.red())
 fig2.draw_polygone([[2,4.5],[4,4.5],[4.2,3.5],[3.5,3]], [Color.none(),Color.green(0.5)])
 fig2.draw_polyline([[-0.8,0],[0,1.5]], 0.2, [Color.red(),Color.black(0.3)])
 fig2.draw_ellipse([1,1],[0.5,2], 0.2, [Color.blue(),Color.blue(0.3)])
+fig2.draw_line([1,1],[3,3], Color.blue())
+fig2.draw_arrow([3,1],[2.2,2], 0.2, [Color.red(),Color.black(0.3)])
 
 # Colors
 # predefined colors without and with opacity
@@ -72,3 +74,15 @@ for i in range (20):
     fig3.draw_box([[i,i+1],[-3,-2]],[Color.black(),cmap_blue_tube.color(ratio)])
     fig3.draw_box([[i,i+1],[-4,-3]],[Color.black(),cmap_red_tube.color(ratio)])
     fig3.draw_box([[i,i+1],[-5,-4]],[Color.black(),cmap_rainbow.color(ratio)])
+
+fig3 = Figure2D("My figure 3", GraphicOutput.VIBES)
+
+fig3.set_window_properties([500,50],[500,500]) 
+fig3.set_axes(axis(0,[-10,10]), axis(1,[-10,10])) 
+
+a = 0.8
+t=ScalarVar()
+# Fermat's spiral
+f1=AnalyticFunction([t], [a*sqrt(t)*cos(t),a*sqrt(t)*sin(t)])
+traj3=AnalyticTrajectory(f1, [0,100])
+fig3.draw_trajectory(traj3, ColorMap.rainbow())

@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_SampledTrajectory.h
+ *  \file codac2_SampledTraj.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -10,27 +10,40 @@
 #pragma once
 
 #include <map>
-#include "codac2_TrajectoryBase.h"
+#include "codac2_TrajBase.h"
+#include "codac2_analytic_variables.h"
 
 namespace codac2
 {
   template<typename T>
-  class SampledTrajectory : public TrajectoryBase<T>, public std::map<double,T>
+  class SampledTraj : public TrajBase<T>, public std::map<double,T>
   {
     public:
 
-      SampledTrajectory()
-        : TrajectoryBase<T>(), std::map<double,T>()
+      SampledTraj()
+        : TrajBase<T>(), std::map<double,T>()
       { }
 
-      SampledTrajectory(const std::map<double,T>& m)
-        : TrajectoryBase<T>(), std::map<double,T>(m)
+      SampledTraj(const std::list<double>& l_t, const std::list<T>& l_x)
+        : SampledTraj()
+      {
+        assert_release(l_t.size() == l_x.size());
+        auto it_t = l_t.begin(); auto it_x = l_x.begin();
+        while(it_t != l_t.end())
+        {
+          (*this)[*(it_t)] = *(it_x);
+          it_t++; it_x++;
+        }
+      }
+
+      SampledTraj(const std::map<double,T>& m)
+        : TrajBase<T>(), std::map<double,T>(m)
       { }
 
       // size is not the std::map<double,T>::size() !
       virtual Index size() const
       {
-        if constexpr(std::is_same_v<typename Wrapper<T>::Domain,Interval>) // if type is scalar: int,double,etc.
+        if constexpr(std::is_same_v<typename ValueType<T>::Type,ScalarType>)
           return 1;
 
         else
@@ -57,7 +70,7 @@ namespace codac2
         if(this->empty())
           return Interval::empty();
         else
-          return { this->begin()->first, std::prev(this->end())->first };
+          return { this->begin()->first, this->rbegin()->first };
       }
 
       virtual void truncate_tdomain(const Interval& new_tdomain)
@@ -115,24 +128,27 @@ namespace codac2
         if(!this->tdomain().is_superset(t))
           return hull.init(Interval(-oo,oo));
 
-        hull.set_empty();
-        for(auto it = this->lower_bound(t.lb()) ; it != this->upper_bound(t.ub()) ; it++)
-          hull |= it->second;
-        hull |= (*this)(t.ub());
-        return hull;
+        else
+        {
+          hull = (*this)(t.lb());
+          for(auto it = this->lower_bound(t.lb()) ; it != this->upper_bound(t.ub()) ; it++)
+            hull |= it->second;
+          hull |= (*this)(t.ub());
+          return hull;
+        }
       }
 
-      virtual SampledTrajectory<T> sampled(double dt) const
+      virtual SampledTraj<T> sampled(double dt) const
       {
         return sampled(dt, true);
       }
 
-      SampledTrajectory<T> sampled(double dt, bool keep_original_values) const
+      SampledTraj<T> sampled(double dt, bool keep_original_values) const
       {
         assert(dt > 0.);
         assert(!is_empty());
 
-        auto straj = TrajectoryBase<T>::sampled(dt);
+        auto straj = TrajBase<T>::sampled(dt);
 
         if(keep_original_values)
         {
@@ -144,4 +160,11 @@ namespace codac2
         return straj;
       }
   };
+  
+  template<typename T>
+  inline std::ostream& operator<<(std::ostream& os, const SampledTraj<T>& x)
+  {
+    os << "SampledTraj. " << x.tdomain() << "↦" << x.codomain() << ", " << x.nb_samples() << " pts";
+    return os;
+  }
 }

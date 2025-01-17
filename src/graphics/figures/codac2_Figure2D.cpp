@@ -2,7 +2,11 @@
  *  codac2_Figure2D.cpp
  * ----------------------------------------------------------------------------
  *  \date       2024
+<<<<<<< HEAD
  *  \author     Simon Rohou, Morgan Louédec
+=======
+ *  \author     Simon Rohou, Maël Godard
+>>>>>>> codac2_dev
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -150,6 +154,20 @@ void Figure2D::draw_ring(const Vector& c, const Interval& r, const StyleProperti
       output_fig->draw_ring(c,r,s);
 }
 
+void Figure2D::draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s)
+{
+  assert_release(p1.size() == p2.size());
+  assert_release(this->size() <= p1.size());
+  draw_polyline({p1,p2}, s);
+}
+
+void Figure2D::draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s)
+{
+  assert_release(p1.size() == p2.size());
+  assert_release(this->size() <= p1.size());
+  draw_polyline({p1,p2}, tip_length, s);
+}
+
 void Figure2D::draw_polyline(const vector<Vector>& x, const StyleProperties& s)
 {
   draw_polyline(x, 1e-3*scaled_unit(), s);
@@ -190,7 +208,7 @@ void Figure2D::draw_pie(const Vector& c, const Interval& r, const Interval& thet
 
   Interval theta_(theta);
   if(theta.is_unbounded())
-    theta_ = Interval(0,2.*codac2::pi);
+    theta_ = Interval(0,2.*PI);
 
   Interval r_(r);
   if(r.is_unbounded())
@@ -209,36 +227,39 @@ void Figure2D::draw_ellipse(const Vector& c, const Vector& ab, double theta, con
     output_fig->draw_ellipse(c,ab,theta,s);
 }
 
-void Figure2D::draw_ellipsoid(const Ellipsoid &e, const StyleProperties &s) {
+void Figure2D::draw_ellipsoid(const Ellipsoid &e, const StyleProperties &s)
+{
   // Author: Morgan Louédec
-    assert_release(this->size() <= e.size());
+  assert_release(this->size() <= e.size());
 
-      Index n = e.size();
-      Ellipsoid proj_e(2);
+  Index n = e.size();
+  Ellipsoid proj_e(2);
 
-        // 2d projection of the ellipsoid
-        if (n > 2) {
-            Vector v = Vector::zero(n);
-            v[i()] = 1;
-            Vector u = Vector::zero(n);
-            u[j()] = 1;
-            proj_e = e.proj_2d(Vector::zero(n), v, u);
-        } else {
-            proj_e = e;
-        }
+  // 2d projection of the ellipsoid
+  if(n > 2)
+  {
+    Vector v = Vector::zero(n);
+    v[i()] = 1;
+    Vector u = Vector::zero(n);
+    u[j()] = 1;
+    proj_e = e.proj_2d(Vector::zero(n), v, u);
+  }
 
-        // draw the 2d ellipsoid
-        Eigen::JacobiSVD<Matrix> jsvd(proj_e.G, Eigen::ComputeThinU);
-        Matrix U(jsvd.matrixU());
-        Vector ab(jsvd.singularValues());
+  else
+    proj_e = e;
 
-        double theta = std::atan2(U(1, 0), U(0, 0));
+  // draw the 2d ellipsoid
+  Eigen::JacobiSVD<Matrix> jsvd(proj_e.G, Eigen::ComputeThinU);
+  Matrix U(jsvd.matrixU());
+  Vector ab(jsvd.singularValues());
 
-    for(const auto& output_fig : _output_figures)
-        output_fig->draw_ellipse(proj_e.mu, ab, theta, s);
+  double theta = std::atan2(U(1, 0), U(0, 0));
+
+  for(const auto& output_fig : _output_figures)
+    output_fig->draw_ellipse(proj_e.mu, ab, theta, s);
 }
 
-void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const StyleProperties& s)
+void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s)
 {
   assert_release(this->size() <= x.size());
   std::vector<Vector> values(x.nb_samples());
@@ -248,9 +269,28 @@ void Figure2D::draw_trajectory(const SampledTrajectory<Vector>& x, const StylePr
   draw_polyline(values,s);
 }
 
-void Figure2D::draw_trajectory(const AnalyticTrajectory<VectorOpValue>& x, const StyleProperties& s)
+void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), s);
+}
+
+void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap)
+{
+  assert_release(this->size() <= x.size());
+
+  double range = x.tdomain().diam();
+
+  for(auto it = x.begin(); std::next(it) != x.end(); ++it)
+  {
+    draw_polyline(
+      { it->second, std::next(it)->second },
+      cmap.color((it->first - x.begin()->first) / range));
+  }
+}
+
+void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap)
+{
+  draw_trajectory(x.sampled(x.tdomain().diam()/1e4), cmap);
 }
 
 void Figure2D::draw_tank(const Vector& x, float size, const StyleProperties& s)

@@ -8,7 +8,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
-#include <codac2_AnalyticTrajectory.h>
+#include <codac2_AnalyticTraj.h>
 #include <codac2_Approx.h>
 
 using namespace std;
@@ -19,7 +19,7 @@ double prim_value(double x)
   return 1.+(1./3.)*std::pow(x,3);
 }
 
-TEST_CASE("AnalyticTrajectory")
+TEST_CASE("AnalyticTraj")
 {
   ScalarVar t;
   AnalyticFunction f {
@@ -27,7 +27,7 @@ TEST_CASE("AnalyticTrajectory")
     sqr(t)
   };
 
-  AnalyticTrajectory traj(f, {-1,10});
+  AnalyticTraj traj(f, {-1,10});
 
   CHECK(traj.tdomain() == Interval(-1,10));
   CHECK(traj.codomain() == Interval(0,100));
@@ -50,7 +50,7 @@ TEST_CASE("AnalyticTrajectory")
   CHECK(Approx(sampled_traj(9.),1e-2) == 81.);
 
   // Testing primitive computation from analytic trajectory
-  double x0 = f.eval(-1).mid(); // == 1.
+  double x0 = f.real_eval(-1); // == 1.
   auto sampled_prim_traj = traj.primitive(x0,0.01);
   CHECK(sampled_prim_traj.tdomain() == Interval(-1,10));
   CHECK(Approx(sampled_prim_traj.codomain(),4e-1) == Interval(prim_value(0),prim_value(10.)));

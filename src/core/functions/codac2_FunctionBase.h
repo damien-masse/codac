@@ -83,13 +83,22 @@ namespace codac2
         return std::dynamic_pointer_cast<X>(x->copy());
       }
 
+      template<typename X>
+      std::shared_ptr<ExprBase> __get_copy(const AnalyticExprWrapper<X>& x) const
+      {
+        return x->copy();
+      }
+
       template<typename A>
       auto __get_copy(const A& x) const
       {
         if constexpr(std::is_base_of_v<VarBase,A>)
           return std::dynamic_pointer_cast<A>(x.copy());
         else
+        {
+          // todo: make this generic (analytic / set):
           return const_value(x);
+        }
       }
 
       const std::shared_ptr<E> _y;
