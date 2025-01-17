@@ -17,7 +17,8 @@ version = u'${PROJECT_VERSION}'
 extensions = [
     'sphinx_rtd_theme',
     'sphinx_math_dollar',
-    'sphinx.ext.mathjax'
+    'sphinx.ext.mathjax',
+    'sphinx_tabs.tabs',
 ]
 
 templates_path = ['_templates']

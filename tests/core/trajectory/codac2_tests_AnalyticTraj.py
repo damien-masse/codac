@@ -15,9 +15,9 @@ import math
 def prim_value(x):
   return 1.+(1./3.)*math.pow(x,3)
 
-class TestAnalyticTrajectory(unittest.TestCase):
+class TestAnalyticTraj(unittest.TestCase):
 
-  def tests_AnalyticTrajectory(self):
+  def tests_AnalyticTraj(self):
 
     t = ScalarVar()
     f = AnalyticFunction(
@@ -25,7 +25,7 @@ class TestAnalyticTrajectory(unittest.TestCase):
       sqr(t)
     )
 
-    traj = AnalyticTrajectory(f, [-1,10])
+    traj = AnalyticTraj(f, [-1,10])
 
     self.assertTrue(traj.tdomain() == Interval(-1,10))
     self.assertTrue(traj.codomain() == Interval(0,100))

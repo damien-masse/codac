@@ -47,12 +47,38 @@
 
   if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
-    message(STATUS "Configuring ${PROJECT_NAME} in DEBUG mode as none was specified.")
     if(MSVC)
       add_compile_options(/MD) # Temporary fix to avoid debug vs release inconsistencies...
     else()
       add_compile_options(-O3)
     endif()
+  endif()
+  
+  if(FAST_RELEASE)
+    add_compile_definitions(FAST_RELEASE)
+  endif()
+  
+  if(NOT WIN32)
+    string(ASCII 27 Esc)
+    set(COLOR_RED "${Esc}[31m")
+    set(COLOR_BLUE "${Esc}[36m")
+    set(COLOR_RESET "${Esc}[m")
+  else()
+    set(COLOR_RED "")
+    set(COLOR_BLUE "")
+    set(COLOR_RESET "")
+  endif()
+
+  message(STATUS "${COLOR_BLUE}Configuring ${PROJECT_NAME} in ${CMAKE_BUILD_TYPE} mode.${COLOR_RESET}")
+
+  if(FAST_RELEASE)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+      message(STATUS "${COLOR_RED}Option FAST_RELEASE cannot be used in Debug mode.${COLOR_RESET}")
+    else()
+      message(STATUS "${COLOR_BLUE}Option FAST_RELEASE enabled.${COLOR_RESET}")
+    endif()
+  else()
+    message(STATUS "Note: in Release build mode, the option FAST_RELEASE=ON would allow faster computations if enabled.")
   endif()
 
   if(MSVC)
@@ -109,11 +135,6 @@
 ################################################################################
 # Compile sources
 ################################################################################
-  
-  if(FAST_RELEASE)
-    add_compile_definitions(FAST_RELEASE)
-    message(STATUS "You are running Codac in fast release mode. (option -DCMAKE_BUILD_TYPE=Release is required)")
-  endif()
   
   add_subdirectory(src) # C++ sources
   add_subdirectory(doc) # documentation (Doxygen + Sphinx manual)
