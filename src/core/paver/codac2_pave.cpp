@@ -14,17 +14,20 @@ using namespace codac2;
 
 namespace codac2
 {
-  PavingOut pave(const IntervalVector& x, std::shared_ptr<const CtcBase<IntervalVector>> c, double eps)
+  PavingOut pave(const IntervalVector& x, std::shared_ptr<const CtcBase<IntervalVector>> c, double eps, bool verbose)
   {
-    return pave(x, *c, eps);
+    return pave(x, *c, eps, verbose);
   }
 
-  PavingOut pave(const IntervalVector& x, const CtcBase<IntervalVector>& c, double eps)
+  PavingOut pave(const IntervalVector& x, const CtcBase<IntervalVector>& c, double eps, bool verbose)
   {
     assert_release(eps > 0.);
     assert_release(!x.is_empty());
     assert_release(c.size() >= 2 && "cannot reveal 1d contractors");
     
+    clock_t t_start = clock();
+    Index n_boundary = 0;
+
     PavingOut p(x);
     // In order to be able to reconstruct the initial box, the first level represents the
     // initial domain x (the left node is x, the right one is an empty box).
@@ -42,28 +45,40 @@ namespace codac2
 
       c.contract(get<0>(n->boxes()));
 
-      if(!get<0>(n->boxes()).is_empty() && get<0>(n->boxes()).max_diam() > eps)
+      if(!get<0>(n->boxes()).is_empty())
       {
-        n->bisect();
-        l.push_back(n->left());
-        l.push_back(n->right());
+        if(get<0>(n->boxes()).max_diam() > eps)
+        {
+          n->bisect();
+          l.push_back(n->left());
+          l.push_back(n->right());
+        }
+        
+        else if(verbose)
+          n_boundary++;
       }
-    }
+    }    
 
+    if(verbose)
+      printf("Computation time: %.4fs, %ld boxes\n",
+        (double)(clock()-t_start)/CLOCKS_PER_SEC, n_boundary);
     return p;
   }
   
-  PavingInOut pave(const IntervalVector& x, std::shared_ptr<const SepBase> s, double eps)
+  PavingInOut pave(const IntervalVector& x, std::shared_ptr<const SepBase> s, double eps, bool verbose)
   {
-    return pave(x, *s, eps);
+    return pave(x, *s, eps, verbose);
   }
 
-  PavingInOut pave(const IntervalVector& x, const SepBase& s, double eps)
+  PavingInOut pave(const IntervalVector& x, const SepBase& s, double eps, bool verbose)
   {
     assert_release(eps > 0.);
     assert_release(!x.is_empty());
     assert_release(s.size() >= 2 && "cannot reveal 1d separators");
     
+    clock_t t_start = clock();
+    Index n_boundary = 0;
+
     PavingInOut p(x);
     std::shared_ptr<PavingInOut_Node> n;
     list<std::shared_ptr<PavingInOut_Node>> l { p.tree() };
@@ -77,14 +92,23 @@ namespace codac2
       auto boundary = (xs.inner & xs.outer);
       n->boxes() = { xs.outer, xs.inner };
 
-      if(!boundary.is_empty() && boundary.max_diam() > eps)
+      if(!boundary.is_empty())
       {
-        n->bisect();
-        l.push_back(n->left());
-        l.push_back(n->right());
+        if(boundary.max_diam() > eps)
+        {
+          n->bisect();
+          l.push_back(n->left());
+          l.push_back(n->right());
+        }
+
+        else
+          n_boundary++;
       }
     }
 
+    if(verbose)
+      printf("Computation time: %.4fs, %ld boundary boxes\n",
+        (double)(clock()-t_start)/CLOCKS_PER_SEC, n_boundary);
     return p;
   }
 }
