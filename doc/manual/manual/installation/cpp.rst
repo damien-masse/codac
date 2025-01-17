@@ -62,6 +62,8 @@ If you prefer to use the latest development version, you can install Codac by co
 Steps
 ~~~~~
 
+.. _sec-install-cpp-prerequisites:
+
 1. **Ensure the following prerequisites are met**:
 
    - A C++ compiler supporting C++20 or later (*e.g.*, GCC 11.0+, Clang 13.0+).
