@@ -11,7 +11,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mathjax_stmaryrd.js
 
   if(WITH_PYTHON)
     
-    find_package(Doxygen 1.0.0)
+    find_package(Doxygen 1.13.0)
 
     if(NOT DOXYGEN_FOUND)
 
