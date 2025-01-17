@@ -1,6 +1,5 @@
 from codac._core import *
-from sys import float_info
-import numpy
+import sys
 
 def codac_error(message):
   print(f'''
@@ -135,7 +134,7 @@ class CtcInverseNotIn(Ctc):
 
 class Approx:
 
-  def __init__(self, x, eps = float_info.epsilon*10):
+  def __init__(self, x, eps = sys.float_info.epsilon*10):
     if isinstance(x, (int,float)):
       self.a = Approx_double(x,eps)
     elif isinstance(x, (Interval)):
@@ -210,19 +209,19 @@ def cart_prod(*args):
     codac_error("cart_prod: invalid input arguments")
 
 
-class AnalyticTrajectory:
+class AnalyticTraj:
 
   def __init__(self, f, t):
     if isinstance(f, AnalyticFunction):
       self.__init__(f.f,t)
     elif isinstance(f, AnalyticFunction_Scalar):
-      self.traj = AnalyticTrajectory_Scalar(f,t)
+      self.traj = AnalyticTraj_Scalar(f,t)
     elif isinstance(f, AnalyticFunction_Vector):
-      self.traj = AnalyticTrajectory_Vector(f,t)
+      self.traj = AnalyticTraj_Vector(f,t)
     else:
-      codac_error("AnalyticTrajectory: can only build this trajectory from an AnalyticFunction_[Scalar/Vector]")
+      codac_error("AnalyticTraj: can only build this trajectory from an AnalyticFunction_[Scalar/Vector]")
 
-  # Methods from TrajectoryBase:
+  # Methods from TrajBase:
 
   def size(self):
     return self.traj.size()
@@ -246,86 +245,13 @@ class AnalyticTrajectory:
     return self.traj.nan_value()
     
   def sampled(self, dt):
-    return SampledTrajectory(self.traj.sampled(dt))
+    return self.traj.sampled(dt)
     
   def primitive(self, y0, t):
-    return SampledTrajectory(self.traj.primitive(y0, t))
+    return self.traj.primitive(y0, t)
     
   def as_function(self):
     return AnalyticFunction(self.traj.as_function())
     
-  # Methods from AnalyticTrajectory:
+  # Methods from AnalyticTraj:
   #   none
-
-
-class SampledTrajectory:
-
-  def __init__(self, m):
-    if isinstance(m, (SampledTrajectory_double,SampledTrajectory_Vector)):
-      self.traj = m
-    elif not isinstance(m,dict):
-      codac_error("SampledTrajectory: can only build this trajectory from a dictionary")
-    elif isinstance(next(iter(m.values())), (int,float)):
-      self.traj = SampledTrajectory_double(m)
-    elif isinstance(next(iter(m.values())), (Vector,list)):
-      self.traj = SampledTrajectory_Vector(m)
-    else:
-      codac_error("SampledTrajectory: can only build this trajectory from maps of scalar or vector values")
-      
-  def __init__(self, l_t, l_x):
-    if not isinstance(l_t,(list,numpy.ndarray)) or not isinstance(l_x,(list,numpy.ndarray)):
-      codac_error("SampledTrajectory: can only build this trajectory from two lists")
-    elif isinstance(next(iter(l_x)), (int,float,numpy.float64)):
-      self.traj = SampledTrajectory_double(l_t,l_x)
-    elif isinstance(next(iter(l_x)), (Vector,list,tuple,numpy.ndarray)):
-      self.traj = SampledTrajectory_Vector(l_t,l_x)
-    else:
-      codac_error("SampledTrajectory: can only build this trajectory from a list of dates and a list of scalar or vector values")
-
-  # Methods from std::map:
-
-  def __setitem__(self, t, y):
-    self.traj[t] = y
-
-  def __getitem__(self, t):
-    return self.traj[t]
-
-  # Methods from TrajectoryBase:
-
-  def size(self):
-    return self.traj.size()
-
-  def is_empty(self):
-    return self.traj.is_empty()
-
-  def tdomain(self):
-    return self.traj.tdomain()
-
-  def truncate_tdomain(self, new_tdomain):
-    return self.traj.truncate_tdomain(new_tdomain)
-    
-  def codomain(self):
-    return self.traj.codomain()
-    
-  def __call__(self, t):
-    return self.traj(t)
-    
-  def nan_value(self):
-    return self.traj.nan_value()
-    
-  def sampled(self, *args):
-    return SampledTrajectory(self.traj.sampled(*args))
-    
-  def primitive(self, y0, t):
-    return SampledTrajectory(self.traj.primitive(y0, t))
-    
-  def as_function(self):
-    return AnalyticFunction(self.traj.as_function())
-    
-  # Methods from SampledTrajectory:
-  
-  def nb_samples(self):
-    return self.traj.nb_samples()
-
-  def __repr__(self):
-    return str(self.traj)

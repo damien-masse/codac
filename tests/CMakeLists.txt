@@ -78,8 +78,8 @@ list(APPEND SRC_TESTS # listing files without extension
   
   core/tools/codac2_tests_Approx
   
-  core/trajectory/codac2_tests_AnalyticTrajectory
-  core/trajectory/codac2_tests_SampledTrajectory
+  core/trajectory/codac2_tests_AnalyticTraj
+  core/trajectory/codac2_tests_SampledTraj
 
   graphics/styles/codac2_tests_Color
 )

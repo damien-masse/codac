@@ -11,11 +11,11 @@ import unittest
 from codac import *
 import sys, math
 
-class TestSampledTrajectory(unittest.TestCase):
+class TestSampledTraj(unittest.TestCase):
 
-  def tests_SampledTrajectory(self):
+  def tests_SampledTraj(self):
 
-    x = SampledTrajectory({
+    x = SampledVectorTraj({
       0.25: [-0.5,0.5],
       1.: [0,0],
       2.: [1,0],
@@ -58,13 +58,13 @@ class TestSampledTrajectory(unittest.TestCase):
     #DefaultView.draw_trajectory(x, Color.blue())
     #DefaultView.draw_trajectory(x_sampled, Color.red())
 
-    # SampledTrajectory as operator (1d case)
+    # SampledTraj as operator (1d case)
     
     t = ScalarVar()
     f = AnalyticFunction(
       [t], cos(t)
     )
-    analytic_traj = AnalyticTrajectory(f, [-math.pi,math.pi])
+    analytic_traj = AnalyticTraj(f, [-math.pi,math.pi])
     sampled_traj = analytic_traj.sampled(1e-2)
     g = sampled_traj.as_function()
 
@@ -77,7 +77,7 @@ class TestSampledTrajectory(unittest.TestCase):
       self.assertTrue(Approx(h.real_eval(t_),1e-8) == math.cos(t_))
       t_=t_+1e-2
 
-    # SampledTrajectory as operator (nd case)
+    # SampledTraj as operator (nd case)
 
     t = ScalarVar()
     f = AnalyticFunction(
@@ -85,7 +85,7 @@ class TestSampledTrajectory(unittest.TestCase):
       vec(2*cos(t),sin(2*t))
     )
 
-    analytic_traj = AnalyticTrajectory(f, [0,5])
+    analytic_traj = AnalyticTraj(f, [0,5])
     sampled_traj = analytic_traj.sampled(1e-2)
     g = sampled_traj.as_function()
 
