@@ -34,8 +34,7 @@ void export_pave(py::module& m)
       {
         if(!is_instance<AnalyticFunction<ScalarType>>(f)
           && !is_instance<AnalyticFunction<VectorType>>(f)
-          && !is_instance<AnalyticFunction<VectorType>>(f))
-        {
+          && !is_instance<AnalyticFunction<VectorType>>(f)) {
           assert_release("sivia: invalid function type");
         }
 

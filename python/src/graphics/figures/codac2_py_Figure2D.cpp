@@ -10,11 +10,11 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
+#include <codac2_Paving.h>
 #include <codac2_Figure2D.h>
 #include "codac2_py_Figure2D_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_matlab.h"
 #include "codac2_py_cast.h"
-#include <codac2_Paving.h>
 
 using namespace std;
 using namespace codac2;
@@ -135,20 +135,34 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_ELLIPSE_CONST_VECTOR_REF_CONST_VECTOR_REF_DOUBLE_CONST_STYLEPROPERTIES_REF,
       "c"_a, "ab"_a, "theta"_a, "s"_a=StyleProperties())
 
-    .def("draw_trajectory", (void(Figure2D::*)(const AnalyticTraj<VectorType>&,const StyleProperties&))&Figure2D::draw_trajectory,
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
-      "x"_a, "s"_a=StyleProperties())
-
     .def("draw_trajectory", (void(Figure2D::*)(const SampledTraj<Vector>&,const StyleProperties&))&Figure2D::draw_trajectory,
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
-    .def("draw_trajectory", (void(Figure2D::*)(const AnalyticTraj<VectorType>&,const ColorMap&))&Figure2D::draw_trajectory,
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
-      "x"_a, "cmap"_a)
+    .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const StyleProperties& s)
+        {
+          if(!is_instance<AnalyticTraj<VectorType>>(x)) {
+            assert_release("draw_trajectory: invalid function type");
+          }
+
+          fig.draw_trajectory(cast<AnalyticTraj<VectorType>>(x), s);
+        },
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
 
     .def("draw_trajectory", (void(Figure2D::*)(const SampledTraj<Vector>&,const ColorMap&))&Figure2D::draw_trajectory,
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_COLORMAP_REF,
+      "x"_a, "cmap"_a)
+
+    .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const ColorMap& cmap)
+        {
+          if(!is_instance<AnalyticTraj<VectorType>>(x)) {
+            assert_release("draw_trajectory: invalid function type");
+          }
+
+          fig.draw_trajectory(cast<AnalyticTraj<VectorType>>(x), cmap);
+        },
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
       "x"_a, "cmap"_a)
 
     // Robots
@@ -230,20 +244,34 @@ void export_Figure2D(py::module& m)
       STATIC_VOID_DEFAULTVIEW_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "theta"_a, "s"_a=StyleProperties())
 
-    .def_static("draw_trajectory", (void(*)(const AnalyticTraj<VectorType>&,const StyleProperties&))&DefaultView::draw_trajectory,
-      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
-      "x"_a, "s"_a=StyleProperties())
-
     .def_static("draw_trajectory", (void(*)(const SampledTraj<Vector>&,const StyleProperties&))&DefaultView::draw_trajectory,
       STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
-    .def_static("draw_trajectory", (void(*)(const AnalyticTraj<VectorType>&,const ColorMap&))&DefaultView::draw_trajectory,
-      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
-      "x"_a, "cmap"_a)
+    .def_static("draw_trajectory", [](const py::object& x, const StyleProperties& s)
+        {
+          if(!is_instance<AnalyticTraj<VectorType>>(x)) {
+            assert_release("draw_trajectory: invalid function type");
+          }
+
+          DefaultView::draw_trajectory(cast<AnalyticTraj<VectorType>>(x), s);
+        },
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
 
     .def_static("draw_trajectory", (void(*)(const SampledTraj<Vector>&,const ColorMap&))&DefaultView::draw_trajectory,
       STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_COLORMAP_REF,
+      "x"_a, "cmap"_a)
+
+    .def_static("draw_trajectory", [](const py::object& x, const ColorMap& cmap)
+        {
+          if(!is_instance<AnalyticTraj<VectorType>>(x)) {
+            assert_release("draw_trajectory: invalid function type");
+          }
+
+          DefaultView::draw_trajectory(cast<AnalyticTraj<VectorType>>(x), cmap);
+        },
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
       "x"_a, "cmap"_a)
 
     // Robots
