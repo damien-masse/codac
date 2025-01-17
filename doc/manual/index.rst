@@ -20,11 +20,12 @@ Welcome to the Codac website.
    :caption: User manual
    :maxdepth: 2
 
-   installation/index.rst
-   intervals/index.rst
-   ellipsoids/index.rst
-   visualization/index.rst
-   extensions/index.rst
+   manual/installation/index.rst
+   manual/intervals/index.rst
+   manual/visualization/index.rst
+   manual/extensions/index.rst
+   
+..   manual/ellipsoids/index.rst
    
 ..    linear/index.rst
 ..    functions/index.rst
