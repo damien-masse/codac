@@ -52,4 +52,4 @@ Depending on your configuration, you may encounter difficulties when installing 
   Depending on the way Python was installed, the path to specify after ``--target`` may differ, *e.g.* if Python was installed from https://www.python.org/ftp/python/3.10.4/python-3.10.4-macos11.pkg, it may be ``/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages``. Otherwise, run ``python3 -m site`` to check the ``site-packages`` full path in ``sys.path`` list. Also, the value ``10_9`` may need to be changed to ``10_14`` (or possibly another value) for some Python versions.
 
 
-Finally, note that unsupported configurations can still probably follow the instructions from :ref:`Installing local Python binding <sec-manual-dev>`, for building the Codac Python binding locally on your machine.
+Finally, note that unsupported configurations can still probably follow the instructions from :ref:`Installing local Python binding <sec-dev-info>`, for building the Codac Python binding locally on your machine.

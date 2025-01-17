@@ -1,3 +1,5 @@
+.. _sec-dev-info:
+
 Information for developers
 ==========================
 
