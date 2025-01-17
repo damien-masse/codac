@@ -3,6 +3,10 @@
 Python installation
 ===================
 
+.. error::
+
+  The following instructions are not valid at the moment: Codac v2 is not yet available on PyPi. To get Codac v2 in Python, please :ref:`compile your own binaries locally on your machine <sec-dev-info-binding>`.
+
 In case you want to use Codac only with Python, then the installation procedure is simply:
 
 1. **Dependencies**: Ensure you have a supported version of Python (>=3.6).
