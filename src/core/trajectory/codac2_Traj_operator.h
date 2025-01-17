@@ -18,7 +18,6 @@
 namespace codac2
 {
   template<typename T>
-    requires (std::is_same_v<typename ValueType<T>::Type,ScalarType> || std::is_same_v<typename ValueType<T>::Type,VectorType>)
   struct TrajectoryOp
   {
     static typename Wrapper<T>::Domain fwd(const TrajBase<T>& x1, const Interval& x2)
