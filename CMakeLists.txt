@@ -61,11 +61,18 @@
     add_compile_options(-Wall -Wextra -Wpedantic)
   endif()
 
-  # Temporary fix in case of error: number of sections exceeded object file format limit.
+  # Temporary attempts to fix errors similar to: 
+  # _ number of sections exceeded object file format limit.
+  # _ out of memory allocating XXX bytes.
+  # _ string table overflow.
+  # _ .obj: file too big.
   if(MSVC)
     add_compile_options(/bigobj)
   elseif(MINGW)
     add_compile_options(-Wa,-mbig-obj)
+    if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+      add_compile_options(-g0)
+    endif()
   endif()
 
 #  # Check that the compiler supports c++20
