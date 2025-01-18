@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_AnalyticTrajectory.h
+ *  \file codac2_AnalyticTraj.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -10,18 +10,18 @@
 #pragma once
 
 #include "codac2_AnalyticFunction.h"
-#include "codac2_TrajectoryBase.h"
-#include "codac2_SampledTrajectory.h"
+#include "codac2_TrajBase.h"
+#include "codac2_SampledTraj.h"
 
 namespace codac2
 {
   template<typename O, typename S = typename O::Scalar>
-  class AnalyticTrajectory : public TrajectoryBase<S>, public AnalyticFunction<O>
+  class AnalyticTraj : public TrajBase<S>, public AnalyticFunction<O>
   {
     public:
 
-      AnalyticTrajectory(const AnalyticFunction<O>& f, const Interval& tdomain)
-        : TrajectoryBase<S>(), AnalyticFunction<O>(f), _tdomain(tdomain)
+      AnalyticTraj(const AnalyticFunction<O>& f, const Interval& tdomain)
+        : TrajBase<S>(), AnalyticFunction<O>(f), _tdomain(tdomain)
       {
         assert_release(f.args().total_size() == 1 && "domain of f must be 1d");
       }
@@ -56,7 +56,7 @@ namespace codac2
       {
         if(!this->tdomain().contains(t))
           return this->nan_value();
-        return AnalyticFunction<O>::eval(t).mid();
+        return AnalyticFunction<O>::real_eval(t);
       }
 
       virtual typename Wrapper<S>::Domain operator()(const Interval& t) const

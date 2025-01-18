@@ -147,7 +147,7 @@ namespace codac2
   {
     public:
 
-      SetOperationExpr(const AnalyticFunction<VectorOpValue>& f, std::shared_ptr<SetExpr> x)
+      SetOperationExpr(const AnalyticFunction<VectorType>& f, std::shared_ptr<SetExpr> x)
         : OperationExprBase<SetExpr>(x), _f(f)
       { }
 
@@ -182,7 +182,7 @@ namespace codac2
 
     protected:
 
-      const AnalyticFunction<VectorOpValue> _f;
+      const AnalyticFunction<VectorType> _f;
   };
 
   template<>

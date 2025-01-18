@@ -12,6 +12,8 @@
 #include <memory>
 #include "codac2_Sep.h"
 #include "codac2_Ctc.h"
+#include "codac2_Matrix.h"
+#include "codac2_Vector.h"
 
 namespace codac2
 {
@@ -25,6 +27,11 @@ namespace codac2
   template<class S>
   concept IsSepBaseOrPtr = (std::is_base_of_v<SepBase,S>
     || std::is_base_of_v<S,std::shared_ptr<SepBase>>);
+
+  template<class T>
+  concept IsRealType = (std::is_same_v<double,T>
+    || std::is_same_v<Vector,T>
+    || std::is_same_v<Matrix,T>);
 
   inline Index size_of([[maybe_unused]] int x)
   {

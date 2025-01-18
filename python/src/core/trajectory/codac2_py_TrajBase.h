@@ -1,5 +1,5 @@
 /** 
- *  TrajectoryBase Python binding
+ *  TrajBase Python binding
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -22,7 +22,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 template<typename S>
-void export_TrajectoryBase(py::class_<S>& pyclass)
+void export_TrajBase(py::class_<S>& pyclass)
 {
   pyclass
 
@@ -30,66 +30,72 @@ void export_TrajectoryBase(py::class_<S>& pyclass)
         {
           return x.size();
         },
-      VIRTUAL_INDEX_TRAJECTORYBASE_T_SIZE_CONST)
+      VIRTUAL_INDEX_TRAJBASE_T_SIZE_CONST)
 
     .def("is_empty", [](const S& x)
         {
           return x.is_empty();
         },
-      VIRTUAL_BOOL_TRAJECTORYBASE_T_IS_EMPTY_CONST)
+      VIRTUAL_BOOL_TRAJBASE_T_IS_EMPTY_CONST)
 
     .def("tdomain", [](const S& x)
         {
           return x.tdomain();
         },
-      VIRTUAL_INTERVAL_TRAJECTORYBASE_T_TDOMAIN_CONST)
+      VIRTUAL_INTERVAL_TRAJBASE_T_TDOMAIN_CONST)
 
     .def("truncate_tdomain", [](S& x, const Interval& new_tdomain)
         {
           x.truncate_tdomain(new_tdomain);
         },
-      VIRTUAL_VOID_TRAJECTORYBASE_T_TRUNCATE_TDOMAIN_CONST_INTERVAL_REF,
+      VIRTUAL_VOID_TRAJBASE_T_TRUNCATE_TDOMAIN_CONST_INTERVAL_REF,
       "new_tdomain"_a)
 
     .def("codomain", [](const S& x)
         {
           return x.codomain();
         },
-      VIRTUAL_WRAPPER_T_DOMAIN_TRAJECTORYBASE_T_CODOMAIN_CONST)
+      VIRTUAL_WRAPPER_T_DOMAIN_TRAJBASE_T_CODOMAIN_CONST)
 
     .def("__call__", [](const S& x, double t)
         {
           return x(t);
         },
-      VIRTUAL_T_TRAJECTORYBASE_T_OPERATORCALL_DOUBLE_CONST,
+      VIRTUAL_T_TRAJBASE_T_OPERATORCALL_DOUBLE_CONST,
       "t"_a)
 
     .def("__call__", [](const S& x, const Interval& t)
         {
           return x(t);
         },
-      VIRTUAL_WRAPPER_T_DOMAIN_TRAJECTORYBASE_T_OPERATORCALL_CONST_INTERVAL_REF_CONST,
+      VIRTUAL_WRAPPER_T_DOMAIN_TRAJBASE_T_OPERATORCALL_CONST_INTERVAL_REF_CONST,
       "t"_a)
 
     .def("nan_value", [](const S& x)
         {
           return x.nan_value();
         },
-      AUTO_TRAJECTORYBASE_T_NAN_VALUE_CONST)
+      AUTO_TRAJBASE_T_NAN_VALUE_CONST)
 
     .def("sampled", [](const S& x, double dt)
         {
           return x.sampled(dt);
         },
-      VIRTUAL_SAMPLEDTRAJECTORY_T_TRAJECTORYBASE_T_SAMPLED_DOUBLE_CONST,
+      VIRTUAL_SAMPLEDTRAJ_T_TRAJBASE_T_SAMPLED_DOUBLE_CONST,
       "dt"_a)
 
-    .def("primitive", [](const S& x, const typename S::ScalarType& y0, double dt)
+    .def("primitive", [](const S& x, const typename S::TrajType::Scalar& y0, double dt)
         {
           return x.primitive(y0,dt);
         },
-      SAMPLEDTRAJECTORY_T_TRAJECTORYBASE_T_PRIMITIVE_CONST_T_REF_DOUBLE_CONST,
+      SAMPLEDTRAJ_T_TRAJBASE_T_PRIMITIVE_CONST_T_REF_DOUBLE_CONST,
       "y0"_a, "dt"_a)
+
+    .def("as_function", [](const S& x)
+        {
+          return x.as_function();
+        },
+      ANALYTICFUNCTION_TYPENAME_VALUETYPE_T_TYPE_TRAJBASE_T_AS_FUNCTION_CONST)
 
   ;
 }

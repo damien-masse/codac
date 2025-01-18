@@ -69,7 +69,7 @@ namespace codac2
 
         else
         {
-          assert_release(false && "Approx::operator== unhandled case")
+          assert_release(false && "Approx::operator== unhandled case");
           return false;
         }
       }

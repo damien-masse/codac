@@ -223,12 +223,12 @@ namespace codac2 {
         return (1 + rho) * M;
     }
 
-    Ellipsoid nonlinear_mapping(const Ellipsoid &e, const AnalyticFunction<VectorOpValue>& f)
+    Ellipsoid nonlinear_mapping(const Ellipsoid &e, const AnalyticFunction<VectorType>& f)
     {
         return nonlinear_mapping(e,f,Vector({1e-10,1e-9}),Vector::ones(e.size()));
     }
 
-    Ellipsoid nonlinear_mapping(const Ellipsoid &e, const AnalyticFunction<VectorOpValue>& f,const Vector& trig, const Vector& q) {
+    Ellipsoid nonlinear_mapping(const Ellipsoid &e, const AnalyticFunction<VectorType>& f,const Vector& trig, const Vector& q) {
 
         assert_release(f.args().size() == 1 && "f must have only one arg");
         assert_release(e.size() == f.input_size());

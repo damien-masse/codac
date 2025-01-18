@@ -24,7 +24,7 @@ void export_Ellipsoid_utils(py::module& m)
   m
 
     .def("stability_analysis", &codac2::stability_analysis,
-      BOOLINTERVAL_STABILITY_ANALYSIS_CONST_ANALYTICFUNCTION_VECTOROPVALUE_REF_UNSIGNED_INT_ELLIPSOID_REF_ELLIPSOID_REF_BOOL,
+      BOOLINTERVAL_STABILITY_ANALYSIS_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_UNSIGNED_INT_ELLIPSOID_REF_ELLIPSOID_REF_BOOL,
       "f"_a, "alpha_max"_a, "e"_a, "e_out"_a, "verbose"_a=false)
 
     .def("solve_discrete_lyapunov", &codac2::solve_discrete_lyapunov,

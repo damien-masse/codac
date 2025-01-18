@@ -83,16 +83,16 @@ void export_Ellipsoid(py::module& m)
 
     .def("nonlinear_mapping", [](const Ellipsoid& e, py::object f)
         {
-          return nonlinear_mapping(e, pyobject_to_AnalyticFunction(f));
+          return nonlinear_mapping(e, cast<AnalyticFunction<VectorType>>(f));
         },
-      ELLIPSOID_NONLINEAR_MAPPING_CONST_ELLIPSOID_REF_CONST_ANALYTICFUNCTION_VECTOROPVALUE_REF,
+      ELLIPSOID_NONLINEAR_MAPPING_CONST_ELLIPSOID_REF_CONST_ANALYTICFUNCTION_VECTORTYPE_REF,
       "e"_a, "f"_a)
 
     .def("nonlinear_mapping", [](const Ellipsoid& e, py::object f, const Vector &trig, const Vector &q)
         {
-          return nonlinear_mapping(e, pyobject_to_AnalyticFunction(f), trig, q);
+          return nonlinear_mapping(e, cast<AnalyticFunction<VectorType>>(f), trig, q);
         },
-      ELLIPSOID_NONLINEAR_MAPPING_CONST_ELLIPSOID_REF_CONST_ANALYTICFUNCTION_VECTOROPVALUE_REF_CONST_VECTOR_REF_CONST_VECTOR_REF,
+      ELLIPSOID_NONLINEAR_MAPPING_CONST_ELLIPSOID_REF_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_CONST_VECTOR_REF_CONST_VECTOR_REF,
       "e"_a, "f"_a, "trig"_a, "q"_a)
 
     .def("nonlinear_mapping_base", &codac2::nonlinear_mapping_base,

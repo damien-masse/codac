@@ -109,6 +109,14 @@ void export_Color(py::module& m)
     .def_static("dark_gray", &Color::dark_gray,
       STATIC_COLOR_COLOR_DARK_GRAY_FLOAT,
       "alpha"_a=1.)
+
+    .def_static("purple", &Color::purple,
+      STATIC_COLOR_COLOR_PURPLE_FLOAT,
+      "alpha"_a=1.)
+
+    .def_static("dark_green", &Color::dark_green,
+      STATIC_COLOR_COLOR_DARK_GREEN_FLOAT,
+      "alpha"_a=1.)
   ;
 
   py::implicitly_convertible<py::list, Color>();
