@@ -119,7 +119,7 @@ jobs:
         echo export BASHMINGWPATH=/c/ProgramData/mingw64/mingw${{ matrix.cfg.bitness }}/bin>>%USERPROFILE%\.bashrc
       if: (matrix.cfg.runtime=='mingw13')
     - run: |
-        #choco install -y -r --no-progress eigen --version=3.4.0.20240224 ${{ matrix.cfg.choco_flags }}
+        rem choco install -y -r --no-progress eigen --version=3.4.0.20240224 ${{ matrix.cfg.choco_flags }}
         wget https://github.com/lebarsfa/ibex-lib/releases/download/ibex-2.8.9.20241117/ibex.2.8.9.20241117.nupkg --no-check-certificate -nv
         choco install -y -r --no-progress --ignore-dependencies -s . ibex --version=2.8.9.20241117 ${{ matrix.cfg.choco_flags }} --params "'/url:https://github.com/lebarsfa/ibex-lib/releases/download/ibex-2.8.9.20241117/ibex_${{ matrix.cfg.arch }}_${{ matrix.cfg.runtime }}.zip'"
         del /f /q ibex.2.8.9.20241117.nupkg
