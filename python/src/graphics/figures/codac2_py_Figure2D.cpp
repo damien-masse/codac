@@ -66,6 +66,12 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_SET_AXES_CONST_FIGUREAXIS_REF_CONST_FIGUREAXIS_REF,
       "axis1"_a, "axis2"_a)
   
+    .def("i", &Figure2D::i,
+      CONST_INDEX_REF_FIGURE2D_I_CONST)
+  
+    .def("j", &Figure2D::j,
+      CONST_INDEX_REF_FIGURE2D_J_CONST)
+  
     .def("pos", &Figure2D::pos,
       CONST_VECTOR_REF_FIGURE2D_POS_CONST)
   
@@ -134,6 +140,10 @@ void export_Figure2D(py::module& m)
     .def("draw_ellipse", &Figure2D::draw_ellipse,
       VOID_FIGURE2D_DRAW_ELLIPSE_CONST_VECTOR_REF_CONST_VECTOR_REF_DOUBLE_CONST_STYLEPROPERTIES_REF,
       "c"_a, "ab"_a, "theta"_a, "s"_a=StyleProperties())
+
+    .def("draw_ellipsoid", &Figure2D::draw_ellipsoid,
+      VOID_FIGURE2D_DRAW_ELLIPSOID_CONST_ELLIPSOID_REF_CONST_STYLEPROPERTIES_REF,
+      "e"_a, "s"_a=StyleProperties())
 
     .def("draw_trajectory", (void(Figure2D::*)(const SampledTraj<Vector>&,const StyleProperties&))&Figure2D::draw_trajectory,
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
@@ -244,6 +254,14 @@ void export_Figure2D(py::module& m)
       STATIC_VOID_DEFAULTVIEW_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "theta"_a, "s"_a=StyleProperties())
 
+    .def_static("draw_ellipse", &DefaultView::draw_ellipse,
+      STATIC_VOID_DEFAULTVIEW_DRAW_ELLIPSE_CONST_VECTOR_REF_CONST_VECTOR_REF_DOUBLE_CONST_STYLEPROPERTIES_REF,
+      "c"_a, "ab"_a, "theta"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_ellipsoid", &DefaultView::draw_ellipsoid,
+      STATIC_VOID_DEFAULTVIEW_DRAW_ELLIPSOID_CONST_ELLIPSOID_REF_CONST_STYLEPROPERTIES_REF,
+      "e"_a, "s"_a=StyleProperties())
+    
     .def_static("draw_trajectory", (void(*)(const SampledTraj<Vector>&,const StyleProperties&))&DefaultView::draw_trajectory,
       STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
