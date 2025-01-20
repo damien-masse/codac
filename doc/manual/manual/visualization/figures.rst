@@ -5,6 +5,8 @@ The Figure classes
 
 This page describes the classes used in Codac for 2D visualization.
 
+.. _subsec-graphics-figures-graphical-outputs:
+
 Graphical outputs
 -----------------
 
@@ -27,11 +29,14 @@ visualization while IPE creates a file that can be edited by the IPE editor. The
 
 Note that for the VIBes output to work, the VIBes viewer must be launched before the program is run.
 
+.. _subsec-graphics-figures-figure2d:
+
 Figure2D
 --------
 
-
-
+The basic class for 2D visualization is Figure2D. It is used to create a figure that can be displayed in VIBes or saved in an xml file for IPE.
+The constructor takes two arguments: the name of the figure and the graphical output. A boolean can be added to specify if the figure is to be used
+DefaultView (see :ref:`_subsec-graphics-figures-figure2d-defaultview`).
 
 .. tabs::
 
@@ -39,24 +44,25 @@ Figure2D
 
     from codac import *
 
-    # .. next questions will be here
+    fig = Figure2D("My figure", GraphicOutput.VIBES | GraphicOutput.IPE) # for both VIBes and IPE
 
   .. code-tab:: c++
 
-    #include <codac.h>
+    #include <codac>
 
-    using namespace std;
     using namespace codac;
 
     int main()
     {
-      // .. next questions will be here
+      Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE); // for both VIBes and IPE
     }
+
+.. _subsec-graphics-figures-figure2d-defaultview:
 
 DefaultView
 -----------
 
-A DefaultView using only VIBes as graphical output is available. This figure is for example used in `draw_while_paving` by default. 
+A DefaultView using only VIBes as graphical output is available. This figure is the one used by the function `draw_while_paving` by default. 
 Any Figure2D object can be used as DefaultView with the set method:
 
 .. tabs::
@@ -70,3 +76,24 @@ Any Figure2D object can be used as DefaultView with the set method:
 
     Figure2D figure = std::make_shared<Figure2D>("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
     DefaultView::set(figure);
+
+Equivalently, a Figure2D can be used as DefaultView by setting the flag `set_as_default` to true in the constructor:
+
+.. tabs::
+
+  .. code-tab:: py
+
+    from codac import *
+
+    fig = Figure2D("My figure", GraphicOutput.VIBES | GraphicOutput.IPE, True)
+
+  .. code-tab:: c++
+
+    #include <codac>
+
+    using namespace codac;
+
+    int main()
+    {
+      Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE,true);
+    }
