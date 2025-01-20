@@ -74,8 +74,10 @@ Any Figure2D object can be used as DefaultView with the set method:
 
   .. code-tab:: c++
 
-    Figure2D figure = std::make_shared<Figure2D>("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
+    std::shared_ptr<codac2::Figure2D> figure = std::make_shared<Figure2D>("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
     DefaultView::set(figure);
+
+Note that in C++ the figure must be a shared pointer in order to be passed to the `set` method.
 
 Equivalently, a Figure2D can be used as DefaultView by setting the flag `set_as_default` to true in the constructor:
 
