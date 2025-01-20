@@ -64,7 +64,6 @@
                  PATH_SUFFIXES lib)
 
     find_package(IBEX REQUIRED)
-    ibex_init_common()
 
     set(CODAC_VERSION ${PROJECT_VERSION})
     set(CODAC_LIBRARIES \${CODAC_CORE_LIBRARY} \${CODAC_GRAPHICS_LIBRARY} \${CODAC_UNSUPPORTED_LIBRARY} Ibex::ibex)
