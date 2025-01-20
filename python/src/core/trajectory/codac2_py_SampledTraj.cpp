@@ -50,6 +50,7 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
   else if constexpr(std::is_same_v<T,Vector>)
   {
     exported_class
+
       .def(py::init(
           [](const py::array_t<double>& l_t, const py::array_t<double>& l_x)
             {
@@ -85,6 +86,18 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
             }),
         SAMPLEDTRAJ_T_SAMPLEDTRAJ_CONST_LIST_DOUBLE_REF_CONST_LIST_T_REF,
         "l_t"_a, "l_x"_a)
+
+    .def("__getitem__", [](const SampledTraj<T>& x, Index_type i) -> SampledTraj<double>
+        {
+          matlab::test_integer(i);
+          return x[matlab::input_index(i)];
+        }, py::return_value_policy::reference_internal)
+
+    .def("subvector", [](const SampledTraj<T>& x, Index_type i, Index_type j) -> SampledTraj<Vector>
+        {
+          matlab::test_integer(i,j);
+          return x.subvector(matlab::input_index(i),matlab::input_index(j));
+        }, py::return_value_policy::reference_internal)
     ;
   }
 
@@ -104,17 +117,26 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
       SAMPLEDTRAJ_T_SAMPLEDTRAJ_T_SAMPLED_DOUBLE_BOOL_CONST,
       "dt"_a, "keep_original_values"_a)
 
-    .def("__getitem__", [](const SampledTraj<T>& x, Index_type index) -> const T&
+    .def("__call__", [](const SampledTraj<T>& x, double t) -> T
         {
-          matlab::test_integer(index);
-          return x.at(matlab::input_index(index));
-        }, py::return_value_policy::reference_internal)
+          return x(t);
+        },
+      VIRTUAL_T_SAMPLEDTRAJ_T_OPERATORCALL_DOUBLE_CONST,
+      "t"_a)
 
-    .def("__setitem__", [](SampledTraj<T>& x, Index_type index, const T& a)
+    .def("__call__", [](const SampledTraj<T>& x, const Interval& t) -> typename Wrapper<T>::Domain
         {
-          matlab::test_integer(index);
-          x[matlab::input_index(index)] = a;
-        })
+          return x(t);
+        },
+      VIRTUAL_WRAPPER_T_DOMAIN_SAMPLEDTRAJ_T_OPERATORCALL_CONST_INTERVAL_REF_CONST,
+      "t"_a)
+
+    .def("set", [](SampledTraj<T>& x, double ti, const T& xi)
+        {
+          return x.set(ti,xi);
+        },
+      VOID_SAMPLEDTRAJ_T_SET_DOUBLE_CONST_T_REF,
+      "ti"_a, "xi"_a)
 
     .def("__repr__", [](const SampledTraj<T>& x) {
           std::ostringstream stream;
