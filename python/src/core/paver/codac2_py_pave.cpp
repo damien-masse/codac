@@ -21,21 +21,20 @@ using namespace pybind11::literals;
 
 void export_pave(py::module& m)
 {
-  m.def("pave", (PavingOut (*)(const IntervalVector&,const CtcBase<IntervalVector>&,double))&codac2::pave,
-    PAVINGOUT_PAVE_CONST_INTERVALVECTOR_REF_CONST_CTCBASE_INTERVALVECTOR_REF_DOUBLE,
-    "x"_a, "c"_a, "eps"_a);
+  m.def("pave", (PavingOut (*)(const IntervalVector&,const CtcBase<IntervalVector>&,double,bool))&codac2::pave,
+    PAVINGOUT_PAVE_CONST_INTERVALVECTOR_REF_CONST_CTCBASE_INTERVALVECTOR_REF_DOUBLE_BOOL,
+    "x"_a, "c"_a, "eps"_a, "verbose"_a=false);
 
-  m.def("pave", (PavingInOut (*)(const IntervalVector&,const SepBase&,double))&codac2::pave,
-    PAVINGINOUT_PAVE_CONST_INTERVALVECTOR_REF_CONST_SEPBASE_REF_DOUBLE,
-    "x"_a, "s"_a, "eps"_a);
+  m.def("pave", (PavingInOut (*)(const IntervalVector&,const SepBase&,double,bool))&codac2::pave,
+    PAVINGINOUT_PAVE_CONST_INTERVALVECTOR_REF_CONST_SEPBASE_REF_DOUBLE_BOOL,
+    "x"_a, "s"_a, "eps"_a, "verbose"_a=false);
 
   m.def("sivia",
       [](const IntervalVector& x, const py::object& f, const py::object& y, double eps, bool verbose)
       {
         if(!is_instance<AnalyticFunction<ScalarType>>(f)
           && !is_instance<AnalyticFunction<VectorType>>(f)
-          && !is_instance<AnalyticFunction<VectorType>>(f))
-        {
+          && !is_instance<AnalyticFunction<VectorType>>(f)) {
           assert_release("sivia: invalid function type");
         }
 

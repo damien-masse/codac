@@ -90,7 +90,7 @@ using namespace pybind11::literals;
   \
   ; \
 
-FunctionArgsList create_FunctionArgsList(const std::vector<py::object>& l)
+inline FunctionArgsList create_FunctionArgsList(const std::vector<py::object>& l)
 {
   FunctionArgsList args {};
   Index i = 0;

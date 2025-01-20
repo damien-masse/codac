@@ -71,6 +71,9 @@ namespace codac2
       const std::vector<FigureAxis>& axes() const;
       void set_axes(const FigureAxis& axis1, const FigureAxis& axis2);
 
+      const Index& i() const;
+      const Index& j() const;
+
       const Vector& pos() const;
       const Vector& window_size() const;
       void set_window_properties(const Vector& pos, const Vector& size);
@@ -93,6 +96,7 @@ namespace codac2
       void draw_polygone(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
       void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s = StyleProperties());
       void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& s = StyleProperties());
+      void draw_ellipsoid(const Ellipsoid& e, const StyleProperties& s = StyleProperties());
       void draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties());
       void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s = StyleProperties());
       void draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap);
@@ -222,6 +226,12 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_ellipse(c,ab,theta,s);
+      }
+
+      static void draw_ellipsoid(const Ellipsoid& e, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_ellipsoid(e,s);
       }
 
       static void draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties())
