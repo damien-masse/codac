@@ -15,9 +15,9 @@ jobs:
         fail-fast: false
         matrix:
             cfg:
-            - { os: ubuntu-24.04, gcc_v: 11, py_v_maj: 3, py_v_min: 10, with_python: ON, with_capd: OFF, desc: 'Ubuntu 24.04 GCC 11 Python 3.10 tests' }
-            - { os: ubuntu-24.04, gcc_v: 13, py_v_maj: 3, py_v_min: 12, with_python: OFF, with_capd: ON, desc: 'Ubuntu 24.04 GCC 13 CAPD tests' }
-            - { os: ubuntu-22.04, gcc_v: 11, py_v_maj: 3, py_v_min: 10, with_python: OFF, with_capd: ON, desc: 'Ubuntu 22.04 GCC 11 CAPD tests' }
+            - { os: ubuntu-24.04, gcc_v: 11, py_v_maj: 3, py_v_min: 10, with_capd: OFF, desc: 'Ubuntu 24.04 GCC 11 Python 3.10 tests' }
+            - { os: ubuntu-24.04, gcc_v: 13, py_v_maj: 3, py_v_min: 12, with_capd: ON, desc: 'Ubuntu 24.04 GCC 13 Python 3.10 CAPD tests' }
+            - { os: ubuntu-22.04, gcc_v: 11, py_v_maj: 3, py_v_min: 10, with_capd: ON, desc: 'Ubuntu 22.04 GCC 11 Python 3.10 CAPD tests' }
     name: ${{ matrix.cfg.desc }}
     steps: 
     - uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
         sudo apt-get -y install doxygen graphviz
 
         # Doxygen might need to be upgraded
-        #if [ "${{ matrix.cfg.with_python }}" = "ON" ]; then git clone --depth 1 https://github.com/doxygen/doxygen.git ; cd doxygen ; mkdir build ; cd build ; cmake .. ; sudo cmake --build . -j 4 --config Release --target install ; cd ../.. ; fi
+        git clone --depth 1 -b Release_1_13_0 https://github.com/doxygen/doxygen.git ; cd doxygen ; mkdir build ; cd build ; cmake .. ; sudo cmake --build . -j 4 --config Release --target install ; cd ../..
 
         # For Python wrapping
         #pip install wheel
@@ -91,23 +91,19 @@ jobs:
         cd build
   
         # Building lib + tests
-        cmake -DCMAKE_INSTALL_PREFIX=$HOME/codac/build_install -DCMAKE_PREFIX_PATH=$HOME/ibex-lib/build_install -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_C_FLAGS="-fPIC" -DWITH_CAPD=${{ matrix.cfg.with_capd }} -DWITH_PYTHON=${{ matrix.cfg.with_python }} -DBUILD_TESTS=ON -DTEST_EXAMPLES=ON ..
+        cmake -DCMAKE_INSTALL_PREFIX=$HOME/codac/build_install -DCMAKE_PREFIX_PATH=$HOME/ibex-lib/build_install -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_C_FLAGS="-fPIC" -DWITH_CAPD=${{ matrix.cfg.with_capd }} -DWITH_PYTHON=ON -DBUILD_TESTS=ON -DTEST_EXAMPLES=ON ..
         make -j 4
         #make doc # todo
         make install
 
-        if [ "${{ matrix.cfg.with_python }}" = "ON" ]; then    
-            cd python/python_package
-            python setup.py develop --user
-            #pip install -e . 
-            cd ../../
+        cd python/python_package
+        python setup.py develop --user
+        #pip install -e . 
+        cd ../../
         
-            python ../tests/core/domains/codac2_tests_BoolInterval.py
-        fi
+        python ../tests/core/domains/codac2_tests_BoolInterval.py
         make test
-        if [ "${{ matrix.cfg.with_python }}" = "ON" ]; then    
-            python -m unittest discover codac.tests
-        fi
+        python -m unittest discover codac.tests
 
         ## Building the examples
 
