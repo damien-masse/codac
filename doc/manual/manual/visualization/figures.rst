@@ -36,7 +36,7 @@ Figure2D
 
 The basic class for 2D visualization is Figure2D. It is used to create a figure that can be displayed in VIBes or saved in an xml file for IPE.
 The constructor takes two arguments: the name of the figure and the graphical output. A boolean can be added to specify if the figure is to be used
-DefaultView (see :ref:`_subsec-graphics-figures-figure2d-defaultview`).
+DefaultView (see :ref:`subsec-graphics-figures-figure2d-defaultview`).
 
 .. tabs::
 
@@ -44,7 +44,7 @@ DefaultView (see :ref:`_subsec-graphics-figures-figure2d-defaultview`).
 
     from codac import *
 
-    fig = Figure2D("My figure", GraphicOutput.VIBES | GraphicOutput.IPE) # for both VIBes and IPE
+    fig = Figure2D("My figure", GraphicOutput.VIBES | GraphicOutput.IPE)
 
   .. code-tab:: c++
 
@@ -54,7 +54,7 @@ DefaultView (see :ref:`_subsec-graphics-figures-figure2d-defaultview`).
 
     int main()
     {
-      Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE); // for both VIBes and IPE
+      Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
     }
 
 .. _subsec-graphics-figures-figure2d-defaultview:
