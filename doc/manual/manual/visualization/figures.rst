@@ -42,20 +42,11 @@ DefaultView (see :ref:`subsec-graphics-figures-figure2d-defaultview`).
 
   .. code-tab:: py
 
-    from codac import *
-
     fig = Figure2D("My figure", GraphicOutput.VIBES | GraphicOutput.IPE)
 
   .. code-tab:: c++
 
-    #include <codac>
-
-    using namespace codac;
-
-    int main()
-    {
-      Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
-    }
+    Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
 
 .. _subsec-graphics-figures-figure2d-defaultview:
 
@@ -85,17 +76,27 @@ Equivalently, a Figure2D can be used as DefaultView by setting the flag `set_as_
 
   .. code-tab:: py
 
-    from codac import *
-
     fig = Figure2D("My figure", GraphicOutput.VIBES | GraphicOutput.IPE, True)
 
   .. code-tab:: c++
 
-    #include <codac>
+    Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE,true);
 
-    using namespace codac;
+.. _subsec-graphics-figures-figure2d-figure-properties:
 
-    int main()
-    {
-      Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE,true);
-    }
+Figure properties
+-----------------
+
+Once created, the properties of a Figure2D object can be modified using the following methods:
+
+.. tabs::
+
+  .. code-tab:: py
+
+    fig.set_window_properties([50,50],[500,500]) # set the window position and size
+    fig.set_axes(axis(0,[-10,10]), axis(1,[-10,10])) # set the range of values on each axis : 0 for x-axis, 1 for y-axis
+
+  .. code-tab:: c++
+
+    fig.set_window_properties({50,50},{500,500}); // set the window position and size
+    fig.set_axes(axis(0,{-10,10}), axis(1,{-10,10})); // set the range of values on each axis : 0 for x-axis, 1 for y-axis
