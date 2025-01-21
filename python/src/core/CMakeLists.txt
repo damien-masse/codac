@@ -6,6 +6,7 @@
 
   pybind11_add_module(_core SHARED
     codac2_py_core.cpp
+    codac2_py_cast.h
     
     actions/codac2_py_OctaSym.cpp
     
@@ -13,14 +14,18 @@
     contractors/codac2_py_Ctc.h
     contractors/codac2_py_CtcAction.cpp
     contractors/codac2_py_CtcCartProd.cpp
+    contractors/codac2_py_CtcCtcBoundary.cpp
+    contractors/codac2_py_CtcEmpty.cpp
     contractors/codac2_py_CtcFixpoint.cpp
     contractors/codac2_py_CtcInnerOuter.cpp
+    contractors/codac2_py_CtcIdentity.cpp
     contractors/codac2_py_CtcInter.cpp
     contractors/codac2_py_CtcInverse.h
     contractors/codac2_py_CtcInverseNotIn.h
     contractors/codac2_py_CtcLazy.cpp
     contractors/codac2_py_CtcNot.cpp
     contractors/codac2_py_CtcPolar.cpp
+    contractors/codac2_py_CtcPolygon.cpp
     contractors/codac2_py_CtcProj.cpp
     contractors/codac2_py_CtcSegment.cpp
     contractors/codac2_py_CtcUnion.cpp
@@ -28,11 +33,15 @@
     contractors/codac2_py_directed_ctc.cpp
     contractors/codac2_py_linear_ctc.cpp
 
+    domains/ellipsoid/codac2_py_Ellipsoid.cpp
+    domains/ellipsoid/codac2_py_Ellipsoid_utils.cpp
     domains/interval/codac2_py_Interval.cpp
     domains/interval/codac2_py_Interval_operations.cpp
     domains/interval/codac2_py_IntervalMatrix.cpp
     domains/interval/codac2_py_IntervalMatrixBase.h
+    domains/interval/codac2_py_IntervalRow.cpp
     domains/interval/codac2_py_IntervalVector.cpp
+    domains/interval/codac2_py_IntervalVector_templ.h
     domains/paving/codac2_py_Paving.cpp
     domains/paving/codac2_py_PavingNode.cpp
     domains/paving/codac2_py_Subpaving.cpp
@@ -41,7 +50,7 @@
     functions/analytic/codac2_py_analytic_operations.cpp
     functions/analytic/codac2_py_analytic_variables.cpp
     functions/analytic/codac2_py_AnalyticFunction.h
-    functions/analytic/codac2_py_ExprWrapper.h
+    functions/analytic/codac2_py_AnalyticExprWrapper.h
 
     geometry/codac2_py_Edge.cpp
     geometry/codac2_py_geometry.cpp
@@ -51,9 +60,10 @@
     matrices/codac2_py_arithmetic_sub.cpp
     matrices/codac2_py_arithmetic_mul.cpp
     matrices/codac2_py_arithmetic_div.cpp
+    matrices/codac2_py_inversion.cpp
     matrices/codac2_py_Matrix.cpp
     matrices/codac2_py_MatrixBase.h
-    matrices/codac2_py_MatrixBaseBlock.h
+    matrices/codac2_py_MatrixBlock.h
     matrices/codac2_py_Vector.cpp
     matrices/codac2_py_VectorBase.h
 
@@ -75,6 +85,10 @@
     separators/codac2_py_SepWrapper.cpp
 
     tools/codac2_py_Approx.cpp
+
+    trajectory/codac2_py_AnalyticTraj.cpp
+    trajectory/codac2_py_SampledTraj.cpp
+    trajectory/codac2_py_TrajBase.h
   )
 
   target_include_directories(_core
@@ -94,6 +108,7 @@
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/paver/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/separators/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tools/
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/
   )
 
   target_link_libraries(_core

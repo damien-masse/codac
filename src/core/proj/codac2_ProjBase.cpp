@@ -13,7 +13,7 @@ using namespace std;
 
 namespace codac2
 {
-  ProjBase::ProjBase(const std::vector<size_t>& proj_indices, const IntervalVector& y, double default_eps)
+  ProjBase::ProjBase(const std::vector<Index>& proj_indices, const IntervalVector& y, double default_eps)
     : _n(proj_indices.size()+y.size()), _xi(proj_indices), _y(y), _default_eps(default_eps)
   {
     assert(default_eps > 0.);
@@ -24,10 +24,10 @@ namespace codac2
     assert(w.size() == _n);
 
     IntervalVector x(_xi.size());
-    size_t k = 0;
+    Index k = 0;
     for(const auto& xi : _xi)
       x[k++] = w[xi];
-    assert(k == _xi.size()); // all components have been reached
+    assert(k == (Index)_xi.size()); // all components have been reached
     return x;
   }
 
@@ -36,8 +36,8 @@ namespace codac2
     assert(w.size() == _n);
     
     IntervalVector y(_y.size());
-    size_t k = 0;
-    for(size_t j = 0 ; j < w.size() ; j++)
+    Index k = 0;
+    for(Index j = 0 ; j < w.size() ; j++)
     {
       bool outside_proj = true;
       for(const auto& xi : _xi)
@@ -57,13 +57,13 @@ namespace codac2
 
   IntervalVector ProjBase::cart_prod_xy(const IntervalVector& x, const IntervalVector& y) const
   {
-    assert(x.size() == _xi.size());
+    assert(x.size() == (Index)_xi.size());
     assert(y.size() == _y.size());
 
-    size_t ix = 0, iy = 0;
+    Index ix = 0, iy = 0;
     IntervalVector w(_n);
 
-    for(size_t j = 0 ; j < _n ; j++)
+    for(Index j = 0 ; j < _n ; j++)
     {
       bool outside_proj = true;
       for(const auto& xi : _xi)
@@ -80,10 +80,10 @@ namespace codac2
     return w;
   }
 
-  size_t ProjBase::y_max_diam_index(const IntervalVector& y) const
+  Index ProjBase::y_max_diam_index(const IntervalVector& y) const
   {
-    size_t k = 0, y_max = y.max_diam_index();
-    for(size_t i = 0 ; i < _n ; i++)
+    Index k = 0, y_max = y.max_diam_index();
+    for(Index i = 0 ; i < _n ; i++)
     {
       bool outside_proj = true;
       for(const auto& xi : _xi)

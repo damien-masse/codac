@@ -25,10 +25,10 @@ void export_CtcProj(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcInter
   exported
 
     .def(py::init(
-        [](const CtcBase<IntervalVector>& c, std::vector<size_t_type> proj_indices, double default_eps)
+        [](const CtcBase<IntervalVector>& c, std::vector<Index_type> proj_indices, double default_eps)
         {
           std::transform(std::begin(proj_indices),std::end(proj_indices),std::begin(proj_indices),
-            [](size_t_type x)
+            [](Index_type x)
             {
               matlab::test_integer(x);
               return matlab::input_index(x);
@@ -36,14 +36,14 @@ void export_CtcProj(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcInter
 
           return std::make_unique<CtcProj>(c.copy(), proj_indices, default_eps);
         }),
-      CTCPROJ_CTCPROJ_CONST_C_REF_CONST_VECTOR_SIZET_REF_DOUBLE,
+      CTCPROJ_CTCPROJ_CONST_C_REF_CONST_VECTOR_INDEX_REF_DOUBLE,
       "c"_a, "proj_indices"_a, "default_eps"_a=0.01)
 
     .def(py::init(
-        [](const CtcBase<IntervalVector>& c, std::vector<size_t_type> proj_indices, const IntervalVector& y, double default_eps)
+        [](const CtcBase<IntervalVector>& c, std::vector<Index_type> proj_indices, const IntervalVector& y, double default_eps)
         {
           std::transform(std::begin(proj_indices),std::end(proj_indices),std::begin(proj_indices),
-            [](size_t_type x)
+            [](Index_type x)
             {
               matlab::test_integer(x);
               return matlab::input_index(x);
@@ -51,7 +51,7 @@ void export_CtcProj(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcInter
 
           return std::make_unique<CtcProj>(c.copy(), proj_indices, y, default_eps);
         }),
-      CTCPROJ_CTCPROJ_CONST_C_REF_CONST_VECTOR_SIZET_REF_CONST_INTERVALVECTOR_REF_DOUBLE,
+      CTCPROJ_CTCPROJ_CONST_C_REF_CONST_VECTOR_INDEX_REF_CONST_INTERVALVECTOR_REF_DOUBLE,
       "c"_a, "proj_indices"_a, "y"_a, "default_eps"_a=0.01)
 
     .def("contract", (void(CtcProj::*)(IntervalVector&,double) const) &CtcProj::contract,

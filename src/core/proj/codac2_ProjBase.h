@@ -18,16 +18,16 @@ namespace codac2
   {
     protected:
 
-      ProjBase(const std::vector<size_t>& proj_indices, const IntervalVector& y, double default_eps = 0.01);
+      ProjBase(const std::vector<Index>& proj_indices, const IntervalVector& y, double default_eps = 0.01);
       IntervalVector extract_x(const IntervalVector& w) const;
       IntervalVector extract_y(const IntervalVector& w) const;
       IntervalVector cart_prod_xy(const IntervalVector& x, const IntervalVector& y) const;
-      size_t y_max_diam_index(const IntervalVector& y) const;
+      Index y_max_diam_index(const IntervalVector& y) const;
 
     protected:
 
-      const size_t _n;
-      const std::vector<size_t> _xi;
+      const Index _n;
+      const std::vector<Index> _xi;
       const IntervalVector _y;
       const double _default_eps;
   };
