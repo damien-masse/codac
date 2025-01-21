@@ -2,11 +2,7 @@
  *  codac2_Figure2D.cpp
  * ----------------------------------------------------------------------------
  *  \date       2024
-<<<<<<< HEAD
- *  \author     Simon Rohou, Morgan Louédec
-=======
- *  \author     Simon Rohou, Maël Godard
->>>>>>> codac2_dev
+ *  \author     Simon Rohou, Maël Godard, Morgan Louédec
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
