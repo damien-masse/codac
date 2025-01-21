@@ -36,6 +36,20 @@ void _export_AnalyticTraj(py::module& m, const string& class_name)
       ANALYTICTRAJ_OS_ANALYTICTRAJ_CONST_ANALYTICFUNCTION_O_REF_CONST_INTERVAL_REF,
       "f"_a, "tdomain"_a)
 
+    .def("__call__", [](const AnalyticTraj<O>& x, double t)
+        {
+          return x(t);
+        },
+      VIRTUAL_S_ANALYTICTRAJ_OS_OPERATORCALL_DOUBLE_CONST,
+      "t"_a)
+
+    .def("__call__", [](const AnalyticTraj<O>& x, const Interval& t)
+        {
+          return x(t);
+        },
+      VIRTUAL_WRAPPER_S_DOMAIN_ANALYTICTRAJ_OS_OPERATORCALL_CONST_INTERVAL_REF_CONST,
+      "t"_a)
+
   ;
 }
 

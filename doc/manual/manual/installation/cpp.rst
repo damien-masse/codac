@@ -88,7 +88,7 @@ Steps
 
       # Configure IBEX before installation
       cd $HOME/ibex-lib
-      mkdir build && cd build
+      mkdir build ; cd build
       cmake -DCMAKE_INSTALL_PREFIX=$HOME/ibex-lib/build_install -DCMAKE_BUILD_TYPE=Release ..
 
       # Building + installing
@@ -113,7 +113,7 @@ Steps
       cd $HOME/codac
       # Get automatically pybind11 and eigen submodules:
       git submodule init ; git submodule update 
-      mkdir build && cd build
+      mkdir build ; cd build
       cmake -DCMAKE_INSTALL_PREFIX=$HOME/codac/build_install -DCMAKE_PREFIX_PATH=$HOME/ibex-lib/build_install -DCMAKE_BUILD_TYPE=Release ..
 
       # Building + installing
@@ -147,7 +147,7 @@ Steps
    .. code-block:: bash
 
       cd $HOME/codac/examples/01_batman
-      mkdir build && cd build
+      mkdir build ; cd build
       cmake ..
       make
 
@@ -263,8 +263,8 @@ Troubleshooting
 ----------------
 If you encounter issues during the installation process, consider the following:
 
-- Ensure all prerequisites are installed and up to date.
-- Check `the GitHub issues <https://github.com/codac-team/codac/issues>`_ page for known problems.
+- ensure all prerequisites are installed and up to date.
+- check `the GitHub issues <https://github.com/codac-team/codac/issues>`_ page for known problems.
 
 If you need further assistance, reach out to the library maintainers via the GitHub repository's issue tracker or email support at `simon.rohou [at] ensta.fr`.
 

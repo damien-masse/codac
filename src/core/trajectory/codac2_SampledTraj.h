@@ -12,6 +12,7 @@
 #include <map>
 #include "codac2_TrajBase.h"
 #include "codac2_analytic_variables.h"
+#include "codac2_template_tools.h"
 
 namespace codac2
 {
@@ -31,7 +32,7 @@ namespace codac2
         auto it_t = l_t.begin(); auto it_x = l_x.begin();
         while(it_t != l_t.end())
         {
-          (*this)[*(it_t)] = *(it_x);
+          this->set(*it_t,*it_x);
           it_t++; it_x++;
         }
       }
@@ -90,8 +91,8 @@ namespace codac2
             ++it;
         }
 
-        (*this)[new_tdomain.lb()] = y_lb; // clean truncation
-        (*this)[new_tdomain.ub()] = y_ub;
+        this->set(new_tdomain.lb(), y_lb); // clean truncation
+        this->set(new_tdomain.ub(), y_ub);
       }
 
       virtual typename Wrapper<T>::Domain codomain() const
@@ -138,6 +139,12 @@ namespace codac2
         }
       }
 
+      void set(double t, const T& x)
+      {
+        assert(this->empty() || size_of(x) == this->size());
+        std::map<double,T>::operator[](t) = x;
+      }
+
       virtual SampledTraj<T> sampled(double dt) const
       {
         return sampled(dt, true);
@@ -154,10 +161,40 @@ namespace codac2
         {
           // Appending values from the initial map:
           for(const auto& [ti,xi] : *this)
-            straj[ti] = xi;
+            straj.set(ti, xi);
         }
         
         return straj;
+      }
+
+      template<typename T_=T>
+        requires std::is_same_v<T_,Vector>
+      SampledTraj<double> operator[](Index i) const
+      {
+        assert_release(i >= 0 && i < size());
+        std::map<double,double> m;
+        for(const auto& [t,y] : *this)
+        {
+          assert(i < y.size());
+          m[t] = y[i];
+        }
+
+        return { m };
+      }
+
+      template<typename T_=T>
+        requires std::is_same_v<T_,Vector>
+      SampledTraj<Vector> subvector(Index i, Index j) const
+      {
+        assert_release(i >= 0 && i <= j && j < size());
+        std::map<double,Vector> m;
+        for(const auto& [t,y] : *this)
+        {
+          assert(j < y.size());
+          m[t] = y.subvector(i,j);
+        }
+
+        return { m };
       }
   };
   

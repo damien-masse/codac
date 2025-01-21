@@ -18,10 +18,10 @@ namespace codac2
 {
   // eps: accuracy of the paving algorithm, the undefined boxes will have their max_diam <= eps
   
-  PavingOut pave(const IntervalVector& x, std::shared_ptr<const CtcBase<IntervalVector>> c, double eps);
-  PavingOut pave(const IntervalVector& x, const CtcBase<IntervalVector>& c, double eps);
-  PavingInOut pave(const IntervalVector& x, std::shared_ptr<const SepBase> s, double eps);
-  PavingInOut pave(const IntervalVector& x, const SepBase& s, double eps);
+  PavingOut pave(const IntervalVector& x, std::shared_ptr<const CtcBase<IntervalVector>> c, double eps, bool verbose = false);
+  PavingOut pave(const IntervalVector& x, const CtcBase<IntervalVector>& c, double eps, bool verbose = false);
+  PavingInOut pave(const IntervalVector& x, std::shared_ptr<const SepBase> s, double eps, bool verbose = false);
+  PavingInOut pave(const IntervalVector& x, const SepBase& s, double eps, bool verbose = false);
 
   template<typename Y>
   PavingInOut sivia(const IntervalVector& x, const AnalyticFunction<Y>& f, const typename Y::Domain& y, double eps, bool verbose = false)
@@ -54,8 +54,10 @@ namespace codac2
         n->bisect();
         l.push_back(n->left());
         l.push_back(n->right());
-        n_boundary++;
       }
+
+      else
+        n_boundary++;
     }
 
     if(verbose)

@@ -2,7 +2,11 @@
  *  codac2_Figure2D.cpp
  * ----------------------------------------------------------------------------
  *  \date       2024
+<<<<<<< HEAD
+ *  \author     Simon Rohou, Morgan Louédec
+=======
  *  \author     Simon Rohou, Maël Godard
+>>>>>>> codac2_dev
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -13,6 +17,8 @@
 #include "codac2_Figure2D_IPE.h"
 #include "codac2_math.h"
 #include "codac2_pave.h"
+#include "codac2_matrices.h"
+#include "codac2_Matrix.h"
 
 using namespace std;
 using namespace codac2;
@@ -51,6 +57,16 @@ void Figure2D::set_axes(const FigureAxis& axis1, const FigureAxis& axis2)
   _axes = { axis1, axis2 };
   for(const auto& output_fig : _output_figures)
     output_fig->update_axes();
+}
+
+const Index& Figure2D::i() const
+{
+  return axes()[0].dim_id;
+}
+
+const Index& Figure2D::j() const
+{
+  return axes()[1].dim_id;
 }
 
 const Vector& Figure2D::pos() const
@@ -211,6 +227,38 @@ void Figure2D::draw_ellipse(const Vector& c, const Vector& ab, double theta, con
     output_fig->draw_ellipse(c,ab,theta,s);
 }
 
+void Figure2D::draw_ellipsoid(const Ellipsoid &e, const StyleProperties &s)
+{
+  // Author: Morgan Louédec
+  assert_release(this->size() <= e.size());
+
+  Index n = e.size();
+  Ellipsoid proj_e(2);
+
+  // 2d projection of the ellipsoid
+  if(n > 2)
+  {
+    Vector v = Vector::zero(n);
+    v[i()] = 1;
+    Vector u = Vector::zero(n);
+    u[j()] = 1;
+    proj_e = e.proj_2d(Vector::zero(n), v, u);
+  }
+
+  else
+    proj_e = e;
+
+  // draw the 2d ellipsoid
+  Eigen::JacobiSVD<Matrix> jsvd(proj_e.G, Eigen::ComputeThinU);
+  Matrix U(jsvd.matrixU());
+  Vector ab(jsvd.singularValues());
+
+  double theta = std::atan2(U(1, 0), U(0, 0));
+
+  for(const auto& output_fig : _output_figures)
+    output_fig->draw_ellipse(proj_e.mu, ab, theta, s);
+}
+
 void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s)
 {
   assert_release(this->size() <= x.size());
@@ -317,7 +365,7 @@ void Figure2D::draw_paving(const PavingInOut& p, const StyleProperties& boundary
 
         for(const auto& bi : hull.diff(outer))
           output_fig->draw_box(bi, outside_style);
-        
+
         if(n->is_leaf())
           output_fig->draw_box(inner & outer, boundary_style);
 

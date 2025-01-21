@@ -53,6 +53,8 @@ void export_linear_ctc(py::module& m);
 
 // domains
 void export_BoolInterval(py::module& m);
+void export_Ellipsoid(py::module& m);
+void export_Ellipsoid_utils(py::module& m);
 py::class_<Interval> export_Interval(py::module& m);
 void export_Interval_operations(py::module& m, py::class_<Interval>& py_Interval);
 py::class_<IntervalRow> export_IntervalRow(py::module& m);
@@ -167,6 +169,8 @@ PYBIND11_MODULE(_core, m)
 
   // domains
   export_BoolInterval(m);
+  export_Ellipsoid(m);
+  export_Ellipsoid_utils(m);
   auto py_Interval = export_Interval(m);
   export_Interval_operations(m, py_Interval);
   auto py_IR = export_IntervalRow(m);
