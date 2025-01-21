@@ -263,8 +263,8 @@ Troubleshooting
 ----------------
 If you encounter issues during the installation process, consider the following:
 
-- Ensure all prerequisites are installed and up to date.
-- Check `the GitHub issues <https://github.com/codac-team/codac/issues>`_ page for known problems.
+- ensure all prerequisites are installed and up to date.
+- check `the GitHub issues <https://github.com/codac-team/codac/issues>`_ page for known problems.
 
 If you need further assistance, reach out to the library maintainers via the GitHub repository's issue tracker or email support at `simon.rohou [at] ensta.fr`.
 

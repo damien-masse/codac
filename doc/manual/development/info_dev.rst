@@ -35,7 +35,12 @@ If you simply want to use the latest Codac release in Python, you can download t
 
 1. **Ensure the following prerequisites are met**:
 
-   - the prerequisites for the :ref:`C++ installation of Codac <sec-install-cpp-prerequisites>`.
+   - the prerequisites for the :ref:`C++ installation of Codac <sec-install-cpp-prerequisites>`. On Linux systems, you can simply:
+
+   .. code-block:: bash
+
+      sudo apt-get install -y g++ gcc cmake git flex bison
+
    - a supported version of Python (>=3.6).
    - a recent `Doxygen <https://www.doxygen.nl>`_ version (for instance, release 1.13.0 or newest). On Linux systems, latest releases are not available as Debian packages, so we advice to install Doxygen from the sources:
 
@@ -60,13 +65,14 @@ If you simply want to use the latest Codac release in Python, you can download t
 
    .. code-block:: bash
       
-      git clone -b master https://github.com/lebarsfa/ibex-lib.git $HOME/ibex-lib
+      git clone https://github.com/lebarsfa/ibex-lib.git $HOME/ibex-lib
+      cd $HOME/ibex-lib
 
    You will need to compile both IBEX and Codac using the ``-fPIC`` options. This can be done with the following CMake configuration:
 
    .. code-block:: bash
       
-      cd $HOME/ibex-lib/build
+      mkdir build ; cd build
       cmake -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_C_FLAGS="-fPIC" -DCMAKE_INSTALL_PREFIX=$HOME/ibex-lib/build_install -DCMAKE_BUILD_TYPE=Release ..
       make ; make install
 
@@ -77,16 +83,27 @@ If you simply want to use the latest Codac release in Python, you can download t
    .. code-block:: bash
       
       git clone https://github.com/codac-team/codac $HOME/codac
+      cd $HOME/codac
+
+   .. admonition:: Using Codac v2 simultaneously with Codac v1
+
+      In case you want to use the two versions of Codac in the same Python script, you will have to compile the binaries of Codac v2 under a different name in order to avoid ``import`` conflicts. Things are already prepared in the branch ``codac2_renamed``, you can therefore:
+   
+      .. code-block:: bash
+         
+         git checkout codac2_renamed
+
+      Note that you will then have to ``import codac2`` instead of ``import codac`` in your Python scripts.
 
    In addition to the ``-fPIC`` options, you will have to configure ``WITH_PYTHON=ON``. Note that the ``git submodule`` commands will automatically get the `pybind11 <https://pybind11.readthedocs.io>`_ files required for the binding.
    
    .. code-block:: bash
       
-      cd $HOME/codac/build
       # Get automatically pybind11 and eigen submodules:
       git submodule init ; git submodule update
       # Configure CMake
-      cmake -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_C_FLAGS="-fPIC" -DWITH_PYTHON=ON -DCMAKE_INSTALL_PREFIX=$HOME/codac/build_install -DCMAKE_PREFIX_PATH=$HOME/ibex-lib/build_install -DCMAKE_BUILD_TYPE=Release ..
+      mkdir build ; cd build
+      cmake -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_C_FLAGS="-fPIC" -DWITH_PYTHON=ON -DCMAKE_INSTALL_PREFIX=$HOME/codac/build_install -DCMAKE_PREFIX_PATH="$HOME/ibex-lib/build_install;$HOME/doxygen/build_install" -DCMAKE_BUILD_TYPE=Release ..
       make ; make install
 
 4. **Configure your Python environment**:
