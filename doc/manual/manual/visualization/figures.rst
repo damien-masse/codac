@@ -36,7 +36,7 @@ Figure2D
 
 The basic class for 2D visualization is Figure2D. It is used to create a figure that can be displayed in VIBes or saved in an xml file for IPE.
 The constructor takes two arguments: the name of the figure and the graphical output. A boolean can be added to specify if the figure is to be used
-DefaultView (see :ref:`subsec-graphics-figures-figure2d-defaultview`).
+DefaultView (see :ref:`subsec-graphics-figures-defaultview`).
 
 .. tabs::
 
@@ -46,9 +46,9 @@ DefaultView (see :ref:`subsec-graphics-figures-figure2d-defaultview`).
 
   .. code-tab:: c++
 
-    Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
+    Figure2D fig ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
 
-.. _subsec-graphics-figures-figure2d-defaultview:
+.. _subsec-graphics-figures-defaultview:
 
 DefaultView
 -----------
@@ -60,13 +60,13 @@ Any Figure2D object can be used as DefaultView with the set method:
 
   .. code-tab:: py
 
-    figure = Figure2D("My figure", GraphicOutput.VIBES | GraphicOutput.IPE)
-    DefaultView.set(figure)
+    fig = Figure2D("My figure", GraphicOutput.VIBES | GraphicOutput.IPE)
+    DefaultView.set(fig)
 
   .. code-tab:: c++
 
-    std::shared_ptr<codac2::Figure2D> figure = std::make_shared<Figure2D>("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
-    DefaultView::set(figure);
+    std::shared_ptr<codac2::Figure2D> fig = std::make_shared<Figure2D>("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
+    DefaultView::set(fig);
 
 Note that in C++ the figure must be a shared pointer in order to be passed to the `set` method.
 
@@ -80,9 +80,9 @@ Equivalently, a Figure2D can be used as DefaultView by setting the flag `set_as_
 
   .. code-tab:: c++
 
-    Figure2D figure ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE,true);
+    Figure2D fig ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE,true);
 
-.. _subsec-graphics-figures-figure2d-figure-properties:
+.. _subsec-graphics-figures-figure-properties:
 
 Figure properties
 -----------------
@@ -100,3 +100,17 @@ Once created, the properties of a Figure2D object can be modified using the foll
 
     fig.set_window_properties({50,50},{500,500}); // set the window position and size
     fig.set_axes(axis(0,{-10,10}), axis(1,{-10,10})); // set the range of values on each axis : 0 for x-axis, 1 for y-axis
+
+The same methods can be applied on the DefaultView object.
+
+.. tabs::
+
+  .. code-tab:: py
+
+    DefaultView.set_window_properties([50,50],[500,500]) # set the window position and size
+    DefaultView.set_axes(axis(0,[-10,10]), axis(1,[-10,10])) # set the range of values on each axis : 0 for x-axis, 1 for y-axis
+
+  .. code-tab:: c++
+
+    DefaultView::set_window_properties({50,50},{500,500});
+    DefaultView::set_axes(axis(0,{-10,10}), axis(1,{-10,10}));
