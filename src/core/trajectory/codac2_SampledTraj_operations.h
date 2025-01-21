@@ -54,6 +54,28 @@ namespace codac2
     return y; \
   } \
 
+  #define macro_member_binary_traj_traj(f) \
+  { \
+    assert_release(x1.nb_samples() == x2.nb_samples()); \
+    auto it_x1 = x1.begin(); \
+    auto it_x2 = x2.begin(); \
+    while(it_x1 != x1.end()) \
+    { \
+      assert_release(it_x1->first == it_x2->first \
+        && "inconsistent dates between the two trajectories"); \
+      it_x1->second = f(it_x1->second,it_x2->second); \
+      it_x1++; it_x2++; \
+    } \
+    return x1; \
+  } \
+
+  #define macro_member_binary_traj_real(f) \
+  { \
+    for(auto it_x1 = x1.begin() ; it_x1 != x1.end() ; it_x1++) \
+      it_x1->second = f(it_x1->second,x2); \
+    return x1; \
+  } \
+
   template<typename T>
   inline T operator_add(const T& x1, const T& x2) { return x1 + x2; }
   template<typename T>
@@ -106,6 +128,26 @@ namespace codac2
   inline SampledTraj<T> operator+(const T& x1, const SampledTraj<T>& x2)
     macro_binary_real_traj(operator_add);
 
+  /**
+   * \brief Operates +=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T>
+  inline SampledTraj<T>& operator+=(SampledTraj<T>& x1, const T& x2)
+    macro_member_binary_traj_real(operator_add);
+
+  /**
+   * \brief Operates +=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T>
+  inline SampledTraj<T>& operator+=(SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_member_binary_traj_traj(operator_add);
+
   /** \brief \f$-x_1(\cdot)\f$
     * \param x1
     * \return trajectory output
@@ -141,6 +183,26 @@ namespace codac2
   template<typename T>
   inline SampledTraj<T> operator-(const T& x1, const SampledTraj<T>& x2)
     macro_binary_real_traj(operator_sub);
+
+  /**
+   * \brief Operates -=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T>
+  inline SampledTraj<T>& operator-=(SampledTraj<T>& x1, const T& x2)
+    macro_member_binary_traj_real(operator_sub);
+
+  /**
+   * \brief Operates -=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T>
+  inline SampledTraj<T>& operator-=(SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_member_binary_traj_traj(operator_sub);
 
   /** \brief \f$x_1\cdot x_2(\cdot)\f$
     * \param x1
@@ -197,6 +259,26 @@ namespace codac2
   inline SampledTraj<Vector> operator*(const SampledTraj<Matrix>& x1, const SampledTraj<Vector>& x2)
     macro_binary_traj_traj(operator_mul_vec);
 
+  /**
+   * \brief Operates *=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T>
+  inline SampledTraj<T>& operator*=(SampledTraj<T>& x1, const T& x2)
+    macro_member_binary_traj_real(operator_mul);
+
+  /**
+   * \brief Operates *=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T>
+  inline SampledTraj<T>& operator*=(SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_member_binary_traj_traj(operator_mul);
+
   /** \brief \f$x_2(\cdot)/x_1\f$
     * \param x1
     * \param x2
@@ -233,6 +315,26 @@ namespace codac2
   template<typename T>
   inline SampledTraj<T> operator/(const T& x1, const SampledTraj<T>& x2)
     macro_binary_real_traj(operator_div);
+
+  /**
+   * \brief Operates /=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T>
+  inline SampledTraj<T>& operator/=(SampledTraj<T>& x1, const T& x2)
+    macro_member_binary_traj_real(operator_div);
+
+  /**
+   * \brief Operates /=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T>
+  inline SampledTraj<T>& operator/=(SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_member_binary_traj_traj(operator_div);
 
   /** \brief \f$x^2(\cdot)\f$
     * \param x1

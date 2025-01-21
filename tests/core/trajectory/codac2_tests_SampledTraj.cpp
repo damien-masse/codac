@@ -117,4 +117,7 @@ TEST_CASE("SampledTraj: operations")
   auto analytic_traj = AnalyticTraj(h, {-PI,PI});
   SampledTraj x = analytic_traj.sampled(1e-2);
   CHECK(Approx(cos(x).codomain(),1e-5) == Interval(-1,1));
+  x = cos(x) + 4.;
+  x -= 42.;
+  CHECK(Approx(x.codomain(),1e-5) == Interval(-1,1)+4.-42.);
 }
