@@ -17,6 +17,7 @@
 #include "codac2_OutputFigure2D.h"
 #include "codac2_Paving.h"
 #include "codac2_ColorMap.h"
+#include "codac2_Ellipsoid.h"
 
 #define DEFAULT_FIG_NAME "Codac - default view"
 

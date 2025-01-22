@@ -28,7 +28,7 @@
     message(STATUS "You are running Codac in fast release mode. (option -DCMAKE_BUILD_TYPE=Release is required)")
   endif()
 
-  add_executable(${PROJECT_NAME} main.cpp)
+  add_executable(${PROJECT_NAME} graphic_examples.cpp)
   target_compile_options(${PROJECT_NAME} PUBLIC ${CODAC_CXX_FLAGS})
   target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CODAC_INCLUDE_DIRS})
   target_link_libraries(${PROJECT_NAME} PUBLIC ${CODAC_LIBRARIES})

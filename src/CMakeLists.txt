@@ -13,6 +13,10 @@
   #if(WITH_PYTHON)
   #  add_subdirectory(sympy)
   #endif()
+
+  if(WITH_CAPD)
+    add_subdirectory(capd)
+  endif()
   
 
 # Generating PKG file
@@ -63,14 +67,15 @@
     find_library(CODAC_UNSUPPORTED_LIBRARY NAMES ${PROJECT_NAME}-unsupported
                  PATH_SUFFIXES lib)
 
+    find_package(IBEX REQUIRED)
+
     set(CODAC_VERSION ${PROJECT_VERSION})
-    set(CODAC_LIBRARIES \${CODAC_CORE_LIBRARY} \${CODAC_GRAPHICS_LIBRARY} \${CODAC_UNSUPPORTED_LIBRARY} \${CODAC_CORE_LIBRARY})
+    set(CODAC_LIBRARIES \${CODAC_CORE_LIBRARY} \${CODAC_GRAPHICS_LIBRARY} \${CODAC_UNSUPPORTED_LIBRARY} Ibex::ibex)
     set(CODAC_INCLUDE_DIRS \${CODAC_CORE_INCLUDE_DIR}/../ \${CODAC_CORE_INCLUDE_DIR}/../eigen3/ \${CODAC_CORE_INCLUDE_DIR} \${CODAC_GRAPHICS_INCLUDE_DIR} \${CODAC_UNSUPPORTED_INCLUDE_DIR})
 
     set(CODAC_C_FLAGS \"\")
     set(CODAC_CXX_FLAGS \"\")
   ")
-
 
   #if(WITH_PYTHON)
   #  
@@ -90,23 +95,29 @@
   #
   #endif()
 
-
   if(WITH_CAPD)
 
     file(APPEND ${CODAC_CMAKE_CONFIG_FILE} "
 
   # Optional 3rd party:
 
-    find_path(CODAC_CAPD_INCLUDE_DIR ${PROJECT_NAME}-sympy.h
-              PATH_SUFFIXES include/${PROJECT_NAME}-sympy)
+    find_package(CAPD REQUIRED)
+
+    find_path(CODAC_CAPD_INCLUDE_DIR ${PROJECT_NAME}-capd.h
+              PATH_SUFFIXES include/${PROJECT_NAME}-capd)
     set(CODAC_INCLUDE_DIRS \${CODAC_INCLUDE_DIRS} \${CODAC_CAPD_INCLUDE_DIR})
 
-    find_library(CODAC_CAPD_LIBRARY NAMES ${PROJECT_NAME}-sympy
+    find_library(CODAC_CAPD_LIBRARY NAMES ${PROJECT_NAME}-capd
                  PATH_SUFFIXES lib)
-    set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_CAPD_LIBRARY})
+                 
+    set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_CAPD_LIBRARY} capd::capd)
     ")
 
   endif()
+
+  file(APPEND ${CODAC_CMAKE_CONFIG_FILE} "
+    set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_GRAPHICS_LIBRARY}  \${CODAC_CORE_LIBRARY})
+    ")
 
 
   install(FILES ${CODAC_CMAKE_CONFIG_FILE} DESTINATION ${CMAKE_INSTALL_CMAKE})

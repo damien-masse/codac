@@ -5,8 +5,9 @@ Visualization
 
 .. toctree::
 
-   colors.rst
    figures.rst
+   functions.rst
+   colors.rst
    vibes.rst
    ipe.rst
    3d_visualization.rst
