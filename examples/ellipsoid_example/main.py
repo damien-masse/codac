@@ -111,6 +111,8 @@ print('\nclusion test e4 in e6: ', e6.is_concentric_subset(e4))
 
 print('\nclusion test e5 in e6: ', e5.is_concentric_subset(e6))
 
+# TODO add the non inclusion test in python
+
 # ----------------------------------------------------------
 # guaranteed and non guaranteed linear mappings
 # ----------------------------------------------------------

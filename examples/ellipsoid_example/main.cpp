@@ -14,11 +14,9 @@ int main() {
     fig1.set_window_properties({0, 100}, {500, 500});
 
     // initial ellipsoid
-    Ellipsoid e1(
-        {1., 0.}, // mu
-        {{0.05, 0.0}, // G
-         {0.,   0.05}}
-    );
+    Vector mu({1., 0.});
+    Matrix G({{0.05, 0.0},{0.,   0.05}});
+    Ellipsoid e1(mu,G);
     fig1.draw_ellipsoid(e1, {Color::red(), Color::red(0.3)});
     cout << "Initial ellipsoid e1 (red):" << endl;
     cout << e1 << endl;
