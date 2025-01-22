@@ -10,7 +10,7 @@ int main() {
     cout << "Linear and nonlinear mappings:" << endl;
 
     Figure2D fig1("Linear and nonlinear mappings", GraphicOutput::VIBES);
-    fig1.set_axes(axis(0, {0, 1.5}), axis(1, {-1., 0.5}));
+    fig1.set_axes(axis(0, {-0.1, 1.3}), axis(1, {-1.2, 0.2}));
     fig1.set_window_properties({0, 100}, {500, 500});
 
     // initial ellipsoid
@@ -89,9 +89,10 @@ int main() {
     fig3.set_window_properties({1200, 100}, {500, 500});
     fig4.set_window_properties({0, 600}, {500, 500});
 
-    fig2.set_axes(axis(0, {-3, 3}), axis(1, {-3, 3}));
-    fig3.set_axes(axis(1, {-3, 3}), axis(2, {-3, 3}));
-    fig4.set_axes(axis(0, {-3, 3}), axis(2, {-3, 3}));
+    fig2.set_axes(axis(0, {-3.1, 3.1}), axis(1, {-3.1, 3.1}));
+    fig2.set_axes(axis(0, {-3.1, 3.1}), axis(1, {-3.1, 3.1}));
+    fig3.set_axes(axis(1, {-3.1, 3.1}), axis(2, {-3.1, 3.1}));
+    fig4.set_axes(axis(0, {-3.1, 3.1}), axis(2, {-3.1, 3.1}));
 
     fig2.draw_ellipsoid(e4, {Color::blue(), Color::blue(0.3)});
     fig3.draw_ellipsoid(e4, {Color::blue(), Color::blue(0.3)});

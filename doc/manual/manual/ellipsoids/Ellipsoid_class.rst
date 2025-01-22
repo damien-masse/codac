@@ -10,43 +10,63 @@ This page describes the Ellipsoid classes used in Codac 2 as well as some functi
 Class Ellipsoid
 ---------------
 
-As presented in :ref:what_is_ellipsoids the n-dimensional ellipsoids is defined by a center point and a shape matrix
+The Ellipsoid class can be used to declare a n-dimensional ellipsoid.
+As presented in :ref:what_is_ellipsoids the ellipsoid is defined by a center point and a shape matrix.
+Ellipsoids can be drawn in VIBES via the .draw_ellipsoid function, as illustrated by :ref:Fig.
+
 .. tabs::
   
     .. code-tab:: py
 
-    # Init drawing figure
-    fig1 = Figure2D('Linear and nonlinear mappings', GraphicOutput.VIBES)
-    fig1.set_axes(axis(0, [0, 1.5]), axis(1, [-1., 0.5]))
-    fig1.set_window_properties([0, 100], [500, 500])
+        # Init drawing figure
+        fig1 = Figure2D('Linear and nonlinear mappings', GraphicOutput.VIBES)
+        fig1.set_axes(axis(0, [-0.1, 1.3]), axis(1, [-1.2, 0.2]))
+        fig1.set_window_properties([0, 100], [500, 500])
 
-    mu = Vector([1., 0.])
-    G = Matrix([[0.05, 0.0],
-              [0.,   0.05]])
-    e1 = Ellipsoid(mu, G)
+        mu = Vector([1., 0.])
+        G = Matrix([[0.05, 0.0],
+                  [0.,   0.05]])
+        e1 = Ellipsoid(mu, G)
 
-    fig1.draw_ellipsoid(e1, [Color.red(), Color.red(0.3)]) # drawing
+        fig1.draw_ellipsoid(e1, [Color.red(), Color.red(0.3)]) # drawing
 
     .. code-tab:: c++
 
-    // Init drawing figure
-    Figure2D fig1("Linear and nonlinear mappings", GraphicOutput::VIBES);
-    fig1.set_axes(axis(0, {0, 1.5}), axis(1, {-1., 0.5}));
-    fig1.set_window_properties({0, 100}, {500, 500});
+        // Init drawing figure
+        Figure2D fig1("Linear and nonlinear mappings", GraphicOutput::VIBES);
+        fig1.set_axes(axis(0, {-0.1, 1.3}), axis(1, {-1.2, 0.2}));
+        fig1.set_window_properties({0, 100}, {500, 500});
 
-    Vector mu({1., 0.}); // center point
-    Matrix G({{0.05, 0.0},{0.,   0.05}}); // shape matrix
-    Ellipsoid e1(mu,G); // ellipsoid
+        Vector mu({1., 0.}); // center point
+        Matrix G({{0.05, 0.0},{0.,   0.05}}); // shape matrix
+        Ellipsoid e1(mu,G); // ellipsoid
 
-    fig1.draw_ellipsoid(e1, {Color::red(), Color::red(0.3)}); // draw
+        fig1.draw_ellipsoid(e1, {Color::red(), Color::red(0.3)}); // draw
+        cout << e1 << endl;
+        /*
+        Ellipsoid 2d:
+          mu=[ 1 ; 0 ]
+           G=
+        [[ 0.05 ,    0 ]
+         [    0 , 0.05 ]]
+        */
 
 Linear and nonlinear mappings
 -----------------------------
 
-.. figure:: codaca.png
+Linear and nonlinear mappings can be applied on ellipsoids.
+
+For every ellipsoid $ex$, square matrix $A$ and vector $b$,
+the function *unreliable_linear_mapping* compute the ellipsoid $ey=A\cdot ex + b$.
+
+Nonlinear mappings can be declared with the AnalyticFunction class. For every ellipsoid $ex$ and nonlinear mapping $h$,
+the function nonlinear_mapping compute an ellipsoid $ey$ that enclose the image of $ex$ by $h$ such that
+$h(ex)\in ey$
+
+.. figure:: linear_and_nonlinear_mappings.png
   :width: 400
 
-  Figure 1 - caption
+  Figure 1 - Illustration of successive linear and nonlinear mappings on ellipsoids
 
 .. tabs::
 
@@ -97,6 +117,16 @@ Linear and nonlinear mappings
 
 Projection of the ellipsoids
 ----------------------------
+
+High dimensional ellipsoids can illustrated with 2D projection.
+In Codac, the projection is made by the Figure2D object via the .draw_ellipsoid function:
+the ellipsoid is projected on the plane (0,i,j),
+where the axis i and j are specified via the .set_axes function of the figure.
+
+.. figure:: projections.png
+  :width: 800
+
+  Figure 2 - Projections of the ellipsoids $e4$, $e5$ and $e6$ in the 3D XYZ space
 
 .. tabs::
 
@@ -185,31 +215,22 @@ Projection of the ellipsoids
       fig3.draw_ellipsoid(e6, {Color::green(), Color::green(0.3)});
       fig4.draw_ellipsoid(e6, {Color::green(), Color::green(0.3)});
 
-.. figure:: codacb.png
-  :width: 400
-
-  Figure 2 - caption
-
-.. figure:: codace.png
-  :width: 400
-
-  Figure 3 - caption
-
-.. figure:: codacf.png
-  :width: 400
-
-  Figure 4 - caption
 
 Inclusion tests
 ---------------
+
+The function .is_concentric_subset can test if two concentric ellipsoids are strictly included in each other.
+The function return a BoolInterval that can be: [ true ] if the inclusion is verified /
+[ true, false ] if the method is not able to conclude
+
 .. tabs::
 
     .. code-tab:: py
 
         print('\nInclusion test e5 in e4: ', e5.is_concentric_subset(e4))
-        print('\nclusion test e4 in e5: ', e4.is_concentric_subset(e5))
-        print('\nclusion test e4 in e6: ', e6.is_concentric_subset(e4))
-        print('\nclusion test e5 in e6: ', e5.is_concentric_subset(e6))
+        print('\nInclusion test e4 in e5: ', e4.is_concentric_subset(e5))
+        print('\nInclusion test e4 in e6: ', e6.is_concentric_subset(e4))
+        print('\nInclusion test e5 in e6: ', e5.is_concentric_subset(e6))
 
     .. code-tab:: c++
 
@@ -218,13 +239,25 @@ Inclusion tests
         cout << "Inclusion test e4 in e6: " << e6.is_concentric_subset(e4) << endl;
         cout << "Inclusion test e5 in e6: " << e5.is_concentric_subset(e6) << endl;
 
+        /*
+        Inclusion test e5 in e4: [ true ] -> e5 is included in e4
+        Inclusion test e4 in e5: [ true, false ] -> not able to conclude
+        Inclusion test e4 in e6: [ true, false ]
+        Inclusion test e5 in e6: [ true, false ]
+        */
+
+
 Degenerated Ellipsoids & singular mappings
 ------------------------------------------
 
-.. figure:: codace.png
-  :width: 400
+It is also possible to have Degenerated Ellipsoids and to apply singular mappings on ellipsoids.
+There functionalities are handled by the Ellipsoid class and the nonlinear_mapping function
 
-  Figure 5 - caption
+.. figure:: singular_case.png
+  :width: 600
+
+  Figure 3 - Singular cases. $e11$ is the image of $e9$ by the nonlinear mapping $h2$.
+  $e12$ is the image of $e10$ by the nonlinear mapping $h3$
 
 .. tabs::
 
@@ -293,14 +326,46 @@ Degenerated Ellipsoids & singular mappings
         cout << "\nNon-degenerate ellipsoid e10 (red):\n" << e10 << endl;
         cout << "\nImage of singular mapping e12 (green):\n" << e12 << endl;
 
+        /*
+        Degenerate ellipsoid e9 (blue):
+        Ellipsoid 2d:
+          mu=[ 0 ; 0.5 ]
+           G=
+        [[ 0.25 ,    0 ]
+         [    0 ,    0 ]]
+
+        Image of degenerated ellipsoid e11 (green):
+        Ellipsoid 2d:
+          mu=[ 1 ; 0.5 ]
+           G=
+        [[   0.500005 , 0.00310879 ]
+         [  -0.250002 , 0.00621758 ]]
+
+        Non-degenerate ellipsoid e10 (red):
+        Ellipsoid 2d:
+          mu=[ 0 ; -0.5 ]
+           G=
+        [[ 0.25 ,    0 ]
+         [    0 , 0.25 ]]
+
+        Image of singular mapping e12 (green):
+        Ellipsoid 2d:
+          mu=[ 1 ; -0.5 ]
+           G=
+        [[     0.698771 ,  2.20794e-16 ]
+         [     0.698771 , -2.20794e-16 ]]
+        */
+
 
 Stability analysis
 ------------------
 
-.. figure:: codacc.png
-  :width: 400
+The function stability_analysis can compute a bassin of attraction for discrete time systems.
 
-  Figure 6 - caption
+.. figure:: stability.png
+  :width: 600
+
+  Figure 6 - Stability analysis for the discrete system $\boldsymbol{x}_{k+1} = \boldsymbol{h4}\left(\boldsymbol{x}_k\right)$
 
 .. tabs::
 
@@ -341,6 +406,22 @@ Stability analysis
         fig6.set_window_properties({1200, 600}, {500, 500});
         fig6.draw_ellipsoid(e13, {Color::red(), Color::red(0.3)});
         fig6.draw_ellipsoid(e13_out, {Color::green(), Color::green(0.3)});
+
+        /*
+        Stability analysis: the system is stable
+        Ellipsoidal domain of attraction e13 (red):
+        Ellipsoid 2d:
+          mu=[ 0 ; 0 ]
+           G=
+        [[  0.0530036 , -0.0162023 ]
+         [ -0.0162023 ,  0.0599474 ]]
+        Outter enclosure e13_out of the Image of e13 by h4 (green):
+        Ellipsoid 2d:
+          mu=[ 0 ; 2.4895e-17 ]
+           G=
+        [[  0.0449537 ,  0.0137871 ]
+         [ -0.0346424 ,  0.0381183 ]]
+        */
 
 
 
