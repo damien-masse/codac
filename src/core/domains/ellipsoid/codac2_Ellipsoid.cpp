@@ -167,12 +167,10 @@ namespace codac2 {
         return e_res + elli_error;
     }
 
-    Matrix nonlinear_mapping_base(const Matrix &G, const Matrix &J, const IntervalMatrix &J_box, const Vector& trig, const Vector& q) {
-
-        Index n = G.cols();
-
+    Matrix nonlinear_mapping_base(const Matrix &G, const Matrix &J, const IntervalMatrix &J_box, const Vector& trig, const Vector& q) 
+    {
         assert(G.is_squared() && J.is_squared() && J_box.is_squared());
-        assert(n == J.cols() && n == J_box.cols() && n == q.size());
+        assert(G.cols() == J.cols() && G.cols() == J_box.cols() && G.cols() == q.size());
 
         auto JG = J * G; // note: reliability may be lost here!
         auto G_ = G.template cast<Interval>();

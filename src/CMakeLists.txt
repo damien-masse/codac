@@ -13,6 +13,10 @@
   #if(WITH_PYTHON)
   #  add_subdirectory(sympy)
   #endif()
+
+  if(WITH_CAPD)
+    add_subdirectory(capd)
+  endif()
   
 
 # Generating PKG file
@@ -73,7 +77,6 @@
     set(CODAC_CXX_FLAGS \"\")
   ")
 
-
   #if(WITH_PYTHON)
   #  
   #  file(APPEND ${CODAC_CMAKE_CONFIG_FILE} "
@@ -92,20 +95,22 @@
   #
   #endif()
 
-
   if(WITH_CAPD)
 
     file(APPEND ${CODAC_CMAKE_CONFIG_FILE} "
 
   # Optional 3rd party:
 
-    find_path(CODAC_CAPD_INCLUDE_DIR ${PROJECT_NAME}-sympy.h
-              PATH_SUFFIXES include/${PROJECT_NAME}-sympy)
+    find_package(CAPD REQUIRED)
+
+    find_path(CODAC_CAPD_INCLUDE_DIR ${PROJECT_NAME}-capd.h
+              PATH_SUFFIXES include/${PROJECT_NAME}-capd)
     set(CODAC_INCLUDE_DIRS \${CODAC_INCLUDE_DIRS} \${CODAC_CAPD_INCLUDE_DIR})
 
-    find_library(CODAC_CAPD_LIBRARY NAMES ${PROJECT_NAME}-sympy
+    find_library(CODAC_CAPD_LIBRARY NAMES ${PROJECT_NAME}-capd
                  PATH_SUFFIXES lib)
-    set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_CAPD_LIBRARY})
+                 
+    set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_CAPD_LIBRARY} capd::capd)
     ")
 
   endif()

@@ -57,20 +57,6 @@ void export_TrajBase(py::class_<S>& pyclass)
         },
       VIRTUAL_WRAPPER_T_DOMAIN_TRAJBASE_T_CODOMAIN_CONST)
 
-    .def("__call__", [](const S& x, double t)
-        {
-          return x(t);
-        },
-      VIRTUAL_T_TRAJBASE_T_OPERATORCALL_DOUBLE_CONST,
-      "t"_a)
-
-    .def("__call__", [](const S& x, const Interval& t)
-        {
-          return x(t);
-        },
-      VIRTUAL_WRAPPER_T_DOMAIN_TRAJBASE_T_OPERATORCALL_CONST_INTERVAL_REF_CONST,
-      "t"_a)
-
     .def("nan_value", [](const S& x)
         {
           return x.nan_value();
