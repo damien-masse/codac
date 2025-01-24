@@ -16,86 +16,31 @@
 #include "codac2_BoolInterval.h"
 #include "codac2_IntFullPivLU.h"
 
-#include "gaol/gaol_fpu.h" /* for rounding settings */
-
 namespace codac2 {
-
-/* product of double values, keeping 0 */
-inline double prodkeepzero(double a, double b) {
-    if (a==0 || b==0) return 0;
-    else if (a==oo || b==oo) return oo;
-    else return a*b;
-}
-
-inline double prodkeepzero(double a, double b, double c) {
-    if (a==0 || b==0 || c==0) return 0;
-    else if (a==oo || b==oo || c==oo) return oo;
-    else return a*b*c;
-}
 
 /* utility function : compute the bound using Gauss-Jordan successive
    algorithm */
 IntervalMatrix IntFullPivLU::buildLUbounds(const IntervalMatrix &E) {
- /* we need rounding up for floating-point operations */
-    {
-    using namespace gaol;
-    GAOL_RND_PRESERVE(); /* save the rounding state */
-    round_upward(); /* round up */
-    }
-
     const Index nCols = E.cols();
     const Index nRows = E.rows();
     const Index nC = std::min(nCols,nRows-1);
   
-    Matrix M = E.mag();
     IntervalMatrix res = E;
     for (Index k=0;k<nC;k++) {
-       
-       double pivot = (M(k,k)>=1.0 ? oo : 1.0/(-(M(k,k)-1.0)));
        if (k>0) {
-         for (Index c=0;c<=k-1;c++)
-            for (Index r=0;r<=k-1;r++) 
-               M(r,c) += prodkeepzero(M(r,k),M(k,c),pivot);
-         for (auto coef : M.block(0,k,k,1).reshaped()) {
-             coef=prodkeepzero(coef,pivot);
-         }
-         for (auto coef : M.block(k,0,1,k).reshaped()) {
-             coef=prodkeepzero(coef,pivot);
-         }
+         res.block(k,k,1,nCols-k)
+            += res.block(k,0,1,k) * res.topRightCorner(k,nCols-k);
+         res.block(k+1,k,nRows-k-1,1)
+	    += res.bottomLeftCorner(nRows-1-k,k) * res.block(0,k,k,1);
        }
-       M(k,k) = prodkeepzero(M(k,k),pivot);
-
-       IntervalMatrix U = IntervalMatrix::Identity(k+1,k+1);
-       for (Index col=0;col<=k;col++) {
-         for (Index row=0;row<=k;row++) 
-              U(row,col)+=(M(row,col)!=oo ?
-			Interval(-1,1)*M(row,col) :
-                        Interval());
-       }
-       res.block(k+1,k,nRows-k-1,1) +=
-	    E.bottomLeftCorner(nRows-k-1,k+1)*U*E.block(0,k,k+1,1);
-       if (nCols-k-1>0) {
-         res.block(k+1,k+1,1,nCols-k-1) +=
-            E.block(k+1,0,1,k+1)*U*E.topRightCorner(k+1,nCols-k-1);
-       }
-       if (k<nC-1) { /* preparing the next row/column */
-           /* can't use direct matrix product due to prodkeepzero */
-           for (Index c=0;c<=k;c++)
-              for (Index r=0;r<=k;r++) 
-                 M(r,k+1) += prodkeepzero(M(r,c),M(c,k+1));
-           for (Index r=0;r<=k;r++)
-              M(k+1,k+1) += prodkeepzero(M(k+1,r),M(r,k+1));
-           for (Index c=0;c<=k;c++)
-              for (Index r=0;r<=k;r++) 
-                 M(k+1,c) += prodkeepzero(M(k+1,r),M(r,c));
-       }
+       Interval pivot = 1.0/(1.0-res(k,k));
+       res.block(k+1,k,nRows-k-1,1) *= pivot;
     }
-
- /* restore rounding */
-    {
-    using namespace gaol;
-    GAOL_RND_RESTORE();
-    }
+    if (nCols>=nRows) { /* one row left */
+         res.block(nRows-1,nRows-1,1,nCols-nRows+1)
+            += res.block(nRows-1,0,1,nRows-1) * 
+	       res.topRightCorner(nRows-1,nCols-nRows+1);
+    } 
     return res;
 }
 
