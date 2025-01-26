@@ -145,12 +145,7 @@
   option(WITH_CAPD "Using CAPD for accurate integration of ODEs" OFF)
 
   if(WITH_CAPD)
-    # This looks for capd.pc file
-    include(FindPkgConfig)
-    pkg_search_module(PKG_CAPD REQUIRED capd capd-gui mpcapd mpcapd-gui)
-    include_directories(${PKG_CAPD_INCLUDE_DIRS})
-    #message(STATUS "[capd2codac] PKG_CAPD_INCLUDE_DIRS = ${PKG_CAPD_INCLUDE_DIRS}")
-    #message(STATUS "[capd2codac] PKG_CAPD_LDFLAGS = ${PKG_CAPD_LDFLAGS}")
+    find_package(CAPD REQUIRED)
   endif()
 
 

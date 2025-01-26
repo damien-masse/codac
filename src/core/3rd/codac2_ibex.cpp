@@ -1,5 +1,5 @@
 /** 
- *  codac2_ibex.h
+ *  codac2_ibex.cpp
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Gilles Chabert, (Simon Rohou)
