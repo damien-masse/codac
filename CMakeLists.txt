@@ -99,6 +99,9 @@
     if (CMAKE_SIZEOF_VOID_P EQUAL 4)
       add_compile_options(-g0)
     endif()
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+      add_compile_options(-Os)
+    endif()
   endif()
 
 #  # Check that the compiler supports c++20
