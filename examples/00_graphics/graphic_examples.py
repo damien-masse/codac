@@ -75,14 +75,14 @@ for i in range (20):
     fig3.draw_box([[i,i+1],[-4,-3]],[Color.black(),cmap_red_tube.color(ratio)])
     fig3.draw_box([[i,i+1],[-5,-4]],[Color.black(),cmap_rainbow.color(ratio)])
 
-fig3 = Figure2D("My figure 3", GraphicOutput.VIBES)
+fig4 = Figure2D("My figure 4", GraphicOutput.VIBES)
 
-fig3.set_window_properties([500,50],[500,500]) 
-fig3.set_axes(axis(0,[-10,10]), axis(1,[-10,10])) 
+fig4.set_window_properties([500,50],[500,500]) 
+fig4.set_axes(axis(0,[-10,10]), axis(1,[-10,10])) 
 
 a = 0.8
 t=ScalarVar()
 # Fermat's spiral
 f1=AnalyticFunction([t], [a*sqrt(t)*cos(t),a*sqrt(t)*sin(t)])
-traj3=AnalyticTrajectory(f1, [0,100])
-fig3.draw_trajectory(traj3, ColorMap.rainbow())
+traj4=AnalyticTraj(f1, [0,100])
+fig4.draw_trajectory(traj4, ColorMap.rainbow())
