@@ -5,14 +5,14 @@ The Ellipsoid class
 
 *Main author:* `Morgan Louédec <https://morgan-louedec.fr/>`_
 
-This page describes the Ellipsoid classes used in Codac 2 as well as some functions with ellipsoids
+This page describes the Ellipsoid classes used in Codac 2 as well as some functions with ellipsoids.
+Additional mathematical information is provided here:term:what_is_ellipsoids.
 
 Class Ellipsoid
 ---------------
 
-The Ellipsoid class can be used to declare a n-dimensional ellipsoid.
-As presented in :ref:what_is_ellipsoids the ellipsoid is defined by a center point and a shape matrix.
-Ellipsoids can be drawn in VIBES via the .draw_ellipsoid function, as illustrated by :ref:Fig.
+The Ellipsoid class can be used to declare a n-dimensional ellipsoid. The ellipsoid is defined by a center point $\boldsymbol{\mu}$ and a shape matrix
+$\boldsymbol{\varGamma}$. Ellipsoids can be drawn in VIBES via the .draw_ellipsoid function, as illustrated by Figure 1.
 
 .. tabs::
   
@@ -54,9 +54,7 @@ Ellipsoids can be drawn in VIBES via the .draw_ellipsoid function, as illustrate
 Linear and nonlinear mappings
 -----------------------------
 
-Linear and nonlinear mappings can be applied on ellipsoids.
-
-For every ellipsoid $ex$, square matrix $A$ and vector $b$,
+Linear and nonlinear mappings can be applied on ellipsoids. For every ellipsoid $ex$, square matrix $A$ and vector $b$,
 the function *unreliable_linear_mapping* compute the ellipsoid $ey=A\cdot ex + b$.
 
 Nonlinear mappings can be declared with the AnalyticFunction class. For every ellipsoid $ex$ and nonlinear mapping $h$,
@@ -118,8 +116,8 @@ $h(ex)\in ey$
 Projection of the ellipsoids
 ----------------------------
 
-High dimensional ellipsoids can illustrated with 2D projection.
-In Codac, the projection is made by the Figure2D object via the .draw_ellipsoid function:
+One can illustrate high dimensional ellipsoids with 2D projection.
+In Codac, the projection is made by the Figure2D object via the .draw_ellipsoid function :
 the ellipsoid is projected on the plane (0,i,j),
 where the axis i and j are specified via the .set_axes function of the figure.
 
@@ -257,7 +255,7 @@ There functionalities are handled by the Ellipsoid class and the nonlinear_mappi
   :width: 600
 
   Figure 3 - Singular cases. $e11$ is the image of $e9$ by the nonlinear mapping $h2$.
-  $e12$ is the image of $e10$ by the nonlinear mapping $h3$
+  The degenerate ellipsoid $e12$ is the image of $e10$ by the singular mapping $h3$
 
 .. tabs::
 
