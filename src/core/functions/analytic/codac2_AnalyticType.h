@@ -35,6 +35,10 @@ namespace codac2
 
     AnalyticType() = delete;
 
+    AnalyticType(const T& a_, bool def_domain_)
+      : a(a_), def_domain(def_domain_)
+    { }
+
     AnalyticType(const T& m_, const T& a_, const M& da_, bool def_domain_)
       : m(m_), a(a_), da(da_), def_domain(def_domain_)
     { }
