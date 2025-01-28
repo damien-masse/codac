@@ -5,7 +5,7 @@ from codac import *
 # ----------------------------------------------------------
 
 fig1 = Figure2D('Linear and nonlinear mappings', GraphicOutput.VIBES)
-fig1.set_axes(axis(0, [0, 1.5]), axis(1, [-1., 0.5]))
+fig1.set_axes(axis(0, [-0.1, 1.3]), axis(1, [-1.2, 0.2]))
 fig1.set_window_properties([0, 100], [500, 500])
 
 # initial ellipsoid
