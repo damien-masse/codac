@@ -22,8 +22,7 @@ int main()
 
   CtcInverse_ ctc(f, IntervalVector::zero(2));
   auto p_ctc = pave({{0,2},{2,4},{0,10}}, ctc, 0.02);
-  Figure3D fig_ctc("PavingOut");
-  fig_ctc.draw_axes();
+  Figure3D fig_ctc("Paving contractor");
   fig_ctc.draw_paving(p_ctc);
 
 
@@ -33,7 +32,7 @@ int main()
 
   auto p_sep = pave({{-1.1,1.1},{-1.1,1.1},{-1.1,1.1}}, sep_ellipsoid&IntervalVector({{-1.5,1.5},{-0.1,0.1},{-1.5,1.5}}), 0.04);
 
-  Figure3D fig_sep("PavingInOut");
+  Figure3D fig_sep("Paving separator");
   fig_sep.draw_axes(0.4);
   fig_sep.draw_paving(p_sep);
 

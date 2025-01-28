@@ -16,6 +16,7 @@ namespace py = pybind11;
 
 // figures
 void export_Figure2D(py::module& m);
+void export_Figure3D(py::module& m);
 
 // paver
 void export_drawwhilepaving(py::module& m);
@@ -37,6 +38,7 @@ PYBIND11_MODULE(_graphics, m)
 
   // figures
   export_Figure2D(m);
+  export_Figure3D(m);
 
   // paver
   export_drawwhilepaving(m);
