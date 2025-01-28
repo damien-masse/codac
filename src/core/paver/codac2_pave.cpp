@@ -77,7 +77,6 @@ namespace codac2
     assert_release(s.size() >= 2 && "cannot reveal 1d separators");
     
     clock_t t_start = clock();
-    Index n_boundary = 0;
 
     PavingInOut p(x);
     std::shared_ptr<PavingInOut_Node> n;
@@ -92,23 +91,16 @@ namespace codac2
       auto boundary = (xs.inner & xs.outer);
       n->boxes() = { xs.outer, xs.inner };
 
-      if(!boundary.is_empty())
+      if(!boundary.is_empty() && boundary.max_diam() > eps)
       {
-        if(boundary.max_diam() > eps)
-        {
-          n->bisect();
-          l.push_back(n->left());
-          l.push_back(n->right());
-        }
-
-        else
-          n_boundary++;
+        n->bisect();
+        l.push_back(n->left());
+        l.push_back(n->right());
       }
     }
 
     if(verbose)
-      printf("Computation time: %.4fs, %ld boundary boxes\n",
-        (double)(clock()-t_start)/CLOCKS_PER_SEC, n_boundary);
+      printf("Computation time: %.4fs\n", (double)(clock()-t_start)/CLOCKS_PER_SEC);
     return p;
   }
 }

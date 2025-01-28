@@ -103,7 +103,6 @@ namespace codac2
     clock_t t_start = clock();
 
     list<IntervalVector> l { x0 };
-    Index n_inner = 0, n_boundary = 0;
 
     while(!l.empty())
     {
@@ -114,10 +113,7 @@ namespace codac2
       auto boundary = x_sep.inner & x_sep.outer;
 
       for(const auto& bi : x.diff(x_sep.inner))
-      {
-        n_inner++;
         fig->draw_box(bi, StyleProperties::inside());
-      }
 
       for(const auto& bi : x.diff(x_sep.outer))
         fig->draw_box(bi, StyleProperties::outside());
@@ -125,10 +121,7 @@ namespace codac2
       if(!boundary.is_empty())
       {
         if(boundary.max_diam() <= eps)
-        {
-          n_boundary++;
           fig->draw_box(boundary, StyleProperties::boundary());
-        }
 
         else
         {
@@ -138,7 +131,6 @@ namespace codac2
       }
     }
     
-    printf("Computation time: %.4fs, %ld inner boxes, %ld boundary boxes\n",
-      (double)(clock()-t_start)/CLOCKS_PER_SEC, n_inner, n_boundary);
+    printf("Computation time: %.4fs\n", (double)(clock()-t_start)/CLOCKS_PER_SEC);
   }
 }

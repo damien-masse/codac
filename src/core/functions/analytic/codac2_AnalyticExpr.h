@@ -28,7 +28,7 @@ namespace codac2
 
       AnalyticExpr<T>& operator=(const AnalyticExpr<T>& x) = delete;
 
-      virtual T fwd_eval(ValuesMap& v, Index total_input_size) const = 0;
+      virtual T fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const = 0;
       virtual void bwd_eval(ValuesMap& v) const = 0;
 
       T init_value(ValuesMap& v, const T& x) const
@@ -77,12 +77,16 @@ namespace codac2
         return OperationExprBase<AnalyticExpr<X>...>::replace_expr(old_expr_id, new_expr);
       }
 
-      Y fwd_eval(ValuesMap& v, Index total_input_size) const
+      Y fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
       {
         return std::apply(
-          [this,&v,total_input_size](auto &&... x)
+          [this,&v,total_input_size,natural_eval](auto &&... x)
           {
-            return AnalyticExpr<Y>::init_value(v, C::fwd(x->fwd_eval(v, total_input_size)...));
+            if(natural_eval)
+              return AnalyticExpr<Y>::init_value(v, C::fwd_natural(x->fwd_eval(v, total_input_size, natural_eval)...));
+
+            else
+              return AnalyticExpr<Y>::init_value(v, C::fwd_centered(x->fwd_eval(v, total_input_size, natural_eval)...));
           },
         this->_x);
       }
@@ -137,11 +141,15 @@ namespace codac2
       {
         return OperationExprBase<AnalyticExpr<VectorType>>::replace_expr(old_expr_id, new_expr);
       }
-      
-      ScalarType fwd_eval(ValuesMap& v, Index total_input_size) const
+
+      ScalarType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
       {
-        return AnalyticExpr<ScalarType>::init_value(
-          v, ComponentOp::fwd(std::get<0>(this->_x)->fwd_eval(v, total_input_size), _i));
+        if(natural_eval)
+          return AnalyticExpr<ScalarType>::init_value(
+            v, ComponentOp::fwd_natural(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i));
+        else
+          return AnalyticExpr<ScalarType>::init_value(
+            v, ComponentOp::fwd_centered(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i));
       }
       
       void bwd_eval(ValuesMap& v) const
@@ -183,10 +191,14 @@ namespace codac2
         return OperationExprBase<AnalyticExpr<VectorType>>::replace_expr(old_expr_id, new_expr);
       }
       
-      VectorType fwd_eval(ValuesMap& v, Index total_input_size) const
+      VectorType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
       {
-        return AnalyticExpr<VectorType>::init_value(
-          v, SubvectorOp::fwd(std::get<0>(this->_x)->fwd_eval(v, total_input_size), _i, _j));
+        if(natural_eval)
+          return AnalyticExpr<VectorType>::init_value(
+            v, SubvectorOp::fwd_natural(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i, _j));
+        else
+          return AnalyticExpr<VectorType>::init_value(
+            v, SubvectorOp::fwd_centered(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i, _j));
       }
       
       void bwd_eval(ValuesMap& v) const
