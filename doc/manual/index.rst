@@ -22,10 +22,9 @@ Welcome to the Codac website.
 
    manual/installation/index.rst
    manual/intervals/index.rst
+   manual/ellipsoids/index.rst
    manual/visualization/index.rst
    manual/extensions/index.rst
-   
-..   manual/ellipsoids/index.rst
    
 ..    linear/index.rst
 ..    functions/index.rst
