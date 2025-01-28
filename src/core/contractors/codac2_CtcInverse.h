@@ -65,7 +65,7 @@ namespace codac2
         // Forward/backward algorithm:
 
           // [1/4] Forward evaluation
-          _f.expr()->fwd_eval(v, _f.args().total_size());
+          _f.expr()->fwd_eval(v, _f.args().total_size(), !_with_centered_form);
           auto& val_expr = _f.expr()->value(v);
 
           if(_is_not_in && !val_expr.def_domain)
@@ -104,7 +104,6 @@ namespace codac2
 
               else
               {
-
                 IntervalVector p = x_ - x_mid;
                 MulOp::bwd(fm, val_expr.da, p);
                 x_ &= p + x_mid;
