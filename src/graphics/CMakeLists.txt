@@ -16,6 +16,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_Figure2DInterface.h
     ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_OutputFigure2D.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_OutputFigure2D.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_Figure3D.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_Figure3D.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_drawwhilepaving.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_drawwhilepaving.h
