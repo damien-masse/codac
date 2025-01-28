@@ -1,9 +1,9 @@
 /** 
  *  \file
- *  Codac binding (core)
+ *  Codac binding (graphics)
  * ----------------------------------------------------------------------------
  *  \date       2020
- *  \author     Simon Rohou, Benoît Desrochers
+ *  \author     Simon Rohou, Maël Godard
  *  \copyright  Copyright 2021 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */

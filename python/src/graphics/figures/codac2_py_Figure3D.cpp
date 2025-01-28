@@ -35,7 +35,7 @@ void export_Figure3D(py::module& m)
       CONST_STRING_REF_FIGURE3D_NAME_CONST)
 
     .def("draw_axes", &Figure3D::draw_axes,
-      VOID_FIGURE3D_DRAW_AXES_CONST_DOUBLE_REF,
+      VOID_FIGURE3D_DRAW_AXES_DOUBLE,
       "size"_a=1.0)
 
     // Geometric shapes

@@ -31,22 +31,22 @@ namespace codac2
 
       const std::string& name() const;
 
-      void draw_axes(const double& size = 1.0);
+      void draw_axes(double size = 1.0);
 
 
       // Geometric shapes
-      void draw_box(const IntervalVector& x, const StyleProperties& s = StyleProperties(Color::dark_gray(0.5)));
-      void draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s = StyleProperties(Color::dark_gray(0.5)));
+      void draw_box(const IntervalVector& x, const StyleProperties& s = { Color::dark_gray(0.5) });
+      void draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s = { Color::dark_gray(0.5) });
 
       // Pavings
       void draw_paving(const PavingOut& p,
-        const StyleProperties& bound_s = StyleProperties(Color::yellow(0.5)));
+        const StyleProperties& bound_s = { Color::yellow(0.5) });
       void draw_paving(const PavingInOut& p,
-        const StyleProperties& bound_s = StyleProperties(Color::yellow(0.15)),
-        const StyleProperties& in_s = StyleProperties(Color::green(0.5)));
+        const StyleProperties& bound_s = { Color::yellow(0.15) },
+        const StyleProperties& in_s = { Color::green(0.5) });
 
       template<typename P>
-      void draw_subpaving(const Subpaving<P>& p, const StyleProperties& s = StyleProperties())
+      inline void draw_subpaving(const Subpaving<P>& p, const StyleProperties& s = StyleProperties())
       {
         for(const auto& pi : p.boxes())
           draw_box(pi, s);
@@ -57,6 +57,5 @@ namespace codac2
       const std::string _name;
       std::ofstream _file;
       size_t vertex_count = 0;
-
   };
 }

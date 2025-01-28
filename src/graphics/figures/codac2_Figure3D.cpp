@@ -33,7 +33,7 @@ const std::string& Figure3D::name() const
   return _name;
 }
 
-void Figure3D::draw_axes(const double& size)
+void Figure3D::draw_axes(double size)
 {
   _file<< "o axes\n";
   // X axis
@@ -88,12 +88,12 @@ void Figure3D::draw_parallelepiped(const Vector& z, const Matrix& A, const Style
   _file << "v " << v7[0] << " " << v7[1] << " " << v7[2] << "\n";
 
   size_t v = vertex_count + 1;
-  _file << "f " << v + 0 << " " << v + 1 << " " << v + 3 << " " << v + 2 << "\n"; // Bottom face
-  _file << "f " << v + 4 << " " << v + 5 << " " << v + 7 << " " << v + 6 << "\n"; // Top face
-  _file << "f " << v + 0 << " " << v + 4 << " " << v + 6 << " " << v + 2 << "\n"; // Front face
-  _file << "f " << v + 1 << " " << v + 5 << " " << v + 7 << " " << v + 3 << "\n"; // Back face
-  _file << "f " << v + 0 << " " << v + 4 << " " << v + 5 << " " << v + 1 << "\n"; // Left face
-  _file << "f " << v + 2 << " " << v + 6 << " " << v + 7 << " " << v + 3 << "\n"; // Right face
+  _file << "f " << v + 0 << " " << v + 1 << " " << v + 3 << " " << v + 2 << "\n";
+  _file << "f " << v + 4 << " " << v + 5 << " " << v + 7 << " " << v + 6 << "\n";
+  _file << "f " << v + 0 << " " << v + 4 << " " << v + 6 << " " << v + 2 << "\n";
+  _file << "f " << v + 1 << " " << v + 5 << " " << v + 7 << " " << v + 3 << "\n";
+  _file << "f " << v + 0 << " " << v + 4 << " " << v + 5 << " " << v + 1 << "\n";
+  _file << "f " << v + 2 << " " << v + 6 << " " << v + 7 << " " << v + 3 << "\n";
 
   vertex_count += 8;
 

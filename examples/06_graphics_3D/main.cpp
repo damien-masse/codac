@@ -9,9 +9,6 @@ int main()
 {
   VectorVar x(3);
 
-  // Example from the publication:
-  // https://www.ensta-bretagne.fr/jaulin/paper_centeredActa.pdf
-
   AnalyticFunction f { {x},
     {
       -sqr(x[2])+2*x[2]*sin(x[2]*x[0])+cos(x[2]*x[1]),
