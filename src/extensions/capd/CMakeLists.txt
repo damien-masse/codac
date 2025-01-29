@@ -38,7 +38,7 @@ list(APPEND CODAC_CAPD_SRC
   foreach(srcfile ${CODAC_CAPD_SRC})
     if(srcfile MATCHES "\\.h$" OR srcfile MATCHES "\\.hpp$")
       list(APPEND CODAC_CAPD_HDR ${srcfile})
-      file(COPY ${srcfile} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../../include)
+      file(COPY ${srcfile} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
     endif()
   endforeach()
 
@@ -51,7 +51,7 @@ list(APPEND CODAC_CAPD_SRC
     get_filename_component(header_name ${header_path} NAME)
     file(APPEND ${CODAC_CAPD_MAIN_HEADER} "#include <${header_name}>\n")
   endforeach()
-  file(COPY ${CODAC_CAPD_MAIN_HEADER} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../../include)
+  file(COPY ${CODAC_CAPD_MAIN_HEADER} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../../../include)
 
   # Install files in system directories
 
