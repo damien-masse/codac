@@ -9,7 +9,6 @@
 
 #pragma once
 
-// #include "capd/capdlib.h"
 #include <capd/intervals/lib.h>
 #include <capd/vectalg/lib.h>
 #include "codac2_IntervalVector.h"
@@ -18,7 +17,6 @@
 
 namespace codac2
 {
-
   /**
    * \brief Casts a Codac Interval object into an CAPD Interval object
    * 
