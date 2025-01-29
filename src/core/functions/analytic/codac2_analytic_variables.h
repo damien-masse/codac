@@ -31,7 +31,7 @@ namespace codac2
         return AnalyticExpr<T>::unique_id();
       }
 
-      T fwd_eval(ValuesMap& v, [[maybe_unused]] Index total_input_size) const
+      T fwd_eval(ValuesMap& v, [[maybe_unused]] Index total_input_size, [[maybe_unused]] bool natural_eval) const
       {
         return AnalyticExpr<T>::value(v);
       }

@@ -68,10 +68,10 @@ namespace codac2
         return OperationExprBase<AnalyticExpr<ScalarType>>::replace_expr(old_expr_id, new_expr);
       }
       
-      O fwd_eval(ValuesMap& v, Index total_input_size) const
+      O fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
       {
         return AnalyticExpr<O>::init_value(
-          v, TrajectoryOp<T>::fwd(_x1, std::get<0>(this->_x)->fwd_eval(v, total_input_size)));
+          v, TrajectoryOp<T>::fwd(_x1, std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval)));
       }
       
       void bwd_eval(ValuesMap& v) const
