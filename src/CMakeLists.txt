@@ -15,7 +15,7 @@
   #endif()
 
   if(WITH_CAPD)
-    add_subdirectory(capd)
+    add_subdirectory(extensions/capd)
   endif()
   
 
