@@ -1,4 +1,4 @@
-// The generated .obj files can be visualized on https://3dviewer.net/
+// The generated .obj files can be visualized on https://3dviewer.net
 
 #include <codac>
 
