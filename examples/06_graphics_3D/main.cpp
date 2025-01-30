@@ -1,4 +1,4 @@
-// The generated .obj files can be visualized on https://3dviewer.net/
+// The generated .obj files can be visualized on https://3dviewer.net
 
 #include <codac>
 
@@ -23,11 +23,14 @@ int main()
   fig_ctc.draw_paving(p_ctc);
 
 
-  SepInverse sep_ellipsoid(
-      AnalyticFunction({x}, 2*sqr(x[0])+x[0]*x[1]+x[0]*x[2]+sqr(x[1])+sqr(x[2])),
+  SepInverse sep_ellipsoid1(
+      AnalyticFunction({x},  0.5*sqr(x[0])+x[0]*x[1]+x[0]*x[2]+2*sqr(x[1])+2*sqr(x[2])),
       Interval(0.4,1));
+  SepInverse sep_ellipsoid2(
+      AnalyticFunction({x}, 3*sqr(x[0])+x[0]*x[1]+x[0]*x[2]+sqr(x[1])+sqr(x[2])),
+      Interval(0,1));
 
-  auto p_sep = pave({{-1.1,1.1},{-1.1,1.1},{-1.1,1.1}}, sep_ellipsoid&IntervalVector({{-1.5,1.5},{-0.1,0.1},{-1.5,1.5}}), 0.04);
+  auto p_sep = pave({{-1.1,1.1},{-1.1,1.1},{-1.1,1.1}}, sep_ellipsoid1&sep_ellipsoid2, 0.1);
 
   Figure3D fig_sep("Paving separator");
   fig_sep.draw_axes(0.4);

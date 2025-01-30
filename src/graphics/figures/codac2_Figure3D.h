@@ -42,7 +42,7 @@ namespace codac2
       void draw_paving(const PavingOut& p,
         const StyleProperties& bound_s = { Color::yellow(0.5) });
       void draw_paving(const PavingInOut& p,
-        const StyleProperties& bound_s = { Color::yellow(0.15) },
+        const StyleProperties& bound_s = { Color::yellow(0.3) },
         const StyleProperties& in_s = { Color::green(0.5) });
 
       template<typename P>
