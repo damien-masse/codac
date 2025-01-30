@@ -14,7 +14,6 @@
 #include "codac2_Matrix.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_IntervalMatrix.h"
-#include "codac2_analytic_values.h"
 
 namespace codac2
 {

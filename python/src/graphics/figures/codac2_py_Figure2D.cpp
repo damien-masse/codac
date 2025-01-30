@@ -1,8 +1,8 @@
 /** 
- *  Codac binding (core)
+ *  Codac binding (graphics)
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -10,10 +10,11 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
+#include <codac2_Paving.h>
 #include <codac2_Figure2D.h>
 #include "codac2_py_Figure2D_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_matlab.h"
-#include <codac2_Paving.h>
+#include "codac2_py_cast.h"
 
 using namespace std;
 using namespace codac2;
@@ -65,6 +66,12 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_SET_AXES_CONST_FIGUREAXIS_REF_CONST_FIGUREAXIS_REF,
       "axis1"_a, "axis2"_a)
   
+    .def("i", &Figure2D::i,
+      CONST_INDEX_REF_FIGURE2D_I_CONST)
+  
+    .def("j", &Figure2D::j,
+      CONST_INDEX_REF_FIGURE2D_J_CONST)
+  
     .def("pos", &Figure2D::pos,
       CONST_VECTOR_REF_FIGURE2D_POS_CONST)
   
@@ -106,6 +113,14 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_RING_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "s"_a=StyleProperties())
 
+    .def("draw_line", &Figure2D::draw_line,
+      VOID_FIGURE2D_DRAW_LINE_CONST_VECTOR_REF_CONST_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+      "p1"_a, "p2"_a, "s"_a=StyleProperties())
+
+    .def("draw_arrow", &Figure2D::draw_arrow,
+      VOID_FIGURE2D_DRAW_ARROW_CONST_VECTOR_REF_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
+      "p1"_a, "p2"_a, "tip_length"_a, "s"_a=StyleProperties())
+
     .def("draw_polyline", (void(Figure2D::*)(const std::vector<Vector>&,const StyleProperties&))&Figure2D::draw_polyline,
       VOID_FIGURE2D_DRAW_POLYLINE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
@@ -126,30 +141,39 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_ELLIPSE_CONST_VECTOR_REF_CONST_VECTOR_REF_DOUBLE_CONST_STYLEPROPERTIES_REF,
       "c"_a, "ab"_a, "theta"_a, "s"_a=StyleProperties())
 
-    .def("draw_trajectory", [](Figure2D& fig, py::object x, const StyleProperties& s)
+    .def("draw_ellipsoid", &Figure2D::draw_ellipsoid,
+      VOID_FIGURE2D_DRAW_ELLIPSOID_CONST_ELLIPSOID_REF_CONST_STYLEPROPERTIES_REF,
+      "e"_a, "s"_a=StyleProperties())
+
+    .def("draw_trajectory", (void(Figure2D::*)(const SampledTraj<Vector>&,const StyleProperties&))&Figure2D::draw_trajectory,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
+
+    .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const StyleProperties& s)
         {
-          py::object x_traj = x.attr("traj");
-
-          if(x_traj)
-          {
-            if(py::isinstance<AnalyticTrajectory<VectorOpValue>>(x_traj))
-            {
-              fig.draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorOpValue>>(),s);
-              return;
-            }
-
-            else if(py::isinstance<SampledTrajectory<Vector>>(x_traj))
-            {
-              fig.draw_trajectory(x_traj.cast<SampledTrajectory<Vector>>(),s);
-              return;
-            }
+          if(!is_instance<AnalyticTraj<VectorType>>(x)) {
+            assert_release("draw_trajectory: invalid function type");
           }
 
-          assert_release(false &&
-            "provided trajectory is not of type AnalyticTrajectory<VectorOpValue> or SampledTrajectory<Vector>");
+          fig.draw_trajectory(cast<AnalyticTraj<VectorType>>(x), s);
         },
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTOROPVALUE_REF_CONST_STYLEPROPERTIES_REF,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
+
+    .def("draw_trajectory", (void(Figure2D::*)(const SampledTraj<Vector>&,const ColorMap&))&Figure2D::draw_trajectory,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_COLORMAP_REF,
+      "x"_a, "cmap"_a)
+
+    .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const ColorMap& cmap)
+        {
+          if(!is_instance<AnalyticTraj<VectorType>>(x)) {
+            assert_release("draw_trajectory: invalid function type");
+          }
+
+          fig.draw_trajectory(cast<AnalyticTraj<VectorType>>(x), cmap);
+        },
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
+      "x"_a, "cmap"_a)
 
     // Robots
 
@@ -206,6 +230,14 @@ void export_Figure2D(py::module& m)
       STATIC_VOID_DEFAULTVIEW_DRAW_RING_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "s"_a=StyleProperties())
 
+    .def_static("draw_line", &DefaultView::draw_line,
+      STATIC_VOID_DEFAULTVIEW_DRAW_LINE_CONST_VECTOR_REF_CONST_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+      "p1"_a, "p2"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_arrow", &DefaultView::draw_arrow,
+      STATIC_VOID_DEFAULTVIEW_DRAW_ARROW_CONST_VECTOR_REF_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
+      "p1"_a, "p2"_a, "tip_length"_a, "s"_a=StyleProperties())
+
     .def_static("draw_polyline", (void(*)(const std::vector<Vector>&,const StyleProperties&))&DefaultView::draw_polyline,
       STATIC_VOID_DEFAULTVIEW_DRAW_POLYLINE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
@@ -221,31 +253,44 @@ void export_Figure2D(py::module& m)
     .def_static("draw_pie", &DefaultView::draw_pie,
       STATIC_VOID_DEFAULTVIEW_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "theta"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_ellipse", &DefaultView::draw_ellipse,
+      STATIC_VOID_DEFAULTVIEW_DRAW_ELLIPSE_CONST_VECTOR_REF_CONST_VECTOR_REF_DOUBLE_CONST_STYLEPROPERTIES_REF,
+      "c"_a, "ab"_a, "theta"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_ellipsoid", &DefaultView::draw_ellipsoid,
+      STATIC_VOID_DEFAULTVIEW_DRAW_ELLIPSOID_CONST_ELLIPSOID_REF_CONST_STYLEPROPERTIES_REF,
+      "e"_a, "s"_a=StyleProperties())
     
-    .def_static("draw_trajectory", [](py::object x, const StyleProperties& s)
+    .def_static("draw_trajectory", (void(*)(const SampledTraj<Vector>&,const StyleProperties&))&DefaultView::draw_trajectory,
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_trajectory", [](const py::object& x, const StyleProperties& s)
         {
-          py::object x_traj = x.attr("traj");
-
-          if(x_traj)
-          {
-            if(py::isinstance<AnalyticTrajectory<VectorOpValue>>(x_traj))
-            {
-              DefaultView::draw_trajectory(x_traj.cast<AnalyticTrajectory<VectorOpValue>>(),s);
-              return;
-            }
-
-            else if(py::isinstance<SampledTrajectory<Vector>>(x_traj))
-            {
-              DefaultView::draw_trajectory(x_traj.cast<SampledTrajectory<Vector>>(),s);
-              return;
-            }
+          if(!is_instance<AnalyticTraj<VectorType>>(x)) {
+            assert_release("draw_trajectory: invalid function type");
           }
 
-          assert_release(false &&
-            "provided trajectory is not of type AnalyticTrajectory<VectorOpValue> or SampledTrajectory<Vector>");
+          DefaultView::draw_trajectory(cast<AnalyticTraj<VectorType>>(x), s);
         },
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJECTORY_VECTOROPVALUE_REF_CONST_STYLEPROPERTIES_REF,
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_trajectory", (void(*)(const SampledTraj<Vector>&,const ColorMap&))&DefaultView::draw_trajectory,
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_COLORMAP_REF,
+      "x"_a, "cmap"_a)
+
+    .def_static("draw_trajectory", [](const py::object& x, const ColorMap& cmap)
+        {
+          if(!is_instance<AnalyticTraj<VectorType>>(x)) {
+            assert_release("draw_trajectory: invalid function type");
+          }
+
+          DefaultView::draw_trajectory(cast<AnalyticTraj<VectorType>>(x), cmap);
+        },
+      STATIC_VOID_DEFAULTVIEW_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
+      "x"_a, "cmap"_a)
 
     // Robots
 

@@ -4,9 +4,6 @@
 
   list(APPEND CODAC_CORE_SRC
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rd/codac2_ibex.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rd/codac2_ibex.h
-
     ${CMAKE_CURRENT_SOURCE_DIR}/actions/codac2_OctaSym.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/actions/codac2_OctaSym.h
 
@@ -51,6 +48,10 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/codac2_BoolInterval.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/codac2_Domain.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/codac2_Wrapper.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_utils.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_utils.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval_operations.h
@@ -69,10 +70,14 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_VarBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_constants.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_operations.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_values.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExpr.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExprWrapper.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticFunction.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticType.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ScalarExprList.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ValueType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_operations.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_operators.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_variables.h
@@ -160,9 +165,12 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_template_tools.h
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTrajectory.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTrajectory.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_TrajectoryBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTraj.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj_operations.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj_operations.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_Traj_operator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_TrajBase.h
   )
 
 ################################################################################
@@ -176,10 +184,10 @@
 
   add_library(${PROJECT_NAME}-core ${CODAC_CORE_SRC})
   target_include_directories(${PROJECT_NAME}-core PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rd
     ${CMAKE_CURRENT_SOURCE_DIR}/actions
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors
     ${CMAKE_CURRENT_SOURCE_DIR}/domains
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/eigen
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving

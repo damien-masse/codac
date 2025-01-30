@@ -34,7 +34,6 @@ list(APPEND SRC_TESTS # listing files without extension
   # Core
 
   core/3rd/codac2_tests_eigen
-  core/3rd/codac2_tests_ibex
 
   core/actions/codac2_tests_OctaSym
 
@@ -50,6 +49,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/contractors/codac2_tests_linear_ctc
 
   core/domains/codac2_tests_BoolInterval
+  core/domains/ellipsoid/codac2_tests_Ellipsoid
   core/domains/interval/codac2_tests_Interval
   core/domains/interval/codac2_tests_Interval_bwd
   core/domains/interval/codac2_tests_Interval_operations
@@ -79,11 +79,29 @@ list(APPEND SRC_TESTS # listing files without extension
   
   core/tools/codac2_tests_Approx
   
-  core/trajectory/codac2_tests_AnalyticTrajectory
-  core/trajectory/codac2_tests_SampledTrajectory
+  core/trajectory/codac2_tests_AnalyticTraj
+  core/trajectory/codac2_tests_SampledTraj
 
   graphics/styles/codac2_tests_Color
 )
+
+set(CODAC_LIBRARIES ${PROJECT_NAME}-core)
+
+# CAPD test
+if (WITH_CAPD)
+  list(APPEND SRC_TESTS
+    extensions/capd/codac2_tests_capd
+  )
+  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-capd capd::capd)
+endif()
+
+# IBEX test
+#if (WITH_IBEX)
+  list(APPEND SRC_TESTS
+    extensions/ibex/codac2_tests_ibex
+  )
+  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-ibex)
+#endif()
 
 foreach(SRC_TEST ${SRC_TESTS})
   string(REPLACE "/" "_" TEST_NAME ${SRC_TEST})
@@ -94,7 +112,7 @@ foreach(SRC_TEST ${SRC_TESTS})
   add_executable(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_TEST}.cpp)
   set(CODAC_HEADERS_DIR ${CMAKE_CURRENT_BINARY_DIR}/../include)
   target_include_directories(${TEST_NAME} SYSTEM PUBLIC ${CODAC_HEADERS_DIR})
-  target_link_libraries(${TEST_NAME} PUBLIC Ibex::ibex ${PROJECT_NAME}-core PRIVATE Catch2::Catch2WithMain)
+  target_link_libraries(${TEST_NAME} PUBLIC Ibex::ibex ${CODAC_LIBRARIES} PRIVATE Catch2::Catch2WithMain)
   add_dependencies(check ${TEST_NAME})
   add_test(NAME ${TEST_NAME}_cpp COMMAND ${TEST_NAME})
 

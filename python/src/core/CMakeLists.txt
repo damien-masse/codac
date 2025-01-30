@@ -6,6 +6,7 @@
 
   pybind11_add_module(_core SHARED
     codac2_py_core.cpp
+    codac2_py_cast.h
     
     actions/codac2_py_OctaSym.cpp
     
@@ -32,6 +33,8 @@
     contractors/codac2_py_directed_ctc.cpp
     contractors/codac2_py_linear_ctc.cpp
 
+    domains/ellipsoid/codac2_py_Ellipsoid.cpp
+    domains/ellipsoid/codac2_py_Ellipsoid_utils.cpp
     domains/interval/codac2_py_Interval.cpp
     domains/interval/codac2_py_Interval_operations.cpp
     domains/interval/codac2_py_IntervalMatrix.cpp
@@ -47,7 +50,7 @@
     functions/analytic/codac2_py_analytic_operations.cpp
     functions/analytic/codac2_py_analytic_variables.cpp
     functions/analytic/codac2_py_AnalyticFunction.h
-    functions/analytic/codac2_py_ExprWrapper.h
+    functions/analytic/codac2_py_AnalyticExprWrapper.h
 
     geometry/codac2_py_Edge.cpp
     geometry/codac2_py_geometry.cpp
@@ -84,9 +87,9 @@
 
     tools/codac2_py_Approx.cpp
 
-    trajectory/codac2_py_AnalyticTrajectory.cpp
-    trajectory/codac2_py_SampledTrajectory.cpp
-    trajectory/codac2_py_TrajectoryBase.h
+    trajectory/codac2_py_AnalyticTraj.cpp
+    trajectory/codac2_py_SampledTraj.cpp
+    trajectory/codac2_py_TrajBase.h
   )
 
   target_include_directories(_core
