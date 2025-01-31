@@ -34,7 +34,6 @@ list(APPEND SRC_TESTS # listing files without extension
   # Core
 
   core/3rd/codac2_tests_eigen
-  core/3rd/codac2_tests_ibex
 
   core/actions/codac2_tests_OctaSym
 
@@ -90,10 +89,18 @@ set(CODAC_LIBRARIES ${PROJECT_NAME}-core)
 # CAPD test
 if (WITH_CAPD)
   list(APPEND SRC_TESTS
-    capd/codac2_tests_capd
+    extensions/capd/codac2_tests_capd
   )
   set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-capd capd::capd)
 endif()
+
+# IBEX test
+#if (WITH_IBEX)
+  list(APPEND SRC_TESTS
+    extensions/ibex/codac2_tests_ibex
+  )
+  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-ibex)
+#endif()
 
 foreach(SRC_TEST ${SRC_TESTS})
   string(REPLACE "/" "_" TEST_NAME ${SRC_TEST})

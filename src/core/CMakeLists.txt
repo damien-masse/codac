@@ -4,9 +4,6 @@
 
   list(APPEND CODAC_CORE_SRC
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rd/codac2_ibex.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rd/codac2_ibex.h
-
     ${CMAKE_CURRENT_SOURCE_DIR}/actions/codac2_OctaSym.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/actions/codac2_OctaSym.h
 
@@ -184,7 +181,6 @@
 
   add_library(${PROJECT_NAME}-core ${CODAC_CORE_SRC})
   target_include_directories(${PROJECT_NAME}-core PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rd
     ${CMAKE_CURRENT_SOURCE_DIR}/actions
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors
     ${CMAKE_CURRENT_SOURCE_DIR}/domains
