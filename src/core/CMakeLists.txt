@@ -109,13 +109,18 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_asin.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan2.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_ceil.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_component.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cos.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cosh.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_det.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_exp.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_floor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_log.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_mat.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_max.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_min.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_mod.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_operators.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_pow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_sin.h

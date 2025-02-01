@@ -88,8 +88,6 @@ namespace codac2
        * \param l list of values contained in the resulting interval
        */
       Interval(std::initializer_list<double> l);
-      
-      Interval(const gaol::interval& x);
 
       /**
        * \brief Sets the value of this interval to x
@@ -561,10 +559,8 @@ namespace codac2
       friend std::ostream& operator<<(std::ostream& os, const Interval& x);
 
     protected:
-
-      /*friend ibex::Interval& to_ibex(codac2::Interval& x);
-      friend const ibex::Interval& to_ibex(const Interval& x);
-      friend Interval to_codac(const ibex::Interval& x);*/
+      
+      Interval(const gaol::interval& x);
 
       #define _dec_friend_interval2_arithm_op(f) \
         friend Interval f(double, const Interval&); \
