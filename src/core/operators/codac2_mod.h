@@ -26,6 +26,10 @@ namespace codac2
 
   inline void ModOp::bwd(Interval& x1, Interval& x2, double p) // x1 = x2 mod(p)
   {
+    // The content of this function comes from the IBEX library.
+    // See ibex::Interval (IBEX lib, main author: Gilles Chabert)
+    //   https://ibex-lib.readthedocs.io
+
     assert_release(p > 0. && "Modulo needs a strictly positive period p.");
 
     if(!(x2.diam() > p || x1.diam() > p))

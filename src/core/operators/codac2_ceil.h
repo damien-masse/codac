@@ -24,6 +24,10 @@ namespace codac2
 
   inline void CeilOp::bwd(const Interval& y, Interval& x1)
   {
+    // The content of this function comes from the IBEX library.
+    // See ibex::Interval (IBEX lib, main author: Gilles Chabert)
+    //   https://ibex-lib.readthedocs.io
+
     if(y.is_empty())
       x1.set_empty();
 

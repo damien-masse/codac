@@ -67,6 +67,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following functions can be used to build analytic expressions.
 
   inline ScalarExpr _add_to_vec(const ScalarExpr& x)
   {

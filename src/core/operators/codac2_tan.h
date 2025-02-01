@@ -24,6 +24,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following function can be used to build analytic expressions.
 
   inline ScalarExpr
   tan(const ScalarExpr& x1)
@@ -42,7 +43,7 @@ namespace codac2
   {
     return {
       fwd(x1.a),
-      x1.def_domain && cos(x1.a) != 0. /* def domain of the derivative of tan */
+      x1.def_domain && cos(x1.a) != 0. // def domain of the derivative of tan
     };
   }
 
@@ -56,7 +57,7 @@ namespace codac2
       fwd(x1.m),
       fwd(x1.a),
       d,
-      x1.def_domain && cos(x1.a) != 0. /* def domain of the derivative of tan */
+      x1.def_domain && cos(x1.a) != 0. // def domain of the derivative of tan
     };
   }
 

@@ -24,6 +24,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following function can be used to build analytic expressions.
 
   inline ScalarExpr 
   sqrt(const ScalarExpr& x1)
@@ -42,8 +43,8 @@ namespace codac2
   {
     return {
       fwd(x1.a),
-      x1.a.is_subset({0,oo}) /* def domain of sqrt */
-      && x1.a != 0. /* def domain of the derivative of sqrt */
+      x1.a.is_subset({0,oo}) // def domain of sqrt
+      && x1.a != 0. // def domain of the derivative of sqrt
       && x1.def_domain
     };
   }
@@ -58,14 +59,18 @@ namespace codac2
       fwd(x1.m),
       fwd(x1.a),
       d,
-      x1.a.is_subset({0,oo}) /* def domain of sqrt */
-      && x1.a != 0. /* def domain of the derivative of sqrt */
+      x1.a.is_subset({0,oo}) // def domain of sqrt
+      && x1.a != 0. // def domain of the derivative of sqrt
       && x1.def_domain
     };
   }
 
   inline void SqrtOp::bwd(const Interval& y, Interval& x1)
   {
+    // The content of this function comes from the IBEX library.
+    // See ibex::Interval (IBEX lib, main author: Gilles Chabert)
+    //   https://ibex-lib.readthedocs.io
+
     if(y.is_empty() || y.ub() < 0)
       x1.set_empty();
 

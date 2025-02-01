@@ -66,6 +66,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following function can be used to build analytic expressions.
 
   // Generic variadic case, cannot handle const values (int, double) for now
 

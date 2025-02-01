@@ -26,6 +26,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following function can be used to build analytic expressions.
 
   inline ScalarExpr
   atan2(const ScalarExpr& x1, const ScalarExpr& x2)
@@ -45,7 +46,7 @@ namespace codac2
     return {
       fwd(x1.a, x2.a),
       x1.def_domain && x2.def_domain
-      && !(x1.a == 0. && x2.a == 0.) /* def domain of the derivative of atan2 */
+      && !(x1.a == 0. && x2.a == 0.) // def domain of the derivative of atan2
     };
   }
 
@@ -63,12 +64,16 @@ namespace codac2
       fwd(x1.a, x2.a),
       d,
       x1.def_domain && x2.def_domain
-      && !(x1.a == 0. && x2.a == 0.) /* def domain of the derivative of atan2 */
+      && !(x1.a == 0. && x2.a == 0.) // def domain of the derivative of atan2
     };
   }
 
   inline void Atan2Op::bwd(const Interval& y, Interval& x1, Interval& x2)
   {
+    // The content of this function comes from the IBEX library.
+    // See ibex::Interval (IBEX lib, main author: Gilles Chabert)
+    //   https://ibex-lib.readthedocs.io
+
     // Probably not the most efficient implementation ever...
 
     // half-plane x2>0

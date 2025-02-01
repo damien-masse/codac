@@ -24,6 +24,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following function can be used to build analytic expressions.
 
   inline ScalarExpr
   tanh(const ScalarExpr& x1)

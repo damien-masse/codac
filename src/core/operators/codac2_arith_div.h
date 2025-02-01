@@ -32,6 +32,7 @@ namespace codac2
   };
 
   // operator/
+  // The following functions can be used to build analytic expressions.
     
   inline ScalarExpr
   operator/(const ScalarExpr& x1, const ScalarExpr& x2)
@@ -56,7 +57,7 @@ namespace codac2
   {
     return {
       fwd(x1.a, x2.a),
-      x1.def_domain && x2.def_domain && x2.a != 0. /* def domain of the derivative of div */
+      x1.def_domain && x2.def_domain && x2.a != 0. // def domain of the derivative of div
     };
   }
 
@@ -72,7 +73,7 @@ namespace codac2
       fwd(x1.m, x2.m),
       fwd(x1.a, x2.a),
       d,
-      x1.def_domain && x2.def_domain && x2.a != 0. /* def domain of the derivative of div */
+      x1.def_domain && x2.def_domain && x2.a != 0. // def domain of the derivative of div
     };
   }
 
@@ -99,7 +100,7 @@ namespace codac2
   {
     return {
       fwd(x1.a, x2.a),
-      x1.def_domain && x2.def_domain && x2.a != 0. /* def domain of the derivative of div */
+      x1.def_domain && x2.def_domain && x2.a != 0. // def domain of the derivative of div
     };
   }
 
@@ -114,7 +115,7 @@ namespace codac2
       fwd(x1.m, x2.m),
       fwd(x1.a, x2.a),
       d,
-      x1.def_domain && x2.def_domain && x2.a != 0. /* def domain of the derivative of div */
+      x1.def_domain && x2.def_domain && x2.a != 0. // def domain of the derivative of div
     };
   }
 

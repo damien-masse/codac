@@ -25,6 +25,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following function can be used to build analytic expressions.
 
   inline ScalarExpr
   pow(const ScalarExpr& x1, const ScalarExpr& x2)
@@ -63,6 +64,10 @@ namespace codac2
 
   inline void PowOp::bwd(const Interval& y, Interval& x1, int x2)
   {
+    // The content of this function comes from the IBEX library.
+    // See ibex::Interval (IBEX lib, main author: Gilles Chabert)
+    //   https://ibex-lib.readthedocs.io
+
     if(x2 % 2 == 0)
     {
       Interval proj = root(y, x2);

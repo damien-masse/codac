@@ -24,6 +24,10 @@ namespace codac2
 
   inline void MinOp::bwd(const Interval& y, Interval& x1, Interval& x2)
   {
+    // The content of this function comes from the IBEX library.
+    // See ibex::Interval (IBEX lib, main author: Gilles Chabert)
+    //   https://ibex-lib.readthedocs.io
+
     Interval mx1 = -x1;
     Interval mx2 = -x2;
 

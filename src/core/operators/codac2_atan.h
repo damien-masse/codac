@@ -24,6 +24,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following function can be used to build analytic expressions.
 
   inline ScalarExpr
   atan(const ScalarExpr& x1)
@@ -62,6 +63,10 @@ namespace codac2
 
   inline void AtanOp::bwd(const Interval& y, Interval& x1)
   {
+    // The content of this function comes from the IBEX library.
+    // See ibex::Interval (IBEX lib, main author: Gilles Chabert)
+    //   https://ibex-lib.readthedocs.io
+
     if(y.is_empty())
       x1.set_empty();
 

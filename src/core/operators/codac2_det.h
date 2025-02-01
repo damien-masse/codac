@@ -41,6 +41,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following functions can be used to build analytic expressions.
 
   inline ScalarExpr
   det(const MatrixExpr& x1)

@@ -24,6 +24,7 @@ namespace codac2
   };
 
   // Analytic operator
+  // The following function can be used to build analytic expressions.
 
   inline ScalarExpr
   log(const ScalarExpr& x1)
@@ -42,8 +43,8 @@ namespace codac2
   {
     return {
       fwd(x1.a),
-      x1.a.is_subset({0,oo}) /* def domain of log */
-      && x1.a != 0. /* def domain of the derivative of log */
+      x1.a.is_subset({0,oo}) // def domain of log
+      && x1.a != 0. // def domain of the derivative of log
       && x1.def_domain
     };
   }
@@ -58,8 +59,8 @@ namespace codac2
       fwd(x1.m),
       fwd(x1.a),
       d,
-      x1.a.is_subset({0,oo}) /* def domain of log */
-      && x1.a != 0. /* def domain of the derivative of log */
+      x1.a.is_subset({0,oo}) // def domain of log
+      && x1.a != 0. // def domain of the derivative of log
       && x1.def_domain
     };
   }

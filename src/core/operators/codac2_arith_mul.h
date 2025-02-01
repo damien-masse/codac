@@ -50,6 +50,7 @@ namespace codac2
   };
 
   // operator*
+  // The following functions can be used to build analytic expressions.
   
   inline ScalarExpr
   operator*(const ScalarExpr& x1, const ScalarExpr& x2)

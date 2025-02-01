@@ -53,6 +53,7 @@ namespace codac2
   };
 
   // operator+ (unary case)
+  // The following functions can be used to build analytic expressions.
   
   inline ScalarExpr
   operator+(const ScalarExpr& x1)
@@ -73,6 +74,7 @@ namespace codac2
   }
 
   // operator+
+  // The following functions can be used to build analytic expressions.
   
   inline ScalarExpr
   operator+(ScalarExpr x1, ScalarExpr x2)
