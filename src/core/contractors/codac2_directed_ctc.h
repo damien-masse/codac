@@ -15,7 +15,7 @@
 #include "codac2_IntervalRow.h"
 
 namespace codac2
-{
+{/*
   struct AddOp
   {
     // Unary operations
@@ -388,5 +388,5 @@ namespace codac2
     static ScalarType fwd_natural(const VectorType& x1, const VectorType& x2, const VectorType& x3);
     static ScalarType fwd_centered(const VectorType& x1, const VectorType& x2, const VectorType& x3);
     static void bwd(const Interval& y, IntervalVector& x1, IntervalVector& x2, IntervalVector& x3);
-  };
+  };*/
 }

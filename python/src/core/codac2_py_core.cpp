@@ -10,6 +10,7 @@
 
 #include <pybind11/pybind11.h>
 #include <codac2_Interval.h>
+#include <codac2_Interval2.h>
 #include <codac2_AnalyticFunction.h>
 #include <codac2_ValueType.h>
 #include <codac2_Row.h>

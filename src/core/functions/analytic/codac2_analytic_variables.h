@@ -12,6 +12,7 @@
 #include <iostream>
 #include "codac2_AnalyticExpr.h"
 #include "codac2_VarBase.h"
+#include "codac2_component.h"
 
 namespace codac2
 {

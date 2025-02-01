@@ -118,7 +118,7 @@ namespace codac2
         return b;
       }
   };
-
+/*
   template<>
   class AnalyticOperationExpr<ComponentOp,ScalarType,VectorType> : public AnalyticExpr<ScalarType>, public OperationExprBase<AnalyticExpr<VectorType>>
   {
@@ -215,5 +215,5 @@ namespace codac2
     protected:
 
       const Index _i, _j;
-  };
+  };*/
 }

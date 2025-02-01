@@ -685,7 +685,7 @@ namespace codac2
    * \param x value to convert into an interval object
    * \return the interval \f$[x]\f$
    */
-  Interval operator""_i(long double x);
+  //Interval operator""_i(long double x);
 
   inline double previous_float(double x)
   {
@@ -1066,8 +1066,8 @@ namespace codac2
     : ibex::Interval(x)
   { }
 
-  inline Interval operator""_i(long double x)
+  /*inline Interval operator""_i(long double x)
   {
     return Interval(x);
-  }
+  }*/
 }

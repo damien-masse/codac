@@ -16,7 +16,7 @@
 #include "codac2_AnalyticExprWrapper.h"
 
 namespace codac2
-{
+{/*
   // operator+ (unary case)
     
     inline ScalarExpr
@@ -385,5 +385,5 @@ namespace codac2
     det(const VectorExpr& x1, const VectorExpr& x2, const VectorExpr& x3)
     {
       return { std::make_shared<AnalyticOperationExpr<DetOp,ScalarType,VectorType,VectorType,VectorType>>(x1,x2,x3) };
-    }
+    }*/
 }

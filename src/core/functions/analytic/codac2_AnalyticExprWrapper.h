@@ -12,9 +12,13 @@
 #include "codac2_AnalyticExpr.h"
 #include "codac2_ValueType.h"
 #include "codac2_analytic_variables.h"
+#include "codac2_component.h"
 
 namespace codac2
 {
+  class ScalarVar;
+  class VectorVar;
+
   template<typename T>
   struct AnalyticExprWrapper;
 

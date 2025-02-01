@@ -14,7 +14,7 @@
 
 using namespace std;
 using namespace codac2;
-
+#if 0
 // AddOp (unary operations)
 
   Interval AddOp::fwd(const Interval& x1)
@@ -1516,3 +1516,4 @@ using namespace codac2;
     x2 &= m.col(1);
     x3 &= m.col(2);
   }
+  #endif

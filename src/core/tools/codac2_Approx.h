@@ -10,6 +10,7 @@
 #pragma once
 
 #include <limits>
+#include "codac2_Interval2.h"
 #include "codac2_matrices.h"
 #include "codac2_Vector.h"
 #include "codac2_IntervalVector.h"
@@ -47,7 +48,7 @@ namespace codac2
         else if(x1 == x2._x)
           return true;
 
-        else if constexpr(std::is_same_v<T,Interval>)
+        else if constexpr(std::is_same_v<T,Interval> || std::is_same_v<T,Interval2>)
         {
           return (x1.lb() == x2._x.lb() || x1.lb() == Approx<double>(x2._x.lb(),x2._eps))
               && (x1.ub() == x2._x.ub() || x1.ub() == Approx<double>(x2._x.ub(),x2._eps));

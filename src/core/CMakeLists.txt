@@ -53,6 +53,10 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_utils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_utils.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval2.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval2_impl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval2_operations.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval2_operations_impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval_operations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval_operations.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_IntervalMatrix.h
@@ -101,6 +105,33 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_MatrixBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_Vector.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_VectorBase.h
+    
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_abs.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_acos.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_arith_add.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_arith_div.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_arith_mul.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_arith_sub.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_asin.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan2.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_component.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cos.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cosh.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_det.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_exp.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_log.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_mat.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_operators.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_pow.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_sin.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_sinh.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_sqr.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_sqrt.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_subvector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_tan.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_tanh.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_vec.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/MatrixBase_addons/codac2_MatrixBase_addons_Base.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/MatrixBase_addons/codac2_MatrixBase_addons_include.h
@@ -198,6 +229,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/MatrixBase_addons
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators
     ${CMAKE_CURRENT_SOURCE_DIR}/paver
     ${CMAKE_CURRENT_SOURCE_DIR}/proj
     ${CMAKE_CURRENT_SOURCE_DIR}/separators
@@ -236,7 +268,7 @@
   file(APPEND ${CODAC_CORE_MAIN_HEADER} "#pragma once\n\n")
   foreach(header_path ${CODAC_CORE_HDR})
     get_filename_component(header_name ${header_path} NAME)
-    if(NOT header_name MATCHES "^.*_addons.*$")
+    if((NOT header_name MATCHES "^.*_addons.*$") AND (NOT header_name MATCHES "^.*_impl.*$"))
       file(APPEND ${CODAC_CORE_MAIN_HEADER} "#include <${header_name}>\n")
     endif()
   endforeach()
