@@ -62,6 +62,6 @@ namespace codac2
 
   inline void SinhOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_sinh(y, x1);
+    x1 &= asinh(y);
   }
 }

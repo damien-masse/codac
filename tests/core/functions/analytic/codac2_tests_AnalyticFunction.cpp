@@ -9,7 +9,6 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <codac2_AnalyticFunction.h>
-#include <codac2_analytic_operations.h>
 #include <codac2_Approx.h>
 #include <codac2_math.h>
 

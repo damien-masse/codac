@@ -64,6 +64,6 @@ namespace codac2
 
   inline void SqrOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_sqr(y, x1);
+    x1 = gaol::sqrt_rel(y, x1);
   }
 }

@@ -62,6 +62,58 @@ namespace codac2
 
   inline void AtanOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_atan(y, x1);
+    if(y.is_empty())
+      x1.set_empty();
+
+    else
+    {
+      // Note: if y.ub>pi/2 or y.lb<-pi/2, tan(y) gives (-oo,oo).
+      // so the implementation is not as simple as x1 &= tan(y).
+
+      Interval z = y;
+      double pi2l = (Interval::pi()/2).lb();
+      double pi2u = (Interval::pi()/2).ub();
+
+      if(z.ub() >= pi2l) // not pi2u. See comments below.
+      {
+        if(z.lb() >= pi2u)
+          x1.set_empty();
+
+        else
+        {
+          if(z.lb() > -pi2l)
+          {
+            // Note 1: tan(z^-) can give an interval (-oo,+oo) if
+            // z^- is close to -pi/2. Even in this case we keep the
+            // lower bound -oo.
+            //
+            // Note 2: if we had used z.lb()<-pi2u (with pi2u>pi/2)
+            // instead of z.lb()<-pi2l, it may be possible, in theory,
+            // that the calculated lower bound is a high value close to +oo, which would be incorrect.
+            //
+            // Note 3: if z.lb() is close to pi/2, the lower bound of tan(z.lb()) can be -oo. There
+            // is nothing we can do about it (the lower bound cannot be evaluated in this case)
+            //
+            // Note 4: tan(z.lb()) cannot be an empty set since z.lb() cannot be exactly pi/2.
+            x1 &= Interval(tan(Interval(z.lb())).lb(),oo);
+          }
+
+          // else do nothing
+        }
+      }
+
+      else
+      {
+        if(z.ub() <= -pi2u)
+          x1.set_empty();
+
+        else if(z.lb() < -pi2l)
+          // Same comments as above
+          x1 &= Interval(-oo,tan(Interval(z.ub())).ub());
+
+        else
+          x1 &= Interval(tan(Interval(z.lb())).lb(), tan(Interval(z.ub())).ub());
+      }
+    }
   }
 }

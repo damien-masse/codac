@@ -11,6 +11,7 @@
 
 #include "codac2_Interval.h"
 #include "codac2_IntervalVector.h"
+#include "codac2_IntervalRow.h"
 #include "codac2_IntervalMatrix.h"
 #include "codac2_AnalyticType.h"
 #include "codac2_AnalyticExprWrapper.h"
@@ -108,7 +109,8 @@ namespace codac2
 
   inline void MulOp::bwd(const Interval& y, Interval& x1, Interval& x2)
   {
-    bwd_mul(y, x1, x2);
+    x1 = gaol::div_rel(y, x2, x1);
+    x2 = gaol::div_rel(y, x1, x2);
   }
 
   inline IntervalVector MulOp::fwd(const Interval& x1, const IntervalVector& x2)
@@ -147,7 +149,7 @@ namespace codac2
   {
     assert(y.size() == x2.size());
     for(Index i = 0 ; i < x2.size() ; i++)
-      bwd_mul(y[i], x1, x2[i]);
+      MulOp::bwd(y[i], x1, x2[i]);
   }
 
   inline IntervalVector MulOp::fwd(const IntervalVector& x1, const Interval& x2)

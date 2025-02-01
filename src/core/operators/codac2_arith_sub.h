@@ -120,7 +120,7 @@ namespace codac2
   inline void SubOp::bwd(const Interval& y, Interval& x1)
   {
     Interval x2_(0.);
-    bwd_sub(y, x2_, x1);
+    SubOp::bwd(y, x2_, x1);
   }
 
   inline IntervalVector SubOp::fwd(const IntervalVector& x1)
@@ -209,7 +209,11 @@ namespace codac2
 
   inline void SubOp::bwd(const Interval& y, Interval& x1, Interval& x2)
   {
-    bwd_sub(y, x1, x2);
+    if((x1 &= y+x2).is_empty())
+      x2.set_empty();
+
+    else if((x2 &= x1-y).is_empty())
+      x1.set_empty();
   }
 
   inline IntervalVector SubOp::fwd(const IntervalVector& x1, const IntervalVector& x2)
@@ -241,7 +245,7 @@ namespace codac2
   {
     assert(y.size() == x1.size() && y.size() == x2.size());
     for(Index i = 0 ; i < y.size() ; i++)
-      bwd(y[i], x1[i], x2[i]);
+      SubOp::bwd(y[i], x1[i], x2[i]);
   }
 
   inline IntervalMatrix SubOp::fwd(const IntervalMatrix& x1, const IntervalMatrix& x2)

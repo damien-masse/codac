@@ -66,6 +66,6 @@ namespace codac2
 
   inline void LogOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_log(y, x1);
+    x1 &= exp(y);
   }
 }

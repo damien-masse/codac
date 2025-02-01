@@ -202,7 +202,11 @@ namespace codac2
 
   inline void AddOp::bwd(const Interval& y, Interval& x1, Interval& x2)
   {
-    bwd_add(y, x1, x2);
+    if((x1 &= y-x2).is_empty())
+      x2.set_empty();
+
+    else if((x2 &= y-x1).is_empty())
+      x1.set_empty();
   }
 
   inline IntervalVector AddOp::fwd(const IntervalVector& x1, const IntervalVector& x2)

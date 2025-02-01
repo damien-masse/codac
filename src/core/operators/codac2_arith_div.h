@@ -14,6 +14,7 @@
 #include "codac2_IntervalMatrix.h"
 #include "codac2_AnalyticType.h"
 #include "codac2_AnalyticExprWrapper.h"
+#include "codac2_arith_mul.h"
 
 namespace codac2
 {
@@ -77,7 +78,16 @@ namespace codac2
 
   inline void DivOp::bwd(const Interval& y, Interval& x1, Interval& x2)
   {
-    bwd_div(y, x1, x2);
+    if((x1 &= y*x2).is_empty())
+      x2.set_empty();
+
+    else
+    {
+      Interval tmp = y;
+      MulOp::bwd(x1, tmp, x2);
+      if(x2.is_empty())
+        x1.set_empty();
+    }
   }
 
   inline IntervalVector DivOp::fwd(const IntervalVector& x1, const Interval& x2)
@@ -112,6 +122,6 @@ namespace codac2
   {
     assert(x1.size() == y.size());
     for(Index i = 0 ; i < x1.size() ; i++)
-      bwd_div(y[i], x1[i], x2);
+      DivOp::bwd(y[i], x1[i], x2);
   }
 }

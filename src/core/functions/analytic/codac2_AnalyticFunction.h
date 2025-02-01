@@ -15,10 +15,9 @@
 #include "codac2_analytic_variables.h"
 #include "codac2_FunctionBase.h"
 #include "codac2_template_tools.h"
-#include "codac2_analytic_operations.h"
 #include "codac2_AnalyticExprWrapper.h"
 #include "codac2_ScalarExprList.h"
-#include <codac2_operators.h>
+#include "codac2_operators.h"
 
 namespace codac2
 {

@@ -62,6 +62,6 @@ namespace codac2
 
   inline void CosOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_cos(y, x1);
+    x1 &= gaol::acos_rel(y, x1);
   }
 }

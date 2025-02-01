@@ -40,8 +40,6 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcSegment.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcSegment.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcWrapper.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_directed_ctc.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_directed_ctc.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_linear_ctc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_linear_ctc.h
 
@@ -53,12 +51,9 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_utils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_utils.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval2.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval2_impl.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval2_operations.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval2_operations_impl.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval_operations.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval_impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval_operations.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_Interval_operations_impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_IntervalMatrix.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_IntervalRow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_IntervalVector.h
@@ -73,7 +68,6 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_FunctionBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_VarBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_constants.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_operations.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExpr.h

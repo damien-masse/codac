@@ -62,6 +62,6 @@ namespace codac2
 
   inline void AbsOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_abs(y, x1);
+    x1 = gaol::invabs_rel(y, x1);
   }
 }

@@ -62,6 +62,6 @@ namespace codac2
 
   inline void CoshOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_cosh(y, x1);
+    x1 = gaol::acosh_rel(y, x1);
   }
 }

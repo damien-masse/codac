@@ -12,6 +12,8 @@
 #include "codac2_Interval.h"
 #include "codac2_AnalyticType.h"
 #include "codac2_AnalyticExprWrapper.h"
+#include "codac2_atan2.h"
+#include "codac2_arith_div.h"
 
 namespace codac2
 {
@@ -67,6 +69,69 @@ namespace codac2
 
   inline void Atan2Op::bwd(const Interval& y, Interval& x1, Interval& x2)
   {
-    bwd_atan2(y, x1, x2);
+    // Probably not the most efficient implementation ever...
+
+    // half-plane x2>0
+    Interval y_x2pos = y & Interval(-1,1)*Interval::half_pi();
+    // upper left quadrant
+    Interval y_x2neg_x1pos = y & (Interval::half_pi() | Interval::pi());
+    // lower left quadrant
+    Interval y_x2neg_x1neg = y & -(Interval::half_pi() | Interval::pi());
+
+    Interval xres = Interval::empty();
+    Interval yres = Interval::empty();
+
+    if(!y_x2pos.is_empty())
+    {
+      Interval xpos = x2 & Interval(0,oo);
+      Interval yall = x1;
+
+      if(y_x2neg_x1pos.is_empty() || y_x2neg_x1neg.is_empty())
+      {
+        Interval z = yall/xpos;
+        AtanOp::bwd(y_x2pos,z);
+        DivOp::bwd(z,yall,xpos);
+      } // Otherwise, all is valid (useless to contract)
+
+      xres |= xpos;
+      yres |= yall;
+
+      // Because atan is not defined for pi/2 and -pi/2
+      if(y_x2pos.lb() >= Interval::half_pi().lb())
+      {
+        xres |= (x2 & Interval::zero());
+        yres |= (x1 & Interval(0,oo));
+      }
+      else if(y_x2pos.ub() <= -Interval::half_pi().lb())
+      {
+        xres |= (x2 & Interval::zero());
+        yres |= (x1 & Interval(-oo,0));
+      }
+    }
+
+    if(!y_x2neg_x1pos.is_empty())
+    {
+      Interval xneg = x2 & Interval(-oo,0);
+      Interval ypos = x1 & Interval(0,oo);
+      Interval z = ypos/xneg;
+      AtanOp::bwd(y_x2neg_x1pos - Interval::pi(),z);
+      DivOp::bwd(z,ypos,xneg);
+      xres |= xneg;
+      yres |= ypos;
+    }
+
+    if(!y_x2neg_x1neg.is_empty())
+    {
+      Interval xneg = x2 & Interval(-oo,0);
+      Interval yneg = x1 & Interval(-oo,0);
+      Interval z = yneg/xneg;
+      AtanOp::bwd(y_x2neg_x1neg + Interval::pi(),z);
+      DivOp::bwd(z,yneg,xneg);
+      xres |= xneg;
+      yres |= yneg;
+    }
+
+    x2 = xres;
+    x1 = yres;
   }
 }

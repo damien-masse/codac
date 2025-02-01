@@ -66,6 +66,13 @@ namespace codac2
 
   inline void SqrtOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_sqrt(y, x1);
+    if(y.is_empty() || y.ub() < 0)
+      x1.set_empty();
+
+    else if(y.lb() < 0)
+      x1 &= sqr(Interval(0,y.ub()));
+
+    else
+      x1 &= sqr(y);
   }
 }

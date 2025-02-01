@@ -62,6 +62,6 @@ namespace codac2
 
   inline void SinOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_sin(y, x1);
+    x1 &= gaol::asin_rel(y, x1);
   }
 }

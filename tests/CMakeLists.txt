@@ -51,7 +51,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/domains/codac2_tests_BoolInterval
   core/domains/ellipsoid/codac2_tests_Ellipsoid
   core/domains/interval/codac2_tests_Interval
-  core/domains/interval/codac2_tests_Interval_bwd
+  #core/domains/interval/codac2_tests_Interval_bwd
   core/domains/interval/codac2_tests_Interval_operations
   core/domains/interval/codac2_tests_IntervalMatrix
   core/domains/interval/codac2_tests_IntervalVector

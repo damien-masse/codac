@@ -1,8 +1,8 @@
 /** 
- *  \file codac2_Interval2_impl.h
+ *  \file codac2_Interval_impl.h
  * 
- *  This class reuses several functions developed for ibex::Interval2.
- *  See ibex::Interval2 (IBEX lib, main author: Gilles Chabert)
+ *  This class reuses several functions developed for ibex::Interval.
+ *  See ibex::Interval (IBEX lib, main author: Gilles Chabert)
  *    https://ibex-lib.readthedocs.io
  *  
  * ----------------------------------------------------------------------------
@@ -18,52 +18,52 @@
 
 namespace codac2
 {
-  inline Interval2::Interval2()
+  inline Interval::Interval()
     : gaol::interval(-oo,oo)
   { }
 
-  inline Interval2::Interval2(double a)
+  inline Interval::Interval(double a)
     : gaol::interval(a)
   {
     if(a == -oo || a == oo)
       set_empty();
   }
 
-  inline Interval2::Interval2(double a, double b)
+  inline Interval::Interval(double a, double b)
     : gaol::interval(a,b)
   { }
 
-  inline Interval2::Interval2(const Interval2& x)
+  inline Interval::Interval(const Interval& x)
     : gaol::interval(x)
   { }
 
-  inline Interval2::Interval2(const std::array<double,1>& array)
-    : Interval2(array[0])
+  inline Interval::Interval(const std::array<double,1>& array)
+    : Interval(array[0])
   { }
 
-  inline Interval2::Interval2(const std::array<double,2>& array)
-    : Interval2(array[0],array[1])
+  inline Interval::Interval(const std::array<double,2>& array)
+    : Interval(array[0],array[1])
   { }
 
-  inline Interval2::Interval2(std::initializer_list<double> l)
-    : Interval2()
+  inline Interval::Interval(std::initializer_list<double> l)
+    : Interval()
   {
     init_from_list(l);
   }
 
-  inline Interval2& Interval2::init(const Interval2& x)
+  inline Interval& Interval::init(const Interval& x)
   {
     *this = x;
     return *this;
   }
 
-  inline Interval2& Interval2::init_from_list(const std::list<double>& l)
+  inline Interval& Interval::init_from_list(const std::list<double>& l)
   {
     if(l.size() == 1)
-      *this = Interval2(*l.begin());
+      *this = Interval(*l.begin());
 
     else if(l.size() == 2)
-      *this = Interval2(*l.begin(),*std::prev(l.end()));
+      *this = Interval(*l.begin(),*std::prev(l.end()));
 
     else
     {
@@ -73,7 +73,7 @@ namespace codac2
     return *this;
   }
 
-  inline Interval2& Interval2::operator=(double x)
+  inline Interval& Interval::operator=(double x)
   {
     if(x == -oo || x == oo)
       set_empty();
@@ -83,48 +83,48 @@ namespace codac2
     return *this;
   }
 
-  inline Interval2& Interval2::operator=(const Interval2& x)
+  inline Interval& Interval::operator=(const Interval& x)
   {
     gaol::interval::operator=(x);
     return *this;
   }
 
-  inline bool Interval2::operator==(const Interval2& x) const
+  inline bool Interval::operator==(const Interval& x) const
   {
     return (is_empty() && x.is_empty()) || (lb() == x.lb() && ub() == x.ub());
   }
   
-  inline bool Interval2::operator!=(const Interval2& x) const
+  inline bool Interval::operator!=(const Interval& x) const
   {
     return !(*this == x);
   }
 
-  inline double Interval2::lb() const
+  inline double Interval::lb() const
   {
     return gaol::interval::left();
   }
 
-  inline double Interval2::ub() const
+  inline double Interval::ub() const
   {
     return gaol::interval::right();
   }
 
-  inline double Interval2::mid() const
+  inline double Interval::mid() const
   {
     return gaol::interval::midpoint();
   }
 
-  inline double Interval2::mag() const
+  inline double Interval::mag() const
   {
     return gaol::interval::mag();
   }
 
-  inline double Interval2::mig() const
+  inline double Interval::mig() const
   {
     return gaol::interval::mig();
   }
 
-  inline double Interval2::rand() const
+  inline double Interval::rand() const
   {
     if(is_empty())
       return std::numeric_limits<double>::quiet_NaN();
@@ -137,7 +137,7 @@ namespace codac2
     return std::max<double>(lb(),std::min<double>(r,ub()));
   }
 
-  inline double Interval2::rad() const
+  inline double Interval::rad() const
   {
     if(is_empty())
       return std::numeric_limits<double>::quiet_NaN();
@@ -154,7 +154,7 @@ namespace codac2
     }
   }
 
-  inline double Interval2::diam() const
+  inline double Interval::diam() const
   {
     if(is_empty())
       return std::numeric_limits<double>::quiet_NaN();
@@ -163,77 +163,77 @@ namespace codac2
       return gaol::interval::width();
   }
 
-  inline double Interval2::volume() const
+  inline double Interval::volume() const
   {
     return diam();
   }
 
-  inline Index Interval2::size() const
+  inline Index Interval::size() const
   {
     return 1;
   }
 
-  inline void Interval2::set_empty()
+  inline void Interval::set_empty()
   {
-    *this = Interval2::empty();
+    *this = Interval::empty();
   }
   
-  inline bool Interval2::is_empty() const
+  inline bool Interval::is_empty() const
   {
     return gaol::interval::is_empty();
   }
 
-  inline bool Interval2::contains(const double& x) const
+  inline bool Interval::contains(const double& x) const
   {
     return gaol::interval::set_contains(x);
   }
 
-  inline bool Interval2::interior_contains(const double& x) const
+  inline bool Interval::interior_contains(const double& x) const
   {
     return !is_empty() && x > lb() && x < ub();
   }
 
-  inline bool Interval2::is_unbounded() const
+  inline bool Interval::is_unbounded() const
   {
     return !gaol::interval::is_finite();
   }
   
-  inline bool Interval2::is_degenerated() const
+  inline bool Interval::is_degenerated() const
   {
     return is_empty() || gaol::interval::is_a_double();
   }
 
-  inline bool Interval2::intersects(const Interval2 &x) const
+  inline bool Interval::intersects(const Interval &x) const
   {
     return !is_empty() && !x.is_empty() && lb() <= x.ub() && ub() >= x.lb();
   }
   
-  inline bool Interval2::is_disjoint(const Interval2& x) const
+  inline bool Interval::is_disjoint(const Interval& x) const
   {
     return is_empty() || x.is_empty() || lb() > x.ub() || ub() < x.lb();
   }
   
-  inline bool Interval2::overlaps(const Interval2& x) const
+  inline bool Interval::overlaps(const Interval& x) const
   {
     return !is_empty() && !x.is_empty() && ub() > x.lb() && x.ub() > lb();
   }
   
-  inline bool Interval2::is_subset(const Interval2& x) const
+  inline bool Interval::is_subset(const Interval& x) const
   {
     return is_empty() || (!x.is_empty() && x.lb() <= lb() && x.ub() >= ub());
   }
   
-  inline bool Interval2::is_strict_subset(const Interval2& x) const
+  inline bool Interval::is_strict_subset(const Interval& x) const
   {
     return !x.is_empty() && (is_empty() || (x.lb() < lb() && x.ub() >= ub()) || (x.ub() > ub() && x.lb() <= lb()));
   }
   
-  inline bool Interval2::is_interior_subset(const Interval2& x) const
+  inline bool Interval::is_interior_subset(const Interval& x) const
   {
     return is_empty() || (!x.is_empty() && (x.lb() == -oo || x.lb() < lb()) && (x.ub() == oo || x.ub() > ub()));
   }
   
-  inline bool Interval2::is_strict_interior_subset(const Interval2& x) const
+  inline bool Interval::is_strict_interior_subset(const Interval& x) const
   {
     return !x.is_empty() && (is_empty() || (
          (x.lb() < lb() && (x.ub() == oo  || x.ub() > ub()))
@@ -241,23 +241,23 @@ namespace codac2
     ));
   }
 
-  inline bool Interval2::is_superset(const Interval2& x) const
+  inline bool Interval::is_superset(const Interval& x) const
   {
     return x.is_subset(*this);
   }
   
-  inline bool Interval2::is_strict_superset(const Interval2& x) const
+  inline bool Interval::is_strict_superset(const Interval& x) const
   {
     return x.is_strict_subset(*this);
   }
   
-  inline Interval2& Interval2::inflate(const double& rad)
+  inline Interval& Interval::inflate(const double& rad)
   {
-    (*this) += Interval2(-rad,rad);
+    (*this) += Interval(-rad,rad);
     return *this;
   }
 
-  inline bool Interval2::is_bisectable() const
+  inline bool Interval::is_bisectable() const
   {
     if(is_empty())
       return false;
@@ -265,21 +265,21 @@ namespace codac2
     return lb() < m && m < ub();
   }
 
-  inline std::pair<Interval2,Interval2> Interval2::bisect(float ratio) const
+  inline std::pair<Interval,Interval> Interval::bisect(float ratio) const
   {
     assert_release(is_bisectable());
-    assert_release(Interval2(0,1).interior_contains(ratio));
+    assert_release(Interval(0,1).interior_contains(ratio));
 
     if(lb() == -oo)
     {
       if(ub() == oo)
-        return { Interval2(-oo,0), Interval2(0,oo) };
+        return { Interval(-oo,0), Interval(0,oo) };
       else
-        return { Interval2(-oo,-std::numeric_limits<double>::max()), Interval2(-std::numeric_limits<double>::max(),ub()) };
+        return { Interval(-oo,-std::numeric_limits<double>::max()), Interval(-std::numeric_limits<double>::max(),ub()) };
     }
 
     else if(ub() == oo)
-      return { Interval2(lb(),std::numeric_limits<double>::max()), Interval2(std::numeric_limits<double>::max(),oo) };
+      return { Interval(lb(),std::numeric_limits<double>::max()), Interval(std::numeric_limits<double>::max(),oo) };
 
     else
     {
@@ -297,16 +297,16 @@ namespace codac2
         assert(m < ub());
       }
 
-      return { Interval2(lb(),m), Interval2(m,ub()) };
+      return { Interval(lb(),m), Interval(m,ub()) };
     }
   }
 
-  inline std::vector<Interval2> Interval2::complementary(bool compactness) const
+  inline std::vector<Interval> Interval::complementary(bool compactness) const
   {
     if(is_empty() || (compactness && is_degenerated()))
       return { {-oo,oo} };
 
-    std::vector<Interval2> l;
+    std::vector<Interval> l;
 
     if(lb() > -oo)
       l.push_back({-oo,lb()});
@@ -317,7 +317,7 @@ namespace codac2
     return l;
   }
 
-  inline std::vector<Interval2> Interval2::diff(const Interval2& y, bool compactness) const
+  inline std::vector<Interval> Interval::diff(const Interval& y, bool compactness) const
   {
     if(compactness && is_degenerated())
     {
@@ -327,10 +327,10 @@ namespace codac2
         return { *this };
     }
 
-    std::vector<Interval2> l;
+    std::vector<Interval> l;
     for(const auto& li : y.complementary(compactness))
     {
-      Interval2 inter = li & *this;
+      Interval inter = li & *this;
       if(!inter.is_degenerated())
         l.push_back(inter);
     }
@@ -338,130 +338,130 @@ namespace codac2
     return l;
   }
 
-  inline Interval2 operator&(const Interval2& x, const Interval2& y)
+  inline Interval operator&(const Interval& x, const Interval& y)
   {
     if(x.is_empty() || y.is_empty() || x.ub() < y.lb())
-      return Interval2::empty();
+      return Interval::empty();
     
     else
       return gaol::operator&(x,y);
   }
 
-  inline Interval2 operator|(const Interval2& x, const Interval2& y)
+  inline Interval operator|(const Interval& x, const Interval& y)
   {
     return gaol::operator|(x,y);
   }
 
-  inline const Interval2& operator+(const Interval2& x)
+  inline const Interval& operator+(const Interval& x)
   {
     return x;
   }
 
-  inline Interval2 operator+(const Interval2& x, double y)
+  inline Interval operator+(const Interval& x, double y)
   {
     if(y == -oo || y == oo)
-      return Interval2::empty();
+      return Interval::empty();
 
     else
       return gaol::operator+(x,y);
   }
 
-  inline Interval2 operator+(double x, const Interval2& y)
+  inline Interval operator+(double x, const Interval& y)
   {
     if(x == -oo || x == oo)
-      return Interval2::empty();
+      return Interval::empty();
 
     else
       return gaol::operator+(x,y);
   }
 
-  inline Interval2 operator+(const Interval2& x, const Interval2& y)
+  inline Interval operator+(const Interval& x, const Interval& y)
   {
     return gaol::operator+(x,y);
   }
 
-  inline Interval2 operator-(const Interval2& x, double y)
+  inline Interval operator-(const Interval& x, double y)
   {
     if(y == -oo || y == oo)
-      return Interval2::empty();
+      return Interval::empty();
 
     else
       return gaol::operator-(x, y);
   }
 
-  inline Interval2 operator-(double x, const Interval2& y)
+  inline Interval operator-(double x, const Interval& y)
   {
     if(x == -oo || x == oo)
-      return Interval2::empty();
+      return Interval::empty();
 
     else
       return gaol::operator-(x, y);
   }
 
-  inline Interval2 operator-(const Interval2& x, const Interval2& y)
+  inline Interval operator-(const Interval& x, const Interval& y)
   {
     return gaol::operator-(x, y);
   }
 
-  inline Interval2 operator*(const Interval2& x, double y)
+  inline Interval operator*(const Interval& x, double y)
   {
     if(y == -oo || y == oo)
-      return Interval2::empty();
+      return Interval::empty();
 
     else
       return gaol::operator*(x,y);
   }
 
-  inline Interval2 operator*(double x, const Interval2& y)
+  inline Interval operator*(double x, const Interval& y)
   {
     if(x == -oo || x == oo)
-      return Interval2::empty();
+      return Interval::empty();
 
     else
       return gaol::operator*(x,y);
   }
 
-  inline Interval2 operator*(const Interval2& x, const Interval2& y)
+  inline Interval operator*(const Interval& x, const Interval& y)
   {
     return gaol::operator*(x,y);
   }
 
-  inline Interval2 operator/(const Interval2& x, double y)
+  inline Interval operator/(const Interval& x, double y)
   {
     if(y == -oo || y == oo)
-      return Interval2::empty();
+      return Interval::empty();
 
     else
       return gaol::operator/(x,y);
   }
 
-  inline Interval2 operator/(double x, const Interval2& y)
+  inline Interval operator/(double x, const Interval& y)
   {
     if(x == -oo || x == oo)
-      return Interval2::empty();
+      return Interval::empty();
 
     else
       return gaol::operator/(x,y);
   }
 
-  inline Interval2 operator/(const Interval2& x, const Interval2& y)
+  inline Interval operator/(const Interval& x, const Interval& y)
   {
     return gaol::operator/(x,y);
   }
 
-  inline Interval2& Interval2::operator|=(const Interval2& x)
+  inline Interval& Interval::operator|=(const Interval& x)
   {
     gaol::interval::operator|=(x);
     return *this;
   }
 
-  inline Interval2& Interval2::operator&=(const Interval2& x)
+  inline Interval& Interval::operator&=(const Interval& x)
   {
     gaol::interval::operator&=(x);
     return *this;
   }
 
-  inline Interval2& Interval2::operator+=(double x)
+  inline Interval& Interval::operator+=(double x)
   {
     if(x == -oo || x == oo)
       set_empty();
@@ -470,18 +470,18 @@ namespace codac2
     return *this;
   }
 
-  inline Interval2& Interval2::operator+=(const Interval2& x)
+  inline Interval& Interval::operator+=(const Interval& x)
   {
     gaol::interval::operator+=(x);
     return *this;
   }
 
-  inline Interval2 Interval2::operator-() const
+  inline Interval Interval::operator-() const
   {
     return 0.-*this;
   }
 
-  inline Interval2& Interval2::operator-=(double x)
+  inline Interval& Interval::operator-=(double x)
   {
     if(x == -oo || x == oo)
       set_empty();
@@ -490,13 +490,13 @@ namespace codac2
     return *this;
   }
 
-  inline Interval2& Interval2::operator-=(const Interval2& x)
+  inline Interval& Interval::operator-=(const Interval& x)
   {
     gaol::interval::operator-=(x);
     return *this;
   }
 
-  inline Interval2& Interval2::operator*=(double x)
+  inline Interval& Interval::operator*=(double x)
   {
     if(x == -oo || x == oo)
       set_empty();
@@ -505,13 +505,13 @@ namespace codac2
     return *this;
   }
 
-  inline Interval2& Interval2::operator*=(const Interval2& x)
+  inline Interval& Interval::operator*=(const Interval& x)
   {
     gaol::interval::operator*=(x);
     return *this;
   }
 
-  inline Interval2& Interval2::operator/=(double x)
+  inline Interval& Interval::operator/=(double x)
   {
     if(x == -oo || x == oo)
       set_empty();
@@ -520,55 +520,65 @@ namespace codac2
     return *this;
   }
 
-  inline Interval2& Interval2::operator/=(const Interval2& x)
+  inline Interval& Interval::operator/=(const Interval& x)
   {
     gaol::interval::operator/=(x);
     return *this;
   }
 
-  inline Interval2 Interval2::empty()
+  inline Interval Interval::empty()
   {
     return std::numeric_limits<double>::quiet_NaN();
   }
   
-  inline Interval2 Interval2::zero()
+  inline Interval Interval::zero()
   {
     return gaol::interval::zero();
   }
   
-  inline Interval2 Interval2::one()
+  inline Interval Interval::one()
   {
     return gaol::interval::one();
   }
 
-  inline Interval2 Interval2::half_pi()
+  inline Interval Interval::half_pi()
   {
     return gaol::interval::half_pi();
   }
 
-  inline Interval2 Interval2::pi()
+  inline Interval Interval::pi()
   {
     return gaol::interval::pi();
   }
 
-  inline Interval2 Interval2::two_pi()
+  inline Interval Interval::two_pi()
   {
     return gaol::interval::two_pi();
   }
 
-  inline std::ostream& operator<<(std::ostream& os, const Interval2& x)
+  inline std::ostream& operator<<(std::ostream& os, const Interval& x)
   {
     gaol::interval::precision(os.precision());
     gaol::operator<<(os,x);
     return os;
   }
 
-  inline Interval2::Interval2(const gaol::interval& x)
+  inline Interval::Interval(const gaol::interval& x)
     : gaol::interval(x)
   { }
 
-  inline Interval2 operator""_i(long double x)
+  inline Interval operator""_i(long double x)
   {
-    return Interval2(x);
+    return Interval(x);
+  }
+
+  inline double previous_float(double x)
+  {
+    return gaol::previous_float(x);
+  }
+
+  inline double next_float(double x)
+  {
+    return gaol::next_float(x);
   }
 }

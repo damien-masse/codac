@@ -66,6 +66,6 @@ namespace codac2
 
   inline void AcosOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_acos(y, x1);
+    x1 &= cos(y);
   }
 }

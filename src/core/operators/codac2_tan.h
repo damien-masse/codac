@@ -62,6 +62,6 @@ namespace codac2
 
   inline void TanOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_tan(y, x1);
+    x1 = gaol::atan_rel(y, x1);
   }
 }

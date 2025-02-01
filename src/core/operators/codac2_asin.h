@@ -66,6 +66,6 @@ namespace codac2
 
   inline void AsinOp::bwd(const Interval& y, Interval& x1)
   {
-    bwd_asin(y, x1);
+    x1 &= sin(y);
   }
 }

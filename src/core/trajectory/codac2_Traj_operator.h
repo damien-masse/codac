@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "codac2_analytic_operations.h"
 #include "codac2_SampledTraj.h"
 #include "codac2_AnalyticExprWrapper.h"
 #include "codac2_ValueType.h"
