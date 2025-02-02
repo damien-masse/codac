@@ -25,48 +25,61 @@ namespace codac2
 
   inline Interval sqrt(const Interval& x)
   {
-    return gaol::sqrt(x);
+    Interval y = gaol::sqrt(x);
+    gaol::round_upward();
+    return y;
   }
 
-  inline Interval pow(const Interval& x, int n)
+  inline Interval pow(const Interval& x, int p)
   {
-    return gaol::pow(x,n);
+    Interval y = gaol::pow(x,p);
+    //gaol::round_upward(); // not necessary?
+    return y;
   }
 
-  inline Interval pow(const Interval& x, double d)
+  inline Interval pow(const Interval& x, double p)
   {
-    if(d == -oo || d == oo)
+    if(p == -oo || p == oo)
       return Interval::empty();
 
     else
-      return gaol::pow(x,d);
+    {
+      Interval y = gaol::pow(x,p);
+      gaol::round_upward();
+      return y;
+    }
   }
 
-  inline Interval pow(const Interval& x, const Interval& y)
+  inline Interval pow(const Interval& x, const Interval& p)
   {
-    return gaol::pow(x,y);
+    Interval y = gaol::pow(x,p);
+    gaol::round_upward();
+    return y;
   }
 
-  inline Interval root(const Interval& x, int n)
+  inline Interval root(const Interval& x, int p)
   {
     // Get the root of the positive part (gaol does
     // not consider negative values to be in the definition
     // domain of the root function)
 
-    gaol::interval res = gaol::nth_root(x, n>=0 ? n : -n);
+    gaol::interval y = gaol::nth_root(x, p>=0 ? p : -p);
 
-    if(n%2 == 1 && x.lb() < 0)
-      res |= -gaol::nth_root(-x, n >= 0 ? n : -n);
+    if(p%2 == 1 && x.lb() < 0)
+      y |= -gaol::nth_root(-x, p >= 0 ? p : -p);
 
-    if(n < 0)
-      res = 1.0/res;
+    if(p < 0)
+      y = 1.0/y;
 
-    return res;
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval exp(const Interval& x)
   {
-    return gaol::exp(x);
+    Interval y = gaol::exp(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval log(const Interval& x)
@@ -75,37 +88,53 @@ namespace codac2
       return Interval::empty();
 
     else
-      return gaol::log(x);
+    {
+      Interval y = gaol::log(x);
+      gaol::round_upward();
+      return y;
+    }
   }
 
   inline Interval cos(const Interval& x)
   {
-    return gaol::cos(x);
+    Interval y = gaol::cos(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval sin(const Interval& x)
   {
-    return gaol::sin(x);
+    Interval y = gaol::sin(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval tan(const Interval& x)
   {
-    return gaol::tan(x);
+    Interval y = gaol::tan(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval acos(const Interval& x)
   {
-    return gaol::acos(x);
+    Interval y = gaol::acos(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval asin(const Interval& x)
   {
-    return gaol::asin(x);
+    Interval y = gaol::asin(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval atan(const Interval& x)
   {
-    return gaol::atan(x);
+    Interval y = gaol::atan(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval atan2(const Interval& y, const Interval& x)
@@ -175,25 +204,34 @@ namespace codac2
 
   inline Interval cosh(const Interval& x)
   {
+    Interval y;
     if(x.is_unbounded()) 
-      return Interval(gaol::cosh(x).left(),oo);
+      y = Interval(gaol::cosh(x).left(),oo);
     else
-      return gaol::cosh(x);
+      y = gaol::cosh(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval sinh(const Interval& x)
   {
-    return gaol::sinh(x);
+    Interval y = gaol::sinh(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval tanh(const Interval& x)
   {
-    return gaol::tanh(x);
+    Interval y = gaol::tanh(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval acosh(const Interval& x)
   {
-    return gaol::acosh(x);
+    Interval y = gaol::acosh(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval asinh(const Interval& x)
@@ -212,11 +250,15 @@ namespace codac2
         -gaol::asinh(gaol::interval(0,-x.lb())).right(),
         gaol::asinh(gaol::interval(0,x.ub())).right()
       };
+
+    // no round_upward?
   }
 
   inline Interval atanh(const Interval& x)
   {
-    return gaol::atanh(x);
+    Interval y = gaol::atanh(x);
+    gaol::round_upward();
+    return y;
   }
 
   inline Interval abs(const Interval& x)

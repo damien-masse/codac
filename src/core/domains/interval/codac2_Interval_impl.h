@@ -162,7 +162,11 @@ namespace codac2
       return std::numeric_limits<double>::quiet_NaN();
 
     else
-      return gaol::interval::width();
+    {
+      double d = gaol::interval::width();
+      gaol::round_upward();
+      return d;
+    }
   }
 
   inline double Interval::volume() const

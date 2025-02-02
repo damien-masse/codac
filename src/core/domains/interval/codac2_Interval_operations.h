@@ -44,31 +44,31 @@ namespace codac2
   Interval pow(const Interval& x, int n);
 
   /**
-   * \brief Returns \f$[x]^d\f$, \f$d\in\mathbb{R}\f$
+   * \brief Returns \f$[x]^p\f$, \f$p\in\mathbb{R}\f$
    * 
    * \param x interval value
-   * \param d real power value
+   * \param p real power value
    * \return the operation result
    */
-  Interval pow(const Interval& x, double d);
+  Interval pow(const Interval& x, double p);
 
   /**
-   * \brief Returns \f$[x]^{[y]}\f$, \f$y\in\mathbb{IR}\f$
+   * \brief Returns \f$[x]^{[p]}\f$, \f$p\in\mathbb{IR}\f$
    * 
    * \param x interval value
-   * \param y interval power value
+   * \param p interval power value
    * \return the operation result
    */
-  Interval pow(const Interval& x, const Interval& y);
+  Interval pow(const Interval& x, const Interval& p);
 
   /**
-   * \brief Returns the n-th root: \f$\sqrt[n]{[x]}\f$
+   * \brief Returns the p-th root: \f$\sqrt[p]{[x]}\f$
    * 
    * \param x interval value
-   * \param n integer root
+   * \param p integer root
    * \return the operation result
    */
-  Interval root(const Interval& x, int n);
+  Interval root(const Interval& x, int p);
 
   /**
    * \brief Returns \f$\exp([x])\f$
