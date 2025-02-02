@@ -24,7 +24,7 @@
 namespace codac2
 {
   const double oo = []() {
-    
+
     // (from IBEX lib, main author: Gilles Chabert)
     // We use Gaol not in PRESERVE_ROUNDING mode, thus
     // assuming the rounding mode is always set upward.
@@ -636,27 +636,27 @@ namespace codac2
 
       friend Interval root(const Interval&, int);
 
-      friend class AbsOp;
-      friend class AcosOp;
-      friend class AddOp;
-      friend class DivOp;
-      friend class MulOp;
-      friend class SubOp;
-      friend class AsinOp;
-      friend class AtanOp;
-      friend class Atan2Op;
-      friend class CosOp;
-      friend class CoshOp;
-      friend class DetOp;
-      friend class ExpOp;
-      friend class LogOp;
-      friend class PowOp;
-      friend class SinOp;
-      friend class SinhOp;
-      friend class SqrOp;
-      friend class SqrtOp;
-      friend class TanOp;
-      friend class TanhOp;
+      friend struct AbsOp;
+      friend struct AcosOp;
+      friend struct AddOp;
+      friend struct DivOp;
+      friend struct MulOp;
+      friend struct SubOp;
+      friend struct AsinOp;
+      friend struct AtanOp;
+      friend struct Atan2Op;
+      friend struct CosOp;
+      friend struct CoshOp;
+      friend struct DetOp;
+      friend struct ExpOp;
+      friend struct LogOp;
+      friend struct PowOp;
+      friend struct SinOp;
+      friend struct SinhOp;
+      friend struct SqrOp;
+      friend struct SqrtOp;
+      friend struct TanOp;
+      friend struct TanhOp;
   };
       
   /**
