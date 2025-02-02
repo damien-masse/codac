@@ -111,7 +111,9 @@ namespace codac2
 
   inline double Interval::mid() const
   {
-    return gaol::interval::midpoint();
+    double m = gaol::interval::midpoint();
+    gaol::round_upward();
+    return m;
   }
 
   inline double Interval::mag() const
