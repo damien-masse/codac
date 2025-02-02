@@ -10,7 +10,6 @@
 
 #include <pybind11/pybind11.h>
 #include <codac2_Interval.h>
-#include <codac2_Interval2.h>
 #include <codac2_AnalyticFunction.h>
 #include <codac2_ValueType.h>
 #include <codac2_Row.h>
@@ -31,8 +30,7 @@ namespace py = pybind11;
 void export_OctaSym(py::module& m);
 
 // contractors
-//py::class_<Ctc,pyCtc> export_Ctc(py::module& m);
-py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector(py::module& m/*, py::class_<Ctc,pyCtc>& py_ctc*/);
+py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector(py::module& m);
 void export_CtcAction(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCartProd(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCtcBoundary(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -49,7 +47,6 @@ void export_CtcProj(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcInter
 void export_CtcSegment(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcUnion(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcWrapper(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
-void export_directed_ctc(py::module& m);
 void export_linear_ctc(py::module& m);
 
 // domains
@@ -68,7 +65,6 @@ void export_Subpaving(py::module& m);
 // functions
 void export_ScalarVar(py::module& m);
 void export_VectorVar(py::module& m);
-void export_expression_operations(py::module& m);
 
 // geometry
 void export_Edge(py::module& m);
@@ -96,6 +92,9 @@ py::class_<Row> export_Row(py::module& m);
 py::class_<Vector> export_Vector(py::module& m);
 py::class_<Matrix> export_Matrix(py::module& m);
 void export_Inversion(py::module& m);
+
+// operators
+void export_operators(py::module& m);
 
 // paver
 void export_pave(py::module& m);
@@ -134,8 +133,7 @@ PYBIND11_MODULE(_core, m)
   export_OctaSym(m);
 
   // contractors
-  //auto py_ctc = export_Ctc(m);
-  auto py_ctc_iv = export_CtcIntervalVector(m/*,py_ctc*/);
+  auto py_ctc_iv = export_CtcIntervalVector(m);
   export_CtcAction(m, py_ctc_iv);
   export_CtcCartProd(m, py_ctc_iv);
   export_CtcCtcBoundary(m, py_ctc_iv);
@@ -156,7 +154,6 @@ PYBIND11_MODULE(_core, m)
   export_CtcSegment(m, py_ctc_iv);
   export_CtcUnion(m, py_ctc_iv);
   export_CtcWrapper(m, py_ctc_iv);
-  export_directed_ctc(m);
   export_linear_ctc(m);
 
   // matrices
@@ -204,12 +201,14 @@ PYBIND11_MODULE(_core, m)
   export_AnalyticFunction<VectorType>(m,"AnalyticFunction_Vector");
   export_ScalarVar(m);
   export_VectorVar(m);
-  export_expression_operations(m);
 
   // geometry
   export_Edge(m);
   export_geometry(m);
   export_Polygon(m);
+
+  // opearators
+  export_operators(m);
 
   // paver
   export_pave(m);

@@ -17,10 +17,16 @@ namespace codac2
 {
   struct FloorOp
   {
+    static Interval fwd(const Interval& x1);
     static void bwd(const Interval& y, Interval& x1);
   };
 
   // Inline functions
+
+  inline Interval FloorOp::fwd(const Interval& x1)
+  {
+    return floor(x1);
+  }
 
   inline void FloorOp::bwd(const Interval& y, Interval& x1)
   {

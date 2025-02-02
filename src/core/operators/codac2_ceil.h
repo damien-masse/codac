@@ -17,10 +17,16 @@ namespace codac2
 {
   struct CeilOp
   {
+    static Interval fwd(const Interval& x1);
     static void bwd(const Interval& y, Interval& x1);
   };
 
   // Inline functions
+
+  inline Interval CeilOp::fwd(const Interval& x1)
+  {
+    return ceil(x1);
+  }
 
   inline void CeilOp::bwd(const Interval& y, Interval& x1)
   {

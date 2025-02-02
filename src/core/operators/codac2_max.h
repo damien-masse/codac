@@ -17,10 +17,16 @@ namespace codac2
 {
   struct MaxOp
   {
+    static Interval fwd(const Interval& x1, const Interval& x2);
     static void bwd(const Interval& y, Interval& x1, Interval& x2);
   };
 
   // Inline functions
+
+  inline Interval MaxOp::fwd(const Interval& x1, const Interval& x2)
+  {
+    return max(x1,x2);
+  }
 
   inline void MaxOp::bwd(const Interval& y, Interval& x1, Interval& x2)
   {

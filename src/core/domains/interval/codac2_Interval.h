@@ -35,7 +35,7 @@ namespace codac2
    *  See ibex::Interval (IBEX lib, main author: Gilles Chabert)
    *    https://ibex-lib.readthedocs.io
    */
-  class Interval : private gaol::interval, public DomainInterface<Interval,double>
+  class Interval : protected gaol::interval, public DomainInterface<Interval,double>
   {
     public:
 
@@ -557,6 +557,18 @@ namespace codac2
       static Interval two_pi();
       
       friend std::ostream& operator<<(std::ostream& os, const Interval& x);
+
+      // Getting 'inaccessible' operators from GAOL, required for pybind11
+      
+        void* operator new(std::size_t size)
+        { 
+          return ::operator new(size); 
+        }
+
+        void operator delete(void* ptr)
+        { 
+          ::operator delete(ptr); 
+        }
 
     protected:
       

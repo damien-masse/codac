@@ -30,7 +30,6 @@
     contractors/codac2_py_CtcSegment.cpp
     contractors/codac2_py_CtcUnion.cpp
     contractors/codac2_py_CtcWrapper.cpp
-    contractors/codac2_py_directed_ctc.cpp
     contractors/codac2_py_linear_ctc.cpp
 
     domains/ellipsoid/codac2_py_Ellipsoid.cpp
@@ -47,7 +46,6 @@
     domains/paving/codac2_py_Subpaving.cpp
     domains/codac2_py_BoolInterval.cpp
 
-    functions/analytic/codac2_py_analytic_operations.cpp
     functions/analytic/codac2_py_analytic_variables.cpp
     functions/analytic/codac2_py_AnalyticFunction.h
     functions/analytic/codac2_py_AnalyticExprWrapper.h
@@ -66,6 +64,8 @@
     matrices/codac2_py_MatrixBlock.h
     matrices/codac2_py_Vector.cpp
     matrices/codac2_py_VectorBase.h
+
+    operators/codac2_py_operators.cpp
 
     paver/codac2_py_pave.cpp
 

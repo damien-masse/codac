@@ -17,10 +17,16 @@ namespace codac2
 {
   struct MinOp
   {
+    static Interval fwd(const Interval& x1, const Interval& x2);
     static void bwd(const Interval& y, Interval& x1, Interval& x2);
   };
 
   // Inline functions
+
+  inline Interval MinOp::fwd(const Interval& x1, const Interval& x2)
+  {
+    return min(x1,x2);
+  }
 
   inline void MinOp::bwd(const Interval& y, Interval& x1, Interval& x2)
   {
