@@ -6,13 +6,13 @@ The Ellipsoid class
 *Main author:* `Morgan Louédec <https://morgan-louedec.fr/>`_
 
 This page describes the Ellipsoid classes used in Codac 2 as well as some functions with ellipsoids.
-Additional mathematical information is provided here:term:what_is_ellipsoids.
+Additional mathematical information is provided :ref:`here<sec-ellipsoids-intro>`.
 
 Class Ellipsoid
 ---------------
 
 The Ellipsoid class can be used to declare a n-dimensional ellipsoid. The ellipsoid is defined by a center point $\boldsymbol{\mu}$ and a shape matrix
-$\boldsymbol{\varGamma}$. Ellipsoids can be drawn in VIBES via the .draw_ellipsoid function, as illustrated by Figure 1.
+$\boldsymbol{\varGamma}$. Ellipsoids can be drawn in VIBES via the *.draw\_ellipsoid* function, as illustrated by Figure 1.
 
 .. tabs::
   
@@ -58,7 +58,7 @@ Linear and nonlinear mappings can be applied on ellipsoids. For every ellipsoid 
 the function *unreliable_linear_mapping* compute the ellipsoid $ey=A\cdot ex + b$.
 
 Nonlinear mappings can be declared with the AnalyticFunction class. For every ellipsoid $ex$ and nonlinear mapping $h$,
-the function nonlinear_mapping compute an ellipsoid $ey$ that enclose the image of $ex$ by $h$ such that
+the function *nonlinear_mapping* compute an ellipsoid $ey$ that enclose the image of $ex$ by $h$ such that
 $h(ex)\in ey$
 
 .. figure:: linear_and_nonlinear_mappings.png
@@ -117,9 +117,9 @@ Projection of the ellipsoids
 ----------------------------
 
 One can illustrate high dimensional ellipsoids with 2D projection.
-In Codac, the projection is made by the Figure2D object via the .draw_ellipsoid function :
+In Codac, the projection is made by the Figure2D object via the *.draw_ellipsoid* function :
 the ellipsoid is projected on the plane (0,i,j),
-where the axis i and j are specified via the .set_axes function of the figure.
+where the axis i and j are specified via the *.set_axes* function of the figure.
 
 .. figure:: projections.png
   :width: 800
@@ -217,7 +217,7 @@ where the axis i and j are specified via the .set_axes function of the figure.
 Inclusion tests
 ---------------
 
-The function .is_concentric_subset can test if two concentric ellipsoids are strictly included in each other.
+The function *.is_concentric_subset* can test if two concentric ellipsoids are strictly included in each other.
 The function return a BoolInterval that can be: [ true ] if the inclusion is verified /
 [ true, false ] if the method is not able to conclude
 
