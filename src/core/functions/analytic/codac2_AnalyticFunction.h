@@ -142,10 +142,16 @@ namespace codac2
 
         else if constexpr(std::is_same_v<T,VectorType>)
         {
+          assert_release(this->args().size() == 1 && "unable (yet) to compute output size for multi-arg functions");
+
           // A dump evaluation is performed to estimate the dimension
           // of the image of this function. A natural evaluation is assumed
           // to be faster.
-          return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
+
+          if(dynamic_cast<ScalarVar*>(this->args()[0].get())) // if the argument is scalar
+            return eval(EvalMode::NATURAL, Interval()).size();
+          else
+            return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
         }
 
         else
