@@ -11,7 +11,6 @@
 
 #include "codac2_Index.h"
 #include "codac2_ValueType.h"
-#include "codac2_AnalyticExprWrapper.h"
 
 namespace codac2
 {
@@ -70,7 +69,7 @@ namespace codac2
   };
 
   template<typename T>
-  AnalyticExprWrapper<typename ValueType<T>::Type> const_value(const T& x)
+  inline AnalyticExprWrapper<typename ValueType<T>::Type> const_value(const T& x)
   {
     return { std::make_shared<ConstValueExpr<typename ValueType<T>::Type>>(x) };
   }
