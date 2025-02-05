@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_sqr.h
+ *  \file codac2_sign.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -15,7 +15,7 @@
 
 namespace codac2
 {
-  struct SqrOp
+  struct SignOp
   {
     static Interval fwd(const Interval& x1);
     static ScalarType fwd_natural(const ScalarType& x1);
@@ -27,47 +27,48 @@ namespace codac2
   // The following function can be used to build analytic expressions.
 
   inline ScalarExpr
-  sqr(const ScalarExpr& x1)
+  sign(const ScalarExpr& x1)
   {
-    return { std::make_shared<AnalyticOperationExpr<SqrOp,ScalarType,ScalarType>>(x1) };
+    return { std::make_shared<AnalyticOperationExpr<SignOp,ScalarType,ScalarType>>(x1) };
   }
-
+    
   // Inline functions
 
-  inline Interval SqrOp::fwd(const Interval& x1)
+  inline Interval SignOp::fwd(const Interval& x1)
   {
-    return sqr(x1);
+    return sign(x1);
   }
 
-  inline ScalarType SqrOp::fwd_natural(const ScalarType& x1)
+  inline ScalarType SignOp::fwd_natural(const ScalarType& x1)
   {
     return {
       fwd(x1.a),
-      x1.def_domain
+      x1.def_domain && x1.a != 0. // def domain of the derivative of sign
     };
   }
 
-  inline ScalarType SqrOp::fwd_centered(const ScalarType& x1)
+  inline ScalarType SignOp::fwd_centered(const ScalarType& x1)
   {
     if(centered_form_not_available_for_args(x1))
       return fwd_natural(x1);
 
-    assert(x1.da.rows() == 1);
-
-    IntervalMatrix d(1,x1.da.cols());
-    for(Index i = 0 ; i < d.size() ; i++)
-      d(0,i) = 2.*x1.a*x1.da(0,i);
-
     return {
       fwd(x1.m),
       fwd(x1.a),
-      d,
-      x1.def_domain
+      IntervalMatrix::zero(1,x1.da.size()),
+      x1.def_domain && x1.a != 0. // def domain of the derivative of sign
     };
   }
 
-  inline void SqrOp::bwd(const Interval& y, Interval& x1)
+  inline void SignOp::bwd(const Interval& y, Interval& x1)
   {
-    x1 = gaol::sqrt_rel(y, x1);
+    if(y.is_empty())
+      x1.set_empty();
+
+    if(y.lb() > 0)
+      x1 &= Interval(0,oo);
+
+    else if(y.ub() < 0)
+      x1 &= Interval(-oo,0);
   }
 }

@@ -93,6 +93,9 @@ namespace codac2
 
   inline ScalarType MulOp::fwd_centered(const ScalarType& x1, const ScalarType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+
     assert(x1.da.rows() == 1);
     assert(x1.da.rows() == x2.da.rows() && x1.da.cols() == x2.da.cols());
 
@@ -129,6 +132,9 @@ namespace codac2
 
   inline VectorType MulOp::fwd_centered(const ScalarType& x1, const VectorType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+
     assert(x1.da.rows() == 1);
     assert(x1.da.cols() == x2.da.cols());
     assert(x2.a.size() == x2.da.rows());
@@ -231,6 +237,9 @@ namespace codac2
 
   inline VectorType MulOp::fwd_centered(const MatrixType& x1, const VectorType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+    
     return {
       fwd(x1.a, /* <<----- x1.m */ x2.m),
       fwd(x1.a, x2.a),

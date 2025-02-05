@@ -52,6 +52,9 @@ namespace codac2
 
   inline ScalarType Atan2Op::fwd_centered(const ScalarType& x1, const ScalarType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+
     assert(x1.da.rows() == 1);
     assert(x1.da.rows() == x2.da.rows() && x1.da.cols() == x2.da.cols());
 

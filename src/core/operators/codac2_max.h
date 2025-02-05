@@ -18,8 +18,37 @@ namespace codac2
   struct MaxOp
   {
     static Interval fwd(const Interval& x1, const Interval& x2);
+    static ScalarType fwd_natural(const ScalarType& x1, const ScalarType& x2);
+    static ScalarType fwd_centered(const ScalarType& x1, const ScalarType& x2);
     static void bwd(const Interval& y, Interval& x1, Interval& x2);
   };
+
+  // Analytic operator
+  // The following function can be used to build analytic expressions.
+
+  inline ScalarExpr
+  max(const ScalarExpr& x1, const ScalarExpr& x2)
+  {
+    return { std::make_shared<AnalyticOperationExpr<MaxOp,ScalarType,ScalarType,ScalarType>>(x1,x2) };
+  }
+
+  inline ScalarType MaxOp::fwd_natural(const ScalarType& x1, const ScalarType& x2)
+  {
+    return {
+      fwd(x1.a, x2.a),
+      x1.def_domain && x2.def_domain
+    };
+  }
+
+  inline ScalarType MaxOp::fwd_centered(const ScalarType& x1, const ScalarType& x2)
+  {
+    return {
+      fwd(x1.m, x2.m),
+      fwd(x1.a, x2.a),
+      IntervalMatrix(0,0), // not supported yet for auto diff
+      x1.def_domain && x2.def_domain
+    };
+  }
 
   // Inline functions
 

@@ -37,6 +37,7 @@
 #include "codac2_py_min_docs.h"
 #include "codac2_py_mod_docs.h"
 #include "codac2_py_pow_docs.h"
+#include "codac2_py_sign_docs.h"
 #include "codac2_py_sin_docs.h"
 #include "codac2_py_sinh_docs.h"
 #include "codac2_py_sqr_docs.h"
@@ -279,6 +280,10 @@ void export_operators(py::module& m)
 
   ;
 
+  m.def("ceil", [](const ScalarExpr& e1) { return ceil(e1); },
+    SCALAREXPR_CEIL_CONST_SCALAREXPR_REF,
+    "x1"_a);
+
   py::class_<ComponentOp>(m, "ComponentOp")
 
     .def_static("fwd", (Interval(*)(const IntervalVector&,Index)) &ComponentOp::fwd,
@@ -370,6 +375,10 @@ void export_operators(py::module& m)
 
   ;
 
+  m.def("floor", [](const ScalarExpr& e1) { return floor(e1); },
+    SCALAREXPR_FLOOR_CONST_SCALAREXPR_REF,
+    "x1"_a);
+
   py::class_<LogOp>(m, "LogOp")
 
     .def_static("fwd", (Interval(*)(const Interval&)) &LogOp::fwd,
@@ -398,6 +407,10 @@ void export_operators(py::module& m)
 
   ;
 
+  m.def("max", [](const ScalarExpr& e1, const ScalarExpr& e2) { return max(e1,e2); },
+    SCALAREXPR_MAX_CONST_SCALAREXPR_REF_CONST_SCALAREXPR_REF,
+    "x1"_a, "x2"_a);
+
   py::class_<MinOp>(m, "MinOp")
 
     .def_static("fwd", (Interval(*)(const Interval&,const Interval&)) &MinOp::fwd,
@@ -408,6 +421,10 @@ void export_operators(py::module& m)
       "y"_a, "x1"_a, "x2"_a)
 
   ;
+
+  m.def("min", [](const ScalarExpr& e1, const ScalarExpr& e2) { return min(e1,e2); },
+    SCALAREXPR_MIN_CONST_SCALAREXPR_REF_CONST_SCALAREXPR_REF,
+    "x1"_a, "x2"_a);
 
   py::class_<ModOp>(m, "ModOp")
 
@@ -434,6 +451,21 @@ void export_operators(py::module& m)
   m.def("pow", [](const ScalarExpr& e1, const ScalarExpr& e2) { return pow(e1,e2); },
     SCALAREXPR_POW_CONST_SCALAREXPR_REF_CONST_SCALAREXPR_REF,
     "x1"_a, "x2"_a);
+
+  py::class_<SignOp>(m, "SignOp")
+
+    .def_static("fwd", (Interval(*)(const Interval&)) &SignOp::fwd,
+      STATIC_INTERVAL_SIGNOP_FWD_CONST_INTERVAL_REF,
+      "x1"_a)
+    .def_static("bwd", (void(*)(const Interval&,Interval&)) &SignOp::bwd,
+      STATIC_VOID_SIGNOP_BWD_CONST_INTERVAL_REF_INTERVAL_REF,
+      "y"_a, "x1"_a)
+
+  ;
+
+  m.def("sign", [](const ScalarExpr& e1) { return sign(e1); },
+    SCALAREXPR_SIGN_CONST_SCALAREXPR_REF,
+    "x1"_a);
 
   py::class_<SinOp>(m, "SinOp")
 

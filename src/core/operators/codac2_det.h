@@ -139,6 +139,9 @@ namespace codac2
 
   inline ScalarType DetOp::fwd_centered(const VectorType& x1, const VectorType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+
     IntervalMatrix m(2,2);
     m.col(0) = x1.m; m.col(1) = x2.m;
     IntervalMatrix a(2,2);
@@ -183,6 +186,9 @@ namespace codac2
 
   inline ScalarType DetOp::fwd_centered(const VectorType& x1, const VectorType& x2, const VectorType& x3)
   {
+    if(centered_form_not_available_for_args(x1,x2,x3))
+      return fwd_natural(x1,x2,x3);
+
     IntervalMatrix m(3,3);
     m.col(0) = x1.m; m.col(1) = x2.m; m.col(2) = x3.m;
     IntervalMatrix a(3,3);

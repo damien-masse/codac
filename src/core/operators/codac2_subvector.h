@@ -95,6 +95,9 @@ namespace codac2
 
   inline VectorType SubvectorOp::fwd_centered(const VectorType& x1, Index i, Index j)
   {
+    if(centered_form_not_available_for_args(x1))
+      return fwd_natural(x1,i,j);
+
     assert(i >= 0 && i < x1.a.rows() && j >= i && j < x1.a.rows());
     return {
       fwd(x1.m,i,j),

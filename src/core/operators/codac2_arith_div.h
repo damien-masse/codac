@@ -63,6 +63,9 @@ namespace codac2
 
   inline ScalarType DivOp::fwd_centered(const ScalarType& x1, const ScalarType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+    
     assert(x1.da.size() == x2.da.size());
 
     IntervalMatrix d(1,x1.da.size());
@@ -106,6 +109,9 @@ namespace codac2
 
   inline VectorType DivOp::fwd_centered(const VectorType& x1, const ScalarType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+    
     assert(x1.da.size() == x2.da.size());
 
     IntervalMatrix d(1,x1.da.size());

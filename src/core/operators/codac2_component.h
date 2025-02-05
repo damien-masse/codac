@@ -93,6 +93,9 @@ namespace codac2
 
   inline ScalarType ComponentOp::fwd_centered(const VectorType& x1, Index i)
   {
+    if(centered_form_not_available_for_args(x1))
+      return fwd_natural(x1,i);
+
     assert(i >= 0 && i < x1.a.rows());
     return {
       fwd(x1.m,i),

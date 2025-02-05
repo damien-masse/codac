@@ -41,6 +41,9 @@ namespace codac2
 
   inline ScalarType LogOp::fwd_natural(const ScalarType& x1)
   {
+    if(centered_form_not_available_for_args(x1))
+      return fwd_natural(x1);
+
     return {
       fwd(x1.a),
       x1.a.is_subset({0,oo}) // def domain of log
