@@ -14,19 +14,14 @@ using namespace std;
 
 namespace codac2
 {
-  ibex::Interval& to_ibex(Interval& x)
+  ibex::Interval to_ibex(const Interval& x)
   {
-    return dynamic_cast<ibex::Interval&>(x);
-  }
-  
-  const ibex::Interval& to_ibex(const Interval& x)
-  {
-    return dynamic_cast<const ibex::Interval&>(x);
+    return { x.lb(), x.ub() };
   }
 
   Interval to_codac(const ibex::Interval& x)
   {
-    return Interval(x);
+    return { x.lb(), x.ub() };
   }
   
   #define cast_vector(OutputType,convert) \

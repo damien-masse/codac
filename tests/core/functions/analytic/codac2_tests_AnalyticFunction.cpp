@@ -9,7 +9,6 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <codac2_AnalyticFunction.h>
-#include <codac2_analytic_operations.h>
 #include <codac2_Approx.h>
 #include <codac2_math.h>
 
@@ -331,5 +330,47 @@ TEST_CASE("AnalyticFunction")
     CHECK(g.eval(EvalMode::NATURAL,a) == 20);
     CHECK(g.eval(EvalMode::CENTERED,a) == 20);
     CHECK(g.eval(a) == 20);
+  }
+
+  // Sign, floor, ceil, min, max
+  {
+    ScalarVar x1, x2;
+
+    {
+      AnalyticFunction f({x1,x2}, 2*max(x1,x2+1));
+      CHECK(f.eval(0.,1.) == 4.);
+      CHECK(f.eval(2.,1.) == 4.);
+      CHECK(f.eval(3.,1.) == 6.);
+    }
+
+    {
+      AnalyticFunction f({x1,x2}, 2*min(x1,x2+1));
+      CHECK(f.eval(0.,1.) == 0.);
+      CHECK(f.eval(2.,1.) == 4.);
+      CHECK(f.eval(3.,1.) == 4.);
+    }
+
+    {
+      AnalyticFunction f({x1}, 2*sign(x1+1));
+      CHECK(f.eval(0.) == 2.);
+      CHECK(sign(Interval::zero()) == Interval(-1,1));
+      CHECK(sign(Interval(-0,0)) == Interval(-1,1));
+      CHECK(f.eval(-1.) == Interval(-2,2));
+      CHECK(f.eval(-2.) == -2.);
+    }
+
+    {
+      AnalyticFunction f({x1}, 2*floor(x1));
+      CHECK(f.eval(0.) == 0.);
+      CHECK(f.eval(1.5) == 2.);
+      CHECK(f.eval(-1.5) == -4.);
+    }
+
+    {
+      AnalyticFunction f({x1}, 2*ceil(x1));
+      CHECK(f.eval(0.) == 0.);
+      CHECK(f.eval(1.5) == 4.);
+      CHECK(f.eval(-1.5) == -2.);
+    }
   }
 }

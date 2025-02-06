@@ -55,4 +55,10 @@ namespace codac2
   using ScalarType = AnalyticType<double,Interval,IntervalMatrix>;
   using VectorType = AnalyticType<Vector,IntervalVector,IntervalMatrix>;
   using MatrixType = AnalyticType<Matrix,IntervalMatrix,IntervalMatrix>;
+
+  template<typename... T>
+  bool centered_form_not_available_for_args(const T&... a)
+  {
+    return ((a.da.size() == 0) || ...);
+  }
 }

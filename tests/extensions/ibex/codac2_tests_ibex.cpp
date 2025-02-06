@@ -15,14 +15,7 @@ using codac2::oo;
 
 TEST_CASE("IBEX")
 {
-  // [Interval] Codac -> IBEX - Non const ref
-  {
-    codac2::Interval codac_x(1,2);
-    CHECK((codac2::to_ibex(codac_x) &= ibex::Interval(0,1)) == ibex::Interval(1.));
-    CHECK(codac_x == codac2::Interval(1.));
-  }
-
-  // [Interval] Codac -> IBEX - Const ref
+  // [Interval] Codac -> IBEX
   {
     CHECK(codac2::to_ibex(codac2::Interval(1,2)) == ibex::Interval(1,2));
     CHECK(codac2::to_ibex(codac2::Interval(-oo,oo)) == ibex::Interval());

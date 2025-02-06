@@ -9,6 +9,8 @@
 
 #include "codac2_analytic_variables.h"
 #include "codac2_AnalyticExprWrapper.h"
+#include "codac2_subvector.h"
+#include "codac2_arith_sub.h"
 
 using namespace std;
 using namespace codac2;
