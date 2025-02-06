@@ -15,9 +15,9 @@
 #include "codac2_analytic_variables.h"
 #include "codac2_FunctionBase.h"
 #include "codac2_template_tools.h"
-#include "codac2_analytic_operations.h"
 #include "codac2_AnalyticExprWrapper.h"
 #include "codac2_ScalarExprList.h"
+#include "codac2_operators.h"
 
 namespace codac2
 {
@@ -142,10 +142,16 @@ namespace codac2
 
         else if constexpr(std::is_same_v<T,VectorType>)
         {
+          assert_release(this->args().size() == 1 && "unable (yet) to compute output size for multi-arg functions");
+
           // A dump evaluation is performed to estimate the dimension
           // of the image of this function. A natural evaluation is assumed
           // to be faster.
-          return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
+
+          if(dynamic_cast<ScalarVar*>(this->args()[0].get())) // if the argument is scalar
+            return eval(EvalMode::NATURAL, Interval()).size();
+          else
+            return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
         }
 
         else

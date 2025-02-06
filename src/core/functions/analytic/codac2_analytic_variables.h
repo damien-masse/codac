@@ -12,11 +12,12 @@
 #include <iostream>
 #include "codac2_AnalyticExpr.h"
 #include "codac2_VarBase.h"
+#include "codac2_component.h"
 
 namespace codac2
 {
   template<typename T>
-  class AnalyticExprWrapper;
+  struct AnalyticExprWrapper;
 
   template<typename T>
   class AnalyticVarExpr : public AnalyticExpr<T>, public VarBase

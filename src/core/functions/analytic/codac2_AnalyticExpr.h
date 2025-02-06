@@ -14,8 +14,8 @@
 #include <utility>
 #include "codac2_ExprBase.h"
 #include "codac2_Domain.h"
-#include "codac2_directed_ctc.h"
 #include "codac2_FunctionArgsList.h"
+#include "codac2_AnalyticType.h"
 
 namespace codac2
 {
@@ -117,103 +117,5 @@ namespace codac2
 
         return b;
       }
-  };
-
-  template<>
-  class AnalyticOperationExpr<ComponentOp,ScalarType,VectorType> : public AnalyticExpr<ScalarType>, public OperationExprBase<AnalyticExpr<VectorType>>
-  {
-    public:
-
-      AnalyticOperationExpr(const std::shared_ptr<AnalyticExpr<VectorType>>& x1, Index i)
-        : OperationExprBase<AnalyticExpr<VectorType>>(x1), _i(i)
-      { }
-
-      AnalyticOperationExpr(const AnalyticOperationExpr& e)
-        : OperationExprBase<AnalyticExpr<VectorType>>(e), _i(e._i)
-      { }
-
-      std::shared_ptr<ExprBase> copy() const
-      {
-        return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,VectorType>>(*this);
-      }
-
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
-      {
-        return OperationExprBase<AnalyticExpr<VectorType>>::replace_expr(old_expr_id, new_expr);
-      }
-
-      ScalarType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
-      {
-        if(natural_eval)
-          return AnalyticExpr<ScalarType>::init_value(
-            v, ComponentOp::fwd_natural(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i));
-        else
-          return AnalyticExpr<ScalarType>::init_value(
-            v, ComponentOp::fwd_centered(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i));
-      }
-      
-      void bwd_eval(ValuesMap& v) const
-      {
-        ComponentOp::bwd(AnalyticExpr<ScalarType>::value(v).a, std::get<0>(this->_x)->value(v).a, _i);
-        std::get<0>(this->_x)->bwd_eval(v);
-      }
-
-      virtual bool belongs_to_args_list(const FunctionArgsList& args) const
-      {
-        return std::get<0>(this->_x)->belongs_to_args_list(args);
-      }
-
-    protected:
-
-      const Index _i;
-  };
-
-  template<>
-  class AnalyticOperationExpr<SubvectorOp,VectorType,VectorType> : public AnalyticExpr<VectorType>, public OperationExprBase<AnalyticExpr<VectorType>>
-  {
-    public:
-
-      AnalyticOperationExpr(const std::shared_ptr<AnalyticExpr<VectorType>>& x1, Index i, Index j)
-        : OperationExprBase<AnalyticExpr<VectorType>>(x1), _i(i), _j(j)
-      { }
-
-      AnalyticOperationExpr(const AnalyticOperationExpr& e)
-        : OperationExprBase<AnalyticExpr<VectorType>>(e), _i(e._i), _j(e._j)
-      { }
-
-      std::shared_ptr<ExprBase> copy() const
-      {
-        return std::make_shared<AnalyticOperationExpr<SubvectorOp,VectorType,VectorType>>(*this);
-      }
-
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
-      {
-        return OperationExprBase<AnalyticExpr<VectorType>>::replace_expr(old_expr_id, new_expr);
-      }
-      
-      VectorType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
-      {
-        if(natural_eval)
-          return AnalyticExpr<VectorType>::init_value(
-            v, SubvectorOp::fwd_natural(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i, _j));
-        else
-          return AnalyticExpr<VectorType>::init_value(
-            v, SubvectorOp::fwd_centered(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i, _j));
-      }
-      
-      void bwd_eval(ValuesMap& v) const
-      {
-        SubvectorOp::bwd(AnalyticExpr<VectorType>::value(v).a, std::get<0>(this->_x)->value(v).a, _i, _j);
-        std::get<0>(this->_x)->bwd_eval(v);
-      }
-
-      virtual bool belongs_to_args_list(const FunctionArgsList& args) const
-      {
-        return std::get<0>(this->_x)->belongs_to_args_list(args);
-      }
-
-    protected:
-
-      const Index _i, _j;
   };
 }

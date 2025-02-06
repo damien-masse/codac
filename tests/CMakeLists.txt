@@ -51,7 +51,6 @@ list(APPEND SRC_TESTS # listing files without extension
   core/domains/codac2_tests_BoolInterval
   core/domains/ellipsoid/codac2_tests_Ellipsoid
   core/domains/interval/codac2_tests_Interval
-  core/domains/interval/codac2_tests_Interval_bwd
   core/domains/interval/codac2_tests_Interval_operations
   core/domains/interval/codac2_tests_IntervalMatrix
   core/domains/interval/codac2_tests_IntervalVector
@@ -68,6 +67,8 @@ list(APPEND SRC_TESTS # listing files without extension
   core/matrices/codac2_tests_Matrix
   core/matrices/codac2_tests_Vector
   core/matrices/codac2_tests_inversion
+
+  core/operators/codac2_tests_operators
 
   core/separators/codac2_tests_SepCartProd
   core/separators/codac2_tests_SepCtcBoundary

@@ -23,20 +23,12 @@
 namespace codac2
 {
   /**
-   * \brief Casts a reference to a Codac Interval object into a reference to an IBEX Interval object
-   * 
-   * \param x Codac type Interval
-   * \return IBEX type Interval
-   */
-  ibex::Interval& to_ibex(codac2::Interval& x);
-
-  /**
    * \brief Casts a Codac Interval object into an IBEX Interval object
    * 
    * \param x const Codac type Interval
    * \return const IBEX type Interval
    */
-  const ibex::Interval& to_ibex(const codac2::Interval& x);
+  ibex::Interval to_ibex(const codac2::Interval& x);
 
   /**
    * \brief Casts an IBEX Interval object into a Codac Interval object
@@ -109,5 +101,4 @@ namespace codac2
    * \return Codac type IntervalMatrix
    */
   codac2::IntervalMatrix to_codac(const ibex::IntervalMatrix& x);
-
 }

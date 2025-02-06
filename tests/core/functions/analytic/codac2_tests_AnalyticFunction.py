@@ -296,5 +296,38 @@ class TestAnalyticFunction(unittest.TestCase):
     self.assertTrue(g.eval(EvalMode.CENTERED,a) == 20)
     self.assertTrue(g.eval(a) == 20)
 
+
+    # Sign, floor, ceil, min, max
+    x1 = ScalarVar()
+    x2 = ScalarVar()
+
+    f = AnalyticFunction([x1,x2], 2*max(x1,x2+1))
+    self.assertTrue(f.eval(0.,1.) == 4.)
+    self.assertTrue(f.eval(2.,1.) == 4.)
+    self.assertTrue(f.eval(3.,1.) == 6.)
+
+    f = AnalyticFunction([x1,x2], 2*min(x1,x2+1))
+    self.assertTrue(f.eval(0.,1.) == 0.)
+    self.assertTrue(f.eval(2.,1.) == 4.)
+    self.assertTrue(f.eval(3.,1.) == 4.)
+
+    f = AnalyticFunction([x1], 2*sign(x1+1))
+    self.assertTrue(f.eval(0.) == 2.)
+    self.assertTrue(sign(Interval.zero()) == Interval(-1,1))
+    self.assertTrue(sign(Interval(-0,0)) == Interval(-1,1))
+    self.assertTrue(f.eval(-1.) == Interval(-2,2))
+    self.assertTrue(f.eval(-2.) == -2.)
+
+    f = AnalyticFunction([x1], 2*floor(x1))
+    self.assertTrue(f.eval(0.) == 0.)
+    self.assertTrue(f.eval(1.5) == 2.)
+    self.assertTrue(f.eval(-1.5) == -4.)
+
+    f = AnalyticFunction([x1], 2*ceil(x1))
+    self.assertTrue(f.eval(0.) == 0.)
+    self.assertTrue(f.eval(1.5) == 4.)
+    self.assertTrue(f.eval(-1.5) == -2.)
+
+
 if __name__ ==  '__main__':
   unittest.main()

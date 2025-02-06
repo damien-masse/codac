@@ -79,6 +79,9 @@ def docstring_varname(memberdef, prefix=''):
   if memberdef.get('const') != None and memberdef.attrib['const'] == "yes":
     txt += "_const"
 
+  if memberdef.get('static') != None and memberdef.attrib['static'] == "yes" and ("static_" not in txt):
+    txt = "static_" + txt
+
   return txt.upper()
 
 
@@ -94,6 +97,9 @@ if not os.path.exists(sys.argv[1]):
 
 files = os.listdir(sys.argv[1])
 for xml_doc in files:
+
+  #if "_impl." in xml_doc: 
+  #  continue
 
   # Parsing XML file from Doxygen output (XML mode enabled)
   tree = ET.parse(sys.argv[1] + "/" + xml_doc)
