@@ -81,6 +81,7 @@ namespace codac2
 
       void center_viewbox(const Vector& c, const Vector& r);
       double scaled_unit() const;
+      void auto_scale();
 
       bool is_default() const;
       void set_as_default();
