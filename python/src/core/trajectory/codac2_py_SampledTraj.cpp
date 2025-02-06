@@ -163,11 +163,11 @@ void add_operators(py::class_<SampledTraj<T>>& pyclass)
       py::is_operator())
 
     .def("__add__", [](const SampledTraj<T>& x1, const T& x2) { return x1+x2; },
-      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_SAMPLEDTRAJ_T_REF_CONST_T_REF,
+      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_SAMPLEDTRAJ_T_REF_CONST_Q_REF,
       py::is_operator())
 
     .def("__add__", [](const T& x1, const SampledTraj<T>& x2) { return x1+x2; },
-      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_Q_REF_CONST_SAMPLEDTRAJ_T_REF,
       py::is_operator())
 
     .def("__sub__", [](const SampledTraj<T>& x1) { return -x1; },
@@ -179,11 +179,11 @@ void add_operators(py::class_<SampledTraj<T>>& pyclass)
       py::is_operator())
 
     .def("__sub__", [](const SampledTraj<T>& x1, const T& x2) { return x1-x2; },
-      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_SAMPLEDTRAJ_T_REF_CONST_T_REF,
+      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_SAMPLEDTRAJ_T_REF_CONST_Q_REF,
       py::is_operator())
 
     .def("__sub__", [](const T& x1, const SampledTraj<T>& x2) { return x1-x2; },
-      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_Q_REF_CONST_SAMPLEDTRAJ_T_REF,
       py::is_operator())
 
     .def("__mul__", [](const SampledTraj<T>& x1, const SampledTraj<T>& x2) { return x1*x2; },
@@ -199,7 +199,7 @@ void add_operators(py::class_<SampledTraj<T>>& pyclass)
       py::is_operator())
 
     .def("__mul__", [](const T& x1, const SampledTraj<T>& x2) { return x1*x2; },
-      SAMPLEDTRAJ_T_OPERATORMUL_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      SAMPLEDTRAJ_T_OPERATORMUL_CONST_Q_REF_CONST_SAMPLEDTRAJ_T_REF,
       py::is_operator())
 
     .def("__truediv__", [](const SampledTraj<T>& x1, double x2) { return x1/x2; },
@@ -227,7 +227,7 @@ void export_SampledTraj(py::module& m)
       py::is_operator())
 
     .def(double() / py::self,
-      SAMPLEDTRAJ_T_OPERATORDIV_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      SAMPLEDTRAJ_T_OPERATORDIV_CONST_Q_REF_CONST_SAMPLEDTRAJ_T_REF,
       py::is_operator())
   ;
 
