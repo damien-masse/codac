@@ -157,9 +157,9 @@ These five color maps are displayed below:
 
 .. figure:: img/colormaps.png
 
-To get the color corresponding to a scalar value, the method color() is used. The scalar value is a float between 0 and 1.
+The method color() is used to get the color corresponding to a scalar value. The argument is a float between 0 and 1.
 
-As for the Color class the ColorMap also has a Model (RGB or HSV) and an associated getter model(). The default Model is RGB.
+As for the Color class, the ColorMap also has a Model (RGB or HSV) and an associated getter model(). The default Model is RGB.
 
 You can also create your own color map :
 
@@ -176,7 +176,11 @@ You can also create your own color map :
   .. code-tab:: c++
 
     // Create a custom color map
-    ColorMap custom_map;
+    ColorMap custom_map (Model::RGB);
     custom_map[0] = Color({255,0,0});
     custom_map[0.5] = Color({0,255,0});
     custom_map[1] = Color({0,0,255});
+
+A function set is also available to add a color to the color map. The arguments are a double (the key) and a Color object.
+
+Note that you can add RGB and HSV colors to the same color map. The model of the color map will define the interpolation space.
