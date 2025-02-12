@@ -71,14 +71,15 @@ int main(){
   ColorMap cmap_red_tube = ColorMap::red_tube();
   ColorMap cmap_rainbow = ColorMap::rainbow();
 
-  for (double i=0.; i<20; i++)
+  double subdivisions = 40.;
+  for (double i=0.; i<subdivisions; i+=1.0)
   {
-    double ratio = i/20.;
-    fig3.draw_box({{i,i+1},{-1,0}},{Color::black(),cmap_haxby.color(ratio)});
-    fig3.draw_box({{i,i+1},{-2,-1}},{Color::black(),cmap_default.color(ratio)});
-    fig3.draw_box({{i,i+1},{-3,-2}},{Color::black(),cmap_blue_tube.color(ratio)});
-    fig3.draw_box({{i,i+1},{-4,-3}},{Color::black(),cmap_red_tube.color(ratio)});
-    fig3.draw_box({{i,i+1},{-5,-4}},{Color::black(),cmap_rainbow.color(ratio)});
+    double ratio = i/subdivisions;
+    fig3.draw_box({{i,i+1},{-1./5.,0}},{Color::black(),cmap_default.color(ratio)});
+    fig3.draw_box({{i,i+1},{-2./5.,-1./5.}},{Color::black(),cmap_haxby.color(ratio)});
+    fig3.draw_box({{i,i+1},{-3./5.,-2./5.}},{Color::black(),cmap_rainbow.color(ratio)});
+    fig3.draw_box({{i,i+1},{-4./5.,-3./5.}},{Color::black(),cmap_blue_tube.color(ratio)});
+    fig3.draw_box({{i,i+1},{-5/5.,-4./5.}},{Color::black(),cmap_red_tube.color(ratio)});
   }
 
   Figure2D fig4 ("My Figure 4",GraphicOutput::VIBES);

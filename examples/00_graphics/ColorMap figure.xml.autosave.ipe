@@ -1,0 +1,1908 @@
+<?xml version="1.0"?>
+<!DOCTYPE ipe SYSTEM "ipe.dtd">
+<ipe version="70218" creator="Ipe 7.2.24">
+<info created="D:20240517161412" modified="D:20240517162731"/>
+<ipestyle name="codac">
+<symbol name="arrow/arc(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/farc(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/ptarc(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/fptarc(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="mark/circle(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</symbol>
+<symbol name="mark/disk(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+</path>
+</symbol>
+<symbol name="mark/fdisk(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+0.5 0 0 0.5 0 0 e
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</group>
+</symbol>
+<symbol name="mark/box(sx)" transformations="translations">
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</symbol>
+<symbol name="mark/square(sx)" transformations="translations">
+<path fill="sym-stroke">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+</path>
+</symbol>
+<symbol name="mark/fsquare(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+-0.5 -0.5 m
+0.5 -0.5 l
+0.5 0.5 l
+-0.5 0.5 l
+h
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="mark/cross(sx)" transformations="translations">
+<group>
+<path fill="sym-stroke">
+-0.43 -0.57 m
+0.57 0.43 l
+0.43 0.57 l
+-0.57 -0.43 l
+h
+</path>
+<path fill="sym-stroke">
+-0.43 0.57 m
+0.57 -0.43 l
+0.43 -0.57 l
+-0.57 0.43 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="arrow/fnormal(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/pointed(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/fpointed(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/linear(spx)">
+<path stroke="sym-stroke" pen="sym-pen">
+-1 0.333 m
+0 0 l
+-1 -0.333 l
+</path>
+</symbol>
+<symbol name="arrow/fdouble(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/double(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/mid-normal(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0.5 0 m
+-0.5 0.333 l
+-0.5 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/mid-fnormal(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0.5 0 m
+-0.5 0.333 l
+-0.5 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/mid-pointed(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0.5 0 m
+-0.5 0.333 l
+-0.3 0 l
+-0.5 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/mid-fpointed(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0.5 0 m
+-0.5 0.333 l
+-0.3 0 l
+-0.5 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/mid-double(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+1 0 m
+0 0.333 l
+0 -0.333 l
+h
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/mid-fdouble(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+1 0 m
+0 0.333 l
+0 -0.333 l
+h
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<anglesize name="22.5 deg" value="22.5"/>
+<anglesize name="30 deg" value="30"/>
+<anglesize name="45 deg" value="45"/>
+<anglesize name="60 deg" value="60"/>
+<anglesize name="90 deg" value="90"/>
+<arrowsize name="large" value="10"/>
+<arrowsize name="small" value="5"/>
+<arrowsize name="tiny" value="3"/>
+<color name="codac_color_000000ff" value="0"/>
+<color name="codac_color_000bc9ff" value="0 0.045 0.789"/>
+<color name="codac_color_0016ffff" value="0 0.087 1"/>
+<color name="codac_color_0017d2ff" value="0 0.09 0.825"/>
+<color name="codac_color_0022dbff" value="0 0.136 0.861"/>
+<color name="codac_color_0035ffff" value="0 0.208 1"/>
+<color name="codac_color_0053ffff" value="0 0.329 1"/>
+<color name="codac_color_0062c6ff" value="0 0.384 0.776"/>
+<color name="codac_color_0072ffff" value="0 0.45 1"/>
+<color name="codac_color_0091ffff" value="0 0.57 1"/>
+<color name="codac_color_00b0ffff" value="0 0.691 1"/>
+<color name="codac_color_00cfffff" value="0 0.812 1"/>
+<color name="codac_color_00edffff" value="0 0.933 1"/>
+<color name="codac_color_00ff19ff" value="0 1 0.1"/>
+<color name="codac_color_00ff38ff" value="0 1 0.22"/>
+<color name="codac_color_00ff57ff" value="0 1 0.341"/>
+<color name="codac_color_00ff75ff" value="0 1 0.462"/>
+<color name="codac_color_00ff94ff" value="0 1 0.583"/>
+<color name="codac_color_00ffb3ff" value="0 1 0.704"/>
+<color name="codac_color_00ffd2ff" value="0 1 0.825"/>
+<color name="codac_color_00fff1ff" value="0 1 0.945"/>
+<color name="codac_color_05ff00ff" value="0.02 1 0"/>
+<color name="codac_color_0800ffff" value="0.033 0 1"/>
+<color name="codac_color_0a0079ff" value="0.039 0 0.474"/>
+<color name="codac_color_0b42e6ff" value="0.043 0.26 0.905"/>
+<color name="codac_color_0d06b7ff" value="0.052 0.025 0.718"/>
+<color name="codac_color_0d80f7ff" value="0.052 0.503 0.971"/>
+<color name="codac_color_16a3fdff" value="0.086 0.641 0.993"/>
+<color name="codac_color_176bf1ff" value="0.091 0.421 0.947"/>
+<color name="codac_color_1d02a3ff" value="0.113 0.01 0.642"/>
+<color name="codac_color_21008fff" value="0.13 0 0.562"/>
+<color name="codac_color_24ff00ff" value="0.141 1 0"/>
+<color name="codac_color_26b6ffff" value="0.149 0.717 1"/>
+<color name="codac_color_2700ffff" value="0.154 0 1"/>
+<color name="codac_color_275ad3ff" value="0.152 0.352 0.827"/>
+<color name="codac_color_2766dfff" value="0.154 0.401 0.877"/>
+<color name="codac_color_2772ecff" value="0.155 0.45 0.927"/>
+<color name="codac_color_287ff6ff" value="0.159 0.498 0.964"/>
+<color name="codac_color_2a8bf9ff" value="0.166 0.545 0.976"/>
+<color name="codac_color_2c97fcff" value="0.174 0.592 0.988"/>
+<color name="codac_color_34a8fdff" value="0.203 0.66 0.994"/>
+<color name="codac_color_37c1ffff" value="0.217 0.759 1"/>
+<color name="codac_color_3ebcfeff" value="0.245 0.74 0.997"/>
+<color name="codac_color_42ff00ff" value="0.262 1 0"/>
+<color name="codac_color_4600ffff" value="0.275 0 1"/>
+<color name="codac_color_46cbfdff" value="0.275 0.798 0.995"/>
+<color name="codac_color_49d1ffff" value="0.286 0.819 1"/>
+<color name="codac_color_4bcffaff" value="0.294 0.811 0.98"/>
+<color name="codac_color_4c6e7fff" value="0.298 0.431 0.498"/>
+<color name="codac_color_4d7081ff" value="0.303 0.439 0.507"/>
+<color name="codac_color_4f7284ff" value="0.309 0.448 0.517"/>
+<color name="codac_color_507486ff" value="0.315 0.456 0.527"/>
+<color name="codac_color_527689ff" value="0.321 0.465 0.537"/>
+<color name="codac_color_53788bff" value="0.327 0.474 0.547"/>
+<color name="codac_color_53d8feff" value="0.325 0.85 0.998"/>
+<color name="codac_color_557b8eff" value="0.333 0.482 0.557"/>
+<color name="codac_color_567d90ff" value="0.339 0.491 0.567"/>
+<color name="codac_color_587f93ff" value="0.345 0.499 0.577"/>
+<color name="codac_color_598195ff" value="0.35 0.508 0.587"/>
+<color name="codac_color_5b8398ff" value="0.356 0.516 0.597"/>
+<color name="codac_color_5c859aff" value="0.362 0.525 0.606"/>
+<color name="codac_color_5cddf2ff" value="0.363 0.868 0.95"/>
+<color name="codac_color_5de0feff" value="0.365 0.881 0.997"/>
+<color name="codac_color_5e889dff" value="0.368 0.533 0.616"/>
+<color name="codac_color_5e9e00ff" value="0.368 0.619 0"/>
+<color name="codac_color_5f8a9fff" value="0.374 0.542 0.626"/>
+<color name="codac_color_618ca2ff" value="0.38 0.55 0.636"/>
+<color name="codac_color_61ff00ff" value="0.383 1 0"/>
+<color name="codac_color_628ea4ff" value="0.386 0.559 0.646"/>
+<color name="codac_color_6400ffff" value="0.395 0 1"/>
+<color name="codac_color_6490a7ff" value="0.392 0.567 0.656"/>
+<color name="codac_color_6592a9ff" value="0.398 0.576 0.666"/>
+<color name="codac_color_66e6faff" value="0.4 0.904 0.982"/>
+<color name="codac_color_66e7e6ff" value="0.402 0.906 0.904"/>
+<color name="codac_color_6795acff" value="0.403 0.584 0.676"/>
+<color name="codac_color_6897aeff" value="0.409 0.593 0.686"/>
+<color name="codac_color_6a99b1ff" value="0.415 0.601 0.696"/>
+<color name="codac_color_6b9bb4ff" value="0.421 0.61 0.705"/>
+<color name="codac_color_6d9db6ff" value="0.427 0.619 0.715"/>
+<color name="codac_color_6de8f0ff" value="0.427 0.911 0.941"/>
+<color name="codac_color_6ea0b9ff" value="0.433 0.627 0.725"/>
+<color name="codac_color_707070ff" value="0.439"/>
+<color name="codac_color_70a2bbff" value="0.439 0.636 0.735"/>
+<color name="codac_color_71a4beff" value="0.445 0.644 0.745"/>
+<color name="codac_color_71ebd7ff" value="0.443 0.921 0.843"/>
+<color name="codac_color_73a6c0ff" value="0.45 0.653 0.755"/>
+<color name="codac_color_73eae5ff" value="0.453 0.919 0.9"/>
+<color name="codac_color_74a8c3ff" value="0.456 0.661 0.765"/>
+<color name="codac_color_76aac5ff" value="0.462 0.67 0.775"/>
+<color name="codac_color_77adc8ff" value="0.468 0.678 0.785"/>
+<color name="codac_color_79afcaff" value="0.474 0.687 0.795"/>
+<color name="codac_color_7ab1cdff" value="0.48 0.695 0.805"/>
+<color name="codac_color_7aebd8ff" value="0.479 0.922 0.848"/>
+<color name="codac_color_7cb3cfff" value="0.486 0.704 0.814"/>
+<color name="codac_color_7db5d2ff" value="0.492 0.712 0.824"/>
+<color name="codac_color_7eebc3ff" value="0.495 0.922 0.766"/>
+<color name="codac_color_7fb7d4ff" value="0.498 0.721 0.834"/>
+<color name="codac_color_80bad7ff" value="0.503 0.729 0.844"/>
+<color name="codac_color_80ebc9ff" value="0.504 0.924 0.79"/>
+<color name="codac_color_80ff00ff" value="0.504 1 0"/>
+<color name="codac_color_82bcd9ff" value="0.509 0.738 0.854"/>
+<color name="codac_color_8300ffff" value="0.516 0 1"/>
+<color name="codac_color_83bedcff" value="0.515 0.746 0.864"/>
+<color name="codac_color_85c0deff" value="0.521 0.755 0.874"/>
+<color name="codac_color_86c2e1ff" value="0.527 0.764 0.884"/>
+<color name="codac_color_87ecbbff" value="0.529 0.925 0.733"/>
+<color name="codac_color_89ebafff" value="0.538 0.925 0.687"/>
+<color name="codac_color_90f200ff" value="0.564 0.949 0"/>
+<color name="codac_color_9a00aaff" value="0.603 0 0.666"/>
+<color name="codac_color_9df2b2ff" value="0.616 0.949 0.7"/>
+<color name="codac_color_9fff00ff" value="0.625 1 0"/>
+<color name="codac_color_a200ffff" value="0.637 0 1"/>
+<color name="codac_color_a2f2a9ff" value="0.637 0.951 0.665"/>
+<color name="codac_color_a93700ff" value="0.662 0.215 0"/>
+<color name="codac_color_aa3901ff" value="0.669 0.224 0.005"/>
+<color name="codac_color_ac3b02ff" value="0.676 0.232 0.01"/>
+<color name="codac_color_ae3d04ff" value="0.683 0.24 0.015"/>
+<color name="codac_color_b03f05ff" value="0.69 0.249 0.021"/>
+<color name="codac_color_b24106ff" value="0.698 0.257 0.026"/>
+<color name="codac_color_b34308ff" value="0.705 0.265 0.031"/>
+<color name="codac_color_b3f8aaff" value="0.702 0.972 0.668"/>
+<color name="codac_color_b54509ff" value="0.712 0.274 0.037"/>
+<color name="codac_color_b7480aff" value="0.719 0.282 0.042"/>
+<color name="codac_color_b94a0cff" value="0.726 0.29 0.047"/>
+<color name="codac_color_bb4c0dff" value="0.733 0.299 0.052"/>
+<color name="codac_color_bc4e0eff" value="0.74 0.307 0.058"/>
+<color name="codac_color_bcfaa5ff" value="0.739 0.98 0.647"/>
+<color name="codac_color_be5010ff" value="0.747 0.315 0.063"/>
+<color name="codac_color_beff00ff" value="0.745 1 0"/>
+<color name="codac_color_c05211ff" value="0.754 0.324 0.068"/>
+<color name="codac_color_c100ffff" value="0.758 0 1"/>
+<color name="codac_color_c25412ff" value="0.761 0.332 0.074"/>
+<color name="codac_color_c45614ff" value="0.768 0.34 0.079"/>
+<color name="codac_color_c4fba3ff" value="0.772 0.987 0.64"/>
+<color name="codac_color_c55915ff" value="0.775 0.349 0.084"/>
+<color name="codac_color_c75b16ff" value="0.782 0.357 0.09"/>
+<color name="codac_color_c95d18ff" value="0.789 0.365 0.095"/>
+<color name="codac_color_cb5f19ff" value="0.796 0.374 0.1"/>
+<color name="codac_color_cd611bff" value="0.803 0.382 0.105"/>
+<color name="codac_color_cdfb9eff" value="0.805 0.986 0.619"/>
+<color name="codac_color_ce631cff" value="0.81 0.39 0.111"/>
+<color name="codac_color_d0651dff" value="0.818 0.399 0.116"/>
+<color name="codac_color_d13b00ff" value="0.819 0.231 0"/>
+<color name="codac_color_d1fc9cff" value="0.823 0.989 0.612"/>
+<color name="codac_color_d2671fff" value="0.825 0.407 0.121"/>
+<color name="codac_color_d46a20ff" value="0.832 0.415 0.127"/>
+<color name="codac_color_d66c21ff" value="0.839 0.424 0.132"/>
+<color name="codac_color_d6fb98ff" value="0.839 0.984 0.599"/>
+<color name="codac_color_d76e23ff" value="0.846 0.432 0.137"/>
+<color name="codac_color_d97024ff" value="0.853 0.44 0.142"/>
+<color name="codac_color_db7225ff" value="0.86 0.449 0.148"/>
+<color name="codac_color_dd7427ff" value="0.867 0.457 0.153"/>
+<color name="codac_color_ddf891ff" value="0.866 0.974 0.572"/>
+<color name="codac_color_ddff00ff" value="0.866 1 0"/>
+<color name="codac_color_df7628ff" value="0.874 0.465 0.158"/>
+<color name="codac_color_dff48bff" value="0.877 0.959 0.549"/>
+<color name="codac_color_e000ffff" value="0.879 0 1"/>
+<color name="codac_color_e07829ff" value="0.881 0.474 0.164"/>
+<color name="codac_color_e27b2bff" value="0.888 0.482 0.169"/>
+<color name="codac_color_e3f48aff" value="0.89 0.959 0.543"/>
+<color name="codac_color_e47d2cff" value="0.895 0.49 0.174"/>
+<color name="codac_color_e67f2dff" value="0.902 0.499 0.18"/>
+<color name="codac_color_e8812fff" value="0.909 0.507 0.185"/>
+<color name="codac_color_e98330ff" value="0.916 0.515 0.19"/>
+<color name="codac_color_e9f082ff" value="0.913 0.945 0.513"/>
+<color name="codac_color_eb8531ff" value="0.923 0.524 0.195"/>
+<color name="codac_color_ed8733ff" value="0.93 0.532 0.201"/>
+<color name="codac_color_eded7cff" value="0.929 0.931 0.488"/>
+<color name="codac_color_ef8934ff" value="0.938 0.54 0.206"/>
+<color name="codac_color_f0e275ff" value="0.941 0.886 0.462"/>
+<color name="codac_color_f1634cff" value="0.945 0.389 0.299"/>
+<color name="codac_color_f25251ff" value="0.95 0.323 0.317"/>
+<color name="codac_color_f4df6eff" value="0.957 0.876 0.434"/>
+<color name="codac_color_f6b5b0ff" value="0.965 0.71 0.693"/>
+<color name="codac_color_f78149ff" value="0.969 0.509 0.287"/>
+<color name="codac_color_f7d268ff" value="0.969 0.827 0.41"/>
+<color name="codac_color_facd61ff" value="0.98 0.804 0.382"/>
+<color name="codac_color_fba5a3ff" value="0.986 0.648 0.641"/>
+<color name="codac_color_fbff00ff" value="0.987 1 0"/>
+<color name="codac_color_fcc65eff" value="0.989 0.779 0.37"/>
+<color name="codac_color_fdc059ff" value="0.994 0.754 0.352"/>
+<color name="codac_color_feba55ff" value="0.998 0.729 0.335"/>
+<color name="codac_color_fec2c1ff" value="0.996 0.761 0.76"/>
+<color name="codac_color_ff00feff" value="1 0 1"/>
+<color name="codac_color_ff4900ff" value="1 0.287 0"/>
+<color name="codac_color_ff5a5aff" value="1 0.356 0.356"/>
+<color name="codac_color_ff6800ff" value="1 0.408 0"/>
+<color name="codac_color_ff7575ff" value="1 0.459 0.459"/>
+<color name="codac_color_ff8600ff" value="1 0.529 0"/>
+<color name="codac_color_ff8f8fff" value="1 0.562 0.562"/>
+<color name="codac_color_ffa246ff" value="1 0.635 0.275"/>
+<color name="codac_color_ffa500ff" value="1 0.65 0"/>
+<color name="codac_color_ffa751ff" value="1 0.657 0.317"/>
+<color name="codac_color_ffa84eff" value="1 0.662 0.305"/>
+<color name="codac_color_ffaa4bff" value="1 0.666 0.294"/>
+<color name="codac_color_ffab5cff" value="1 0.671 0.362"/>
+<color name="codac_color_ffaf4eff" value="1 0.687 0.307"/>
+<color name="codac_color_ffb451ff" value="1 0.707 0.32"/>
+<color name="codac_color_ffb778ff" value="1 0.719 0.472"/>
+<color name="codac_color_ffb854ff" value="1 0.724 0.33"/>
+<color name="codac_color_ffc394ff" value="1 0.768 0.582"/>
+<color name="codac_color_ffc400ff" value="1 0.77 0"/>
+<color name="codac_color_ffd0acff" value="1 0.816 0.677"/>
+<color name="codac_color_ffd0d0ff" value="1 0.818 0.818"/>
+<color name="codac_color_ffd32aff" value="1 0.827 0.164"/>
+<color name="codac_color_ffdcc2ff" value="1 0.865 0.764"/>
+<color name="codac_color_ffe0e0ff" value="1 0.878 0.878"/>
+<color name="codac_color_ffe300ff" value="1 0.891 0"/>
+<color name="codac_color_ffefefff" value="1 0.938 0.937"/>
+<color name="codac_color_ffffff00" value="1"/>
+<color name="codac_color_ffffffff" value="1"/>
+<dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
+<dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
+<dashstyle name="dashed" value="[4] 0"/>
+<dashstyle name="dotted" value="[1 3] 0"/>
+<gridsize name="10 pts (~3.5 mm)" value="10"/>
+<gridsize name="14 pts (~5 mm)" value="14"/>
+<gridsize name="16 pts (~6 mm)" value="16"/>
+<gridsize name="20 pts (~7 mm)" value="20"/>
+<gridsize name="28 pts (~10 mm)" value="28"/>
+<gridsize name="32 pts (~12 mm)" value="32"/>
+<gridsize name="4 pts" value="4"/>
+<gridsize name="56 pts (~20 mm)" value="56"/>
+<gridsize name="8 pts (~3 mm)" value="8"/>
+<opacity name="0%" value="0"/>
+<opacity name="10%" value="0.1"/>
+<opacity name="100%" value="1"/>
+<opacity name="20%" value="0.2"/>
+<opacity name="30%" value="0.3"/>
+<opacity name="40%" value="0.4"/>
+<opacity name="50%" value="0.5"/>
+<opacity name="60%" value="0.6"/>
+<opacity name="70%" value="0.7"/>
+<opacity name="80%" value="0.8"/>
+<opacity name="90%" value="0.9"/>
+<pen name="fat" value="1.2"/>
+<pen name="heavier" value="0.8"/>
+<pen name="ultrafat" value="1.5"/>
+<symbolsize name="large" value="5"/>
+<symbolsize name="small" value="2"/>
+<symbolsize name="tiny" value="1.1"/>
+<textsize name="Huge" value="\Huge"/>
+<textsize name="LARGE" value="\LARGE"/>
+<textsize name="Large" value="\Large"/>
+<textsize name="footnote" value="\footnotesize"/>
+<textsize name="huge" value="\huge"/>
+<textsize name="large" value="\large"/>
+<textsize name="small" value="\small"/>
+<textsize name="tiny" value="\tiny"/>
+<textstyle name="center" begin="\begin{center}" end="\end{center}"/>
+<textstyle name="item" begin="\begin{itemize}\item{}" end="\end{itemize}"/>
+<textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
+<tiling name="falling" angle="-60" step="4" width="1"/>
+<tiling name="rising" angle="30" step="4" width="1"/>
+</ipestyle>
+<page>
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<path layer="alpha" stroke="codac_color_000000ff" fill="codac_color_0a0079ff" opacity="100%">
+4.90197 441.667 m
+9.80393 441.667 l
+9.80393 458.334 l
+4.90197 458.334 l
+4.90197 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_275ad3ff" opacity="100%">
+4.90197 425.001 m
+9.80393 425.001 l
+9.80393 441.667 l
+4.90197 441.667 l
+4.90197 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ff00feff" opacity="100%">
+4.90197 408.334 m
+9.80393 408.334 l
+9.80393 425.001 l
+4.90197 425.001 l
+4.90197 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_4c6e7fff" opacity="100%">
+4.90197 391.667 m
+9.80393 391.667 l
+9.80393 408.334 l
+4.90197 408.334 l
+4.90197 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_a93700ff" opacity="100%">
+4.90197 375.001 m
+9.80393 375.001 l
+9.80393 391.667 l
+4.90197 391.667 l
+4.90197 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_21008fff" opacity="100%">
+9.80393 441.667 m
+14.7059 441.667 l
+14.7059 458.334 l
+9.80393 458.334 l
+9.80393 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_2766dfff" opacity="100%">
+9.80393 425.001 m
+14.7059 425.001 l
+14.7059 441.667 l
+9.80393 441.667 l
+9.80393 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_e000ffff" opacity="100%">
+9.80393 408.334 m
+14.7059 408.334 l
+14.7059 425.001 l
+9.80393 425.001 l
+9.80393 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_4d7081ff" opacity="100%">
+9.80393 391.667 m
+14.7059 391.667 l
+14.7059 408.334 l
+9.80393 408.334 l
+9.80393 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_aa3901ff" opacity="100%">
+9.80393 375.001 m
+14.7059 375.001 l
+14.7059 391.667 l
+9.80393 391.667 l
+9.80393 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_1d02a3ff" opacity="100%">
+14.7059 441.667 m
+19.6079 441.667 l
+19.6079 458.334 l
+14.7059 458.334 l
+14.7059 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_2772ecff" opacity="100%">
+14.7059 425.001 m
+19.6079 425.001 l
+19.6079 441.667 l
+14.7059 441.667 l
+14.7059 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_c100ffff" opacity="100%">
+14.7059 408.334 m
+19.6079 408.334 l
+19.6079 425.001 l
+14.7059 425.001 l
+14.7059 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_4f7284ff" opacity="100%">
+14.7059 391.667 m
+19.6079 391.667 l
+19.6079 408.334 l
+14.7059 408.334 l
+14.7059 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ac3b02ff" opacity="100%">
+14.7059 375.001 m
+19.6079 375.001 l
+19.6079 391.667 l
+14.7059 391.667 l
+14.7059 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0d06b7ff" opacity="100%">
+19.6079 441.667 m
+24.5099 441.667 l
+24.5099 458.334 l
+19.6079 458.334 l
+19.6079 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_287ff6ff" opacity="100%">
+19.6079 425.001 m
+24.5099 425.001 l
+24.5099 441.667 l
+19.6079 441.667 l
+19.6079 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_a200ffff" opacity="100%">
+19.6079 408.334 m
+24.5099 408.334 l
+24.5099 425.001 l
+19.6079 425.001 l
+19.6079 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_507486ff" opacity="100%">
+19.6079 391.667 m
+24.5099 391.667 l
+24.5099 408.334 l
+19.6079 408.334 l
+19.6079 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ae3d04ff" opacity="100%">
+19.6079 375.001 m
+24.5099 375.001 l
+24.5099 391.667 l
+19.6079 391.667 l
+19.6079 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_000bc9ff" opacity="100%">
+24.5099 441.667 m
+29.4118 441.667 l
+29.4118 458.334 l
+24.5099 458.334 l
+24.5099 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_2a8bf9ff" opacity="100%">
+24.5099 425.001 m
+29.4118 425.001 l
+29.4118 441.667 l
+24.5099 441.667 l
+24.5099 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_8300ffff" opacity="100%">
+24.5099 408.334 m
+29.4118 408.334 l
+29.4118 425.001 l
+24.5099 425.001 l
+24.5099 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_527689ff" opacity="100%">
+24.5099 391.667 m
+29.4118 391.667 l
+29.4118 408.334 l
+24.5099 408.334 l
+24.5099 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_b03f05ff" opacity="100%">
+24.5099 375.001 m
+29.4118 375.001 l
+29.4118 391.667 l
+24.5099 391.667 l
+24.5099 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0017d2ff" opacity="100%">
+29.4118 441.667 m
+34.3138 441.667 l
+34.3138 458.334 l
+29.4118 458.334 l
+29.4118 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_2c97fcff" opacity="100%">
+29.4118 425.001 m
+34.3138 425.001 l
+34.3138 441.667 l
+29.4118 441.667 l
+29.4118 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6400ffff" opacity="100%">
+29.4118 408.334 m
+34.3138 408.334 l
+34.3138 425.001 l
+29.4118 425.001 l
+29.4118 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_53788bff" opacity="100%">
+29.4118 391.667 m
+34.3138 391.667 l
+34.3138 408.334 l
+29.4118 408.334 l
+29.4118 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_b24106ff" opacity="100%">
+29.4118 375.001 m
+34.3138 375.001 l
+34.3138 391.667 l
+29.4118 391.667 l
+29.4118 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0022dbff" opacity="100%">
+34.3138 441.667 m
+39.2157 441.667 l
+39.2157 458.334 l
+34.3138 458.334 l
+34.3138 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_34a8fdff" opacity="100%">
+34.3138 425.001 m
+39.2157 425.001 l
+39.2157 441.667 l
+34.3138 441.667 l
+34.3138 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_4600ffff" opacity="100%">
+34.3138 408.334 m
+39.2157 408.334 l
+39.2157 425.001 l
+34.3138 425.001 l
+34.3138 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_557b8eff" opacity="100%">
+34.3138 391.667 m
+39.2157 391.667 l
+39.2157 408.334 l
+34.3138 408.334 l
+34.3138 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_b34308ff" opacity="100%">
+34.3138 375.001 m
+39.2157 375.001 l
+39.2157 391.667 l
+34.3138 391.667 l
+34.3138 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0b42e6ff" opacity="100%">
+39.2157 441.667 m
+44.1177 441.667 l
+44.1177 458.334 l
+39.2157 458.334 l
+39.2157 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_3ebcfeff" opacity="100%">
+39.2157 425.001 m
+44.1177 425.001 l
+44.1177 441.667 l
+39.2157 441.667 l
+39.2157 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_2700ffff" opacity="100%">
+39.2157 408.334 m
+44.1177 408.334 l
+44.1177 425.001 l
+39.2157 425.001 l
+39.2157 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_567d90ff" opacity="100%">
+39.2157 391.667 m
+44.1177 391.667 l
+44.1177 408.334 l
+39.2157 408.334 l
+39.2157 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_b54509ff" opacity="100%">
+39.2157 375.001 m
+44.1177 375.001 l
+44.1177 391.667 l
+39.2157 391.667 l
+39.2157 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_176bf1ff" opacity="100%">
+44.1177 441.667 m
+49.0197 441.667 l
+49.0197 458.334 l
+44.1177 458.334 l
+44.1177 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_49d1ffff" opacity="100%">
+44.1177 425.001 m
+49.0197 425.001 l
+49.0197 441.667 l
+44.1177 441.667 l
+44.1177 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0800ffff" opacity="100%">
+44.1177 408.334 m
+49.0197 408.334 l
+49.0197 425.001 l
+44.1177 425.001 l
+44.1177 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_587f93ff" opacity="100%">
+44.1177 391.667 m
+49.0197 391.667 l
+49.0197 408.334 l
+44.1177 408.334 l
+44.1177 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_b7480aff" opacity="100%">
+44.1177 375.001 m
+49.0197 375.001 l
+49.0197 391.667 l
+44.1177 391.667 l
+44.1177 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0d80f7ff" opacity="100%">
+49.0197 441.667 m
+53.9216 441.667 l
+53.9216 458.334 l
+49.0197 458.334 l
+49.0197 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_53d8feff" opacity="100%">
+49.0197 425.001 m
+53.9216 425.001 l
+53.9216 441.667 l
+49.0197 441.667 l
+49.0197 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0016ffff" opacity="100%">
+49.0197 408.334 m
+53.9216 408.334 l
+53.9216 425.001 l
+49.0197 425.001 l
+49.0197 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_598195ff" opacity="100%">
+49.0197 391.667 m
+53.9216 391.667 l
+53.9216 408.334 l
+49.0197 408.334 l
+49.0197 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_b94a0cff" opacity="100%">
+49.0197 375.001 m
+53.9216 375.001 l
+53.9216 391.667 l
+49.0197 391.667 l
+49.0197 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_16a3fdff" opacity="100%">
+53.9216 441.667 m
+58.8236 441.667 l
+58.8236 458.334 l
+53.9216 458.334 l
+53.9216 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_5de0feff" opacity="100%">
+53.9216 425.001 m
+58.8236 425.001 l
+58.8236 441.667 l
+53.9216 441.667 l
+53.9216 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0035ffff" opacity="100%">
+53.9216 408.334 m
+58.8236 408.334 l
+58.8236 425.001 l
+53.9216 425.001 l
+53.9216 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_5b8398ff" opacity="100%">
+53.9216 391.667 m
+58.8236 391.667 l
+58.8236 408.334 l
+53.9216 408.334 l
+53.9216 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_bb4c0dff" opacity="100%">
+53.9216 375.001 m
+58.8236 375.001 l
+58.8236 391.667 l
+53.9216 391.667 l
+53.9216 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_26b6ffff" opacity="100%">
+58.8236 441.667 m
+63.7255 441.667 l
+63.7255 458.334 l
+58.8236 458.334 l
+58.8236 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_66e6faff" opacity="100%">
+58.8236 425.001 m
+63.7255 425.001 l
+63.7255 441.667 l
+58.8236 441.667 l
+58.8236 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0053ffff" opacity="100%">
+58.8236 408.334 m
+63.7255 408.334 l
+63.7255 425.001 l
+58.8236 425.001 l
+58.8236 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_5c859aff" opacity="100%">
+58.8236 391.667 m
+63.7255 391.667 l
+63.7255 408.334 l
+58.8236 408.334 l
+58.8236 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_bc4e0eff" opacity="100%">
+58.8236 375.001 m
+63.7255 375.001 l
+63.7255 391.667 l
+58.8236 391.667 l
+58.8236 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_37c1ffff" opacity="100%">
+63.7255 441.667 m
+68.6275 441.667 l
+68.6275 458.334 l
+63.7255 458.334 l
+63.7255 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6de8f0ff" opacity="100%">
+63.7255 425.001 m
+68.6275 425.001 l
+68.6275 441.667 l
+63.7255 441.667 l
+63.7255 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0072ffff" opacity="100%">
+63.7255 408.334 m
+68.6275 408.334 l
+68.6275 425.001 l
+63.7255 425.001 l
+63.7255 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_5e889dff" opacity="100%">
+63.7255 391.667 m
+68.6275 391.667 l
+68.6275 408.334 l
+63.7255 408.334 l
+63.7255 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_be5010ff" opacity="100%">
+63.7255 375.001 m
+68.6275 375.001 l
+68.6275 391.667 l
+63.7255 391.667 l
+63.7255 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_46cbfdff" opacity="100%">
+68.6275 441.667 m
+73.5295 441.667 l
+73.5295 458.334 l
+68.6275 458.334 l
+68.6275 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_73eae5ff" opacity="100%">
+68.6275 425.001 m
+73.5295 425.001 l
+73.5295 441.667 l
+68.6275 441.667 l
+68.6275 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_0091ffff" opacity="100%">
+68.6275 408.334 m
+73.5295 408.334 l
+73.5295 425.001 l
+68.6275 425.001 l
+68.6275 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_5f8a9fff" opacity="100%">
+68.6275 391.667 m
+73.5295 391.667 l
+73.5295 408.334 l
+68.6275 408.334 l
+68.6275 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_c05211ff" opacity="100%">
+68.6275 375.001 m
+73.5295 375.001 l
+73.5295 391.667 l
+68.6275 391.667 l
+68.6275 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_5cddf2ff" opacity="100%">
+73.5295 441.667 m
+78.4314 441.667 l
+78.4314 458.334 l
+73.5295 458.334 l
+73.5295 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_7aebd8ff" opacity="100%">
+73.5295 425.001 m
+78.4314 425.001 l
+78.4314 441.667 l
+73.5295 441.667 l
+73.5295 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00b0ffff" opacity="100%">
+73.5295 408.334 m
+78.4314 408.334 l
+78.4314 425.001 l
+73.5295 425.001 l
+73.5295 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_618ca2ff" opacity="100%">
+73.5295 391.667 m
+78.4314 391.667 l
+78.4314 408.334 l
+73.5295 408.334 l
+73.5295 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_c25412ff" opacity="100%">
+73.5295 375.001 m
+78.4314 375.001 l
+78.4314 391.667 l
+73.5295 391.667 l
+73.5295 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_66e7e6ff" opacity="100%">
+78.4314 441.667 m
+83.3334 441.667 l
+83.3334 458.334 l
+78.4314 458.334 l
+78.4314 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_80ebc9ff" opacity="100%">
+78.4314 425.001 m
+83.3334 425.001 l
+83.3334 441.667 l
+78.4314 441.667 l
+78.4314 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00cfffff" opacity="100%">
+78.4314 408.334 m
+83.3334 408.334 l
+83.3334 425.001 l
+78.4314 425.001 l
+78.4314 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_628ea4ff" opacity="100%">
+78.4314 391.667 m
+83.3334 391.667 l
+83.3334 408.334 l
+78.4314 408.334 l
+78.4314 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_c45614ff" opacity="100%">
+78.4314 375.001 m
+83.3334 375.001 l
+83.3334 391.667 l
+78.4314 391.667 l
+78.4314 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_71ebd7ff" opacity="100%">
+83.3334 441.667 m
+88.2353 441.667 l
+88.2353 458.334 l
+83.3334 458.334 l
+83.3334 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_87ecbbff" opacity="100%">
+83.3334 425.001 m
+88.2353 425.001 l
+88.2353 441.667 l
+83.3334 441.667 l
+83.3334 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00edffff" opacity="100%">
+83.3334 408.334 m
+88.2353 408.334 l
+88.2353 425.001 l
+83.3334 425.001 l
+83.3334 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6490a7ff" opacity="100%">
+83.3334 391.667 m
+88.2353 391.667 l
+88.2353 408.334 l
+83.3334 408.334 l
+83.3334 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_c55915ff" opacity="100%">
+83.3334 375.001 m
+88.2353 375.001 l
+88.2353 391.667 l
+83.3334 391.667 l
+83.3334 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_7eebc3ff" opacity="100%">
+88.2353 441.667 m
+93.1373 441.667 l
+93.1373 458.334 l
+88.2353 458.334 l
+88.2353 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_9df2b2ff" opacity="100%">
+88.2353 425.001 m
+93.1373 425.001 l
+93.1373 441.667 l
+88.2353 441.667 l
+88.2353 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00fff1ff" opacity="100%">
+88.2353 408.334 m
+93.1373 408.334 l
+93.1373 425.001 l
+88.2353 425.001 l
+88.2353 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6592a9ff" opacity="100%">
+88.2353 391.667 m
+93.1373 391.667 l
+93.1373 408.334 l
+88.2353 408.334 l
+88.2353 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_c75b16ff" opacity="100%">
+88.2353 375.001 m
+93.1373 375.001 l
+93.1373 391.667 l
+88.2353 391.667 l
+88.2353 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_89ebafff" opacity="100%">
+93.1373 441.667 m
+98.0393 441.667 l
+98.0393 458.334 l
+93.1373 458.334 l
+93.1373 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_b3f8aaff" opacity="100%">
+93.1373 425.001 m
+98.0393 425.001 l
+98.0393 441.667 l
+93.1373 441.667 l
+93.1373 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00ffd2ff" opacity="100%">
+93.1373 408.334 m
+98.0393 408.334 l
+98.0393 425.001 l
+93.1373 425.001 l
+93.1373 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6795acff" opacity="100%">
+93.1373 391.667 m
+98.0393 391.667 l
+98.0393 408.334 l
+93.1373 408.334 l
+93.1373 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_c95d18ff" opacity="100%">
+93.1373 375.001 m
+98.0393 375.001 l
+98.0393 391.667 l
+93.1373 391.667 l
+93.1373 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_a2f2a9ff" opacity="100%">
+98.0393 441.667 m
+102.942 441.667 l
+102.942 458.334 l
+98.0393 458.334 l
+98.0393 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_c4fba3ff" opacity="100%">
+98.0393 425.001 m
+102.942 425.001 l
+102.942 441.667 l
+98.0393 441.667 l
+98.0393 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00ffb3ff" opacity="100%">
+98.0393 408.334 m
+102.942 408.334 l
+102.942 425.001 l
+98.0393 425.001 l
+98.0393 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6897aeff" opacity="100%">
+98.0393 391.667 m
+102.942 391.667 l
+102.942 408.334 l
+98.0393 408.334 l
+98.0393 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_cb5f19ff" opacity="100%">
+98.0393 375.001 m
+102.942 375.001 l
+102.942 391.667 l
+98.0393 391.667 l
+98.0393 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_bcfaa5ff" opacity="100%">
+102.942 441.667 m
+107.844 441.667 l
+107.844 458.334 l
+102.942 458.334 l
+102.942 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_cdfb9eff" opacity="100%">
+102.942 425.001 m
+107.844 425.001 l
+107.844 441.667 l
+102.942 441.667 l
+102.942 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00ff94ff" opacity="100%">
+102.942 408.334 m
+107.844 408.334 l
+107.844 425.001 l
+102.942 425.001 l
+102.942 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6a99b1ff" opacity="100%">
+102.942 391.667 m
+107.844 391.667 l
+107.844 408.334 l
+102.942 408.334 l
+102.942 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_cd611bff" opacity="100%">
+102.942 375.001 m
+107.844 375.001 l
+107.844 391.667 l
+102.942 391.667 l
+102.942 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_d1fc9cff" opacity="100%">
+107.844 441.667 m
+112.746 441.667 l
+112.746 458.334 l
+107.844 458.334 l
+107.844 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_d6fb98ff" opacity="100%">
+107.844 425.001 m
+112.746 425.001 l
+112.746 441.667 l
+107.844 441.667 l
+107.844 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00ff75ff" opacity="100%">
+107.844 408.334 m
+112.746 408.334 l
+112.746 425.001 l
+107.844 425.001 l
+107.844 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6b9bb4ff" opacity="100%">
+107.844 391.667 m
+112.746 391.667 l
+112.746 408.334 l
+107.844 408.334 l
+107.844 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ce631cff" opacity="100%">
+107.844 375.001 m
+112.746 375.001 l
+112.746 391.667 l
+107.844 391.667 l
+107.844 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_dff48bff" opacity="100%">
+112.746 441.667 m
+117.648 441.667 l
+117.648 458.334 l
+112.746 458.334 l
+112.746 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ddf891ff" opacity="100%">
+112.746 425.001 m
+117.648 425.001 l
+117.648 441.667 l
+112.746 441.667 l
+112.746 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00ff57ff" opacity="100%">
+112.746 408.334 m
+117.648 408.334 l
+117.648 425.001 l
+112.746 425.001 l
+112.746 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6d9db6ff" opacity="100%">
+112.746 391.667 m
+117.648 391.667 l
+117.648 408.334 l
+112.746 408.334 l
+112.746 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_d0651dff" opacity="100%">
+112.746 375.001 m
+117.648 375.001 l
+117.648 391.667 l
+112.746 391.667 l
+112.746 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_eded7cff" opacity="100%">
+117.648 441.667 m
+122.55 441.667 l
+122.55 458.334 l
+117.648 458.334 l
+117.648 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_e3f48aff" opacity="100%">
+117.648 425.001 m
+122.55 425.001 l
+122.55 441.667 l
+117.648 441.667 l
+117.648 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00ff38ff" opacity="100%">
+117.648 408.334 m
+122.55 408.334 l
+122.55 425.001 l
+117.648 425.001 l
+117.648 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_6ea0b9ff" opacity="100%">
+117.648 391.667 m
+122.55 391.667 l
+122.55 408.334 l
+117.648 408.334 l
+117.648 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_d2671fff" opacity="100%">
+117.648 375.001 m
+122.55 375.001 l
+122.55 391.667 l
+117.648 391.667 l
+117.648 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_f4df6eff" opacity="100%">
+122.55 441.667 m
+127.451 441.667 l
+127.451 458.334 l
+122.55 458.334 l
+122.55 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_e9f082ff" opacity="100%">
+122.55 425.001 m
+127.451 425.001 l
+127.451 441.667 l
+122.55 441.667 l
+122.55 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_00ff19ff" opacity="100%">
+122.55 408.334 m
+127.451 408.334 l
+127.451 425.001 l
+122.55 425.001 l
+122.55 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_70a2bbff" opacity="100%">
+122.55 391.667 m
+127.451 391.667 l
+127.451 408.334 l
+122.55 408.334 l
+122.55 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_d46a20ff" opacity="100%">
+122.55 375.001 m
+127.451 375.001 l
+127.451 391.667 l
+122.55 391.667 l
+122.55 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_facd61ff" opacity="100%">
+127.451 441.667 m
+132.353 441.667 l
+132.353 458.334 l
+127.451 458.334 l
+127.451 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_f0e275ff" opacity="100%">
+127.451 425.001 m
+132.353 425.001 l
+132.353 441.667 l
+127.451 441.667 l
+127.451 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_05ff00ff" opacity="100%">
+127.451 408.334 m
+132.353 408.334 l
+132.353 425.001 l
+127.451 425.001 l
+127.451 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_71a4beff" opacity="100%">
+127.451 391.667 m
+132.353 391.667 l
+132.353 408.334 l
+127.451 408.334 l
+127.451 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_d66c21ff" opacity="100%">
+127.451 375.001 m
+132.353 375.001 l
+132.353 391.667 l
+127.451 391.667 l
+127.451 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffb854ff" opacity="100%">
+132.353 441.667 m
+137.255 441.667 l
+137.255 458.334 l
+132.353 458.334 l
+132.353 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_f7d268ff" opacity="100%">
+132.353 425.001 m
+137.255 425.001 l
+137.255 441.667 l
+132.353 441.667 l
+132.353 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_24ff00ff" opacity="100%">
+132.353 408.334 m
+137.255 408.334 l
+137.255 425.001 l
+132.353 425.001 l
+132.353 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_73a6c0ff" opacity="100%">
+132.353 391.667 m
+137.255 391.667 l
+137.255 408.334 l
+132.353 408.334 l
+132.353 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_d76e23ff" opacity="100%">
+132.353 375.001 m
+137.255 375.001 l
+137.255 391.667 l
+132.353 391.667 l
+132.353 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffa246ff" opacity="100%">
+137.255 441.667 m
+142.157 441.667 l
+142.157 458.334 l
+137.255 458.334 l
+137.255 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_fcc65eff" opacity="100%">
+137.255 425.001 m
+142.157 425.001 l
+142.157 441.667 l
+137.255 441.667 l
+137.255 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_42ff00ff" opacity="100%">
+137.255 408.334 m
+142.157 408.334 l
+142.157 425.001 l
+137.255 425.001 l
+137.255 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_74a8c3ff" opacity="100%">
+137.255 391.667 m
+142.157 391.667 l
+142.157 408.334 l
+137.255 408.334 l
+137.255 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_d97024ff" opacity="100%">
+137.255 375.001 m
+142.157 375.001 l
+142.157 391.667 l
+137.255 391.667 l
+137.255 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_f78149ff" opacity="100%">
+142.157 441.667 m
+147.059 441.667 l
+147.059 458.334 l
+142.157 458.334 l
+142.157 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_fdc059ff" opacity="100%">
+142.157 425.001 m
+147.059 425.001 l
+147.059 441.667 l
+142.157 441.667 l
+142.157 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_61ff00ff" opacity="100%">
+142.157 408.334 m
+147.059 408.334 l
+147.059 425.001 l
+142.157 425.001 l
+142.157 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_76aac5ff" opacity="100%">
+142.157 391.667 m
+147.059 391.667 l
+147.059 408.334 l
+142.157 408.334 l
+142.157 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_db7225ff" opacity="100%">
+142.157 375.001 m
+147.059 375.001 l
+147.059 391.667 l
+142.157 391.667 l
+142.157 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_f1634cff" opacity="100%">
+147.059 441.667 m
+151.961 441.667 l
+151.961 458.334 l
+147.059 458.334 l
+147.059 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_feba55ff" opacity="100%">
+147.059 425.001 m
+151.961 425.001 l
+151.961 441.667 l
+147.059 441.667 l
+147.059 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_80ff00ff" opacity="100%">
+147.059 408.334 m
+151.961 408.334 l
+151.961 425.001 l
+147.059 425.001 l
+147.059 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_77adc8ff" opacity="100%">
+147.059 391.667 m
+151.961 391.667 l
+151.961 408.334 l
+147.059 408.334 l
+147.059 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_dd7427ff" opacity="100%">
+147.059 375.001 m
+151.961 375.001 l
+151.961 391.667 l
+147.059 391.667 l
+147.059 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_f25251ff" opacity="100%">
+151.961 441.667 m
+156.863 441.667 l
+156.863 458.334 l
+151.961 458.334 l
+151.961 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffb451ff" opacity="100%">
+151.961 425.001 m
+156.863 425.001 l
+156.863 441.667 l
+151.961 441.667 l
+151.961 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_9fff00ff" opacity="100%">
+151.961 408.334 m
+156.863 408.334 l
+156.863 425.001 l
+151.961 425.001 l
+151.961 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_79afcaff" opacity="100%">
+151.961 391.667 m
+156.863 391.667 l
+156.863 408.334 l
+151.961 408.334 l
+151.961 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_df7628ff" opacity="100%">
+151.961 375.001 m
+156.863 375.001 l
+156.863 391.667 l
+151.961 391.667 l
+151.961 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ff5a5aff" opacity="100%">
+156.863 441.667 m
+161.765 441.667 l
+161.765 458.334 l
+156.863 458.334 l
+156.863 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffaf4eff" opacity="100%">
+156.863 425.001 m
+161.765 425.001 l
+161.765 441.667 l
+156.863 441.667 l
+156.863 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_beff00ff" opacity="100%">
+156.863 408.334 m
+161.765 408.334 l
+161.765 425.001 l
+156.863 425.001 l
+156.863 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_7ab1cdff" opacity="100%">
+156.863 391.667 m
+161.765 391.667 l
+161.765 408.334 l
+156.863 408.334 l
+156.863 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_e07829ff" opacity="100%">
+156.863 375.001 m
+161.765 375.001 l
+161.765 391.667 l
+156.863 391.667 l
+156.863 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ff7575ff" opacity="100%">
+161.765 441.667 m
+166.667 441.667 l
+166.667 458.334 l
+161.765 458.334 l
+161.765 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffaa4bff" opacity="100%">
+161.765 425.001 m
+166.667 425.001 l
+166.667 441.667 l
+161.765 441.667 l
+161.765 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ddff00ff" opacity="100%">
+161.765 408.334 m
+166.667 408.334 l
+166.667 425.001 l
+161.765 425.001 l
+161.765 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_7cb3cfff" opacity="100%">
+161.765 391.667 m
+166.667 391.667 l
+166.667 408.334 l
+161.765 408.334 l
+161.765 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_e27b2bff" opacity="100%">
+161.765 375.001 m
+166.667 375.001 l
+166.667 391.667 l
+161.765 391.667 l
+161.765 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ff8f8fff" opacity="100%">
+166.667 441.667 m
+171.569 441.667 l
+171.569 458.334 l
+166.667 458.334 l
+166.667 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffa84eff" opacity="100%">
+166.667 425.001 m
+171.569 425.001 l
+171.569 441.667 l
+166.667 441.667 l
+166.667 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_fbff00ff" opacity="100%">
+166.667 408.334 m
+171.569 408.334 l
+171.569 425.001 l
+166.667 425.001 l
+166.667 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_7db5d2ff" opacity="100%">
+166.667 391.667 m
+171.569 391.667 l
+171.569 408.334 l
+166.667 408.334 l
+166.667 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_e47d2cff" opacity="100%">
+166.667 375.001 m
+171.569 375.001 l
+171.569 391.667 l
+166.667 391.667 l
+166.667 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_fba5a3ff" opacity="100%">
+171.569 441.667 m
+176.471 441.667 l
+176.471 458.334 l
+171.569 458.334 l
+171.569 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffa751ff" opacity="100%">
+171.569 425.001 m
+176.471 425.001 l
+176.471 441.667 l
+171.569 441.667 l
+171.569 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffe300ff" opacity="100%">
+171.569 408.334 m
+176.471 408.334 l
+176.471 425.001 l
+171.569 425.001 l
+171.569 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_7fb7d4ff" opacity="100%">
+171.569 391.667 m
+176.471 391.667 l
+176.471 408.334 l
+171.569 408.334 l
+171.569 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_e67f2dff" opacity="100%">
+171.569 375.001 m
+176.471 375.001 l
+176.471 391.667 l
+171.569 391.667 l
+171.569 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_f6b5b0ff" opacity="100%">
+176.471 441.667 m
+181.373 441.667 l
+181.373 458.334 l
+176.471 458.334 l
+176.471 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffab5cff" opacity="100%">
+176.471 425.001 m
+181.373 425.001 l
+181.373 441.667 l
+176.471 441.667 l
+176.471 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffc400ff" opacity="100%">
+176.471 408.334 m
+181.373 408.334 l
+181.373 425.001 l
+176.471 425.001 l
+176.471 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_80bad7ff" opacity="100%">
+176.471 391.667 m
+181.373 391.667 l
+181.373 408.334 l
+176.471 408.334 l
+176.471 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_e8812fff" opacity="100%">
+176.471 375.001 m
+181.373 375.001 l
+181.373 391.667 l
+176.471 391.667 l
+176.471 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_fec2c1ff" opacity="100%">
+181.373 441.667 m
+186.275 441.667 l
+186.275 458.334 l
+181.373 458.334 l
+181.373 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffb778ff" opacity="100%">
+181.373 425.001 m
+186.275 425.001 l
+186.275 441.667 l
+181.373 441.667 l
+181.373 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffa500ff" opacity="100%">
+181.373 408.334 m
+186.275 408.334 l
+186.275 425.001 l
+181.373 425.001 l
+181.373 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_82bcd9ff" opacity="100%">
+181.373 391.667 m
+186.275 391.667 l
+186.275 408.334 l
+181.373 408.334 l
+181.373 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_e98330ff" opacity="100%">
+181.373 375.001 m
+186.275 375.001 l
+186.275 391.667 l
+181.373 391.667 l
+181.373 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffd0d0ff" opacity="100%">
+186.275 441.667 m
+191.177 441.667 l
+191.177 458.334 l
+186.275 458.334 l
+186.275 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffc394ff" opacity="100%">
+186.275 425.001 m
+191.177 425.001 l
+191.177 441.667 l
+186.275 441.667 l
+186.275 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ff8600ff" opacity="100%">
+186.275 408.334 m
+191.177 408.334 l
+191.177 425.001 l
+186.275 425.001 l
+186.275 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_83bedcff" opacity="100%">
+186.275 391.667 m
+191.177 391.667 l
+191.177 408.334 l
+186.275 408.334 l
+186.275 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_eb8531ff" opacity="100%">
+186.275 375.001 m
+191.177 375.001 l
+191.177 391.667 l
+186.275 391.667 l
+186.275 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffe0e0ff" opacity="100%">
+191.177 441.667 m
+196.079 441.667 l
+196.079 458.334 l
+191.177 458.334 l
+191.177 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffd0acff" opacity="100%">
+191.177 425.001 m
+196.079 425.001 l
+196.079 441.667 l
+191.177 441.667 l
+191.177 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ff6800ff" opacity="100%">
+191.177 408.334 m
+196.079 408.334 l
+196.079 425.001 l
+191.177 425.001 l
+191.177 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_85c0deff" opacity="100%">
+191.177 391.667 m
+196.079 391.667 l
+196.079 408.334 l
+191.177 408.334 l
+191.177 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ed8733ff" opacity="100%">
+191.177 375.001 m
+196.079 375.001 l
+196.079 391.667 l
+191.177 391.667 l
+191.177 375.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffefefff" opacity="100%">
+196.079 441.667 m
+200.981 441.667 l
+200.981 458.334 l
+196.079 458.334 l
+196.079 441.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ffdcc2ff" opacity="100%">
+196.079 425.001 m
+200.981 425.001 l
+200.981 441.667 l
+196.079 441.667 l
+196.079 425.001 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ff4900ff" opacity="100%">
+196.079 408.334 m
+200.981 408.334 l
+200.981 425.001 l
+196.079 425.001 l
+196.079 408.334 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_86c2e1ff" opacity="100%">
+196.079 391.667 m
+200.981 391.667 l
+200.981 408.334 l
+196.079 408.334 l
+196.079 391.667 l
+</path>
+<path stroke="codac_color_000000ff" fill="codac_color_ef8934ff" opacity="100%">
+196.079 375.001 m
+200.981 375.001 l
+200.981 391.667 l
+196.079 391.667 l
+196.079 375.001 l
+</path>
+</page>
+</ipe>

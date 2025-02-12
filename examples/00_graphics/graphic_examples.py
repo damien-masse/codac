@@ -58,7 +58,6 @@ fig2.draw_box([[2.6,3.1],[2.6,3.1]],[Color([108,90,78],Model.HSV),Color([108,90,
 fig2.draw_box([[2.,2.3],[2.6,2.9]],[[255,0,255],[255,0,255,100]])
 
 fig3 = Figure2D("ColorMap figure", GraphicOutput.VIBES | GraphicOutput.IPE)
-fig3.set_axes(axis(0,[-1,21]), axis(1,[-5.5,0.5]))
 fig3.set_window_properties([800,250],[500,500])
 
 cmap_haxby=ColorMap.haxby()
@@ -67,13 +66,16 @@ cmap_blue_tube=ColorMap.blue_tube()
 cmap_red_tube=ColorMap.red_tube()
 cmap_rainbow=ColorMap.rainbow()
 
-for i in range (20):
-    ratio=i/20
-    fig3.draw_box([[i,i+1],[-1,0]],[Color.black(),cmap_haxby.color(ratio)])
-    fig3.draw_box([[i,i+1],[-2,-1]],[Color.black(),cmap_default.color(ratio)])
-    fig3.draw_box([[i,i+1],[-3,-2]],[Color.black(),cmap_blue_tube.color(ratio)])
-    fig3.draw_box([[i,i+1],[-4,-3]],[Color.black(),cmap_red_tube.color(ratio)])
-    fig3.draw_box([[i,i+1],[-5,-4]],[Color.black(),cmap_rainbow.color(ratio)])
+subdivisions=40
+fig3.set_axes(axis(0,[-1,subdivisions+1]), axis(1,[-1,0]))
+
+for i in range (subdivisions):
+    ratio=i/subdivisions
+    fig3.draw_box([[i,i+1],[-1/5,0]],[Color.black(),cmap_default.color(ratio)])
+    fig3.draw_box([[i,i+1],[-2/5,-1/5]],[Color.black(),cmap_haxby.color(ratio)])
+    fig3.draw_box([[i,i+1],[-3/5,-2/5]],[Color.black(),cmap_rainbow.color(ratio)])
+    fig3.draw_box([[i,i+1],[-4/5,-3/5]],[Color.black(),cmap_blue_tube.color(ratio)])
+    fig3.draw_box([[i,i+1],[-5/5,-4/5]],[Color.black(),cmap_red_tube.color(ratio)])
 
 fig4 = Figure2D("My figure 4", GraphicOutput.VIBES)
 
