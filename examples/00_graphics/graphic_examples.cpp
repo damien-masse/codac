@@ -62,7 +62,7 @@ int main(){
   fig2->draw_box({{2.6,3.1},{2.6,3.1}},{Color({108,90,78},Model::HSV),Color({108,90,78,20},Model::HSV)});
 
   Figure2D fig3 ("My Figure 3",GraphicOutput::VIBES|GraphicOutput::IPE);
-  fig3.set_axes(axis(0,{-1,21}), axis(1,{-5.5,0.5}));
+  fig3.set_axes(axis(0,{-1,21}), axis(1,{-1.15,0}));
   fig3.set_window_properties({800,250},{500,500});
 
   ColorMap cmap_haxby = ColorMap::haxby();
@@ -70,6 +70,11 @@ int main(){
   ColorMap cmap_blue_tube = ColorMap::blue_tube();
   ColorMap cmap_red_tube = ColorMap::red_tube();
   ColorMap cmap_rainbow = ColorMap::rainbow();
+
+  ColorMap custom_map;
+  custom_map[0] = Color({255,0,0});
+  custom_map[0.5] = Color({0,255,0});
+  custom_map.set(1,Color({0,0,255}));
 
   double subdivisions = 40.;
   for (double i=0.; i<subdivisions; i+=1.0)
@@ -80,6 +85,7 @@ int main(){
     fig3.draw_box({{i,i+1},{-3./5.,-2./5.}},{Color::black(),cmap_rainbow.color(ratio)});
     fig3.draw_box({{i,i+1},{-4./5.,-3./5.}},{Color::black(),cmap_blue_tube.color(ratio)});
     fig3.draw_box({{i,i+1},{-5/5.,-4./5.}},{Color::black(),cmap_red_tube.color(ratio)});
+    fig3.draw_box({{i,i+1},{-6./5.,-5./5.}},{Color::black(),custom_map.color(ratio)});
   }
 
   Figure2D fig4 ("My Figure 4",GraphicOutput::VIBES);

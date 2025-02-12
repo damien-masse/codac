@@ -16,6 +16,11 @@ ColorMap::ColorMap(Model m_) :
   m(m_)
 { }
 
+void ColorMap::set(float r, const Color& c)
+{
+    (*this)[r] = c;
+}
+
 Color ColorMap::color(float r) const
 {
     assert (this->size() >= 2);

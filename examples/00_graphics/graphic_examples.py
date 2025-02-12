@@ -66,8 +66,13 @@ cmap_blue_tube=ColorMap.blue_tube()
 cmap_red_tube=ColorMap.red_tube()
 cmap_rainbow=ColorMap.rainbow()
 
+custom_map = ColorMap(Model.RGB)
+custom_map[0] = Color([255,0,0])
+custom_map[0.5] = Color([0,255,0])
+custom_map.set(1, Color([0,0,255]))
+
 subdivisions=40
-fig3.set_axes(axis(0,[-1,subdivisions+1]), axis(1,[-1,0]))
+fig3.set_axes(axis(0,[-1,subdivisions+1]), axis(1,[-1.15,0]))
 
 for i in range (subdivisions):
     ratio=i/subdivisions
@@ -76,6 +81,7 @@ for i in range (subdivisions):
     fig3.draw_box([[i,i+1],[-3/5,-2/5]],[Color.black(),cmap_rainbow.color(ratio)])
     fig3.draw_box([[i,i+1],[-4/5,-3/5]],[Color.black(),cmap_blue_tube.color(ratio)])
     fig3.draw_box([[i,i+1],[-5/5,-4/5]],[Color.black(),cmap_red_tube.color(ratio)])
+    fig3.draw_box([[i,i+1],[-6/5,-5/5]],[Color.black(),custom_map.color(ratio)])
 
 fig4 = Figure2D("My figure 4", GraphicOutput.VIBES)
 
