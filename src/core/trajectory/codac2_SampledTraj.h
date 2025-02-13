@@ -167,6 +167,15 @@ namespace codac2
         return straj;
       }
 
+      SampledTraj<T>& shift_tdomain(double shift)
+      {
+        std::map<double,T> save = *this;
+        this->clear();
+        for(const auto& [ti,xi] : save)
+          this->std::map<double,T>::operator[](ti+shift) = xi;
+        return *this;
+      }
+
       template<typename T_=T>
         requires std::is_same_v<T_,Vector>
       SampledTraj<double> operator[](Index i) const
