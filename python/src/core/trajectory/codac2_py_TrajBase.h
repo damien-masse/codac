@@ -70,6 +70,13 @@ void export_TrajBase(py::class_<S>& pyclass)
       VIRTUAL_SAMPLEDTRAJ_T_TRAJBASE_T_SAMPLED_DOUBLE_CONST,
       "dt"_a)
 
+    .def("sampled_as", [](const S& this_traj, const SampledTraj<typename S::TrajType::Scalar>& x)
+        {
+          return this_traj.sampled_as(x);
+        },
+      SAMPLEDTRAJ_T_TRAJBASE_T_SAMPLED_AS_CONST_SAMPLEDTRAJ_Q_REF_CONST,
+      "x"_a)
+
     .def("primitive", [](const S& x, const typename S::TrajType::Scalar& y0, double dt)
         {
           return x.primitive(y0,dt);

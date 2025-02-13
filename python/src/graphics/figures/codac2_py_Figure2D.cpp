@@ -89,6 +89,9 @@ void export_Figure2D(py::module& m)
     .def("scaled_unit", &Figure2D::scaled_unit,
       DOUBLE_FIGURE2D_SCALED_UNIT_CONST)
   
+    .def("auto_scale", &Figure2D::auto_scale,
+      VOID_FIGURE2D_AUTO_SCALE)
+  
     .def("is_default", &Figure2D::is_default,
       BOOL_FIGURE2D_IS_DEFAULT_CONST)
   

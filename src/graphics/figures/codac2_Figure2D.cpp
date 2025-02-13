@@ -99,6 +99,17 @@ double Figure2D::scaled_unit() const
   return std::max(_axes[0].limits.diam(),_axes[1].limits.diam()) / _window_size.max_coeff();
 }
 
+void Figure2D::auto_scale()
+{
+  Vector w = this->window_size();
+  if(_axes[0].limits.diam() > _axes[1].limits.diam())
+    w[1] *= _axes[1].limits.diam()/_axes[0].limits.diam();
+  else
+    w[0] *= _axes[0].limits.diam()/_axes[1].limits.diam();
+
+  this->set_window_properties(this->pos(), w);
+}
+
 bool Figure2D::is_default() const
 {
   return DefaultView::_selected_fig == this->weak_from_this().lock();

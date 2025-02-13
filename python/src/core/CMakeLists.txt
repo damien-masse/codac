@@ -115,11 +115,6 @@
     PRIVATE ${PROJECT_NAME}-core ${LIBS} Ibex::ibex
   )
 
-  if(APPLE)
-    set_target_properties(_core
-      PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
-  endif(APPLE)
-
   # Copy the generated library in the package folder
   add_custom_command(TARGET _core POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:_core>" "${PYTHON_PACKAGE_DIR}/${PYTHON_PACKAGE_NAME}"

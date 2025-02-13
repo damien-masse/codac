@@ -24,14 +24,7 @@ namespace codac2
     }
 
     fig->set_axes(axis(0,x0[0],"x_1"), axis(1,x0[1],"x_2"));
-
-    Vector w = fig->window_size();
-    if(x0[0].diam() > x0[1].diam())
-      w[1] *= x0[1].diam()/x0[0].diam();
-    else
-      w[0] *= x0[0].diam()/x0[1].diam();
-
-    fig->set_window_properties(fig->pos(), w);
+    fig->auto_scale();
   }
 
   void draw_while_paving(const IntervalVector& x0, shared_ptr<const CtcBase<IntervalVector>> c, double eps, std::shared_ptr<Figure2D> fig)

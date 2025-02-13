@@ -117,6 +117,10 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
       SAMPLEDTRAJ_T_SAMPLEDTRAJ_T_SAMPLED_DOUBLE_BOOL_CONST,
       "dt"_a, "keep_original_values"_a)
 
+    .def("shift_tdomain", &SampledTraj<T>::shift_tdomain,
+      SAMPLEDTRAJ_T_REF_SAMPLEDTRAJ_T_SHIFT_TDOMAIN_DOUBLE,
+      "shift"_a)
+
     .def("__call__", [](const SampledTraj<T>& x, double t) -> T
         {
           return x(t);
@@ -131,10 +135,7 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
       VIRTUAL_WRAPPER_T_DOMAIN_SAMPLEDTRAJ_T_OPERATORCALL_CONST_INTERVAL_REF_CONST,
       "t"_a)
 
-    .def("set", [](SampledTraj<T>& x, double ti, const T& xi)
-        {
-          return x.set(ti,xi);
-        },
+    .def("set", &SampledTraj<T>::set,
       VOID_SAMPLEDTRAJ_T_SET_DOUBLE_CONST_T_REF,
       "ti"_a, "xi"_a)
 
@@ -163,11 +164,11 @@ void add_operators(py::class_<SampledTraj<T>>& pyclass)
       py::is_operator())
 
     .def("__add__", [](const SampledTraj<T>& x1, const T& x2) { return x1+x2; },
-      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_SAMPLEDTRAJ_T_REF_CONST_T_REF,
+      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_SAMPLEDTRAJ_T_REF_CONST_Q_REF,
       py::is_operator())
 
     .def("__add__", [](const T& x1, const SampledTraj<T>& x2) { return x1+x2; },
-      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      SAMPLEDTRAJ_T_OPERATORPLUS_CONST_Q_REF_CONST_SAMPLEDTRAJ_T_REF,
       py::is_operator())
 
     .def("__sub__", [](const SampledTraj<T>& x1) { return -x1; },
@@ -179,11 +180,11 @@ void add_operators(py::class_<SampledTraj<T>>& pyclass)
       py::is_operator())
 
     .def("__sub__", [](const SampledTraj<T>& x1, const T& x2) { return x1-x2; },
-      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_SAMPLEDTRAJ_T_REF_CONST_T_REF,
+      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_SAMPLEDTRAJ_T_REF_CONST_Q_REF,
       py::is_operator())
 
     .def("__sub__", [](const T& x1, const SampledTraj<T>& x2) { return x1-x2; },
-      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      SAMPLEDTRAJ_T_OPERATORMINUS_CONST_Q_REF_CONST_SAMPLEDTRAJ_T_REF,
       py::is_operator())
 
     .def("__mul__", [](const SampledTraj<T>& x1, const SampledTraj<T>& x2) { return x1*x2; },
@@ -199,7 +200,7 @@ void add_operators(py::class_<SampledTraj<T>>& pyclass)
       py::is_operator())
 
     .def("__mul__", [](const T& x1, const SampledTraj<T>& x2) { return x1*x2; },
-      SAMPLEDTRAJ_T_OPERATORMUL_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      SAMPLEDTRAJ_T_OPERATORMUL_CONST_Q_REF_CONST_SAMPLEDTRAJ_T_REF,
       py::is_operator())
 
     .def("__truediv__", [](const SampledTraj<T>& x1, double x2) { return x1/x2; },
@@ -227,7 +228,7 @@ void export_SampledTraj(py::module& m)
       py::is_operator())
 
     .def(double() / py::self,
-      SAMPLEDTRAJ_T_OPERATORDIV_CONST_T_REF_CONST_SAMPLEDTRAJ_T_REF,
+      SAMPLEDTRAJ_T_OPERATORDIV_CONST_Q_REF_CONST_SAMPLEDTRAJ_T_REF,
       py::is_operator())
   ;
 

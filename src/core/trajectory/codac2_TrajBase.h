@@ -60,6 +60,15 @@ namespace codac2
         return straj;
       }
 
+      template<typename Q>
+      SampledTraj<T> sampled_as(const SampledTraj<Q>& x) const
+      {
+        SampledTraj<T> straj;
+        for(const auto& [ti,dump] : x)
+          straj.set(ti, (*this)(ti));
+        return straj;
+      }
+
       SampledTraj<T> primitive(const T& y0, double dt) const
       {
         assert_release(dt > 0.);
