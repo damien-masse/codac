@@ -44,6 +44,7 @@ using namespace pybind11::literals;
   \
     /* Several cases of vector inputs */ \
     .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m) { return f.op(m); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, py::list x1) { return f.op(m,cast<IntervalVector>(x1)); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1) { return f.op(m,x1); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2) { return f.op(m,x1,x2); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3) { return f.op(m,x1,x2,x3); }, doc) \
@@ -76,6 +77,7 @@ using namespace pybind11::literals;
   \
     /* Several cases of vector inputs */ \
     .def(op_name, [](AnalyticFunction<T>& f) { return f.op(); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, py::list x1) { return f.op(cast<IntervalVector>(x1)); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, IV x1) { return f.op(x1); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, IV x1, IV x2) { return f.op(x1,x2); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, IV x1, IV x2, IV x3) { return f.op(x1,x2,x3); }, doc) \
