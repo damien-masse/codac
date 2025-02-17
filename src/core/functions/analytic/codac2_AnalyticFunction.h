@@ -131,6 +131,6 @@ namespace codac2
   template<typename T>
   AnalyticFunction(const FunctionArgsList&, const T&) -> 
     AnalyticFunction<typename ValueType<T>::Type>;
-
-  #include "codac2_AnalyticFunction_impl.h"
 }
+
+#include "codac2_AnalyticFunction_impl.h"
