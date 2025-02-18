@@ -117,6 +117,13 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
       SAMPLEDTRAJ_T_SAMPLEDTRAJ_T_SAMPLED_DOUBLE_BOOL_CONST,
       "dt"_a, "keep_original_values"_a)
 
+    .def("sampled_as", [](const SampledTraj<T>& this_traj, const SampledTraj<T>& x, bool keep_original_values)
+        {
+          return this_traj.sampled_as(x,keep_original_values);
+        },
+      SAMPLEDTRAJ_T_SAMPLEDTRAJ_T_SAMPLED_AS_CONST_SAMPLEDTRAJ_Q_REF_BOOL_CONST,
+      "x"_a, "keep_original_values"_a)
+
     .def("shift_tdomain", &SampledTraj<T>::shift_tdomain,
       SAMPLEDTRAJ_T_REF_SAMPLEDTRAJ_T_SHIFT_TDOMAIN_DOUBLE,
       "shift"_a)
