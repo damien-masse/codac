@@ -73,7 +73,6 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExpr.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExprWrapper.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticFunction.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticFunction_impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ScalarExprList.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ValueType.h
