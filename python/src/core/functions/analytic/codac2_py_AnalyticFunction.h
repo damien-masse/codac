@@ -17,6 +17,7 @@
 #include <codac2_analytic_variables.h>
 #include <codac2_AnalyticFunction.h>
 #include "codac2_py_AnalyticFunction_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
+#include "codac2_py_AnalyticFunction_impl_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_FunctionBase_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_AnalyticExprWrapper.h"
 #include "codac2_py_cast.h"
@@ -258,6 +259,6 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
           stream << f;
           return std::string(stream.str()); 
         },
-      OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_ANALYTICFUNCTION_T_REF)
+      OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_ANALYTICFUNCTION_U_REF)
   ;
 }

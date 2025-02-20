@@ -83,6 +83,12 @@ void export_MatrixBase(py::module& m, py::class_<S>& pyclass)
         },
       MATRIXBASE_ADDONS_BASE_AUTO_SQUARED_NORM_CONST)
 
+    .def("is_nan", [](const S& x)
+        {
+          return x.is_nan();
+        },
+      MATRIXBASE_ADDONS_BASE_BOOL_IS_NAN_CONST)
+
   ;
 
   if constexpr(!VECTOR_INHERITANCE)

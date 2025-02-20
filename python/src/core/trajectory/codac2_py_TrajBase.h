@@ -14,6 +14,7 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <codac2_Matrix.h>
+#include <codac2_TrajBase.h>
 #include "codac2_py_matlab.h"
 
 using namespace std;

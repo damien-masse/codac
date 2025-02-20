@@ -167,6 +167,22 @@ namespace codac2
         return straj;
       }
 
+      template<typename Q>
+      SampledTraj<T> sampled_as(const SampledTraj<Q>& x) const
+      {
+        return TrajBase<T>::sampled_as(x);
+      }
+
+      template<typename Q>
+      SampledTraj<T> sampled_as(const SampledTraj<Q>& x, bool keep_original_values) const
+      {
+        SampledTraj<T> straj = TrajBase<T>::sampled_as(x);
+        if(keep_original_values)
+          for(const auto& [ti,xi] : *this)
+            straj.set(ti, xi);
+        return straj;
+      }
+
       SampledTraj<T>& shift_tdomain(double shift)
       {
         std::map<double,T> save = *this;
