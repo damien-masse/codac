@@ -192,6 +192,23 @@ namespace codac2
         return *this;
       }
 
+      SampledTraj<T>& stretch_tdomain(const Interval& tdomain)
+      {
+        Interval a = this->tdomain(), b = tdomain;
+        std::map<double,T> save = *this;
+        this->clear();
+        for(const auto& [ti,xi] : save)
+            this->std::map<double,T>::operator[]([&]() {
+              if(ti == a.ub())
+                return b.ub(); // due to floating point possible error
+              else
+                return ((ti-a.lb())*b.diam()/a.diam())+b.lb();
+            }()
+          ) = xi;
+        assert(this->tdomain() == tdomain);
+        return *this;
+      }
+
       template<typename T_=T>
         requires std::is_same_v<T_,Vector>
       SampledTraj<double> operator[](Index i) const

@@ -87,6 +87,12 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
         SAMPLEDTRAJ_T_SAMPLEDTRAJ_CONST_LIST_DOUBLE_REF_CONST_LIST_T_REF,
         "l_t"_a, "l_x"_a)
 
+    .def("__iter__", [](const SampledTraj<T>& x)
+        {
+          return py::make_iterator(x.begin(), x.end());
+        },
+        py::keep_alive<0, 1>()) // essential: keep object alive while iterator exists
+
     .def("__getitem__", [](const SampledTraj<T>& x, Index_type i) -> SampledTraj<double>
         {
           matlab::test_integer(i);
@@ -127,6 +133,10 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
     .def("shift_tdomain", &SampledTraj<T>::shift_tdomain,
       SAMPLEDTRAJ_T_REF_SAMPLEDTRAJ_T_SHIFT_TDOMAIN_DOUBLE,
       "shift"_a)
+
+    .def("stretch_tdomain", &SampledTraj<T>::stretch_tdomain,
+      SAMPLEDTRAJ_T_REF_SAMPLEDTRAJ_T_STRETCH_TDOMAIN_CONST_INTERVAL_REF,
+      "tdomain"_a)
 
     .def("__call__", [](const SampledTraj<T>& x, double t) -> T
         {
