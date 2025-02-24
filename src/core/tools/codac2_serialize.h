@@ -33,21 +33,48 @@ namespace codac2
 
   // Vector
 
-    void serialize(std::ofstream& f, const Vector& x)
+    template<typename T>
+    void serialize(std::ofstream& f, const Eigen::Matrix<T,-1,1>& x)
     {
       Index size = x.size();
-      f.write(reinterpret_cast<const char*>(&size), sizeof(size));
+      f.write(reinterpret_cast<const char*>(&size), sizeof(T));
       for(Index i = 0 ; i < size ; i++)
         serialize(f,x[i]);
     }
 
-    void deserialize(std::ifstream& f, Vector& x)
+    template<typename T>
+    void deserialize(std::ifstream& f, Eigen::Matrix<T,-1,1>& x)
     {
       Index size;
-      f.read(reinterpret_cast<char*>(&size), sizeof(size));
+      f.read(reinterpret_cast<char*>(&size), sizeof(T));
       x.resize(size);
       for(Index i = 0 ; i < size ; i++)
         deserialize(f,x[i]);
+    }
+
+  // Matrix
+
+    template<typename T>
+    void serialize(std::ofstream& f, const Eigen::Matrix<T,-1,-1>& x)
+    {
+      Index r = x.rows(), c = x.cols();
+      f.write(reinterpret_cast<const char*>(&r), sizeof(T));
+      f.write(reinterpret_cast<const char*>(&c), sizeof(T));
+      for(Index i = 0 ; i < r ; i++)
+        for(Index j = 0 ; j < c ; j++)
+          serialize(f,x(i,j));
+    }
+
+    template<typename T>
+    void deserialize(std::ifstream& f, Eigen::Matrix<T,-1,-1>& x)
+    {
+      Index r, c;
+      f.read(reinterpret_cast<char*>(&r), sizeof(T));
+      f.read(reinterpret_cast<char*>(&c), sizeof(T));
+      x.resize(r,c);
+      for(Index i = 0 ; i < r ; i++)
+        for(Index j = 0 ; j < c ; j++)
+          deserialize(f,x(i,j));
     }
 
   // SampledTraj<T>
@@ -69,6 +96,7 @@ namespace codac2
     void deserialize(std::ifstream& f, SampledTraj<T>& x)
     {
       Index size;
+      x.clear();
       f.read(reinterpret_cast<char*>(&size), sizeof(size));
 
       for(Index i = 0 ; i < size ; i++)

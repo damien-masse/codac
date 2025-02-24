@@ -86,6 +86,7 @@
     separators/codac2_py_SepWrapper.cpp
 
     tools/codac2_py_Approx.cpp
+    tools/codac2_py_transformations.cpp
 
     trajectory/codac2_py_AnalyticTraj.cpp
     trajectory/codac2_py_SampledTraj.cpp

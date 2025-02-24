@@ -97,6 +97,9 @@ void export_Figure2D(py::module& m)
   
     .def("set_as_default", &Figure2D::set_as_default,
       VOID_FIGURE2D_SET_AS_DEFAULT)
+  
+    .def("set_tdomain", &Figure2D::set_tdomain,
+      VOID_FIGURE2D_SET_TDOMAIN_CONST_INTERVAL_REF)
 
     // Geometric shapes
 

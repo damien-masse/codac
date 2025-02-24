@@ -29,7 +29,7 @@ template<typename T>
 py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& class_name)
 {
   py::class_<SampledTraj<T>> exported_class(m, class_name.c_str(), SAMPLEDTRAJ_MAIN);
-  export_TrajBase<SampledTraj<T>>(exported_class);
+  export_TrajBase<SampledTraj<T>,T>(exported_class);
 
   exported_class
 
@@ -110,6 +110,15 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
     .def("nb_samples", &SampledTraj<T>::nb_samples,
       SIZET_SAMPLEDTRAJ_T_NB_SAMPLES_CONST)
 
+    .def("__len__", &SampledTraj<T>::nb_samples,
+      SIZET_SAMPLEDTRAJ_T_NB_SAMPLES_CONST)
+
+    .def("__iter__", [](const SampledTraj<T>& x)
+        {
+          return py::make_iterator(x.begin(), x.end());
+        },
+        py::keep_alive<0, 1>()) // essential: keep object alive while iterator exists
+
     .def("sampled", [](const SampledTraj<T>& x, double dt, bool keep_original_values)
         {
           return x.sampled(dt,keep_original_values);
@@ -127,6 +136,10 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
     .def("shift_tdomain", &SampledTraj<T>::shift_tdomain,
       SAMPLEDTRAJ_T_REF_SAMPLEDTRAJ_T_SHIFT_TDOMAIN_DOUBLE,
       "shift"_a)
+
+    .def("stretch_tdomain", &SampledTraj<T>::stretch_tdomain,
+      SAMPLEDTRAJ_T_REF_SAMPLEDTRAJ_T_STRETCH_TDOMAIN_CONST_INTERVAL_REF,
+      "tdomain"_a)
 
     .def("__call__", [](const SampledTraj<T>& x, double t) -> T
         {

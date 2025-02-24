@@ -120,6 +120,11 @@ void Figure2D::set_as_default()
   DefaultView::set(this->shared_from_this());
 }
 
+void Figure2D::set_tdomain(const Interval& tdomain)
+{
+  _tdomain = tdomain;
+}
+
 void Figure2D::draw_point(const Vector& c, const StyleProperties& s)
 {
   assert_release(this->size() <= c.size());
@@ -272,7 +277,8 @@ void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const StyleProperti
   std::vector<Vector> values(x.nb_samples());
   size_t i = 0;
   for(const auto& [ti,xi] : x)
-    values[i++] = xi;
+    if(_tdomain.contains(ti))
+      values[i++] = xi;
   draw_polyline(values,s);
 }
 
@@ -288,11 +294,10 @@ void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cma
   double range = x.tdomain().diam();
 
   for(auto it = x.begin(); std::next(it) != x.end(); ++it)
-  {
-    draw_polyline(
-      { it->second, std::next(it)->second },
-      cmap.color((it->first - x.begin()->first) / range));
-  }
+    if(_tdomain.contains(it->first))
+      draw_polyline(
+        { it->second, std::next(it)->second },
+        cmap.color((it->first - x.begin()->first) / range));
 }
 
 void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap)
