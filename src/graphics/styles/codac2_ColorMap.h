@@ -32,8 +32,6 @@ namespace codac2
 
       const Model& model() const { return m; }
 
-      void set (float r, const Color& c);
-
       Color color (float r) const;
 
       static ColorMap haxby()

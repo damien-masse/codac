@@ -181,6 +181,4 @@ You can also create your own color map :
     custom_map[0.5] = Color({0,255,0});
     custom_map[1] = Color({0,0,255});
 
-A function set is also available to add a color to the color map. The arguments are a double (the key) and a Color object.
-
 Note that you can add RGB and HSV colors to the same color map. The model of the color map will define the interpolation space.

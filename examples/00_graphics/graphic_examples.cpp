@@ -74,7 +74,7 @@ int main(){
   ColorMap custom_map;
   custom_map[0] = Color({255,0,0});
   custom_map[0.5] = Color({0,255,0});
-  custom_map.set(1,Color({0,0,255}));
+  custom_map[1] = Color({0,0,255});
 
   double subdivisions = 40.;
   for (double i=0.; i<subdivisions; i+=1.0)

@@ -27,15 +27,18 @@ void export_ColorMap(py::module& m)
         COLORMAP_COLORMAP_MODEL,
         "m"_a=Model::RGB)
 
-    .def("__setitem__", &ColorMap::set,
-        "r"_a, "c"_a)
+    .def("__getitem__", [](const ColorMap& x, float r) -> const Color&
+        {
+          return x.at(r);
+        }, py::return_value_policy::reference_internal)
+
+    .def("__setitem__", [](ColorMap& x, float r, const Color& c)
+        {
+          x[r] = c;
+        })
 
     .def("model", &ColorMap::model,
         CONST_MODEL_REF_COLORMAP_MODEL_CONST)
-
-    .def("set", &ColorMap::set,
-        VOID_COLORMAP_SET_FLOAT_CONST_COLOR_REF,
-        "r"_a, "c"_a)
 
     .def("color", &ColorMap::color,
         COLOR_COLORMAP_COLOR_FLOAT_CONST,

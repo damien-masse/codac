@@ -69,7 +69,7 @@ cmap_rainbow=ColorMap.rainbow()
 custom_map = ColorMap(Model.RGB)
 custom_map[0] = Color([255,0,0])
 custom_map[0.5] = Color([0,255,0])
-custom_map.set(1, Color([0,0,255]))
+custom_map[1] = Color([0,0,255])
 
 subdivisions=40
 fig3.set_axes(axis(0,[-1,subdivisions+1]), axis(1,[-1.15,0]))
