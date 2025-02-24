@@ -17,6 +17,7 @@
 #include <codac2_analytic_variables.h>
 #include <codac2_AnalyticFunction.h>
 #include "codac2_py_AnalyticFunction_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
+#include "codac2_py_AnalyticFunction_impl_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_FunctionBase_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_AnalyticExprWrapper.h"
 #include "codac2_py_cast.h"
@@ -44,6 +45,7 @@ using namespace pybind11::literals;
   \
     /* Several cases of vector inputs */ \
     .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m) { return f.op(m); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, py::list x1) { return f.op(m,cast<IntervalVector>(x1)); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1) { return f.op(m,x1); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2) { return f.op(m,x1,x2); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, const EvalMode& m, IV x1, IV x2, IV x3) { return f.op(m,x1,x2,x3); }, doc) \
@@ -76,6 +78,7 @@ using namespace pybind11::literals;
   \
     /* Several cases of vector inputs */ \
     .def(op_name, [](AnalyticFunction<T>& f) { return f.op(); }, doc) \
+    .def(op_name, [](AnalyticFunction<T>& f, py::list x1) { return f.op(cast<IntervalVector>(x1)); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, IV x1) { return f.op(x1); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, IV x1, IV x2) { return f.op(x1,x2); }, doc) \
     .def(op_name, [](AnalyticFunction<T>& f, IV x1, IV x2, IV x3) { return f.op(x1,x2,x3); }, doc) \
@@ -256,6 +259,6 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
           stream << f;
           return std::string(stream.str()); 
         },
-      OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_ANALYTICFUNCTION_T_REF)
+      OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_ANALYTICFUNCTION_U_REF)
   ;
 }

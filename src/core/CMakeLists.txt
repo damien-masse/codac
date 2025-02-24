@@ -191,7 +191,10 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_math.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_serialize.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_template_tools.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_transformations.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_transformations.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTraj.h
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj.h

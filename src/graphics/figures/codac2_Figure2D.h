@@ -81,9 +81,12 @@ namespace codac2
 
       void center_viewbox(const Vector& c, const Vector& r);
       double scaled_unit() const;
+      void auto_scale();
 
       bool is_default() const;
       void set_as_default();
+
+      void set_tdomain(const Interval& tdomain);
 
       // Geometric shapes
       void draw_point(const Vector& c, const StyleProperties& s = StyleProperties());
@@ -129,6 +132,7 @@ namespace codac2
       Vector _pos {50,50}, _window_size {500,500};
       std::vector<FigureAxis> _axes { axis(0,{0,1}), axis(1,{0,1}) };
       std::vector<std::shared_ptr<OutputFigure2D>> _output_figures;
+      Interval _tdomain;
 
       friend DefaultView;
   };

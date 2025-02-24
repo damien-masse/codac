@@ -128,6 +128,7 @@ Many properties have an associated getter :
 - pos() and window_size() to get the window position and size (type is Vector)
 - scaled_unit() to get the scaling ratio from window to figure dimensions (type is double)
 
+For temporal objects (such as trajectories or tubes), it is possible to restrict the temporal frame to display by using the ``set_tdomain()`` method.
 
 VIBes only
 ----------

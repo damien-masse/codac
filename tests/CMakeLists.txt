@@ -78,6 +78,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/separators/codac2_tests_SepTransform
   
   core/tools/codac2_tests_Approx
+  core/tools/codac2_tests_transformations
   
   core/trajectory/codac2_tests_AnalyticTraj
   core/trajectory/codac2_tests_SampledTraj

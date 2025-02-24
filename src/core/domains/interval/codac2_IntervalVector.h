@@ -34,8 +34,6 @@ namespace codac2
   }
 
   template<typename... X>
-    requires ((std::is_same_v<int,X> || std::is_same_v<double,X> || std::is_same_v<Interval,X>
-     || std::is_same_v<Vector,X> || std::is_same_v<IntervalVector,X>) && ...)
   inline IntervalVector cart_prod(const X&... x)
   {
     std::vector<IntervalVector> v_x;
