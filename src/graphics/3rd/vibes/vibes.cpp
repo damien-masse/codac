@@ -724,6 +724,11 @@ namespace vibes
 
   void drawRaster(const std::string& rasterFilename, const double &xlb, const double &yub, const double &width, const double &height, Params params)
   {
+    drawRaster(rasterFilename, xlb, yub, width, height, 0., params);
+  }
+
+  void drawRaster(const std::string& rasterFilename, const double &xlb, const double &yub, const double &width, const double &height, const double & rot, Params params)
+  {
     beginDrawingIfNeeded();
     Vec2d ul_corner = { xlb, yub };
     Vec2d size = { width, height };
@@ -734,7 +739,8 @@ namespace vibes
     msg["shape"] = (params, "type", "raster",
                             "filename", rasterFilename,
                             "ul_corner", ul_corner,
-                            "size", size
+                            "size", size,
+                            "rot", rot
                    );
 
     fputs(Value(msg).toJSONString().append("\n\n").c_str(), channel.get());

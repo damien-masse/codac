@@ -381,11 +381,14 @@ namespace vibes {
                                      const double &,r_min, const double &,r_max)
 
   /// Draw a raster image with upper left corner at position <ulb, yub>
-  /// and with <width, height> size.
+  /// and with <width, height> size. Possibly with a rotation <rot> in degrees.
   /// The color used for transparency is throw the pen color
   VIBES_FUNC_COLOR_PARAM_5(drawRaster, const std::string&, rasterFilename,
                                        const double &,ulb, const double &, yub,
                                        const double &,width, const double &, height);
+  VIBES_FUNC_COLOR_PARAM_6(drawRaster, const std::string&, rasterFilename,
+                                       const double &,ulb, const double &, yub,
+                                       const double &,width, const double &, height, const double &, rot);
 
   /// @}
   /// @name Objects grouping and deletion
