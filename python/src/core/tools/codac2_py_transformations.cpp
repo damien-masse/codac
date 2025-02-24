@@ -11,6 +11,7 @@
 #include <sstream>
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/stl.h>
 #include <codac2_transformations.h>
 #include "codac2_py_transformations_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_doc.h"

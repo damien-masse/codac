@@ -11,6 +11,7 @@
 #include <sstream>
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
+#include <pybind11/stl.h>
 #include <codac2_Interval.h>
 #include <codac2_Vector.h>
 #include <codac2_IntervalVector.h>
