@@ -29,7 +29,7 @@ template<typename T>
 py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& class_name)
 {
   py::class_<SampledTraj<T>> exported_class(m, class_name.c_str(), SAMPLEDTRAJ_MAIN);
-  export_TrajBase<SampledTraj<T>>(exported_class);
+  export_TrajBase<SampledTraj<T>,T>(exported_class);
 
   exported_class
 

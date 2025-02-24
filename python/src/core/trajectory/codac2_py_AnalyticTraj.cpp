@@ -28,7 +28,7 @@ template<typename O>
 void _export_AnalyticTraj(py::module& m, const string& class_name)
 {
   py::class_<AnalyticTraj<O>> exported_class(m, class_name.c_str(), ANALYTICTRAJ_MAIN);
-  export_TrajBase<AnalyticTraj<O>>(exported_class);
+  export_TrajBase<AnalyticTraj<O>,typename O::Scalar>(exported_class);
 
   exported_class
 
