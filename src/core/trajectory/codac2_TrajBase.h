@@ -24,8 +24,6 @@ namespace codac2
   {
     public:
 
-      using TrajType = ValueType<T>::Type;
-
       TrajBase()
       { }
 
@@ -39,7 +37,7 @@ namespace codac2
 
       auto nan_value() const
       {
-        if constexpr(std::is_same_v<TrajType,ScalarType>)
+        if constexpr(std::is_same_v<T,double> || std::is_same_v<typename ValueType<T>::Type,ScalarType>)
           return std::numeric_limits<double>::quiet_NaN();
 
         else
@@ -63,6 +61,8 @@ namespace codac2
       template<typename Q>
       SampledTraj<T> sampled_as(const SampledTraj<Q>& x) const
       {
+        assert_release(x.tdomain().is_subset(this->tdomain()));
+        
         SampledTraj<T> straj;
         for(const auto& [ti,dump] : x)
           straj.set(ti, (*this)(ti));
@@ -95,6 +95,6 @@ namespace codac2
       }
 
       // Implementation in codac2_Trajectory_operator.h
-      AnalyticFunction<TrajType> as_function() const;
+      AnalyticFunction<typename ValueType<T>::Type> as_function() const;
   };
 }
