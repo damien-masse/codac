@@ -25,6 +25,7 @@ Welcome to the Codac website.
    manual/visualization/index.rst
    manual/tools/index.rst
    manual/extensions/index.rst
+   manual/seealso/index.rst
    
 ..   manual/ellipsoids/index.rst
    
@@ -47,7 +48,6 @@ Welcome to the Codac website.
 ..    cn/index.rst
 ..    geometry/index.rst
 ..    topology/index.rst
-..    seealso/index.rst
 ..    references/index.rst
 
 
