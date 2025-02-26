@@ -38,3 +38,13 @@ figcaption {
 h2 {
   font-size: 1.5em;
 }
+
+div[class^="highlight"] {
+  background: #eeffcc;
+  /*border: 1px solid #e1e4e5;*/
+}
+
+.sphinx-tabs-tab {
+  line-height: 6px;
+  border-radius: 0;
+}
