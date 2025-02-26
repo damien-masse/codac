@@ -129,3 +129,10 @@ Many properties have an associated getter :
 - scaled_unit() to get the scaling ratio from window to figure dimensions (type is double)
 
 For temporal objects (such as trajectories or tubes), it is possible to restrict the temporal frame to display by using the ``set_tdomain()`` method.
+
+VIBes only
+----------
+
+Some methods are exclusive to the real-time display with VIBes :
+
+- center_viewbox : takes two Vector as arguments, the center and radius of each axis
