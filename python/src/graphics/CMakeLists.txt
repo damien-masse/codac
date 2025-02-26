@@ -8,6 +8,7 @@
     codac2_py_graphics.cpp
 
     figures/codac2_py_Figure2D.cpp
+    figures/codac2_py_Figure3D.cpp
 
     paver/codac2_py_drawwhilepaving.cpp
 

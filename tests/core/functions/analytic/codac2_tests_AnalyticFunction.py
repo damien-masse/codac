@@ -296,5 +296,47 @@ class TestAnalyticFunction(unittest.TestCase):
     self.assertTrue(g.eval(EvalMode.CENTERED,a) == 20)
     self.assertTrue(g.eval(a) == 20)
 
+
+    # Sign, floor, ceil, min, max
+    x1 = ScalarVar()
+    x2 = ScalarVar()
+
+    f = AnalyticFunction([x1,x2], 2*max(x1,x2+1))
+    self.assertTrue(f.eval(0.,1.) == 4.)
+    self.assertTrue(f.eval(2.,1.) == 4.)
+    self.assertTrue(f.eval(3.,1.) == 6.)
+
+    f = AnalyticFunction([x1,x2], 2*min(x1,x2+1))
+    self.assertTrue(f.eval(0.,1.) == 0.)
+    self.assertTrue(f.eval(2.,1.) == 4.)
+    self.assertTrue(f.eval(3.,1.) == 4.)
+
+    f = AnalyticFunction([x1], 2*sign(x1+1))
+    self.assertTrue(f.eval(0.) == 2.)
+    self.assertTrue(sign(Interval.zero()) == Interval(-1,1))
+    self.assertTrue(sign(Interval(-0,0)) == Interval(-1,1))
+    self.assertTrue(f.eval(-1.) == Interval(-2,2))
+    self.assertTrue(f.eval(-2.) == -2.)
+
+    f = AnalyticFunction([x1], 2*floor(x1))
+    self.assertTrue(f.eval(0.) == 0.)
+    self.assertTrue(f.eval(1.5) == 2.)
+    self.assertTrue(f.eval(-1.5) == -4.)
+
+    f = AnalyticFunction([x1], 2*ceil(x1))
+    self.assertTrue(f.eval(0.) == 0.)
+    self.assertTrue(f.eval(1.5) == 4.)
+    self.assertTrue(f.eval(-1.5) == -2.)
+
+
+    # Issue #201
+    # Input argument is a py::list instead of a Vector
+    x1 = VectorVar(2)
+    f = AnalyticFunction([x1], 2.*x1)
+    self.assertTrue(f.eval([2,3]) == IntervalVector([[4],[6]]))
+    self.assertTrue(f.eval([[2,3],[4,5]]) == IntervalVector([[4,6],[8,10]]))
+
+
+
 if __name__ ==  '__main__':
   unittest.main()

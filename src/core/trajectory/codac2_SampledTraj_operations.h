@@ -54,21 +54,50 @@ namespace codac2
     return y; \
   } \
 
-  template<typename T>
-  inline T operator_add(const T& x1, const T& x2) { return x1 + x2; }
-  template<typename T>
-  inline T operator_sub(const T& x1, const T& x2) { return x1 - x2; }
-  template<typename T>
-  inline T operator_mul(const T& x1, const T& x2) { return x1 * x2; }
-  template<typename T>
-  inline T operator_mul_scal(double x1, const T& x2) { return x1 * x2; }
-  template<typename T>
-  inline T operator_mul_scal(const T& x1, double x2) { return x1 * x2; }
+  #define macro_member_binary_traj_traj(f) \
+  { \
+    assert_release(x1.nb_samples() == x2.nb_samples()); \
+    auto it_x1 = x1.begin(); \
+    auto it_x2 = x2.begin(); \
+    while(it_x1 != x1.end()) \
+    { \
+      assert_release(it_x1->first == it_x2->first \
+        && "inconsistent dates between the two trajectories"); \
+      it_x1->second = f(it_x1->second,it_x2->second); \
+      it_x1++; it_x2++; \
+    } \
+    return x1; \
+  } \
+
+  #define macro_member_binary_traj_real(f) \
+  { \
+    for(auto it_x1 = x1.begin() ; it_x1 != x1.end() ; it_x1++) \
+      it_x1->second = f(it_x1->second,x2); \
+    return x1; \
+  } \
+
+  template<typename T,typename X1,typename X2>
+  inline T operator_add(const X1& x1, const X2& x2) { return x1 + x2; }
+
+  template<typename T,typename X1,typename X2>
+  inline T operator_sub(const X1& x1, const X2& x2) { return x1 - x2; }
+
+  template<typename T,typename X1,typename X2>
+  inline T operator_mul(const X1& x1, const X2& x2) { return x1 * x2; }
+
+  template<typename T,typename X2>
+  inline T operator_mul_scal(double x1, const X2& x2) { return x1 * x2; }
+
+  template<typename T,typename X1>
+  inline T operator_mul_scal(const X1& x1, double x2) { return x1 * x2; }
+
   inline Matrix operator_mul_vec(const Matrix& x1, const Vector& x2) { return x1 * x2; }
-  template<typename T>
-  inline T operator_div(const T& x1, const T& x2) { return x1 / x2; }
-  template<typename T>
-  inline T operator_div_scal(const T& x1, double x2) { return x1 / x2; }
+
+  template<typename T,typename X1,typename X2>
+  inline T operator_div(const X1& x1, const X2& x2) { return x1 / x2; }
+
+  template<typename T,typename X1>
+  inline T operator_div_scal(const X1& x1, double x2) { return x1 / x2; }
 
   /** \brief \f$x1(\cdot)\f$
     * \param x1
@@ -86,25 +115,45 @@ namespace codac2
     */
   template<typename T>
   inline SampledTraj<T> operator+(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-    macro_binary_traj_traj(operator_add);
+    macro_binary_traj_traj(operator_add<T>);
 
   /** \brief \f$x_1(\cdot)+x_2\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-  inline SampledTraj<T> operator+(const SampledTraj<T>& x1, const T& x2)
-    macro_binary_traj_real(operator_add);
+  template<typename T,typename Q>
+  inline SampledTraj<T> operator+(const SampledTraj<T>& x1, const Q& x2)
+    macro_binary_traj_real(operator_add<T>);
 
   /** \brief \f$x+x_2(\cdot)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
+  template<typename T,typename Q>
+  inline SampledTraj<T> operator+(const Q& x1, const SampledTraj<T>& x2)
+    macro_binary_real_traj(operator_add<T>);
+
+  /**
+   * \brief Operates +=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T,typename Q>
+  inline SampledTraj<T>& operator+=(SampledTraj<T>& x1, const Q& x2)
+    macro_member_binary_traj_real(operator_add<T>);
+
+  /**
+   * \brief Operates +=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
   template<typename T>
-  inline SampledTraj<T> operator+(const T& x1, const SampledTraj<T>& x2)
-    macro_binary_real_traj(operator_add);
+  inline SampledTraj<T>& operator+=(SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_member_binary_traj_traj(operator_add<T>);
 
   /** \brief \f$-x_1(\cdot)\f$
     * \param x1
@@ -122,25 +171,45 @@ namespace codac2
     */
   template<typename T>
   inline SampledTraj<T> operator-(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-    macro_binary_traj_traj(operator_sub);
+    macro_binary_traj_traj(operator_sub<T>);
 
   /** \brief \f$x_1(\cdot)-x_2\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-  inline SampledTraj<T> operator-(const SampledTraj<T>& x1, const T& x2)
-    macro_binary_traj_real(operator_sub);
+  template<typename T,typename Q>
+  inline SampledTraj<T> operator-(const SampledTraj<T>& x1, const Q& x2)
+    macro_binary_traj_real(operator_sub<T>);
 
   /** \brief \f$x-x_2(\cdot)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
+  template<typename T,typename Q>
+  inline SampledTraj<T> operator-(const Q& x1, const SampledTraj<T>& x2)
+    macro_binary_real_traj(operator_sub<T>);
+
+  /**
+   * \brief Operates -=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T,typename Q>
+  inline SampledTraj<T>& operator-=(SampledTraj<T>& x1, const Q& x2)
+    macro_member_binary_traj_real(operator_sub<T>);
+
+  /**
+   * \brief Operates -=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
   template<typename T>
-  inline SampledTraj<T> operator-(const T& x1, const SampledTraj<T>& x2)
-    macro_binary_real_traj(operator_sub);
+  inline SampledTraj<T>& operator-=(SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_member_binary_traj_traj(operator_sub<T>);
 
   /** \brief \f$x_1\cdot x_2(\cdot)\f$
     * \param x1
@@ -150,7 +219,7 @@ namespace codac2
   template<typename T>
     requires (!std::is_same_v<T,double>)
   inline SampledTraj<T> operator*(double x1, const SampledTraj<T>& x2)
-    macro_binary_real_traj(operator_mul_scal);
+    macro_binary_real_traj(operator_mul_scal<T>);
 
   /** \brief \f$x_1(\cdot)\cdot x_2\f$
     * \param x1
@@ -160,7 +229,7 @@ namespace codac2
   template<typename T>
     requires (!std::is_same_v<T,double>)
   inline SampledTraj<T> operator*(const SampledTraj<T>& x1, double x2)
-    macro_binary_traj_real(operator_mul_scal);
+    macro_binary_traj_real(operator_mul_scal<T>);
 
   /** \brief \f$x_1(\cdot)\cdot x_2(\cdot)\f$
     * \param x1
@@ -169,25 +238,25 @@ namespace codac2
     */
   template<typename T>
   inline SampledTraj<T> operator*(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-    macro_binary_traj_traj(operator_mul);
+    macro_binary_traj_traj(operator_mul<T>);
 
   /** \brief \f$x_1(\cdot)\cdot x_2\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-  inline SampledTraj<T> operator*(const SampledTraj<T>& x1, const T& x2)
-    macro_binary_traj_real(operator_mul);
+  template<typename T,typename Q>
+  inline SampledTraj<T> operator*(const SampledTraj<T>& x1, const Q& x2)
+    macro_binary_traj_real(operator_mul<T>);
 
   /** \brief \f$x\cdot x_2(\cdot)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-  inline SampledTraj<T> operator*(const T& x1, const SampledTraj<T>& x2)
-    macro_binary_real_traj(operator_mul);
+  template<typename T,typename Q>
+  inline SampledTraj<T> operator*(const Q& x1, const SampledTraj<T>& x2)
+    macro_binary_real_traj(operator_mul<T>);
 
   /** \brief \f$x_1(\cdot)\cdot x_2\f$
     * \param x1
@@ -197,6 +266,26 @@ namespace codac2
   inline SampledTraj<Vector> operator*(const SampledTraj<Matrix>& x1, const SampledTraj<Vector>& x2)
     macro_binary_traj_traj(operator_mul_vec);
 
+  /**
+   * \brief Operates *=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T,typename Q>
+  inline SampledTraj<T>& operator*=(SampledTraj<T>& x1, const Q& x2)
+    macro_member_binary_traj_real(operator_mul<T>);
+
+  /**
+   * \brief Operates *=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T>
+  inline SampledTraj<T>& operator*=(SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_member_binary_traj_traj(operator_mul<T>);
+
   /** \brief \f$x_2(\cdot)/x_1\f$
     * \param x1
     * \param x2
@@ -205,7 +294,7 @@ namespace codac2
   template<typename T>
     requires (!std::is_same_v<T,double>)
   inline SampledTraj<T> operator/(const SampledTraj<T>& x1, double x2)
-    macro_binary_traj_real(operator_div_scal);
+    macro_binary_traj_real(operator_div_scal<T>);
 
   /** \brief \f$x_1(\cdot)/x_2(\cdot)\f$
     * \param x1
@@ -214,25 +303,45 @@ namespace codac2
     */
   template<typename T>
   inline SampledTraj<T> operator/(const SampledTraj<T>& x1, const SampledTraj<T>& x2)
-    macro_binary_traj_traj(operator_div);
+    macro_binary_traj_traj(operator_div<T>);
 
   /** \brief \f$x_1(\cdot)/x_2\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
-  template<typename T>
-  inline SampledTraj<T> operator/(const SampledTraj<T>& x1, const T& x2)
-    macro_binary_traj_real(operator_div);
+  template<typename T,typename Q>
+  inline SampledTraj<T> operator/(const SampledTraj<T>& x1, const Q& x2)
+    macro_binary_traj_real(operator_div<T>);
 
   /** \brief \f$x/x_2(\cdot)\f$
     * \param x1
     * \param x2
     * \return trajectory output
     */
+  template<typename T,typename Q>
+  inline SampledTraj<T> operator/(const Q& x1, const SampledTraj<T>& x2)
+    macro_binary_real_traj(operator_div<T>);
+
+  /**
+   * \brief Operates /=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
+  template<typename T,typename Q>
+  inline SampledTraj<T>& operator/=(SampledTraj<T>& x1, const Q& x2)
+    macro_member_binary_traj_real(operator_div<T>);
+
+  /**
+   * \brief Operates /=
+   * \param x1
+   * \param x2
+   * \return updated output
+   */
   template<typename T>
-  inline SampledTraj<T> operator/(const T& x1, const SampledTraj<T>& x2)
-    macro_binary_real_traj(operator_div);
+  inline SampledTraj<T>& operator/=(SampledTraj<T>& x1, const SampledTraj<T>& x2)
+    macro_member_binary_traj_traj(operator_div<T>);
 
   /** \brief \f$x^2(\cdot)\f$
     * \param x1

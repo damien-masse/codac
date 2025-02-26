@@ -11,7 +11,6 @@
 
 #include "codac2_Index.h"
 #include "codac2_ValueType.h"
-#include "codac2_AnalyticExprWrapper.h"
 
 namespace codac2
 {
@@ -29,17 +28,26 @@ namespace codac2
         return std::make_shared<ConstValueExpr<T>>(*this);
       }
 
-      T fwd_eval(ValuesMap& v, Index total_input_size) const
+      T fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
       {
-        return AnalyticExpr<T>::init_value(v, T(
-            // the mid is not considered for const values in centered form expression:
-            _x,
-            _x,
-            // the derivative of a const value is zero:
-            IntervalMatrix::zero(_x.size(),total_input_size),
-            // the definition domain is necesarily met at this point:
-            true
-          ));
+        if(natural_eval)
+          return AnalyticExpr<T>::init_value(v, T(
+              // the mid is not considered for const values in centered form expression:
+              _x,
+              // the definition domain is necesarily met at this point:
+              true
+            ));
+
+        else
+          return AnalyticExpr<T>::init_value(v, T(
+              // the mid is not considered for const values in centered form expression:
+              _x,
+              _x,
+              // the derivative of a const value is zero:
+              IntervalMatrix::zero(_x.size(),total_input_size),
+              // the definition domain is necesarily met at this point:
+              true
+            ));
       }
       
       void bwd_eval(ValuesMap& v) const
@@ -61,7 +69,7 @@ namespace codac2
   };
 
   template<typename T>
-  AnalyticExprWrapper<typename ValueType<T>::Type> const_value(const T& x)
+  inline AnalyticExprWrapper<typename ValueType<T>::Type> const_value(const T& x)
   {
     return { std::make_shared<ConstValueExpr<typename ValueType<T>::Type>>(x) };
   }

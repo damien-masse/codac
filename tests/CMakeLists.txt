@@ -34,7 +34,6 @@ list(APPEND SRC_TESTS # listing files without extension
   # Core
 
   core/3rd/codac2_tests_eigen
-  core/3rd/codac2_tests_ibex
 
   core/actions/codac2_tests_OctaSym
 
@@ -52,7 +51,6 @@ list(APPEND SRC_TESTS # listing files without extension
   core/domains/codac2_tests_BoolInterval
   core/domains/ellipsoid/codac2_tests_Ellipsoid
   core/domains/interval/codac2_tests_Interval
-  core/domains/interval/codac2_tests_Interval_bwd
   core/domains/interval/codac2_tests_Interval_operations
   core/domains/interval/codac2_tests_IntervalMatrix
   core/domains/interval/codac2_tests_IntervalVector
@@ -70,6 +68,8 @@ list(APPEND SRC_TESTS # listing files without extension
   core/matrices/codac2_tests_Vector
   core/matrices/codac2_tests_inversion
 
+  core/operators/codac2_tests_operators
+
   core/separators/codac2_tests_SepCartProd
   core/separators/codac2_tests_SepCtcBoundary
   core/separators/codac2_tests_SepInverse
@@ -78,6 +78,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/separators/codac2_tests_SepTransform
   
   core/tools/codac2_tests_Approx
+  core/tools/codac2_tests_transformations
   
   core/trajectory/codac2_tests_AnalyticTraj
   core/trajectory/codac2_tests_SampledTraj
@@ -90,10 +91,18 @@ set(CODAC_LIBRARIES ${PROJECT_NAME}-core)
 # CAPD test
 if (WITH_CAPD)
   list(APPEND SRC_TESTS
-    capd/codac2_tests_capd
+    extensions/capd/codac2_tests_capd
   )
   set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-capd capd::capd)
 endif()
+
+# IBEX test
+#if (WITH_IBEX)
+  list(APPEND SRC_TESTS
+    extensions/ibex/codac2_tests_ibex
+  )
+  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-ibex)
+#endif()
 
 foreach(SRC_TEST ${SRC_TESTS})
   string(REPLACE "/" "_" TEST_NAME ${SRC_TEST})

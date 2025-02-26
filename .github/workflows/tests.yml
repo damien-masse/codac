@@ -102,6 +102,13 @@ jobs:
         cd ../../
         
         python ../tests/core/domains/codac2_tests_BoolInterval.py
+
+        ./tests/codac2_tests_core_contractors_CtcInverse
+        ./tests/codac2_tests_core_contractors_CtcPolygon
+        ./tests/codac2_tests_core_contractors_linear_ctc
+        ./tests/codac2_tests_core_domains_ellipsoid_Ellipsoid
+        ./tests/codac2_tests_core_domains_interval_Interval
+
         make test
         python -m unittest discover codac.tests
 

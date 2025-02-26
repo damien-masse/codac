@@ -7,6 +7,7 @@
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
+#include <iostream>
 #include "codac2_GaussJordan.h"
 
 using namespace std;

@@ -15,9 +15,9 @@
 #include "codac2_analytic_variables.h"
 #include "codac2_FunctionBase.h"
 #include "codac2_template_tools.h"
-#include "codac2_analytic_operations.h"
 #include "codac2_AnalyticExprWrapper.h"
 #include "codac2_ScalarExprList.h"
+#include "codac2_operators.h"
 
 namespace codac2
 {
@@ -79,17 +79,17 @@ namespace codac2
       typename T::Domain eval(const EvalMode& m, const Args&... x) const
       {
         check_valid_inputs(x...);
-        auto x_ = eval_(x...);
 
         switch(m)
         {
           case EvalMode::NATURAL:
           {
-            return x_.a;
+            return eval_<true>(x...).a;
           }
 
           case EvalMode::CENTERED:
           {
+            auto x_ = eval_<false>(x...);
             auto flatten_x = cart_prod(x...);
             assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
             
@@ -102,6 +102,8 @@ namespace codac2
           case EvalMode::DEFAULT:
           default:
           {
+            auto x_ = eval_<false>(x...);
+
             if(x_.da.size() == 0) // if the centered form is not available for this expression
               return eval(EvalMode::NATURAL, x...);
 
@@ -130,7 +132,7 @@ namespace codac2
       auto diff(const Args&... x) const
       {
         check_valid_inputs(x...);
-        return eval_(x...).da;
+        return eval_<false>(x...).da;
       }
 
       Index output_size() const
@@ -140,10 +142,16 @@ namespace codac2
 
         else if constexpr(std::is_same_v<T,VectorType>)
         {
+          assert_release(this->args().size() == 1 && "unable (yet) to compute output size for multi-arg functions");
+
           // A dump evaluation is performed to estimate the dimension
           // of the image of this function. A natural evaluation is assumed
           // to be faster.
-          return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
+
+          if(dynamic_cast<ScalarVar*>(this->args()[0].get())) // if the argument is scalar
+            return eval(EvalMode::NATURAL, Interval()).size();
+          else
+            return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
         }
 
         else
@@ -209,18 +217,18 @@ namespace codac2
         (intersect_value_from_arg_map(v, x, i++), ...);
       }
 
-      template<typename... Args>
+      template<bool NATURAL_EVAL,typename... Args>
       auto eval_(const Args&... x) const
       {
         ValuesMap v;
 
         if constexpr(sizeof...(Args) == 0)
-          return this->expr()->fwd_eval(v, 0);
+          return this->expr()->fwd_eval(v, 0, NATURAL_EVAL);
 
         else
         {
           fill_from_args(v, x...);
-          return this->expr()->fwd_eval(v, cart_prod(x...).size()); // todo: improve size computation
+          return this->expr()->fwd_eval(v, cart_prod(x...).size(), NATURAL_EVAL); // todo: improve size computation
         }
       }
 

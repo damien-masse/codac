@@ -35,6 +35,10 @@ namespace codac2
 
     AnalyticType() = delete;
 
+    AnalyticType(const T& a_, bool def_domain_)
+      : a(a_), def_domain(def_domain_)
+    { }
+
     AnalyticType(const T& m_, const T& a_, const M& da_, bool def_domain_)
       : m(m_), a(a_), da(da_), def_domain(def_domain_)
     { }
@@ -51,4 +55,10 @@ namespace codac2
   using ScalarType = AnalyticType<double,Interval,IntervalMatrix>;
   using VectorType = AnalyticType<Vector,IntervalVector,IntervalMatrix>;
   using MatrixType = AnalyticType<Matrix,IntervalMatrix,IntervalMatrix>;
+
+  template<typename... T>
+  bool centered_form_not_available_for_args(const T&... a)
+  {
+    return ((a.da.size() == 0) || ...);
+  }
 }
