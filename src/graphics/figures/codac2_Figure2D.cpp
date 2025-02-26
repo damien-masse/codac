@@ -191,6 +191,8 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
   assert_release(tip_length >= 0.); // 0 = disabled tip
   for([[maybe_unused]] const auto& xi : x)
   {
+    if(!(this->size() <= xi.size()))
+      cout << this->size() << "  -  " << xi.size() << endl;
     assert_release(this->size() <= xi.size());
   }
 
@@ -274,12 +276,14 @@ void Figure2D::draw_ellipsoid(const Ellipsoid &e, const StyleProperties &s)
 void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s)
 {
   assert_release(this->size() <= x.size());
-  std::vector<Vector> values(x.nb_samples());
-  size_t i = 0;
+
+  std::vector<Vector> values;
   for(const auto& [ti,xi] : x)
     if(_tdomain.contains(ti))
-      values[i++] = xi;
-  draw_polyline(values,s);
+      values.push_back(xi);
+
+  if(values.size() > 1)
+    draw_polyline(values,s);
 }
 
 void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s)
@@ -303,6 +307,25 @@ void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cma
 void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), cmap);
+}
+
+void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s)
+{
+  std::vector<Vector> values;
+  for(const auto& [ti,xi] : x)
+    if(_tdomain.contains(ti))
+      values.push_back({ti,xi});
+
+  if(values.size() > 1)
+  {
+    draw_polyline(values,s);
+
+    _axes[0].limits = x.tdomain();
+    _axes[1].limits = x.codomain();
+
+    for(const auto& output_fig : _output_figures)
+      output_fig->update_axes();
+  }
 }
 
 void Figure2D::draw_tank(const Vector& x, float size, const StyleProperties& s)

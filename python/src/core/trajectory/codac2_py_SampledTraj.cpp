@@ -237,6 +237,10 @@ void export_SampledTraj(py::module& m)
 
   add_operators<double>(py_SampledTraj_double);
 
+  m.def("continuous_traj", &continuous_traj,
+    SAMPLEDTRAJ_DOUBLE_CONTINUOUS_TRAJ_CONST_SAMPLEDTRAJ_DOUBLE_REF,
+    "x"_a);
+
   py_SampledTraj_double
 
     .def(py::self * py::self,
