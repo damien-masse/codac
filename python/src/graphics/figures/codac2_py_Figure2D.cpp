@@ -1,5 +1,5 @@
 /** 
- *  Codac binding (core)
+ *  Codac binding (graphics)
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou, Maël Godard
@@ -89,11 +89,17 @@ void export_Figure2D(py::module& m)
     .def("scaled_unit", &Figure2D::scaled_unit,
       DOUBLE_FIGURE2D_SCALED_UNIT_CONST)
   
+    .def("auto_scale", &Figure2D::auto_scale,
+      VOID_FIGURE2D_AUTO_SCALE)
+  
     .def("is_default", &Figure2D::is_default,
       BOOL_FIGURE2D_IS_DEFAULT_CONST)
   
     .def("set_as_default", &Figure2D::set_as_default,
       VOID_FIGURE2D_SET_AS_DEFAULT)
+  
+    .def("set_tdomain", &Figure2D::set_tdomain,
+      VOID_FIGURE2D_SET_TDOMAIN_CONST_INTERVAL_REF)
 
     // Geometric shapes
 

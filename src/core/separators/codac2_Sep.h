@@ -22,8 +22,8 @@ namespace codac2
         : _bp { x._bp }
       { }
 
-      BoxPair(const IntervalVector& inner, const IntervalVector& outer)
-        : _bp { inner, outer }
+      BoxPair(const IntervalVector& inner_, const IntervalVector& outer_)
+        : _bp { inner_, outer_ }
       { }
 
       BoxPair& operator=(const BoxPair& x)

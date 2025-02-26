@@ -1,5 +1,5 @@
 /** 
- *  Codac binding (core)
+ *  Codac binding (graphics)
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou, Maël Godard
@@ -26,6 +26,16 @@ void export_ColorMap(py::module& m)
     .def(py::init<Model>(),
         COLORMAP_COLORMAP_MODEL,
         "m"_a=Model::RGB)
+
+    .def("__getitem__", [](const ColorMap& x, float r) -> const Color&
+        {
+          return x.at(r);
+        }, py::return_value_policy::reference_internal)
+
+    .def("__setitem__", [](ColorMap& x, float r, const Color& c)
+        {
+          x[r] = c;
+        })
 
     .def("model", &ColorMap::model,
         CONST_MODEL_REF_COLORMAP_MODEL_CONST)

@@ -16,6 +16,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_Figure2DInterface.h
     ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_OutputFigure2D.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_OutputFigure2D.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_Figure3D.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_Figure3D.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_drawwhilepaving.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_drawwhilepaving.h
@@ -45,7 +47,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/paver
     ${CMAKE_CURRENT_SOURCE_DIR}/styles
   )
-  target_link_libraries(${PROJECT_NAME}-graphics PUBLIC ${PROJECT_NAME}-core Ibex::ibex Eigen3::Eigen)
+  target_link_libraries(${PROJECT_NAME}-graphics PUBLIC ${PROJECT_NAME}-core Ibex::ibex Eigen3::Eigen ${PROJECT_NAME}-core)
   
 
 ################################################################################

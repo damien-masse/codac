@@ -12,14 +12,13 @@
 #include "codac2_AnalyticExpr.h"
 #include "codac2_ValueType.h"
 #include "codac2_analytic_variables.h"
+#include "codac2_component.h"
+#include "codac2_analytic_constants.h"
 
 namespace codac2
 {
-  template<typename T>
-  struct AnalyticExprWrapper;
-
-  template<typename T>
-  AnalyticExprWrapper<typename ValueType<T>::Type> const_value(const T& x);
+  class ScalarVar;
+  class VectorVar;
 
   template<typename T>
   struct AnalyticExprWrapper : public std::shared_ptr<AnalyticExpr<T>>

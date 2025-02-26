@@ -15,8 +15,11 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include "codac2_AnalyticExprWrapper.h"
-#include "codac2_analytic_operations.h"
 #include "codac2_py_matlab.h"
+#include "codac2_arith_add.h"
+#include "codac2_arith_sub.h"
+#include "codac2_arith_mul.h"
+#include "codac2_arith_div.h"
 #include "codac2_py_AnalyticExprWrapper_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 
 using namespace codac2;

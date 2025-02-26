@@ -55,6 +55,9 @@ void export_ScalarVar(py::module& m)
     .def("__truediv__",  [](const ScalarVar& e1, const ScalarExpr& e2) { return e1 / e2; }, py::is_operator())
     .def("__truediv__",  [](const ScalarVar& e1, const Interval& e2)   { return e1 / e2; }, py::is_operator())
     .def("__rtruediv__", [](const ScalarVar& e1, const Interval& e2)   { return e2 / e1; }, py::is_operator())
+    .def("__rtruediv__", [](const ScalarVar& e1, const IntervalVector& e2) { return e2 / e1; }, py::is_operator())
+    .def("__rtruediv__", [](const ScalarVar& e1, const VectorVar& e2)  { return e2 / e1; }, py::is_operator())
+    .def("__rtruediv__", [](const ScalarVar& e1, const VectorExpr& e2) { return e2 / e1; }, py::is_operator())
   ;
 
   py::implicitly_convertible<ScalarVar,ScalarExpr>();
@@ -120,6 +123,15 @@ void export_VectorVar(py::module& m)
     .def("__sub__",  [](const VectorVar& e1, const VectorExpr& e2)     { return e1 - e2; }, py::is_operator())
     .def("__sub__",  [](const VectorVar& e1, const IntervalVector& e2) { return e1 - e2; }, py::is_operator())
     .def("__rsub__", [](const VectorVar& e1, const IntervalVector& e2) { return e2 - e1; }, py::is_operator())
+    .def("__mul__",  [](const VectorVar& e1, const Interval& e2)       { return e1 * e2; }, py::is_operator())
+    .def("__mul__",  [](const VectorVar& e1, const ScalarVar& e2)      { return e1 * e2; }, py::is_operator())
+    .def("__mul__",  [](const VectorVar& e1, const ScalarExpr& e2)     { return e1 * e2; }, py::is_operator())
+    .def("__rmul__", [](const VectorVar& e1, const Interval& e2)       { return e2 * e1; }, py::is_operator())
+    .def("__rmul__", [](const VectorVar& e1, const ScalarVar& e2)      { return e2 * e1; }, py::is_operator())
+    .def("__rmul__", [](const VectorVar& e1, const ScalarExpr& e2)     { return e2 * e1; }, py::is_operator())
+    .def("__truediv__", [](const VectorVar& e1, const ScalarVar& e2)   { return e1 / e2; }, py::is_operator())
+    .def("__truediv__", [](const VectorVar& e1, const ScalarExpr& e2)  { return e1 / e2; }, py::is_operator())
+    .def("__truediv__", [](const VectorVar& e1, const Interval& e2)    { return e1 / e2; }, py::is_operator())
   ;
   
   py::implicitly_convertible<VectorVar,VectorExpr>();

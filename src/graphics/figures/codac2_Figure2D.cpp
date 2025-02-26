@@ -2,11 +2,7 @@
  *  codac2_Figure2D.cpp
  * ----------------------------------------------------------------------------
  *  \date       2024
-<<<<<<< HEAD
- *  \author     Simon Rohou, Morgan Louédec
-=======
- *  \author     Simon Rohou, Maël Godard
->>>>>>> codac2_dev
+ *  \author     Simon Rohou, Maël Godard, Morgan Louédec
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -103,6 +99,17 @@ double Figure2D::scaled_unit() const
   return std::max(_axes[0].limits.diam(),_axes[1].limits.diam()) / _window_size.max_coeff();
 }
 
+void Figure2D::auto_scale()
+{
+  Vector w = this->window_size();
+  if(_axes[0].limits.diam() > _axes[1].limits.diam())
+    w[1] *= _axes[1].limits.diam()/_axes[0].limits.diam();
+  else
+    w[0] *= _axes[0].limits.diam()/_axes[1].limits.diam();
+
+  this->set_window_properties(this->pos(), w);
+}
+
 bool Figure2D::is_default() const
 {
   return DefaultView::_selected_fig == this->weak_from_this().lock();
@@ -111,6 +118,11 @@ bool Figure2D::is_default() const
 void Figure2D::set_as_default()
 {
   DefaultView::set(this->shared_from_this());
+}
+
+void Figure2D::set_tdomain(const Interval& tdomain)
+{
+  _tdomain = tdomain;
 }
 
 void Figure2D::draw_point(const Vector& c, const StyleProperties& s)
@@ -265,7 +277,8 @@ void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const StyleProperti
   std::vector<Vector> values(x.nb_samples());
   size_t i = 0;
   for(const auto& [ti,xi] : x)
-    values[i++] = xi;
+    if(_tdomain.contains(ti))
+      values[i++] = xi;
   draw_polyline(values,s);
 }
 
@@ -281,11 +294,10 @@ void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cma
   double range = x.tdomain().diam();
 
   for(auto it = x.begin(); std::next(it) != x.end(); ++it)
-  {
-    draw_polyline(
-      { it->second, std::next(it)->second },
-      cmap.color((it->first - x.begin()->first) / range));
-  }
+    if(_tdomain.contains(it->first))
+      draw_polyline(
+        { it->second, std::next(it)->second },
+        cmap.color((it->first - x.begin()->first) / range));
 }
 
 void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap)
