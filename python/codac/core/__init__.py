@@ -159,54 +159,98 @@ class Approx:
 
 
 def cart_prod(*args):
-  # -1: to be defined, 0: domains, 1: ctc, 2: sep
+  # -1: to be defined, 0: vector, 1: intervalvector, 2: ctc, 3: sep
   lst=[]
   mode = -1
 
-  mode_str = {}
-  mode_str[-2] = "error"
-  mode_str[-1] = "undefined"
-  mode_str[0] = "domain"
-  mode_str[1] = "contractor"
-  mode_str[2] = "separator"
+  for arg in args:
+
+    if isinstance(arg, (int,float,Vector)):
+      if mode == -1:
+        mode = 0
+
+    elif isinstance(arg, (list,Interval,IntervalVector)):
+      if mode != 2 and mode != 3:
+        mode = 1
+
+    elif isinstance(arg, Ctc):
+      mode = 2
+
+    elif isinstance(arg, (Sep,SepBase)):
+      mode = 3
+
+    else:
+      codac_error("cart_prod: invalid input arguments (a/" + str(mode) + ")")
 
   for arg in args:
 
-    if isinstance(arg, (float,Interval)):
-      if mode != -1 and mode != 0:
-        codac_error("cart_prod: invalid input arguments, was expecting a " + mode_str[mode] + ", got a scalar domain")
-      mode = 0
-      lst.append(IntervalVector([Interval(arg)]))
+    if isinstance(arg, (int,float)):
+      if mode == 0:
+        lst.append(Vector([arg]))
+      elif mode == 1:
+        lst.append(IntervalVector(Vector([arg])))
+      elif mode == 2:
+        lst.append(CtcWrapper(IntervalVector([arg])))
+      elif mode == 3:
+        lst.append(SepWrapper(IntervalVector([arg])))
+      else:
+        codac_error("cart_prod: invalid input arguments (b/" + str(mode) + ")")
 
-    elif isinstance(arg, (list,Vector,IntervalVector)):
-      if mode != -1 and mode != 0:
-        codac_error("cart_prod: invalid input arguments, was expecting a " + mode_str[mode] + ", got a vector domain")
-      mode = 0
-      lst.append(IntervalVector(arg))
+    elif isinstance(arg, (Vector)):
+      if mode == 0:
+        lst.append(arg)
+      elif mode == 1:
+        lst.append(IntervalVector(arg))
+      elif mode == 2:
+        lst.append(CtcWrapper(IntervalVector(arg)))
+      elif mode == 3:
+        lst.append(SepWrapper(IntervalVector(arg)))
+      else:
+        codac_error("cart_prod: invalid input arguments (c/" + str(mode) + ")")
+
+    elif isinstance(arg, (Interval)):
+      if mode == 1:
+        lst.append(IntervalVector([arg]))
+      elif mode == 2:
+        lst.append(CtcWrapper(IntervalVector([arg])))
+      elif mode == 3:
+        lst.append(SepWrapper(IntervalVector([arg])))
+      else:
+        codac_error("cart_prod: invalid input arguments (d/" + str(mode) + ")")
+
+    elif isinstance(arg, (list,IntervalVector)):
+      if mode == 1:
+        lst.append(IntervalVector(arg))
+      elif mode == 2:
+        lst.append(CtcWrapper(IntervalVector(arg)))
+      elif mode == 3:
+        lst.append(SepWrapper(IntervalVector(arg)))
+      else:
+        codac_error("cart_prod: invalid input arguments (e/" + str(mode) + ")")
 
     elif isinstance(arg, Ctc):
-      if mode != -1 and mode != 1:
-        codac_error("cart_prod: invalid input arguments, was expecting a " + mode_str[mode] + ", got a contractor")
-      mode = 1
+      if mode != 2:
+        codac_error("cart_prod: invalid input arguments (f/" + str(mode) + ")")
       lst.append(arg)
 
     elif isinstance(arg, (Sep,SepBase)):
-      if mode != -1 and mode != 2:
-        codac_error("cart_prod: invalid input arguments, was expecting a " + mode_str[mode] + ", got a separator")
-      mode = 2
+      if mode != 3:
+        codac_error("cart_prod: invalid input arguments (g/" + str(mode) + ")")
       lst.append(arg)
 
     else:
       mode = -2 # will generate an error
 
   if mode == 0:
-    return cart_prod_boxes(lst)
+    return cart_prod_vector(lst)
   elif mode == 1:
-    return cart_prod_ctc(lst)
+    return cart_prod_intervalvector(lst)
   elif mode == 2:
+    return cart_prod_ctc(lst)
+  elif mode == 3:
     return cart_prod_sep(lst)
   else:
-    codac_error("cart_prod: invalid input arguments")
+    codac_error("cart_prod: invalid input arguments (h/" + str(mode) + ")")
 
 
 class AnalyticTraj:

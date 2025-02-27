@@ -143,6 +143,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/MatrixBase_addons/codac2_MatrixBase_addons_Vector.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/MatrixBase_addons/codac2_MatrixBase_addons_VectorBase.h
     
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_cart_prod.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_GaussJordan.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_GaussJordan.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_inversion.cpp
@@ -195,6 +196,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_template_tools.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_transformations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_transformations.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_TypeInfo.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTraj.h
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj.h

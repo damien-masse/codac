@@ -73,6 +73,7 @@ void export_geometry(py::module& m);
 void export_Polygon(py::module& m);
 
 // matrices
+void export_cart_prod(py::module& m);
 void export_arithmetic_add(
   py::class_<Vector>& py_V, py::class_<IntervalVector>& py_IV,
   py::class_<Matrix>& py_M, py::class_<IntervalMatrix>& py_IM,
@@ -160,6 +161,7 @@ PYBIND11_MODULE(_core, m)
   export_linear_ctc(m);
 
   // matrices
+  export_cart_prod(m);
   py::class_<Row> exported_row_class(m, "Row", DOC_TO_BE_DEFINED);
   auto py_V = export_Vector(m);
   auto py_M = export_Matrix(m);

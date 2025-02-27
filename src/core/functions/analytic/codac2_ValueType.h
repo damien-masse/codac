@@ -22,21 +22,12 @@ namespace codac2
   struct ValueType
   { };
 
-  template<>
-  struct ValueType<int> {
+  template<typename T>
+    requires (std::is_arithmetic_v<T>)
+  struct ValueType<T> {
     using Type = ScalarType;
   };
-
-  template<>
-  struct ValueType<Index> {
-    using Type = ScalarType;
-  };
-
-  template<>
-  struct ValueType<double> {
-    using Type = ScalarType;
-  };
-
+  
   template<>
   struct ValueType<Interval> {
     using Type = ScalarType;

@@ -13,7 +13,6 @@
 #include "codac2_Sep.h"
 #include "codac2_Collection.h"
 #include "codac2_SepWrapper.h"
-#include "codac2_template_tools.h"
 
 namespace codac2
 {

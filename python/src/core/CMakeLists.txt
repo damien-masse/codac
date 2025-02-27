@@ -55,6 +55,7 @@
     geometry/codac2_py_geometry.cpp
     geometry/codac2_py_Polygon.cpp
 
+    matrices/codac2_py_cart_prod.cpp
     matrices/codac2_py_arithmetic_add.cpp
     matrices/codac2_py_arithmetic_sub.cpp
     matrices/codac2_py_arithmetic_mul.cpp

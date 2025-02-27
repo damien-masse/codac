@@ -15,7 +15,6 @@
 #include "codac2_AnalyticFunction.h"
 #include "codac2_CtcWrapper.h"
 #include "codac2_CtcInverse.h"
-#include "codac2_template_tools.h"
 
 namespace codac2
 {

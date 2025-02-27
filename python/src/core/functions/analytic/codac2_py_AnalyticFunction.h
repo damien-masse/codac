@@ -14,8 +14,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
-#include <codac2_analytic_variables.h>
 #include <codac2_AnalyticFunction.h>
+#include <codac2_analytic_variables.h>
 #include "codac2_py_AnalyticFunction_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_AnalyticFunction_impl_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_FunctionBase_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
