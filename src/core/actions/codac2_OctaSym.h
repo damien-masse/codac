@@ -13,7 +13,6 @@
 #include "codac2_matrices.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_CtcWrapper.h"
-#include "codac2_template_tools.h"
 
 namespace codac2
 {
@@ -63,7 +62,7 @@ namespace codac2
       // -> is defined in CtcAction class
 
       template<typename S>
-        requires IsSepBaseOrPtr<S>
+        requires is_sep_v<S>
       SepAction operator()(const S& s) const;
       // -> is defined in SepAction class
 

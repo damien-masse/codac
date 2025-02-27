@@ -181,6 +181,10 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
       "x"_a, "cmap"_a)
 
+    .def("plot_trajectory", (void(Figure2D::*)(const SampledTraj<double>&,const StyleProperties&))&Figure2D::plot_trajectory,
+      VOID_FIGURE2D_PLOT_TRAJECTORY_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
+
     // Robots
 
     .def("draw_tank", &Figure2D::draw_tank,

@@ -246,4 +246,28 @@ namespace codac2
     os << "SampledTraj. " << x.tdomain() << "↦" << x.codomain() << ", " << x.nb_samples() << " pts";
     return os;
   }
+
+  inline SampledTraj<double> continuous_traj(const SampledTraj<double>& x)
+  {
+    SampledTraj<double> x_continuous;
+    const Interval periodicity = x.codomain();
+
+    double prev_xi = 0., value_mod = 0.;
+
+    for(const auto& [ti,xi] : x)
+    {
+      if(!x_continuous.empty())
+      {
+        if(prev_xi - xi > periodicity.diam()*0.9)
+          value_mod += periodicity.diam();
+        else if(prev_xi - xi < -periodicity.diam()*0.9)
+          value_mod -= periodicity.diam();
+      }
+
+      prev_xi = xi;
+      x_continuous.set(ti, xi+value_mod);
+    }
+
+    return x_continuous;
+  }
 }

@@ -105,6 +105,7 @@ namespace codac2
       void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s = StyleProperties());
       void draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap);
       void draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap);
+      void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties());
 
       // Robots
       void draw_tank(const Vector& x, float size, const StyleProperties& s = StyleProperties());
@@ -261,6 +262,12 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_trajectory(x,cmap);
+      }
+
+      static void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->plot_trajectory(x,s);
       }
 
       // Robots

@@ -3,7 +3,7 @@
 Affine transformation estimation
 ================================
 
-The ``affine_transformation()`` functions allow to compute the affine transformation (translation, rotation, scaling) that best aligns a set of 2d points ``src`` with another set ``dst``. This transformation is obtained using Singular Value Decomposition (SVD).
+The ``affine_transformation()`` functions allow to compute the affine transformation (translation, rotation, scaling) that best aligns an ordered set of 2d points ``src`` with another set ``dst``. This transformation is obtained using Singular Value Decomposition (SVD).
 Please note that these functions do not employ any guaranteed calculation, and the result is only an approximation that can be used for certain applications such as robotics.
 
 The output is an ``Affine2d`` object from the `Eigen library <https://eigen.tuxfamily.org/>`_, fully available in C++. However, the Python binding of this class is only partial.
@@ -20,7 +20,7 @@ Constraints and Limitations
 Usage
 -----
 
-Inputs ``src`` and ``dst`` can be provided either as a list of 2d points, or with sampled trajectories.
+Inputs ``src`` and ``dst`` can be provided either as a list of 2d points, or with sampled trajectories. The ordering of the points in these lists matters: every i-th point in the first list must correspond to the i-th point in the other.
 
 .. tabs::
   

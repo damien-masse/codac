@@ -16,7 +16,6 @@
 #include "codac2_CtcInverseNotIn.h"
 #include "codac2_CtcInnerOuter.h"
 #include "codac2_SepCtcPair.h"
-#include "codac2_template_tools.h"
 
 namespace codac2
 {
