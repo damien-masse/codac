@@ -93,9 +93,12 @@ class CtcInverse(Ctc):
         codac_error("CtcInverse: inverse argument 'y' should be a scalar type (float,Interval)")
       self.c = CtcInverse_Interval(f.f,Interval(y),with_centered_form)
     elif isinstance(f.f, AnalyticFunction_Vector):
-      if not isinstance(y, (Vector,IntervalVector,list)):
-        codac_error("CtcInverse: inverse argument 'y' should be a vector type (Vector,IntervalVector)")
-      self.c = CtcInverse_IntervalVector(f.f,IntervalVector(y),with_centered_form)
+      if not isinstance(y, (Vector,IntervalVector,list,CtcIntervalVector)):
+        codac_error("CtcInverse: inverse argument 'y' should be a vector type (Vector,IntervalVector,CtcIntervalVector)")
+      if isinstance(y, CtcIntervalVector):
+        self.c = CtcInverse_IntervalVector(f,y,with_centered_form)
+      else:
+        self.c = CtcInverse_IntervalVector(f.f,IntervalVector(y),with_centered_form)
     else:
       codac_error("CtcInverse: can only build CtcInverse from scalar or vector functions")
 

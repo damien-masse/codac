@@ -13,6 +13,7 @@
 #include <codac2_Approx.h>
 #include <codac2_pave.h>
 #include <codac2_Subpaving.h>
+#include <codac2_CtcWrapper.h>
 
 using namespace std;
 using namespace codac2;
@@ -165,6 +166,42 @@ TEST_CASE("CtcInverse")
       c.contract(b);
       CHECK(b == IntervalVector::empty(2));
       //DefaultView::draw_box(b,Color::blue());
+    }
+  }
+  
+  {
+    VectorVar x(2);
+    AnalyticFunction f { {x}, vec(x[0],sqr(x[0]/7.)+sqr(x[1]/3.)) };
+    CtcInverse_<IntervalVector> c(f, CtcWrapper_<IntervalVector>({{0,oo},{1}}));
+
+    {
+      IntervalVector b({{0,0.8},{-2.28,-1.56}});
+      c.contract(b);
+      CHECK(b == IntervalVector::empty(2));
+    }
+
+    {
+      IntervalVector b({{4,5.4},{-0.05,2.45}});
+      c.contract(b);
+      CHECK(Approx(b,1e-2) == IntervalVector({{4.0397,5.40},{1.9089,2.45}}));
+    }
+
+    {
+      IntervalVector b({{6.25,6.7},{0.9,1.85}});
+      c.contract(b);
+      CHECK(Approx(b,1e-2) == IntervalVector({{6.25,6.67},{0.9,1.351}}));
+    }
+
+    {
+      IntervalVector b({{-6,-5},{0,2}});
+      c.contract(b);
+      CHECK(b == IntervalVector::empty(2));
+    }
+
+    {
+      IntervalVector b({{2,3},{-1,1}});
+      c.contract(b);
+      CHECK(b == IntervalVector::empty(2));
     }
   }
 }

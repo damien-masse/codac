@@ -15,9 +15,7 @@ namespace codac2
 {
   inline IntervalVector to_IntervalVector(const Interval& x)
   {
-    IntervalVector a(1);
-    a[0] = x;
-    return a;
+    return { x };
   }
 
   inline IntervalVector to_IntervalVector(const IntervalVector& x)
