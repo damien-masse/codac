@@ -30,12 +30,19 @@ void export_CtcInverse(py::module& m, const std::string& export_name, py::class_
       "f"_a, "y"_a, "with_centered_form"_a = true,
       CTCINVERSE_Y_CTCINVERSE_CONST_ANALYTICFUNCTION_TYPENAME_VALUETYPE_Y_TYPE_REF_CONST_Y_REF_BOOL_BOOL);
 
-  if constexpr(std::is_same_v<T,VectorType>) // separators only associated with interval vectors
+  if constexpr(std::is_same_v<T,VectorType>) // contractors only associated with interval vectors
   {
     exported
-    .def(py::init<const AnalyticFunction<T>&, const pyCtcIntervalVector&, bool>(),
-      "f"_a, "c"_a, "with_centered_form"_a = true,
-      CTCINVERSE_Y_CTCINVERSE_CONST_ANALYTICFUNCTION_TYPENAME_VALUETYPE_Y_TYPE_REF_CONST_C_REF_BOOL_BOOL);
+    .def(py::init(
+        [](const py::object& f, const CtcBase<IntervalVector>& c, bool with_centered_form)
+        {
+          return std::make_unique<CtcInverse_<D>>(
+            cast<AnalyticFunction<T>>(f),
+            c.copy(), with_centered_form);
+        }
+      ),
+      CTCINVERSE_Y_CTCINVERSE_CONST_ANALYTICFUNCTION_TYPENAME_VALUETYPE_Y_TYPE_REF_CONST_C_REF_BOOL_BOOL,
+      "f"_a, "c"_a, "with_centered_form"_a = true);
   }
 
   exported
