@@ -107,6 +107,9 @@ inline FunctionArgsList create_FunctionArgsList(const std::vector<py::object>& l
     else if(py::isinstance<VectorVar>(li))
       args.push_back(li.cast<VectorVar>().arg_copy());
 
+    else if(py::isinstance<MatrixVar>(li))
+      args.push_back(li.cast<MatrixVar>().arg_copy());
+
     else
       throw std::invalid_argument("Argument " + std::to_string(i) + " is invalid. Only variables are accepted.");
   }

@@ -344,8 +344,15 @@ class TestAnalyticFunction(unittest.TestCase):
 
     I = Matrix([[1,0],[0,1]])
     x = VectorVar(2)
-    f = AnalyticFunction([x], I*I*(x+x))
+    f = AnalyticFunction([x], I*I*x)
     self.assertTrue(f.eval(IntervalVector([[-1,1],[2,3]])) == IntervalVector([[-1,1],[2,3]]))
+
+    A = MatrixVar(2,2)
+    x = VectorVar(2)
+    h = AnalyticFunction([A], A*A)
+    f = AnalyticFunction([x,A], h(A)*x)
+    g = AnalyticFunction([x], f(x,Matrix([[0,2],[-1,0]])))
+    self.assertTrue(g.eval(IntervalVector([[-1,1],[2,3]])) == IntervalVector([[-2,2],[-6,-4]]))
 
 
 if __name__ ==  '__main__':

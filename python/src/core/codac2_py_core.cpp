@@ -66,6 +66,7 @@ void export_Subpaving(py::module& m);
 // functions
 void export_ScalarVar(py::module& m);
 void export_VectorVar(py::module& m);
+void export_MatrixVar(py::module& m);
 
 // geometry
 void export_Edge(py::module& m);
@@ -202,10 +203,13 @@ PYBIND11_MODULE(_core, m)
 
   export_ScalarExpr(m);
   export_VectorExpr(m);
+  export_MatrixExpr(m);
   export_AnalyticFunction<ScalarType>(m,"AnalyticFunction_Scalar");
   export_AnalyticFunction<VectorType>(m,"AnalyticFunction_Vector");
+  export_AnalyticFunction<MatrixType>(m,"AnalyticFunction_Matrix");
   export_ScalarVar(m);
   export_VectorVar(m);
+  export_MatrixVar(m);
 
   // geometry
   export_Edge(m);
