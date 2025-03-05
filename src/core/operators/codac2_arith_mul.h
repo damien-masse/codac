@@ -47,6 +47,11 @@ namespace codac2
     static VectorType fwd_natural(const MatrixType& x1, const VectorType& x2);
     static VectorType fwd_centered(const MatrixType& x1, const VectorType& x2);
     static void bwd(const IntervalVector& y, IntervalMatrix& x1, IntervalVector& x2);
+
+    static IntervalMatrix fwd(const IntervalMatrix& x1, const IntervalMatrix& x2);
+    static MatrixType fwd_natural(const MatrixType& x1, const MatrixType& x2);
+    static MatrixType fwd_centered(const MatrixType& x1, const MatrixType& x2);
+    static void bwd(const IntervalMatrix& y, IntervalMatrix& x1, IntervalMatrix& x2);
   };
 
   // operator*
@@ -74,6 +79,12 @@ namespace codac2
   operator*(const MatrixExpr& x1, const VectorExpr& x2)
   {
     return { std::make_shared<AnalyticOperationExpr<MulOp,VectorType,MatrixType,VectorType>>(x1,x2) };
+  }
+
+  inline MatrixExpr
+  operator*(const MatrixExpr& x1, const MatrixExpr& x2)
+  {
+    return { std::make_shared<AnalyticOperationExpr<MulOp,MatrixType,MatrixType,MatrixType>>(x1,x2) };
   }
 
   // Inline functions
@@ -310,5 +321,40 @@ namespace codac2
         }
       }
     }
+  }
+
+  inline IntervalMatrix MulOp::fwd(const IntervalMatrix& x1, const IntervalMatrix& x2)
+  {
+    assert(x1.cols() == x2.rows());
+    return x1 * x2;
+  }
+
+  inline MatrixType MulOp::fwd_natural(const MatrixType& x1, const MatrixType& x2)
+  {
+    return {
+      fwd(x1.a, x2.a),
+      x1.def_domain && x2.def_domain
+    };
+  }
+
+  inline MatrixType MulOp::fwd_centered(const MatrixType& x1, const MatrixType& x2)
+  {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+    
+    return {
+      fwd(x1.a, /* <<----- x1.m */ x2.m),
+      fwd(x1.a, x2.a),
+      IntervalMatrix::zero(0,0), // todo
+      x1.def_domain && x2.def_domain
+    };
+  }
+
+  inline void MulOp::bwd(const IntervalMatrix& y, IntervalMatrix& x1, IntervalMatrix& x2)
+  {
+    assert(x1.rows() == x2.cols());
+    assert(y.rows() == x1.rows() && y.cols() == x2.cols());
+
+    // todo
   }
 }
