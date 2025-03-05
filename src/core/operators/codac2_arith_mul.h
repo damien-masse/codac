@@ -243,7 +243,7 @@ namespace codac2
     return {
       fwd(x1.a, /* <<----- x1.m */ x2.m),
       fwd(x1.a, x2.a),
-      IntervalMatrix::zero(x1.a.rows(),x1.a.cols()), // todo
+      IntervalMatrix::zero(0,0), // todo
       x1.def_domain && x2.def_domain
     };
   }
