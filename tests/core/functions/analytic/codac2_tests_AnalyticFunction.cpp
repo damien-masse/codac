@@ -381,4 +381,20 @@ TEST_CASE("AnalyticFunction")
     AnalyticFunction f({x1}, 2.*x1);
     // assumed to not be possible in C++: CHECK(f.eval({2,3}) == IntervalVector({{4},{6}}));
   }
+
+  {
+    {
+      Matrix I({{0,2},{-1,0}});
+      VectorVar x(2);
+      AnalyticFunction f({x}, I*x);
+      CHECK(f.eval(IntervalVector({{0,1},{2,3}})) == IntervalVector({{4,6},{-1,0}}));
+    }
+
+    {
+      Matrix I({{1,0},{0,1}});
+      VectorVar x(2);
+      AnalyticFunction f({x}, I*I*x);
+      CHECK(f.eval(IntervalVector({{-1,1},{2,3}})) == IntervalVector({{-1,1},{2,3}}));
+    }
+  }
 }

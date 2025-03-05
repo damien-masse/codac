@@ -52,4 +52,16 @@ namespace codac2
   struct ValueType<IntervalMatrix> {
     using Type = MatrixType;
   };
+
+  template<typename T>
+    requires (T::RowsAtCompileTime!=1 && T::ColsAtCompileTime==1)
+  struct ValueType<T> {
+    using Type = VectorType;
+  };
+
+  template<typename T>
+    requires (T::RowsAtCompileTime!=1 && T::ColsAtCompileTime!=1)
+  struct ValueType<T> {
+    using Type = MatrixType;
+  };
 }
