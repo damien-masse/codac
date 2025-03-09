@@ -82,4 +82,24 @@ namespace codac2
 
       Index _n;
   };
+
+  class MatrixVar : public AnalyticVarExpr<MatrixType>
+  {
+    public:
+
+      explicit MatrixVar(Index r, Index c);
+
+      std::shared_ptr<VarBase> arg_copy() const;
+      std::shared_ptr<ExprBase> copy() const;
+      Index size() const;
+      Index rows() const;
+      Index cols() const;
+
+      //AnalyticExprWrapper<ScalarType> operator()(Index i, Index j) const;
+      //AnalyticExprWrapper<VectorType> col(Index i) const;
+
+    protected:
+
+      Index _r, _c;
+  };
 }

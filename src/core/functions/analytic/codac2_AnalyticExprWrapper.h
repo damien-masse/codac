@@ -41,6 +41,11 @@ namespace codac2
       : std::shared_ptr<AnalyticExpr<T>>({ std::dynamic_pointer_cast<AnalyticExpr<T>>(e.copy()) })
     { }
     
+    AnalyticExprWrapper(const MatrixVar& e)
+      requires std::is_same_v<T,MatrixType>
+      : std::shared_ptr<AnalyticExpr<T>>({ std::dynamic_pointer_cast<AnalyticExpr<T>>(e.copy()) })
+    { }
+    
     template<typename V>
     AnalyticExprWrapper(const V& e)
       requires std::is_same_v<typename ValueType<V>::Type,T>

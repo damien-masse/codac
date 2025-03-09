@@ -109,3 +109,45 @@ inline void export_VectorExpr(py::module& m)
   py::implicitly_convertible<IntervalVector,VectorExpr>();
   py::implicitly_convertible<VectorVar,VectorExpr>();
 }
+
+inline void export_MatrixExpr(py::module& m)
+{
+  py::class_<MatrixExpr>
+    exported(m, "MatrixExpr");
+
+  exported
+
+    .def(py::init<Matrix>())
+    .def(py::init<IntervalMatrix>())
+    .def(py::init<MatrixExpr>())
+    .def(py::init<MatrixVar>())
+
+    .def("__pos__",  [](const MatrixExpr& e1)                           { return e1; }, py::is_operator())
+    .def(py::self + py::self)
+    .def("__add__",  [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e1+e2; }, py::is_operator())
+    .def("__radd__", [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e1+e2; }, py::is_operator())
+
+    .def(- py::self)
+    .def(py::self - py::self)
+    .def("__sub__",  [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e1-e2; }, py::is_operator())
+    .def("__rsub__", [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e2-e1; }, py::is_operator())
+
+    .def(py::self * py::self)
+    .def("__mul__",  [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e1*e2; }, py::is_operator())
+    .def("__mul__",  [](const MatrixExpr& e1, const MatrixVar& e2)      { return e1*e2; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e2*e1; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const MatrixVar& e2)      { return e2*e1; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const ScalarExpr& e2)     { return e2*e1; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const Interval& e2)       { return e2*e1; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const ScalarVar& e2)      { return e2*e1; }, py::is_operator())
+
+    .def("__truediv__", [](const MatrixExpr& e1, const ScalarExpr& e2)  { return e1/e2; }, py::is_operator())
+    .def("__truediv__", [](const MatrixExpr& e1, const Interval& e2)    { return e1/e2; }, py::is_operator())
+    .def("__truediv__", [](const MatrixExpr& e1, const ScalarVar& e2)   { return e1/e2; }, py::is_operator())
+
+  ;
+
+  py::implicitly_convertible<Matrix,MatrixExpr>();
+  py::implicitly_convertible<IntervalMatrix,MatrixExpr>();
+  py::implicitly_convertible<MatrixVar,MatrixExpr>();
+}
