@@ -2,7 +2,7 @@
  *  \file codac2_OctaSym.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou, Luc Jaulin
+ *  \author     Simon Rohou, Luc Jaulin, Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
