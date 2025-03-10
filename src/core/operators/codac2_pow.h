@@ -33,6 +33,12 @@ namespace codac2
     return { std::make_shared<AnalyticOperationExpr<PowOp,ScalarType,ScalarType,ScalarType>>(x1,x2) };
   }
 
+  inline ScalarExpr
+  operator^(const ScalarExpr& x1, const ScalarExpr& x2)
+  {
+    return { std::make_shared<AnalyticOperationExpr<PowOp,ScalarType,ScalarType,ScalarType>>(x1,x2) };
+  }
+
   // Inline functions
 
   inline Interval PowOp::fwd(const Interval& x1, const Interval& x2)

@@ -63,6 +63,14 @@ TEST_CASE("AnalyticFunction")
         CHECK(Approx(f.eval(m, Interval(3))) == 9);
       }
       {
+        AnalyticFunction f({x}, x^2);
+        CHECK(Approx(f.eval(m, Interval(3))) == 9);
+      }
+      {
+        AnalyticFunction f({x}, (0.+x)^(1.*x));
+        CHECK(Approx(f.eval(m, Interval(3))) == 27);
+      }
+      {
         AnalyticFunction f({x}, cos(x));
         CHECK(Approx(f.eval(m, Interval(0))) == 1);
       }
