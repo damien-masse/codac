@@ -46,6 +46,7 @@ fig2.draw_polyline([[-0.8,0],[0,1.5]], 0.2, [Color.red(),Color.black(0.3)])
 fig2.draw_ellipse([1,1],[0.5,2], 0.2, [Color.blue(),Color.blue(0.3)])
 fig2.draw_line([1,1],[3,3], Color.blue())
 fig2.draw_arrow([3,1],[2.2,2], 0.2, [Color.red(),Color.black(0.3)])
+fig2.draw_parallelepiped([1.5,2.8],Matrix([[0.5,0.4],[0,0.2]]), [Color.red(),Color.green(0.5)])
 
 # Colors
 # predefined colors without and with opacity
@@ -72,7 +73,7 @@ custom_map[0.5] = Color([0,255,0])
 custom_map[1] = Color([0,0,255])
 
 subdivisions=40
-fig3.set_axes(axis(0,[-1,subdivisions+1]), axis(1,[-1.15,0]))
+fig3.set_axes(axis(0,[-1,subdivisions+1]), axis(1,[-1.25,0]))
 
 for i in range (subdivisions):
     ratio=i/subdivisions
