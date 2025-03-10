@@ -29,6 +29,11 @@ namespace codac2
     static VectorType fwd_natural(const VectorType& x1, const ScalarType& x2);
     static VectorType fwd_centered(const VectorType& x1, const ScalarType& x2);
     static void bwd(const IntervalVector& y, IntervalVector& x1, Interval& x2);
+
+    static IntervalMatrix fwd(const IntervalMatrix& x1, const Interval& x2);
+    static MatrixType fwd_natural(const MatrixType& x1, const ScalarType& x2);
+    static MatrixType fwd_centered(const MatrixType& x1, const ScalarType& x2);
+    static void bwd(const IntervalMatrix& y, IntervalMatrix& x1, Interval& x2);
   };
 
   // operator/
@@ -44,6 +49,12 @@ namespace codac2
   operator/(const VectorExpr& x1, const ScalarExpr& x2)
   {
     return { std::make_shared<AnalyticOperationExpr<DivOp,VectorType,VectorType,ScalarType>>(x1,x2) };
+  }
+  
+  inline MatrixExpr
+  operator/(const MatrixExpr& x1, const ScalarExpr& x2)
+  {
+    return { std::make_shared<AnalyticOperationExpr<DivOp,MatrixType,MatrixType,ScalarType>>(x1,x2) };
   }
 
   // Inline functions
@@ -130,5 +141,39 @@ namespace codac2
     assert(x1.size() == y.size());
     for(Index i = 0 ; i < x1.size() ; i++)
       DivOp::bwd(y[i], x1[i], x2);
+  }
+
+  inline IntervalMatrix DivOp::fwd(const IntervalMatrix& x1, const Interval& x2)
+  {
+    return x1 / x2;
+  }
+
+  inline MatrixType DivOp::fwd_natural(const MatrixType& x1, const ScalarType& x2)
+  {
+    return {
+      fwd(x1.a, x2.a),
+      x1.def_domain && x2.def_domain && x2.a != 0. // def domain of the derivative of div
+    };
+  }
+
+  inline MatrixType DivOp::fwd_centered(const MatrixType& x1, const ScalarType& x2)
+  {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+    
+    assert(x1.da.size() == x2.da.size());
+
+    return {
+      fwd(x1.m, x2.m),
+      fwd(x1.a, x2.a),
+      IntervalMatrix(0,0), // not available
+      x1.def_domain && x2.def_domain && x2.a != 0. // def domain of the derivative of div
+    };
+  }
+
+  inline void DivOp::bwd([[maybe_unused]] const IntervalMatrix& y, [[maybe_unused]] IntervalMatrix& x1, [[maybe_unused]] Interval& x2)
+  {
+    assert(x1.size() == y.size());
+    // todo
   }
 }

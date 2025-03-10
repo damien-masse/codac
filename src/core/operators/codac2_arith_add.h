@@ -165,6 +165,9 @@ namespace codac2
 
   inline MatrixType AddOp::fwd_centered(const MatrixType& x1)
   {
+    if(centered_form_not_available_for_args(x1))
+      return fwd_natural(x1);
+
     return {
       fwd(x1.m),
       fwd(x1.a),
@@ -193,6 +196,9 @@ namespace codac2
 
   inline ScalarType AddOp::fwd_centered(const ScalarType& x1, const ScalarType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+
     assert(x1.da.size() == x2.da.size());
     return {
       fwd(x1.m, x2.m),
@@ -227,6 +233,9 @@ namespace codac2
 
   inline VectorType AddOp::fwd_centered(const VectorType& x1, const VectorType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+
     assert(x1.da.rows() == x2.da.rows() && x1.da.cols() == x2.da.cols());
     return {
       fwd(x1.m, x2.m),

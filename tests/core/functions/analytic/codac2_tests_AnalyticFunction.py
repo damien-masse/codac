@@ -52,6 +52,14 @@ class TestAnalyticFunction(unittest.TestCase):
       self.assertTrue(Approx(test_eval(f,Interval(2))) == 6)
       f = AnalyticFunction([x], pow(x,2))
       self.assertTrue(Approx(test_eval(f,Interval(3))) == 9)
+      f = AnalyticFunction([x], x^2)
+      self.assertTrue(Approx(test_eval(f,Interval(3))) == 9)
+      f = AnalyticFunction([x], (0.+x)^(1.*x))
+      self.assertTrue(Approx(test_eval(f,Interval(3))) == 27)
+      f = AnalyticFunction([x], x**2)
+      self.assertTrue(Approx(test_eval(f,Interval(3))) == 9)
+      f = AnalyticFunction([x], (0.+x)**(1.*x))
+      self.assertTrue(Approx(test_eval(f,Interval(3))) == 27)
       f = AnalyticFunction([x], cos(x))
       self.assertTrue(Approx(test_eval(f,Interval(0))) == 1)    
 
@@ -336,6 +344,23 @@ class TestAnalyticFunction(unittest.TestCase):
     self.assertTrue(f.eval([2,3]) == IntervalVector([[4],[6]]))
     self.assertTrue(f.eval([[2,3],[4,5]]) == IntervalVector([[4,6],[8,10]]))
 
+
+    I = Matrix([[0,2],[-1,0]])
+    x = VectorVar(2)
+    f = AnalyticFunction([x], I*x)
+    self.assertTrue(f.eval(IntervalVector([[0,1],[2,3]])) == IntervalVector([[4,6],[-1,0]]))
+
+    I = Matrix([[1,0],[0,1]])
+    x = VectorVar(2)
+    f = AnalyticFunction([x], I*I*x)
+    self.assertTrue(f.eval(IntervalVector([[-1,1],[2,3]])) == IntervalVector([[-1,1],[2,3]]))
+
+    A = MatrixVar(2,2)
+    x = VectorVar(2)
+    h = AnalyticFunction([A], A*A)
+    f = AnalyticFunction([x,A], h(A)*x)
+    g = AnalyticFunction([x], f(x,Matrix([[0,2],[-1,0]])))
+    self.assertTrue(g.eval(IntervalVector([[-1,1],[2,3]])) == IntervalVector([[-2,2],[-6,-4]]))
 
 
 if __name__ ==  '__main__':

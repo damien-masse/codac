@@ -21,6 +21,7 @@
 #include "codac2_arith_mul.h"
 #include "codac2_arith_div.h"
 #include "codac2_py_AnalyticExprWrapper_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
+#include "codac2_pow.h"
 
 using namespace codac2;
 namespace py = pybind11;
@@ -57,6 +58,14 @@ inline void export_ScalarExpr(py::module& m)
     .def("__truediv__",  [](const ScalarExpr& e1, const ScalarExpr& e2) { return e1/e2; }, py::is_operator())
     .def("__truediv__",  [](const ScalarExpr& e1, const Interval& e2)   { return e1/e2; }, py::is_operator())
     .def("__rtruediv__", [](const ScalarExpr& e1, const Interval& e2)   { return e2/e1; }, py::is_operator())
+
+    .def("__xor__",  [](const ScalarExpr& e1, const ScalarExpr& e2) { return e1^e2; }, py::is_operator())
+    .def("__xor__",  [](const ScalarExpr& e1, const Interval& e2)   { return e1^e2; }, py::is_operator())
+    .def("__rxor__", [](const ScalarExpr& e1, const Interval& e2)   { return e2^e1; }, py::is_operator())
+
+    .def("__pow__",  [](const ScalarExpr& e1, const ScalarExpr& e2) { return e1^e2; }, py::is_operator())
+    .def("__pow__",  [](const ScalarExpr& e1, const Interval& e2)   { return e1^e2; }, py::is_operator())
+    .def("__rpow__", [](const ScalarExpr& e1, const Interval& e2)   { return e2^e1; }, py::is_operator())
 
   ;
 
@@ -108,4 +117,46 @@ inline void export_VectorExpr(py::module& m)
   py::implicitly_convertible<Vector,VectorExpr>();
   py::implicitly_convertible<IntervalVector,VectorExpr>();
   py::implicitly_convertible<VectorVar,VectorExpr>();
+}
+
+inline void export_MatrixExpr(py::module& m)
+{
+  py::class_<MatrixExpr>
+    exported(m, "MatrixExpr");
+
+  exported
+
+    .def(py::init<Matrix>())
+    .def(py::init<IntervalMatrix>())
+    .def(py::init<MatrixExpr>())
+    .def(py::init<MatrixVar>())
+
+    .def("__pos__",  [](const MatrixExpr& e1)                           { return e1; }, py::is_operator())
+    .def(py::self + py::self)
+    .def("__add__",  [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e1+e2; }, py::is_operator())
+    .def("__radd__", [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e1+e2; }, py::is_operator())
+
+    .def(- py::self)
+    .def(py::self - py::self)
+    .def("__sub__",  [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e1-e2; }, py::is_operator())
+    .def("__rsub__", [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e2-e1; }, py::is_operator())
+
+    .def(py::self * py::self)
+    .def("__mul__",  [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e1*e2; }, py::is_operator())
+    .def("__mul__",  [](const MatrixExpr& e1, const MatrixVar& e2)      { return e1*e2; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const IntervalMatrix& e2) { return e2*e1; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const MatrixVar& e2)      { return e2*e1; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const ScalarExpr& e2)     { return e2*e1; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const Interval& e2)       { return e2*e1; }, py::is_operator())
+    .def("__rmul__", [](const MatrixExpr& e1, const ScalarVar& e2)      { return e2*e1; }, py::is_operator())
+
+    .def("__truediv__", [](const MatrixExpr& e1, const ScalarExpr& e2)  { return e1/e2; }, py::is_operator())
+    .def("__truediv__", [](const MatrixExpr& e1, const Interval& e2)    { return e1/e2; }, py::is_operator())
+    .def("__truediv__", [](const MatrixExpr& e1, const ScalarVar& e2)   { return e1/e2; }, py::is_operator())
+
+  ;
+
+  py::implicitly_convertible<Matrix,MatrixExpr>();
+  py::implicitly_convertible<IntervalMatrix,MatrixExpr>();
+  py::implicitly_convertible<MatrixVar,MatrixExpr>();
 }

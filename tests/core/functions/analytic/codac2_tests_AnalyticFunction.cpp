@@ -63,6 +63,14 @@ TEST_CASE("AnalyticFunction")
         CHECK(Approx(f.eval(m, Interval(3))) == 9);
       }
       {
+        AnalyticFunction f({x}, x^2);
+        CHECK(Approx(f.eval(m, Interval(3))) == 9);
+      }
+      {
+        AnalyticFunction f({x}, (0.+x)^(1.*x));
+        CHECK(Approx(f.eval(m, Interval(3))) == 27);
+      }
+      {
         AnalyticFunction f({x}, cos(x));
         CHECK(Approx(f.eval(m, Interval(0))) == 1);
       }
@@ -380,5 +388,28 @@ TEST_CASE("AnalyticFunction")
     VectorVar x1(2);
     AnalyticFunction f({x1}, 2.*x1);
     // assumed to not be possible in C++: CHECK(f.eval({2,3}) == IntervalVector({{4},{6}}));
+  }
+
+  {
+    Matrix I({{0,2},{-1,0}});
+    VectorVar x(2);
+    AnalyticFunction f({x}, I*x);
+    CHECK(f.eval(IntervalVector({{0,1},{2,3}})) == IntervalVector({{4,6},{-1,0}}));
+  }
+
+  {
+    Matrix I({{1,0},{0,1}});
+    VectorVar x(2);
+    AnalyticFunction f({x}, I*I*x);
+    CHECK(f.eval(IntervalVector({{-1,1},{2,3}})) == IntervalVector({{-1,1},{2,3}}));
+  }
+
+  {
+    MatrixVar A(2,2);
+    VectorVar x(2);
+    AnalyticFunction h({A}, A*A);
+    AnalyticFunction f({x,A}, h(A)*x);
+    AnalyticFunction g({x}, f(x,Matrix({{0,2},{-1,0}})));
+    CHECK(g.eval(IntervalVector({{-1,1},{2,3}})) == IntervalVector({{-2,2},{-6,-4}}));
   }
 }

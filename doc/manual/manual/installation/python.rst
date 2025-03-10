@@ -5,7 +5,7 @@ Python installation
 
 .. error::
 
-  The following instructions are not valid at the moment: Codac v2 is not yet available on PyPi. To get Codac v2 in Python, please :ref:`compile your own binaries locally on your machine <sec-dev-info-binding>`.
+  Some of the following instructions may not be valid at the moment: Codac v2 is not yet fully available. To get Codac v2 in Python, please see how to :ref:`compile your own binaries locally on your machine <sec-dev-info-binding>`.
 
 In case you want to use Codac only with Python, then the installation procedure is simply:
 
@@ -14,7 +14,7 @@ In case you want to use Codac only with Python, then the installation procedure 
 
    .. code-block:: bash
    
-      pip install codac
+      pip install codac --pre
 
 
 You can also update and test your Codac Python package.
@@ -22,7 +22,7 @@ You can also update and test your Codac Python package.
 * **Update via pip**: Use the following command to update your already installed Codac package:
    .. code-block:: bash
 
-      pip install codac --upgrade
+      pip install codac --upgrade --pre
 
 
 * **Testing the installation**: In order to verify that your installation is working properly in Python, you can run:

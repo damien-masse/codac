@@ -42,6 +42,9 @@ namespace codac2
       requires (std::is_base_of_v<ScalarType,X> && ...)
     static inline VectorType fwd_centered(const X&... x)
     {
+      if(centered_form_not_available_for_args(x...))
+        return fwd_natural(x...);
+
       IntervalMatrix d(sizeof...(X),std::get<0>(std::tie(x...)).da.cols());
       Index i = 0;
       ((d.row(i++) = x.da), ...);
