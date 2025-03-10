@@ -11,8 +11,11 @@
 
 #include <vector>
 #include "codac2_matrices.h"
+#include "codac2_Matrix.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_CtcWrapper.h"
+#include "codac2_AnalyticFunction.h"
+
 
 namespace codac2
 {
@@ -40,6 +43,8 @@ namespace codac2
       OctaSym invert() const;
 
       OctaSym operator*(const OctaSym& s) const;
+
+      Matrix permutation_matrix() const;
 
       int _sign(int a) const
       {

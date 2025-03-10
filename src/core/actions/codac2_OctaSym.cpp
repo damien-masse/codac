@@ -44,3 +44,11 @@ OctaSym OctaSym::operator*(const OctaSym& s) const
     a[i] = _sign(s[i])*(*this)[std::abs((int)s[i])-1];
   return a;
 }
+
+Matrix OctaSym::permutation_matrix() const
+{ 
+  Matrix m = Matrix::Zero(size(),size());
+  for(size_t i = 0 ; i < size() ; i++)
+    m(i,std::abs((*this)[i])-1) = _sign((*this)[i]);
+  return m;
+}
