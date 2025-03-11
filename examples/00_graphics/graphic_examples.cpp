@@ -52,6 +52,7 @@ int main(){
   fig2->draw_ellipse({1,1},{0.5,2}, 0.2, {Color::blue(),Color::blue(0.3)});
   fig2->draw_line({1,1},{3,3}, Color::blue());
   fig2->draw_arrow({3,1},{2.2,2}, 0.2, {Color::red(),Color::black(0.3)});
+  fig2->draw_parallelepiped({1.5,2.8},Matrix({{0.5,0.4},{0,0.2}}), {Color::red(),Color::green(0.5)});
 
   // Colors
   // predefined colors without and with opacity
@@ -62,7 +63,6 @@ int main(){
   fig2->draw_box({{2.6,3.1},{2.6,3.1}},{Color({108,90,78},Model::HSV),Color({108,90,78,20},Model::HSV)});
 
   Figure2D fig3 ("My Figure 3",GraphicOutput::VIBES|GraphicOutput::IPE);
-  fig3.set_axes(axis(0,{-1,21}), axis(1,{-1.15,0}));
   fig3.set_window_properties({800,250},{500,500});
 
   ColorMap cmap_haxby = ColorMap::haxby();
@@ -77,6 +77,7 @@ int main(){
   custom_map[1] = Color({0,0,255});
 
   double subdivisions = 40.;
+  fig3.set_axes(axis(0,{-1,subdivisions+1}), axis(1,{-1.25,0}));
   for (double i=0.; i<subdivisions; i+=1.0)
   {
     double ratio = i/subdivisions;

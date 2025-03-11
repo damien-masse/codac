@@ -139,6 +139,10 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_POLYGONE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
+    .def("draw_parallelepiped", &Figure2D::draw_parallelepiped,
+      VOID_FIGURE2D_DRAW_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF_CONST_STYLEPROPERTIES_REF,
+      "z"_a, "A"_a, "s"_a=StyleProperties())
+
     .def("draw_pie", &Figure2D::draw_pie,
       VOID_FIGURE2D_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "theta"_a, "s"_a=StyleProperties())
@@ -184,6 +188,7 @@ void export_Figure2D(py::module& m)
     .def("plot_trajectory", (void(Figure2D::*)(const SampledTraj<double>&,const StyleProperties&))&Figure2D::plot_trajectory,
       VOID_FIGURE2D_PLOT_TRAJECTORY_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
+
 
     // Robots
 
@@ -259,6 +264,10 @@ void export_Figure2D(py::module& m)
     .def_static("draw_polygone", (void(*)(const std::vector<Vector>&,const StyleProperties&))&DefaultView::draw_polygone,
       STATIC_VOID_DEFAULTVIEW_DRAW_POLYGONE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_parallelepiped", &DefaultView::draw_parallelepiped,
+      STATIC_VOID_DEFAULTVIEW_DRAW_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF_CONST_STYLEPROPERTIES_REF,
+      "z"_a, "A"_a, "s"_a=StyleProperties())
 
     .def_static("draw_pie", &DefaultView::draw_pie,
       STATIC_VOID_DEFAULTVIEW_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
