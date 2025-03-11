@@ -218,11 +218,11 @@ void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const Style
   assert_release(z.size() == 2);
 
   auto a1 = A.col(0), a2 = A.col(1);
-  draw_polygone({
-    { z+a1+a2 },
-    { z-a1+a2 },
-    { z-a1-a2 },
-    { z+a1-a2 }}, s);
+
+  draw_polygone(vector<Vector>({
+      Vector(z+a1+a2), Vector(z-a1+a2),
+      Vector(z-a1-a2), Vector(z+a1-a2)
+    }), s);
 }
 
 void Figure2D::draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s)
