@@ -55,6 +55,7 @@ html_theme_options = {
         "color-sidebar-link-text": "white",
         "sidebar-caption-font-size": "120%",
 
+        "color-link": "#0068A2",
         "color-link--visited": "var(--color-link)",
 
         "header-height": "2rem",
