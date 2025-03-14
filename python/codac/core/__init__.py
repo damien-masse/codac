@@ -43,6 +43,9 @@ class AnalyticFunction:
   def input_size(self):
     return self.f.input_size()
 
+  def output_size(self):
+    return self.f.output_size()
+
   def real_eval(self,*args):
     return self.f.real_eval(*args)
 

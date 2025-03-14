@@ -21,6 +21,11 @@ namespace codac2
     static ScalarType fwd_natural(const VectorType& x1, Index i);
     static ScalarType fwd_centered(const VectorType& x1, Index i);
     static void bwd(const Interval& y, IntervalVector& x1, Index i);
+
+    static Interval fwd(const IntervalMatrix& x1, Index i, Index j);
+    static ScalarType fwd_natural(const MatrixType& x1, Index i, Index j);
+    static ScalarType fwd_centered(const MatrixType& x1, Index i, Index j);
+    static void bwd(const Interval& y, IntervalMatrix& x1, Index i, Index j);
   };
 
   // Analytic operator
@@ -74,40 +79,132 @@ namespace codac2
       const Index _i;
   };
 
+  template<>
+  class AnalyticOperationExpr<ComponentOp,ScalarType,MatrixType> : public AnalyticExpr<ScalarType>, public OperationExprBase<AnalyticExpr<MatrixType>>
+  {
+    public:
+
+      AnalyticOperationExpr(const std::shared_ptr<AnalyticExpr<MatrixType>>& x1, Index i, Index j)
+        : OperationExprBase<AnalyticExpr<MatrixType>>(x1), _i(i), _j(j)
+      { }
+
+      AnalyticOperationExpr(const AnalyticOperationExpr& e)
+        : OperationExprBase<AnalyticExpr<MatrixType>>(e), _i(e._i), _j(e._j)
+      { }
+
+      std::shared_ptr<ExprBase> copy() const
+      {
+        return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,MatrixType>>(*this);
+      }
+
+      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      {
+        return OperationExprBase<AnalyticExpr<MatrixType>>::replace_expr(old_expr_id, new_expr);
+      }
+
+      ScalarType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
+      {
+        if(natural_eval)
+          return AnalyticExpr<ScalarType>::init_value(
+            v, ComponentOp::fwd_natural(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i, _j));
+        else
+          return AnalyticExpr<ScalarType>::init_value(
+            v, ComponentOp::fwd_centered(std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval), _i, _j));
+      }
+      
+      void bwd_eval(ValuesMap& v) const
+      {
+        ComponentOp::bwd(AnalyticExpr<ScalarType>::value(v).a, std::get<0>(this->_x)->value(v).a, _i, _j);
+        std::get<0>(this->_x)->bwd_eval(v);
+      }
+
+      virtual bool belongs_to_args_list(const FunctionArgsList& args) const
+      {
+        return std::get<0>(this->_x)->belongs_to_args_list(args);
+      }
+
+    protected:
+
+      const Index _i, _j;
+  };
+
   // Inline functions
 
-  inline Interval ComponentOp::fwd(const IntervalVector& x1, Index i)
-  {
-    assert(i >= 0 && i < x1.size());
-    return x1[i];
-  }
+  // Vector component
 
-  inline ScalarType ComponentOp::fwd_natural(const VectorType& x1, Index i)
-  {
-    assert(i >= 0 && i < x1.a.rows());
-    return {
-      fwd(x1.a,i),
-      x1.def_domain
-    };
-  }
+    inline Interval ComponentOp::fwd(const IntervalVector& x1, Index i)
+    {
+      assert(i >= 0 && i < x1.size());
+      return x1[i];
+    }
 
-  inline ScalarType ComponentOp::fwd_centered(const VectorType& x1, Index i)
-  {
-    if(centered_form_not_available_for_args(x1))
-      return fwd_natural(x1,i);
+    inline ScalarType ComponentOp::fwd_natural(const VectorType& x1, Index i)
+    {
+      assert(i >= 0 && i < x1.a.rows());
+      return {
+        fwd(x1.a,i),
+        x1.def_domain
+      };
+    }
 
-    assert(i >= 0 && i < x1.a.rows());
-    return {
-      fwd(x1.m,i),
-      fwd(x1.a,i),
-      x1.da.row(i),
-      x1.def_domain
-    };
-  }
+    inline ScalarType ComponentOp::fwd_centered(const VectorType& x1, Index i)
+    {
+      if(centered_form_not_available_for_args(x1))
+        return fwd_natural(x1,i);
 
-  inline void ComponentOp::bwd(const Interval& y, IntervalVector& x1, Index i)
-  {
-    assert(i >= 0 && i < x1.size());
-    x1[i] &= y;
-  }
+      assert(i >= 0 && i < x1.a.rows());
+      return {
+        fwd(x1.m,i),
+        fwd(x1.a,i),
+        x1.da.row(i),
+        x1.def_domain
+      };
+    }
+
+    inline void ComponentOp::bwd(const Interval& y, IntervalVector& x1, Index i)
+    {
+      assert(i >= 0 && i < x1.size());
+      x1[i] &= y;
+    }
+
+  // Matrix component
+
+    inline Interval ComponentOp::fwd(const IntervalMatrix& x1, Index i, Index j)
+    {
+      assert(i >= 0 && i < x1.rows());
+      assert(j >= 0 && j < x1.cols());
+      return x1(i,j);
+    }
+
+    inline ScalarType ComponentOp::fwd_natural(const MatrixType& x1, Index i, Index j)
+    {
+      assert(i >= 0 && i < x1.a.rows());
+      assert(j >= 0 && j < x1.a.cols());
+      return {
+        fwd(x1.a,i,j),
+        x1.def_domain
+      };
+    }
+
+    inline ScalarType ComponentOp::fwd_centered(const MatrixType& x1, Index i, Index j)
+    {
+      if(centered_form_not_available_for_args(x1))
+        return fwd_natural(x1,i,j);
+
+      assert(i >= 0 && i < x1.a.rows());
+      assert(j >= 0 && j < x1.a.cols());
+      return {
+        fwd(x1.m,i,j),
+        fwd(x1.a,i,j),
+        IntervalMatrix(0,0), // centered form not yet available
+        x1.def_domain
+      };
+    }
+
+    inline void ComponentOp::bwd(const Interval& y, IntervalMatrix& x1, Index i, Index j)
+    {
+      assert(i >= 0 && i < x1.rows());
+      assert(j >= 0 && j < x1.cols());
+      x1(i,j) &= y;
+    }
 }

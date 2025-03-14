@@ -293,6 +293,13 @@ void export_operators(py::module& m)
       STATIC_VOID_COMPONENTOP_BWD_CONST_INTERVAL_REF_INTERVALVECTOR_REF_INDEX,
       "y"_a, "x1"_a, "i"_a)
 
+    .def_static("fwd", (Interval(*)(const IntervalMatrix&,Index,Index)) &ComponentOp::fwd,
+      STATIC_INTERVAL_COMPONENTOP_FWD_CONST_INTERVALMATRIX_REF_INDEX_INDEX,
+      "x1"_a, "i"_a, "j"_a)
+    .def_static("bwd", (void(*)(const Interval&,IntervalMatrix&,Index,Index)) &ComponentOp::bwd,
+      STATIC_VOID_COMPONENTOP_BWD_CONST_INTERVAL_REF_INTERVALMATRIX_REF_INDEX_INDEX,
+      "y"_a, "x1"_a, "i"_a, "j"_a)
+
   ;
 
   py::class_<CosOp>(m, "CosOp")
