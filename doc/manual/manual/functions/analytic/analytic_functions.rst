@@ -52,7 +52,7 @@ An ``AnalyticFunction`` object is built from:
       :language: py
       :start-after: [1-beg]
       :end-before: [1-end]
-      :dedent: 2
+      :dedent: 4
 
   .. group-tab:: C++
 
@@ -60,6 +60,7 @@ An ``AnalyticFunction`` object is built from:
       :language: c++
       :start-after: [1-beg]
       :end-before: [1-end]
+      :dedent: 4
 
 For ``VectorVar`` and ``MatrixVar``, as well as for vector or matrix expressions, coefficients can be accessed using the operators ``[i]`` and ``(i,j)`` respectively. For vector elements, the ``.subvector(i,j)`` method allows to get a subvector of the variable or expression.
 
@@ -71,7 +72,7 @@ For ``VectorVar`` and ``MatrixVar``, as well as for vector or matrix expressions
       :language: py
       :start-after: [2-beg]
       :end-before: [2-end]
-      :dedent: 2
+      :dedent: 4
 
   .. group-tab:: C++
 
@@ -79,6 +80,7 @@ For ``VectorVar`` and ``MatrixVar``, as well as for vector or matrix expressions
       :language: c++
       :start-after: [2-beg]
       :end-before: [2-end]
+      :dedent: 4
 
 Variables are temporary objects used only to construct expressions. They can be freed once the function has been instantiated: there is no memory error in using an ``AnalyticFunction`` without its ``*Var`` arguments in the same scope, as in this example:
 
@@ -90,7 +92,7 @@ Variables are temporary objects used only to construct expressions. They can be 
       :language: py
       :start-after: [3-beg]
       :end-before: [3-end]
-      :dedent: 2
+      :dedent: 4
 
   .. group-tab:: C++
 
@@ -98,6 +100,7 @@ Variables are temporary objects used only to construct expressions. They can be 
       :language: c++
       :start-after: [3-beg]
       :end-before: [3-end]
+      :dedent: 4
 
 
 Function composition
@@ -113,7 +116,7 @@ Function composition
       :language: py
       :start-after: [4-beg]
       :end-before: [4-end]
-      :dedent: 2
+      :dedent: 4
 
   .. group-tab:: C++
 
@@ -121,6 +124,7 @@ Function composition
       :language: c++
       :start-after: [4-beg]
       :end-before: [4-end]
+      :dedent: 4
 
 
 Evaluations
@@ -138,7 +142,7 @@ Evaluations can be done by the ``.eval()`` method of ``AnalyticFunction``.
       :language: py
       :start-after: [5-beg]
       :end-before: [5-end]
-      :dedent: 2
+      :dedent: 4
 
   .. group-tab:: C++
 
@@ -146,6 +150,7 @@ Evaluations can be done by the ``.eval()`` method of ``AnalyticFunction``.
       :language: c++
       :start-after: [5-beg]
       :end-before: [5-end]
+      :dedent: 4
 
 
 For multivariate functions, it is possible to provide several inputs to the ``.eval()`` method, as in the above example with ``f2`` or ``f3``. In Codac C++, the arguments may be of different types (any mixed scalar, vector, or matrix types). In Python and Matlab however, the binding does not allow any combination of inputs, but several arguments of same structural types can be provided: a list of scalar values, or a list of vector values (``Vector``, ``IntervalVector``), or a list of matrix values (``Matrix``, ``IntervalMatrix``).
@@ -175,7 +180,7 @@ By default, the latter mode is used for evaluations. To select a specific mode, 
       :language: py
       :start-after: [6-beg]
       :end-before: [6-end]
-      :dedent: 2
+      :dedent: 4
 
   .. group-tab:: C++
 
@@ -183,6 +188,7 @@ By default, the latter mode is used for evaluations. To select a specific mode, 
       :language: c++
       :start-after: [6-beg]
       :end-before: [6-end]
+      :dedent: 4
 
 
 Interval automatic differentiation
@@ -211,7 +217,7 @@ The ``.diff()`` method can be used in the same way as the ``.eval()`` method.
       :language: py
       :start-after: [7-beg]
       :end-before: [7-end]
-      :dedent: 2
+      :dedent: 4
 
   .. group-tab:: C++
 
@@ -219,6 +225,7 @@ The ``.diff()`` method can be used in the same way as the ``.eval()`` method.
       :language: c++
       :start-after: [7-beg]
       :end-before: [7-end]
+      :dedent: 4
 
 
 Other properties
@@ -234,7 +241,7 @@ Let us consider a function :math:`[\mathbf{f}]:\mathbb{IR}^n\to\mathbb{IR}^m`, t
       :language: py
       :start-after: [8-beg]
       :end-before: [8-end]
-      :dedent: 2
+      :dedent: 4
 
   .. group-tab:: C++
 
@@ -242,6 +249,7 @@ Let us consider a function :math:`[\mathbf{f}]:\mathbb{IR}^n\to\mathbb{IR}^m`, t
       :language: c++
       :start-after: [8-beg]
       :end-before: [8-end]
+      :dedent: 4
 
 In the case of multivariate functions, ``.input_size()`` returns the sum of the dimensions of the arguments.
 

@@ -5,5 +5,5 @@ Inclusion functions
 
 .. toctree::
 
-   analytical/analytic_functions.rst
+   analytic/analytic_functions.rst
    .. Set-membership functions

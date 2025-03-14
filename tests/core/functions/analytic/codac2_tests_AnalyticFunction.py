@@ -12,20 +12,11 @@ import unittest
 import math
 from codac import *
 
-sys.path.append(
-  os.path.join(os.path.dirname(__file__),
-  '../../../../doc/manual/manual/functions/analytical'))
-import src
-
 def create_f():
   x = ScalarVar()
   return AnalyticFunction([x], x*cos(x))
 
 class TestAnalyticFunction(unittest.TestCase):
-
-  def tests_AnalyticFunction_manual(self): # tests from the manual
-
-    src.tests_AnalyticFunction_manual(self)
 
   def tests_AnalyticFunction(self):
 

@@ -203,7 +203,7 @@ User manual
    * Serialization tools
    * :ref:`sec-tools-registration`
 
-* Codac Extensions
+* Codac extensions
    * CAPD (rigorous numerics in dynamical systems)
    * Interface with the IBEX library
    * Sympy (symbolic computation)

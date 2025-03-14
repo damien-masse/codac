@@ -431,8 +431,3 @@ TEST_CASE("AnalyticFunction")
     CHECK(Approx(f.eval(PI)) == -PI);
   }
 }
-
-TEST_CASE("AnalyticFunction - manual")
-{
-  #include "../../../../doc/manual/manual/functions/analytical/src.cpp"
-}
