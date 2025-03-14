@@ -212,6 +212,19 @@ void Figure2D::draw_polygone(const vector<Vector>& x, const StyleProperties& s)
     output_fig->draw_polygone(x,s);
 }
 
+void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s)
+{
+  assert_release(A.is_squared() && A.rows() == z.size());
+  assert_release(z.size() == 2);
+
+  auto a1 = A.col(0), a2 = A.col(1);
+
+  draw_polygone(vector<Vector>({
+      Vector(z+a1+a2), Vector(z-a1+a2),
+      Vector(z-a1-a2), Vector(z+a1-a2)
+    }), s);
+}
+
 void Figure2D::draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s)
 {
   assert_release(this->size() <= c.size());
