@@ -7,11 +7,25 @@
 #  \copyright  Copyright 2024 Codac Team
 #  \license    GNU Lesser General Public License (LGPL)
 
+import sys, os
 import unittest
 import math
 from codac import *
 
+sys.path.append(
+  os.path.join(os.path.dirname(__file__),
+  '../../../../doc/manual/manual/functions/analytical'))
+import src
+
+def create_f():
+  x = ScalarVar()
+  return AnalyticFunction([x], x*cos(x))
+
 class TestAnalyticFunction(unittest.TestCase):
+
+  def tests_AnalyticFunction_manual(self): # tests from the manual
+
+    src.tests_AnalyticFunction_manual(self)
 
   def tests_AnalyticFunction(self):
 
@@ -362,6 +376,13 @@ class TestAnalyticFunction(unittest.TestCase):
     g = AnalyticFunction([x], f(x,Matrix([[0,2],[-1,0]])))
     self.assertTrue(g.eval(IntervalVector([[-1,1],[2,3]])) == IntervalVector([[-2,2],[-6,-4]]))
 
+    A = MatrixVar(2,2)
+    f_det = AnalyticFunction([A], A(0,0)*A(1,1)-A(1,0)*A(0,1))
+    self.assertTrue(f_det.eval(Matrix([[1,2],[3,4]])) == -2)
+    self.assertTrue(f_det.eval(IntervalMatrix([[[0,1],[1,2]],[[2,3],[3,4]]])) == Interval(-6,2))
+
+    f = create_f()
+    self.assertTrue(Approx(f.eval(PI)) == -PI)
 
 if __name__ ==  '__main__':
   unittest.main()
