@@ -168,21 +168,21 @@ This function can take an optional argument:
     fig.draw_polyline({{2,-0.5},{4,0.5},{3,1.5},{4,2.5},{3,3}}); // Polyline from (2,-0.5) to (4,0.5) to (3,1.5) to (4,2.5) to (3,3)
     fig.draw_polyline({{-0.8,0},{0,1.5}}, 0.2); // Polyline from (-0.8,0) to (0,1.5) with arrow head size 0.2
 
-draw_polygon
-------------
+draw_polygone
+-------------
 
-Draws a polygon on the figure. This function takes **1** argument:
-  - A vector of Vector : the polygon to draw.
+Draws a polygone on the figure. This function takes **1** argument:
+  - A vector of Vector : the polygone to draw.
 
 .. tabs::
 
   .. code-tab:: py
     
-    fig.draw_polygone([[2,4.5],[4,4.5],[4.2,3.5],[3.5,3]]) # Polygon with vertices (2,4.5), (4,4.5), (4.2,3.5) and (3.5,3)
+    fig.draw_polygone([[2,4.5],[4,4.5],[4.2,3.5],[3.5,3]]) # Polygone with vertices (2,4.5), (4,4.5), (4.2,3.5) and (3.5,3)
 
   .. code-tab:: c++
 
-    fig.draw_polygone({{2,4.5},{4,4.5},{4.2,3.5},{3.5,3}}); // Polygon with vertices (2,4.5), (4,4.5), (4.2,3.5) and (3.5,3)
+    fig.draw_polygone({{2,4.5},{4,4.5},{4.2,3.5},{3.5,3}}); // Polygone with vertices (2,4.5), (4,4.5), (4.2,3.5) and (3.5,3)
 
 draw_pie
 --------

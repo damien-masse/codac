@@ -182,7 +182,7 @@ void Figure2D::draw_arrow(const Vector& p1, const Vector& p2, float tip_length, 
 
 void Figure2D::draw_polyline(const vector<Vector>& x, const StyleProperties& s)
 {
-  draw_polyline(x, 1e-3*scaled_unit(), s);
+  draw_polyline(x, 0., s);
 }
 
 void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const StyleProperties& s)
