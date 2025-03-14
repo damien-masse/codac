@@ -75,11 +75,10 @@ User manual
    * Reliable inversions of matrices
    * C++: efficient matrix operations using Eigen
 
-* Functions
-   * What is an inclusion function?
-   * Analytical functions
-      * The class AnalyticalFunction
-      * Interval automatic differentiation
+* :ref:`sec-functions`
+   * :ref:`sec-functions-analytic`
+      * :ref:`sec-functions-analytic-class`
+      * Available operators
       * Extension to custom expressions
       * Temporal functions
    * Set-membership functions
@@ -267,6 +266,7 @@ Development
 
    manual/installation/index.rst
    manual/intervals/index.rst
+   manual/functions/index.rst
    manual/ellipsoids/index.rst
    manual/visualization/index.rst
    manual/tools/index.rst

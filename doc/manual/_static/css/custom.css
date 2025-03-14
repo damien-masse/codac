@@ -31,6 +31,15 @@ a.sidebar-brand {
   margin-top: 0;
 }
 
+.sphinx-tabs-tab {
+  line-height: 6px;
+  border-radius: 0;
+}
+
+.sphinx-tabs-panel {
+  padding: 0.4em;
+}
+
 figcaption {
   text-align: left;
 }
@@ -50,9 +59,4 @@ h3 {
 div[class^="highlight"] {
   background: #eeffcc;
   /*border: 1px solid #e1e4e5;*/
-}
-
-.sphinx-tabs-tab {
-  line-height: 6px;
-  border-radius: 0;
 }
