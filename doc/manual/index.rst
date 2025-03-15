@@ -78,7 +78,7 @@ User manual
 * :ref:`sec-functions`
    * :ref:`sec-functions-analytic`
       * :ref:`sec-functions-analytic-class`
-      * Available operators
+      * :ref:`sec-functions-analytic-operators`
       * Extension to custom expressions
       * Temporal functions
    * Set-membership functions
