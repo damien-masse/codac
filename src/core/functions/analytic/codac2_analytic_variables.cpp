@@ -113,5 +113,9 @@ using namespace codac2;
     return _c;
   }
 
-  //AnalyticExprWrapper<ScalarType> MatrixVar::operator()(Index i, Index j) const
-  //AnalyticExprWrapper<VectorType> MatrixVar::col(Index i) const
+  AnalyticExprWrapper<ScalarType> MatrixVar::operator()(Index i, Index j) const
+  {
+    assert_release(i >= 0 && i < _r && j >= 0 && j < _c);
+    return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,MatrixType>>(
+      std::dynamic_pointer_cast<AnalyticExpr<MatrixType>>(this->copy()), i, j) };
+  }

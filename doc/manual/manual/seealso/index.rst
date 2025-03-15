@@ -1,3 +1,5 @@
+.. _sec-seealso:
+
 See also
 ========
 

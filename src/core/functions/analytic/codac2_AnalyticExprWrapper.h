@@ -13,6 +13,7 @@
 #include "codac2_ValueType.h"
 #include "codac2_analytic_variables.h"
 #include "codac2_component.h"
+#include "codac2_subvector.h"
 #include "codac2_analytic_constants.h"
 
 namespace codac2
@@ -56,6 +57,18 @@ namespace codac2
       requires std::is_same_v<T,VectorType>
     {
       return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,VectorType>>(*this,i) };
+    }
+
+    inline AnalyticExprWrapper<VectorType> subvector(Index i, Index j) const
+      requires std::is_same_v<T,VectorType>
+    {
+      return { std::make_shared<AnalyticOperationExpr<SubvectorOp,VectorType,VectorType>>(*this,i,j) };
+    }
+    
+    inline AnalyticExprWrapper<ScalarType> operator()(Index i, Index j) const
+      requires std::is_same_v<T,MatrixType>
+    {
+      return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,MatrixType>>(*this,i,j) };
     }
   };
 

@@ -14,6 +14,7 @@
 #include <codac2_pave.h>
 #include <codac2_Subpaving.h>
 #include <codac2_CtcWrapper.h>
+#include <codac2_drawwhilepaving.h>
 
 using namespace std;
 using namespace codac2;
@@ -227,15 +228,21 @@ TEST_CASE("ParabolasExample")
   );
 
   CtcInverse_ ctc(h, IntervalVector::zero(3));
-  IntervalVector x0 {{0,1},{0,1},{0,0.2},{0,0.2}};
+  IntervalVector x0 {{0,1},{0,1},{0.05,0.18},{0.05,0.18}};
+
   //draw_while_paving(x0, ctc, 0.001);
+  //DefaultView::set_axes(axis(0,{0.11,0.23}), axis(1,{0.1,0.22}));
+
   auto p = pave(x0, ctc, 0.01);
   auto cs = p.connected_subsets();
   CHECK(cs.size() == 1);
   CHECK(Approx(cs.begin()->box(),1e-4) == IntervalVector({
-    {0.13244,0.201099},
-    {0.131459,0.202575},
-    {0.132274,0.200001},
-    {0.132283,0.200001}
+    {0.149199,0.182388},
+    {0.148306,0.1826},
+    {0.148054,0.18},
+    {0.148732,0.18}
   }));
+
+  //for(const auto& bi : cs)
+  //  DefaultView::draw_box(bi.box().subvector(0,1));
 }

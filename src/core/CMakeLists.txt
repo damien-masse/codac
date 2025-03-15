@@ -104,6 +104,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_acos.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_arith_add.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_arith_div.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_arith_mul.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_arith_mul.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_arith_sub.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_asin.h
