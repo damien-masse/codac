@@ -13,7 +13,6 @@
 #include "codac2_IntervalVector.h"
 #include "codac2_CtcWrapper.h"
 #include "codac2_Collection.h"
-#include "codac2_template_tools.h"
 
 namespace codac2
 {
@@ -63,7 +62,7 @@ namespace codac2
   };
 
   template<typename... C>
-    requires (IsCtcBaseOrPtr<C,IntervalVector> && ...)
+    requires ((is_ctc_v<C>) || ...) && (!(is_sep_v<C>) && ...)
   inline CtcCartProd cart_prod(const C&... c)
   {
     return CtcCartProd(c...);

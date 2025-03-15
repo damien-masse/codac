@@ -18,6 +18,7 @@
 #include "codac2_AnalyticExprWrapper.h"
 #include "codac2_ScalarExprList.h"
 #include "codac2_operators.h"
+#include "codac2_cart_prod.h"
 
 namespace codac2
 {
@@ -90,7 +91,7 @@ namespace codac2
           case EvalMode::CENTERED:
           {
             auto x_ = eval_<false>(x...);
-            auto flatten_x = cart_prod(x...);
+            auto flatten_x = IntervalVector(cart_prod(x...));
             assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
             
             if constexpr(std::is_same_v<T,ScalarType>)
@@ -109,7 +110,7 @@ namespace codac2
 
             else
             {
-              auto flatten_x = cart_prod(x...);
+              auto flatten_x = IntervalVector(cart_prod(x...));
               if constexpr(std::is_same_v<T,ScalarType>)
                 return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0]);
               else

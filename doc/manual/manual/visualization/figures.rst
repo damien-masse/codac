@@ -127,3 +127,12 @@ Many properties have an associated getter :
 - i() and j() to get respectively the figure x-axis and y-axis index (type is Index)
 - pos() and window_size() to get the window position and size (type is Vector)
 - scaled_unit() to get the scaling ratio from window to figure dimensions (type is double)
+
+For temporal objects (such as trajectories or tubes), it is possible to restrict the temporal frame to display by using the ``set_tdomain()`` method.
+
+VIBes only
+----------
+
+Some methods are exclusive to the real-time display with VIBes :
+
+- center_viewbox : takes two Vector as arguments, the center and radius of each axis

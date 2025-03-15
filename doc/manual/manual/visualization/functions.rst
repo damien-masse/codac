@@ -26,8 +26,9 @@ For example :
     // On the DefaultView
     DefaultView::draw_box({{2.2,2.5},{2.2,2.5}});
 
-In addition to the arguments described here for every function, an optionnal argument *StyleProperties* can be added to choose the edge
-and fill color (by default black edge no fill). This object can be deduced from one or two :ref:`Color <sec-graphics-colors>` objects.
+In addition to the arguments described here for every function, an optionnal argument of type StyleProperties can be added to choose the edge
+and fill color (by default black edge no fill). This object can be deduced from one or two Color objects, see :ref:`this page <sec-graphics-colors>` 
+for more information.
 
 .. tabs::
 
@@ -261,14 +262,14 @@ Trajectories can be drawn with a ColorMap instead of the classic StyleProperties
     
     a = 0.8
     t=ScalarVar()
-    f1=AnalyticFunction([t], [a*sqrt(t)*cos(t),a*sqrt(t)*sin(t)])
-    traj4=AnalyticTraj(f1, [0,100])
-    fig.draw_trajectory(traj4, ColorMap.rainbow())
+    f=AnalyticFunction([t], [a*sqrt(t)*cos(t),a*sqrt(t)*sin(t)])
+    traj=AnalyticTraj(f, [0,100])
+    fig.draw_trajectory(traj, ColorMap.rainbow())
 
   .. code-tab:: c++
 
     double a=0.5;
     ScalarVar t;
-    AnalyticFunction f1 ({t},{a*sqrt(t)*cos(t),a*sqrt(t)*sin(t)});
-    AnalyticTraj traj4 (f1,{0,100});
-    fig4.draw_trajectory(traj4,ColorMap::rainbow());
+    AnalyticFunction f ({t},{a*sqrt(t)*cos(t),a*sqrt(t)*sin(t)});
+    AnalyticTraj traj (f,{0,100});
+    fig4.draw_trajectory(traj,ColorMap::rainbow());

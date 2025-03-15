@@ -167,6 +167,48 @@ namespace codac2
         return straj;
       }
 
+      template<typename Q>
+      SampledTraj<T> sampled_as(const SampledTraj<Q>& x) const
+      {
+        return TrajBase<T>::sampled_as(x);
+      }
+
+      template<typename Q>
+      SampledTraj<T> sampled_as(const SampledTraj<Q>& x, bool keep_original_values) const
+      {
+        SampledTraj<T> straj = TrajBase<T>::sampled_as(x);
+        if(keep_original_values)
+          for(const auto& [ti,xi] : *this)
+            straj.set(ti, xi);
+        return straj;
+      }
+
+      SampledTraj<T>& shift_tdomain(double shift)
+      {
+        std::map<double,T> save = *this;
+        this->clear();
+        for(const auto& [ti,xi] : save)
+          this->std::map<double,T>::operator[](ti+shift) = xi;
+        return *this;
+      }
+
+      SampledTraj<T>& stretch_tdomain(const Interval& tdomain)
+      {
+        Interval a = this->tdomain(), b = tdomain;
+        std::map<double,T> save = *this;
+        this->clear();
+        for(const auto& [ti,xi] : save)
+            this->std::map<double,T>::operator[]([&]() {
+              if(ti == a.ub())
+                return b.ub(); // due to floating point possible error
+              else
+                return ((ti-a.lb())*b.diam()/a.diam())+b.lb();
+            }()
+          ) = xi;
+        assert(this->tdomain() == tdomain);
+        return *this;
+      }
+
       template<typename T_=T>
         requires std::is_same_v<T_,Vector>
       SampledTraj<double> operator[](Index i) const
@@ -203,5 +245,29 @@ namespace codac2
   {
     os << "SampledTraj. " << x.tdomain() << "↦" << x.codomain() << ", " << x.nb_samples() << " pts";
     return os;
+  }
+
+  inline SampledTraj<double> continuous_traj(const SampledTraj<double>& x)
+  {
+    SampledTraj<double> x_continuous;
+    const Interval periodicity = x.codomain();
+
+    double prev_xi = 0., value_mod = 0.;
+
+    for(const auto& [ti,xi] : x)
+    {
+      if(!x_continuous.empty())
+      {
+        if(prev_xi - xi > periodicity.diam()*0.9)
+          value_mod += periodicity.diam();
+        else if(prev_xi - xi < -periodicity.diam()*0.9)
+          value_mod -= periodicity.diam();
+      }
+
+      prev_xi = xi;
+      x_continuous.set(ti, xi+value_mod);
+    }
+
+    return x_continuous;
   }
 }

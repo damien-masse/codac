@@ -329,5 +329,14 @@ class TestAnalyticFunction(unittest.TestCase):
     self.assertTrue(f.eval(-1.5) == -2.)
 
 
+    # Issue #201
+    # Input argument is a py::list instead of a Vector
+    x1 = VectorVar(2)
+    f = AnalyticFunction([x1], 2.*x1)
+    self.assertTrue(f.eval([2,3]) == IntervalVector([[4],[6]]))
+    self.assertTrue(f.eval([[2,3],[4,5]]) == IntervalVector([[4,6],[8,10]]))
+
+
+
 if __name__ ==  '__main__':
   unittest.main()

@@ -26,7 +26,7 @@ void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& pysep)
 
     .def(py::init<const IntervalVector&>(),
       SEPWRAPPER__INTERVALVECTOR_SEPWRAPPER__CONST_INTERVALVECTOR_REF,
-      "vertices"_a)
+      "y"_a)
 
     .def("separate", &SepWrapper_<IntervalVector>::separate,
       BOXPAIR_SEPWRAPPER__INTERVALVECTOR_SEPARATE_CONST_INTERVALVECTOR_REF_CONST,

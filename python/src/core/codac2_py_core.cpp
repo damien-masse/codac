@@ -34,6 +34,7 @@ py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector
 void export_CtcAction(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCartProd(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCtcBoundary(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcDist(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcEmpty(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcFixpoint(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcIdentity(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -72,6 +73,7 @@ void export_geometry(py::module& m);
 void export_Polygon(py::module& m);
 
 // matrices
+void export_cart_prod(py::module& m);
 void export_arithmetic_add(
   py::class_<Vector>& py_V, py::class_<IntervalVector>& py_IV,
   py::class_<Matrix>& py_M, py::class_<IntervalMatrix>& py_IM,
@@ -115,6 +117,7 @@ void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& sep);
 
 // tools
 void export_Approx(py::module& m);
+void export_transformations(py::module& m);
 
 // trajectory
 void export_AnalyticTraj(py::module& m);
@@ -137,6 +140,7 @@ PYBIND11_MODULE(_core, m)
   export_CtcAction(m, py_ctc_iv);
   export_CtcCartProd(m, py_ctc_iv);
   export_CtcCtcBoundary(m, py_ctc_iv);
+  export_CtcDist(m, py_ctc_iv);
   export_CtcEmpty(m, py_ctc_iv);
   export_CtcFixpoint(m, py_ctc_iv);
   export_CtcIdentity(m, py_ctc_iv);
@@ -157,6 +161,7 @@ PYBIND11_MODULE(_core, m)
   export_linear_ctc(m);
 
   // matrices
+  export_cart_prod(m);
   py::class_<Row> exported_row_class(m, "Row", DOC_TO_BE_DEFINED);
   auto py_V = export_Vector(m);
   auto py_M = export_Matrix(m);
@@ -230,6 +235,7 @@ PYBIND11_MODULE(_core, m)
 
   // tools
   export_Approx(m);
+  export_transformations(m);
 
   // trajectory
   export_AnalyticTraj(m);

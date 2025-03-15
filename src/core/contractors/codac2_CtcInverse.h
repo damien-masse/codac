@@ -14,7 +14,6 @@
 #include "codac2_Ctc.h"
 #include "codac2_CtcWrapper.h"
 #include "codac2_Collection.h"
-#include "codac2_template_tools.h"
 #include "codac2_arith_mul.h"
 
 namespace codac2

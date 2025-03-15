@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <type_traits>
 #include "codac2_Interval.h"
 #include "codac2_Interval_operations.h"
 #include "codac2_assert.h"
@@ -90,6 +91,18 @@ namespace codac2
 
   template<typename Scalar,int R,int C>
   using Mat = Eigen::Matrix<Scalar,R,C>;
+
+  template<int R,int C>
+  struct is_interval_based<Eigen::Matrix<double,R,C>> : std::false_type {};
+
+  template<int R,int C>
+  struct is_interval_based<Eigen::Matrix<Interval,R,C>> : std::true_type {};
+
+  template<typename T,int R,int C>
+  struct is_ctc<Eigen::Matrix<T,R,C>> : std::false_type {};
+
+  template<typename T,int R,int C>
+  struct is_sep<Eigen::Matrix<T,R,C>> : std::false_type {};
 }
 
 namespace codac2

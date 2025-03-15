@@ -373,4 +373,12 @@ TEST_CASE("AnalyticFunction")
       CHECK(f.eval(-1.5) == -2.);
     }
   }
+
+  // Issue #201 (in Python originally)
+  {
+    // Input argument is a list instead of a Vector
+    VectorVar x1(2);
+    AnalyticFunction f({x1}, 2.*x1);
+    // assumed to not be possible in C++: CHECK(f.eval({2,3}) == IntervalVector({{4},{6}}));
+  }
 }

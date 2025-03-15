@@ -20,6 +20,7 @@
 #include "codac2_Index.h"
 #include "codac2_Domain.h"
 #include "codac2_assert.h"
+#include "codac2_TypeInfo.h"
 
 namespace codac2
 {
@@ -35,6 +36,17 @@ namespace codac2
 
     return std::numeric_limits<double>::infinity();
   }();
+
+  class Interval;
+
+  template<>
+  struct is_interval_based<Interval> : std::true_type {};
+
+  template<>
+  struct is_ctc<Interval> : std::false_type {};
+
+  template<>
+  struct is_sep<Interval> : std::false_type {};
 
   /**
    * \class Interval
