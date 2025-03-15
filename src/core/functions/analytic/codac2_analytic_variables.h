@@ -95,7 +95,7 @@ namespace codac2
       Index rows() const;
       Index cols() const;
 
-      //AnalyticExprWrapper<ScalarType> operator()(Index i, Index j) const;
+      AnalyticExprWrapper<ScalarType> operator()(Index i, Index j) const;
       //AnalyticExprWrapper<VectorType> col(Index i) const;
 
     protected:

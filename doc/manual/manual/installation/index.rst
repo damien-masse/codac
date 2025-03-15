@@ -1,6 +1,6 @@
 .. _sec-install:
 
-Installation Guide
+Installation guide
 ==================
 
 Codac is available in both C++20 and Python3, as well as MATLAB `through its Python interface <https://fr.mathworks.com/help/matlab/matlab_external/install-supported-python-implementation.html>`_. 

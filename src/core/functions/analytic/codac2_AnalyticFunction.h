@@ -182,19 +182,24 @@ namespace codac2
         assert(i >= 0 && i < (Index)this->args().size());
         assert_release(size_of(x) == this->args()[i]->size() && "provided arguments do not match function inputs");
 
-        IntervalMatrix d = IntervalMatrix::zero(size_of(x), this->args().total_size());
-        
-        Index p = 0, j = 0;
-        for( ; j < i ; j++)
-          p += this->args()[j]->size();
+        using D_TYPE = typename ValueType<D>::Type;
 
-        for(Index k = p ; k < p+size_of(x) ; k++)
-          d(k-p,k) = 1.;
+        IntervalMatrix d(0,0); // derivatives disabled for matrix inputs
 
-        using D_DOMAIN = typename ValueType<D>::Type;
+        if constexpr(!std::is_same_v<D_TYPE,MatrixType>)
+        {
+          d = IntervalMatrix::zero(size_of(x), this->args().total_size());
+          
+          Index p = 0;
+          for(Index j = 0 ; j < i ; j++)
+            p += this->args()[j]->size();
+
+          for(Index k = p ; k < p+size_of(x) ; k++)
+            d(k-p,k) = 1.;
+        }
 
         v[this->args()[i]->unique_id()] = 
-          std::make_shared<D_DOMAIN>(typename D_DOMAIN::Domain(x).mid(), x, d, true);
+          std::make_shared<D_TYPE>(typename D_TYPE::Domain(x).mid(), x, d, true);
       }
 
       template<typename... Args>
