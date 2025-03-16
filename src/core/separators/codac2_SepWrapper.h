@@ -13,6 +13,7 @@
 #include "codac2_SepCtcPair.h"
 #include "codac2_CtcWrapper.h"
 #include "codac2_CtcUnion.h"
+#include "codac2_Paving.h"
 
 namespace codac2
 {
@@ -54,5 +55,21 @@ namespace codac2
           cu |= CtcWrapper<IntervalVector>(complem_y);
         return cu;
       }
+  };
+
+  template<>
+  class SepWrapper_<PavingInOut>: public Sep<SepWrapper_<PavingInOut>>
+  {
+    public:
+
+      SepWrapper_(const PavingInOut& P)
+        : Sep<SepWrapper_<PavingInOut>>(P.size()), P(P)
+      { }
+
+      BoxPair separate(const IntervalVector& x) const;
+
+    protected:
+    
+      const PavingInOut P;
   };
 }
