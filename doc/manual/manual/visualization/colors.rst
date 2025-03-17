@@ -147,11 +147,23 @@ Color maps
 
 Color maps are used to convert a scalar value (between 0 and 1) to a color. The ColorMap class provides a set of predefined color maps:
 
-- basic() : the default ColorMap
-- haxby() : the Haxby color map
-- rainbow() : the rainbow color map
-- blue_tube() : a blue color map, used mainly for tubes
-- red_tube() : a red color map, used mainly for tubes
+.. tabs::
+
+  .. code-tab:: py
+
+    ColorMap.basic() # default color map
+    ColorMap.haxby() # Haxby color map
+    ColorMap.rainbow() # rainbow color map
+    ColorMap.blue_tube() # blue color map, used mainly for tubes
+    ColorMap.red_tube() # red color map, used mainly for tubes
+
+  .. code-tab:: c++
+
+    ColorMap::basic(); // default color map
+    ColorMap::haxby(); // Haxby color map
+    ColorMap::rainbow(); // rainbow color map
+    ColorMap::blue_tube(); // blue color map, used mainly for tubes
+    ColorMap::red_tube(); // red color map, used mainly for tubes
 
 These five color maps are displayed below:
 
