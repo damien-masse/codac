@@ -11,6 +11,7 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <codac2_Paving.h>
+#include <codac2_Subpaving.h>
 #include <codac2_Figure2D.h>
 #include "codac2_py_Figure2D_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_matlab.h"
@@ -210,6 +211,14 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_PAVING_CONST_PAVINGINOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
       "p"_a, "boundary_style"_a=StyleProperties::boundary(), "outside_style"_a=StyleProperties::outside(), "inside_style"_a=StyleProperties::inside())
 
+    .def("draw_subpaving", (void(Figure2D::*)(const Subpaving<PavingOut>&,const StyleProperties&))&Figure2D::draw_subpaving,
+      VOID_FIGURE2D_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "s"_a=StyleProperties())
+
+    .def("draw_subpaving", (void(Figure2D::*)(const Subpaving<PavingInOut>&,const StyleProperties&))&Figure2D::draw_subpaving,
+      VOID_FIGURE2D_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "s"_a=StyleProperties())
+
   ;
 
   py::class_<DefaultView> exported_default_view(m, "DefaultView", DEFAULTVIEW_MAIN);
@@ -330,6 +339,14 @@ void export_Figure2D(py::module& m)
     .def_static("draw_paving", (void(*)(const PavingInOut&,const StyleProperties&,const StyleProperties&,const StyleProperties&))&DefaultView::draw_paving,
       STATIC_VOID_DEFAULTVIEW_DRAW_PAVING_CONST_PAVINGINOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
       "p"_a, "boundary_style"_a=StyleProperties::boundary(), "outside_style"_a=StyleProperties::outside(), "inside_style"_a=StyleProperties::inside())
+
+    .def_static("draw_subpaving", (void(*)(const Subpaving<PavingOut>&,const StyleProperties&))&DefaultView::draw_subpaving,
+      STATIC_VOID_DEFAULTVIEW_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_subpaving", (void(*)(const Subpaving<PavingInOut>&,const StyleProperties&))&DefaultView::draw_subpaving,
+      STATIC_VOID_DEFAULTVIEW_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "s"_a=StyleProperties())
 
   ;
 }
