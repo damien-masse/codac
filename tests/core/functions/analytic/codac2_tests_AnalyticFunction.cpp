@@ -15,6 +15,12 @@
 using namespace std;
 using namespace codac2;
 
+auto create_f()
+{
+  ScalarVar x;
+  return AnalyticFunction({x}, x*cos(x));
+}
+
 TEST_CASE("AnalyticFunction")
 {
   std::array<EvalMode,3> modes {
@@ -411,5 +417,17 @@ TEST_CASE("AnalyticFunction")
     AnalyticFunction f({x,A}, h(A)*x);
     AnalyticFunction g({x}, f(x,Matrix({{0,2},{-1,0}})));
     CHECK(g.eval(IntervalVector({{-1,1},{2,3}})) == IntervalVector({{-2,2},{-6,-4}}));
+  }
+
+  {
+    MatrixVar A(2,2);
+    AnalyticFunction f_det({A}, A(0,0)*A(1,1)-A(1,0)*A(0,1));
+    CHECK(f_det.eval(Matrix({{1,2},{3,4}})) == -2);
+    CHECK(f_det.eval(IntervalMatrix({{{0,1},{1,2}},{{2,3},{3,4}}})) == Interval(-6,2));
+  }
+
+  {
+    auto f = create_f();
+    CHECK(Approx(f.eval(PI)) == -PI);
   }
 }

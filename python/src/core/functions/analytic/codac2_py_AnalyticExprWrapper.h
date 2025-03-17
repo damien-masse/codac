@@ -87,12 +87,19 @@ inline void export_VectorExpr(py::module& m)
     .def(py::init<VectorExpr>())
     .def(py::init<VectorVar>())
 
-    .def("__getitem__", [](const VectorExpr& x, Index_type index)
+    .def("__getitem__", [](const VectorExpr& x, Index_type i)
         {
-          matlab::test_integer(index);
-          return x[matlab::input_index(index)];
+          matlab::test_integer(i);
+          return x[matlab::input_index(i)];
         }, py::return_value_policy::reference_internal,
       ANALYTICEXPRWRAPPER_SCALARTYPE_ANALYTICEXPRWRAPPER_T_OPERATORCOMPO_INDEX_CONST)
+
+    .def("subvector", [](const VectorExpr& v, Index_type i, Index_type j)
+        {
+          matlab::test_integer(i, j);
+          return v.subvector(matlab::input_index(i),matlab::input_index(j));
+        },
+      ANALYTICEXPRWRAPPER_VECTORTYPE_ANALYTICEXPRWRAPPER_T_SUBVECTOR_INDEX_INDEX_CONST)
 
     .def("__pos__",  [](const VectorExpr& e1)                           { return e1; }, py::is_operator())
     .def(py::self + py::self)
@@ -130,6 +137,13 @@ inline void export_MatrixExpr(py::module& m)
     .def(py::init<IntervalMatrix>())
     .def(py::init<MatrixExpr>())
     .def(py::init<MatrixVar>())
+
+    .def("__call__", [](const MatrixExpr& x, Index_type i, Index_type j)
+        {
+          matlab::test_integer(i,j);
+          return x(matlab::input_index(i),matlab::input_index(j));
+        }, py::return_value_policy::reference_internal,
+      ANALYTICEXPRWRAPPER_SCALARTYPE_ANALYTICEXPRWRAPPER_T_OPERATORCALL_INDEX_INDEX_CONST)
 
     .def("__pos__",  [](const MatrixExpr& e1)                           { return e1; }, py::is_operator())
     .def(py::self + py::self)

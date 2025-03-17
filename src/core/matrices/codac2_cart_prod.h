@@ -10,6 +10,8 @@
 #pragma once
 
 #include "codac2_IntervalVector.h"
+#include "codac2_Matrix.h"
+#include "codac2_matrices.h"
 
 namespace codac2
 {
@@ -26,6 +28,14 @@ namespace codac2
   inline IntervalVector to_IntervalVector(const Vector& x)
   {
     return x.template cast<Interval>();
+  }
+
+  // Flatten some matrix into an interval vector
+  template<typename T,int R,int C>
+    requires (!Eigen::IsVectorOrRow<R,C>)
+  inline IntervalVector to_IntervalVector(const Eigen::Matrix<T,R,C>& x)
+  {
+    return Eigen::Map<const Eigen::Matrix<T,R,1>>(x.data(), x.size());
   }
 
   inline IntervalVector cart_prod()
