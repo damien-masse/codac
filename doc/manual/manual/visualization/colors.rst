@@ -100,7 +100,7 @@ Custom colors can be defined in the RGB or HSV color spaces. An enumaration Mode
     Model::RGB; // RGB color space
     Model::HSV; // HSV color space
 
-A getter model() is available, and the methods rgb() and hsv() are used to do the conversion between the two color spaces.
+A getter model() is available, and the methods ``rgb()`` and ``hsv()`` are used to do the conversion between the two color spaces.
 
 If the color is in RGB the red, green, blue and alpha values are between 0 and 255.
 If the color is in HSV the hue value is between 0 and 360 while the saturation, value and alpha values are between 0 and 100.
@@ -115,8 +115,8 @@ The Color class constructor can take different arguments:
 
 Additionnal methods are available for any useful purpose:
 
-- hex_str() : the html representation of the color
-- vec() : the RGBA or HSVA values in a vector
+- ``hex_str()`` : the html representation of the color
+- ``vec()`` : the RGBA or HSVA values in a vector
 
 Color creation example :
 
@@ -169,7 +169,7 @@ These five color maps are displayed below:
 
 .. figure:: img/colormaps.png
 
-The method color() is used to get the color corresponding to a scalar value. The argument is a float between 0 and 1.
+The method ``color()`` is used to get the color corresponding to a scalar value. The argument is a float between 0 and 1.
 
 As for the Color class, the ColorMap also has a Model (RGB or HSV) and an associated getter model(). The default Model is RGB.
 
