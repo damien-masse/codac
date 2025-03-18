@@ -21,7 +21,7 @@ namespace codac2
     public:
 
       SepNot(const IntervalVector& x)
-        : Sep<SepNot>(x.size()), _sep(SepWrapper_<IntervalVector>(x))
+        : Sep<SepNot>(x.size()), _sep(SepWrapper(x))
       { }
 
       template<typename S>

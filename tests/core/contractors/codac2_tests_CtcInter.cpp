@@ -17,8 +17,8 @@ using namespace codac2;
 TEST_CASE("CtcInter")
 {
   {
-    CtcWrapper_<IntervalVector> c1({{-10,10},{-2,2}});
-    CtcWrapper_<IntervalVector> c2({{-12,2},{0,4}});
+    CtcWrapper c1(IntervalVector({{-10,10},{-2,2}}));
+    CtcWrapper c2(IntervalVector({{-12,2},{0,4}}));
 
     auto c3 = c1 & c2;
     IntervalVector x(2);

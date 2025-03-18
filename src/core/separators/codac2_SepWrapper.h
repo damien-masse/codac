@@ -16,15 +16,15 @@
 
 namespace codac2
 {
-  /// \cond SepWrapper_<T>
+  /// \cond SepWrapper<T>
 
   template<typename T>
-  class SepWrapper_ : public Sep<SepWrapper_<T>>
+  class SepWrapper : public Sep<SepWrapper<T>>
   {
     public:
 
-      SepWrapper_(const T& y)
-        : Sep<SepWrapper_<T>>(y.size()), _y(y)
+      SepWrapper(const T& y)
+        : Sep<SepWrapper<T>>(y.size()), _y(y)
       { }
 
     protected:
@@ -35,12 +35,12 @@ namespace codac2
   /// \endcond
 
   template<>
-  class SepWrapper_<IntervalVector> : public SepCtcPair
+  class SepWrapper<IntervalVector> : public SepCtcPair
   {
     public:
 
-      SepWrapper_(const IntervalVector& y)
-        : SepCtcPair(complementary_union(y), CtcWrapper_<IntervalVector>(y))
+      SepWrapper(const IntervalVector& y)
+        : SepCtcPair(complementary_union(y), CtcWrapper<IntervalVector>(y))
       { }
 
       BoxPair separate(const IntervalVector& x) const;
@@ -51,7 +51,7 @@ namespace codac2
       {
         CtcUnion<IntervalVector> cu(y.size());
         for(const auto& complem_y : y.complementary())
-          cu |= CtcWrapper_<IntervalVector>(complem_y);
+          cu |= CtcWrapper<IntervalVector>(complem_y);
         return cu;
       }
   };

@@ -37,12 +37,12 @@ namespace codac2
 
       std::shared_ptr<CtcBase<IntervalVector>> create_ctc(const FunctionArgsList& args, const std::vector<std::shared_ptr<CtcBase<IntervalVector>>>& x) const
       {
-        return std::make_shared<CtcWrapper_<T>>(_x);
+        return std::make_shared<CtcWrapper<T>>(_x);
       }
 
       std::shared_ptr<SepBase> create_sep(const FunctionArgsList& args, const std::vector<std::shared_ptr<SepBase>>& x) const
       {
-        return std::make_shared<SepWrapper_<T>>(_x);
+        return std::make_shared<SepWrapper<T>>(_x);
       }
       
       operator std::shared_ptr<SetExpr>() const
