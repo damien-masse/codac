@@ -173,7 +173,7 @@ TEST_CASE("CtcInverse")
   {
     VectorVar x(2);
     AnalyticFunction f { {x}, vec(x[0],sqr(x[0]/7.)+sqr(x[1]/3.)) };
-    CtcInverse_<IntervalVector> c(f, CtcWrapper_<IntervalVector>({{0,oo},{1}}));
+    CtcInverse_<IntervalVector> c(f, CtcWrapper(IntervalVector({{0,oo},{1}})));
 
     {
       IntervalVector b({{0,0.8},{-2.28,-1.56}});

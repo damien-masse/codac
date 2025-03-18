@@ -35,7 +35,7 @@ namespace codac2
       }
 
       CtcInverse(const AnalyticFunction<typename ValueType<Y>::Type>& f, const Y& y, bool with_centered_form = true, bool is_not_in = false)
-        : CtcInverse(f, CtcWrapper_<Y>(y), with_centered_form, is_not_in)
+        : CtcInverse(f, CtcWrapper<Y>(y), with_centered_form, is_not_in)
       { }
 
       //std::shared_ptr<CtcBase<X>> copy() const
@@ -52,7 +52,7 @@ namespace codac2
       template<typename... X>
       void contract_(const Y& y, X&... x) const
       {
-        return contract_(CtcWrapper_<Y>(y), x...);
+        return contract_(CtcWrapper<Y>(y), x...);
       }
 
       template<typename... X>
