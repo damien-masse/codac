@@ -21,26 +21,26 @@ namespace codac2
   class CtcNot;
   
   template<typename Y>
-  class CtcInverse// : virtual public Ctc
+  class CtcInverse_// : virtual public Ctc
   {
     public:
 
       template<typename C>
         requires IsCtcBaseOrPtr<C,Y>
-      CtcInverse(const AnalyticFunction<typename ValueType<Y>::Type>& f, const C& ctc_y, bool with_centered_form = true, bool is_not_in = false)
+      CtcInverse_(const AnalyticFunction<typename ValueType<Y>::Type>& f, const C& ctc_y, bool with_centered_form = true, bool is_not_in = false)
         : _f(f), _ctc_y(ctc_y), _with_centered_form(with_centered_form), _is_not_in(is_not_in)
       {
         assert_release([&]() { return f.output_size() == size_of(ctc_y); }()
-          && "CtcInverse: invalid dimension of image argument ('y' or 'ctc_y')");
+          && "CtcInverse_: invalid dimension of image argument ('y' or 'ctc_y')");
       }
 
-      CtcInverse(const AnalyticFunction<typename ValueType<Y>::Type>& f, const Y& y, bool with_centered_form = true, bool is_not_in = false)
-        : CtcInverse(f, CtcWrapper<Y>(y), with_centered_form, is_not_in)
+      CtcInverse_(const AnalyticFunction<typename ValueType<Y>::Type>& f, const Y& y, bool with_centered_form = true, bool is_not_in = false)
+        : CtcInverse_(f, CtcWrapper<Y>(y), with_centered_form, is_not_in)
       { }
 
       //std::shared_ptr<CtcBase<X>> copy() const
       //{
-      //  return std::make_shared<CtcInverse<Y>>(*this);
+      //  return std::make_shared<CtcInverse_<Y>>(*this);
       //}
 
       template<typename... X>
@@ -99,7 +99,7 @@ namespace codac2
 
               if constexpr(std::is_same_v<Y,IntervalMatrix>)
               {
-                std::cout << "CtcInverse: matrices expressions not (yet) supported with centered form" << std::endl;
+                std::cout << "CtcInverse_: matrices expressions not (yet) supported with centered form" << std::endl;
               }
 
               else
@@ -135,29 +135,70 @@ namespace codac2
   };
 
   template<typename Y,typename X=IntervalVector>
-  class CtcInverse_ : public Ctc<CtcInverse_<Y,X>,X>, public CtcInverse<Y>
+  class CtcInverse : public Ctc<CtcInverse<Y,X>,X>, public CtcInverse_<Y>
   {
     public:
 
-      CtcInverse_(const AnalyticFunction<typename ValueType<Y>::Type>& f, const Y& y, bool with_centered_form = true, bool is_not_in = false)
-        : Ctc<CtcInverse_<Y,X>,X>(f.args()[0]->size() /* f must have only one arg, see following assert */),
-          CtcInverse<Y>(f, y, with_centered_form,is_not_in)
+      CtcInverse(const AnalyticFunction<typename ValueType<Y>::Type>& f, const Y& y, bool with_centered_form = true, bool is_not_in = false)
+        : Ctc<CtcInverse<Y,X>,X>(f.args()[0]->size() /* f must have only one arg, see following assert */),
+          CtcInverse_<Y>(f, y, with_centered_form,is_not_in)
       {
         assert_release(f.args().size() == 1 && "f must have only one arg");
       }
 
       template<typename C>
         requires IsCtcBaseOrPtr<C,Y>
-      CtcInverse_(const AnalyticFunction<typename ValueType<Y>::Type>& f, const C& ctc_y, bool with_centered_form = true, bool is_not_in = false)
-        : Ctc<CtcInverse_<Y,X>,X>(f.args()[0]->size() /* f must have only one arg, see following assert */),
-          CtcInverse<Y>(f, ctc_y, with_centered_form,is_not_in)
+      CtcInverse(const AnalyticFunction<typename ValueType<Y>::Type>& f, const C& ctc_y, bool with_centered_form = true, bool is_not_in = false)
+        : Ctc<CtcInverse<Y,X>,X>(f.args()[0]->size() /* f must have only one arg, see following assert */),
+          CtcInverse_<Y>(f, ctc_y, with_centered_form,is_not_in)
       {
         assert_release(f.args().size() == 1 && "f must have only one arg");
       }
 
       void contract(X& x) const
       {
-        CtcInverse<Y>::contract(x);
+        CtcInverse_<Y>::contract(x);
       }
   };
+
+  // Template deduction guides
+
+  // ScalarType
+
+    template<typename Y>
+    CtcInverse(const AnalyticFunction<ScalarType>&, std::initializer_list<Y>, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<Interval,IntervalVector>;
+
+    template<typename C>
+      requires IsCtcBaseOrPtr<C,Interval>
+    CtcInverse(const AnalyticFunction<ScalarType>&, const C&, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<Interval,IntervalVector>;
+
+  // VectorType
+
+    CtcInverse(const AnalyticFunction<VectorType>&, std::initializer_list<double>, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<IntervalVector,IntervalVector>;
+
+    CtcInverse(const AnalyticFunction<VectorType>&, std::initializer_list<std::initializer_list<double>>, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<IntervalVector,IntervalVector>;
+
+    template<typename C>
+      requires IsCtcBaseOrPtr<C,IntervalVector>
+    CtcInverse(const AnalyticFunction<VectorType>&, const C&, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<IntervalVector,IntervalVector>;
+
+  // MatrixType
+        
+    template<typename Y>
+    CtcInverse(const AnalyticFunction<MatrixType>&, std::initializer_list<std::initializer_list<double>>, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<IntervalMatrix,IntervalVector>;
+
+    template<typename Y>
+    CtcInverse(const AnalyticFunction<MatrixType>&, std::initializer_list<std::initializer_list<std::initializer_list<double>>>, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<IntervalMatrix,IntervalVector>;
+
+    template<typename C>
+      requires IsCtcBaseOrPtr<C,IntervalMatrix>
+    CtcInverse(const AnalyticFunction<MatrixType>&, const C&, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<IntervalMatrix,IntervalVector>;
 }
