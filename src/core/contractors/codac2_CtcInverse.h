@@ -189,11 +189,9 @@ namespace codac2
 
   // MatrixType
         
-    template<typename Y>
     CtcInverse(const AnalyticFunction<MatrixType>&, std::initializer_list<std::initializer_list<double>>, bool with_centered_form = true, bool is_not_in = false) -> 
       CtcInverse<IntervalMatrix,IntervalVector>;
 
-    template<typename Y>
     CtcInverse(const AnalyticFunction<MatrixType>&, std::initializer_list<std::initializer_list<std::initializer_list<double>>>, bool with_centered_form = true, bool is_not_in = false) -> 
       CtcInverse<IntervalMatrix,IntervalVector>;
 
