@@ -12,7 +12,7 @@
 using namespace std;
 using namespace codac2;
 
-BoxPair SepWrapper_<IntervalVector>::separate(const IntervalVector& x) const
+BoxPair SepWrapper<IntervalVector>::separate(const IntervalVector& x) const
 {
   return SepCtcPair::separate(x);
 }

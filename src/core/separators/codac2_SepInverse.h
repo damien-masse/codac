@@ -29,7 +29,7 @@ namespace codac2
       SepInverse(const AnalyticFunction<T>& f, const typename T::Domain& y, bool with_centered_form = true)
         : SepCtcPair(
             CtcInverseNotIn<typename T::Domain,X>(f,y,with_centered_form),
-            CtcInverse_<typename T::Domain,X>(f,y,with_centered_form))
+            CtcInverse<typename T::Domain,X>(f,y,with_centered_form))
       { }
 
       template<typename T,typename S>
@@ -37,7 +37,7 @@ namespace codac2
       SepInverse(const AnalyticFunction<T>& f, const S& sep_y, bool with_centered_form = true)
         : SepCtcPair(
             CtcInverseNotIn<typename T::Domain,X>(f,CtcInner(sep_y),with_centered_form),
-            CtcInverse_<typename T::Domain,X>(f,CtcOuter(sep_y),with_centered_form))
+            CtcInverse<typename T::Domain,X>(f,CtcOuter(sep_y),with_centered_form))
       { }
   };
 }

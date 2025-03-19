@@ -174,7 +174,7 @@ namespace codac2
     protected:
 
       template<typename Y>
-      friend class CtcInverse;
+      friend class CtcInverse_;
 
       template<typename D>
       void add_value_to_arg_map(ValuesMap& v, const D& x, Index i) const

@@ -24,7 +24,7 @@ TEST_CASE("CtcInverse")
   {
     ScalarVar x,y;
     AnalyticFunction f { {x,y}, x-y };
-    CtcInverse<Interval> c(f, Interval(0.));
+    CtcInverse_<Interval> c(f, Interval(0.));
     CHECK(c.function().input_size() == 2);
 
     Interval a,b;
@@ -67,7 +67,7 @@ TEST_CASE("CtcInverse")
   {
     VectorVar x(2);
     AnalyticFunction f { {x}, x[0]-x[1] };
-    CtcInverse_<Interval> c(f, {0});
+    CtcInverse c(f, {0});
 
     //pave(IntervalVector({{-10,10},{-10,10}}), c, 0.1);
 
@@ -96,7 +96,7 @@ TEST_CASE("CtcInverse")
   {
     VectorVar x(2);
     AnalyticFunction f { {x}, vec(x[0]-x[1]) };
-    CtcInverse_<IntervalVector> c(f, {0});
+    CtcInverse c(f, {0.});
 
     //pave(IntervalVector({{-10,10},{-10,10}}), c, 0.1);
 
@@ -125,7 +125,7 @@ TEST_CASE("CtcInverse")
   {
     VectorVar x(2);
     AnalyticFunction f { {x}, vec(x[0],sqr(x[0]/7.)+sqr(x[1]/3.)) };
-    CtcInverse_<IntervalVector> c(f, {{0,oo},{1}});
+    CtcInverse c(f, {{0,oo},{1,1}});
 
     //pave(IntervalVector({{-10,10},{-10,10}}), c, 0.1);
 
@@ -173,7 +173,7 @@ TEST_CASE("CtcInverse")
   {
     VectorVar x(2);
     AnalyticFunction f { {x}, vec(x[0],sqr(x[0]/7.)+sqr(x[1]/3.)) };
-    CtcInverse_<IntervalVector> c(f, CtcWrapper_<IntervalVector>({{0,oo},{1}}));
+    CtcInverse c(f, CtcWrapper(IntervalVector({{0,oo},{1}})));
 
     {
       IntervalVector b({{0,0.8},{-2.28,-1.56}});
@@ -227,7 +227,7 @@ TEST_CASE("ParabolasExample")
       Vector({2,0,0.55}),Vector({2,1,-0.45}),Vector({2,2,0.55}))
   );
 
-  CtcInverse_ ctc(h, IntervalVector::zero(3));
+  CtcInverse ctc(h, IntervalVector::zero(3));
   IntervalVector x0 {{0,1},{0,1},{0.05,0.18},{0.05,0.18}};
 
   //draw_while_paving(x0, ctc, 0.001);

@@ -6,6 +6,6 @@ Analytic inclusion functions
 .. toctree::
 
    analytic_functions.rst
-   Interval automatic differentiation
+   analytic_operators.rst
    Extension to custom expressions
    Temporal functions
