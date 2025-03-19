@@ -82,6 +82,9 @@ void export_Figure2D(py::module& m)
     .def("set_window_properties", &Figure2D::set_window_properties,
       VOID_FIGURE2D_SET_WINDOW_PROPERTIES_CONST_VECTOR_REF_CONST_VECTOR_REF,
       "pos"_a, "size"_a)
+
+    .def("draw_axes", &Figure2D::draw_axes,
+      VOID_FIGURE2D_DRAW_AXES)
   
     .def("center_viewbox", &Figure2D::center_viewbox,
       VOID_FIGURE2D_CENTER_VIEWBOX_CONST_VECTOR_REF_CONST_VECTOR_REF,
@@ -235,6 +238,9 @@ void export_Figure2D(py::module& m)
   
     .def_static("set_window_properties", &DefaultView::set_window_properties,
       STATIC_VOID_DEFAULTVIEW_SET_WINDOW_PROPERTIES_CONST_VECTOR_REF_CONST_VECTOR_REF)
+
+    .def_static("draw_axes", &DefaultView::draw_axes,
+      STATIC_VOID_DEFAULTVIEW_DRAW_AXES)
 
     // Geometric shapes
 

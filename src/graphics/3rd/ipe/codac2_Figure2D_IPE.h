@@ -50,6 +50,8 @@ namespace codac2
       */
       void begin_path_with_matrix(const Vector& x, float length, const StyleProperties& s);
 
+      void draw_axes();
+
       // Geometric shapes
       void draw_point(const Vector& c, const StyleProperties& s = StyleProperties());
       void draw_box(const IntervalVector& x, const StyleProperties& s = StyleProperties());

@@ -8,6 +8,7 @@
  */
 
 #include <cstdio>
+#include <sstream>
 #include "codac2_Figure2D_IPE.h"
 #include "codac2_math.h"
 
@@ -123,6 +124,147 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
   _f_temp_content << "\"" << scale_length(length) * std::cos(x[j()+1]) << " " << scale_length(length) * std::sin(x[j()+1]) << " "
                   << - scale_length(length) * std::sin(x[j()+1]) << " " << scale_length(length) * std::cos(x[j()+1]) << " " 
                   << scale_x(x[i()]) << " " << scale_y(x[j()]) << "\">\n";
+}
+
+// Function to determine the appropriate precision for an axis
+int determinePrecision(double step) {
+    if (step >= 1) return 1;
+    return std::max(1, static_cast<int>(std::abs(std::log10(step)) + 1));
+}
+
+// Function to round a number to a fixed number of decimal places, with tolerance for floating-point errors
+double roundToPrecision(double num, int precision) {
+    double factor = std::pow(10, precision);
+    
+    
+    // Round the number to the desired precision
+    return std::round(num * factor) / factor;
+}
+
+// Function to generate axis tick marks as doubles
+std::vector<double> generateAxisTicks(double minVal, double maxVal, int maxTicks = 5) {
+    std::vector<double> ticks;
+
+    if (minVal > maxVal) std::swap(minVal, maxVal);
+
+    double range = maxVal - minVal;
+    double rawStep = range / maxTicks;
+
+    // Round step size to a "nice" value (1, 2, 5, 10, etc.)
+    double magnitude = std::pow(10, std::floor(std::log10(rawStep)));
+    double normalizedStep = rawStep / magnitude;
+
+    double step;
+    if (normalizedStep < 1.5) step = 1.0;
+    else if (normalizedStep < 3) step = 2.0;
+    else if (normalizedStep < 7) step = 5.0;
+    else step = 10.0;
+    step *= magnitude;
+
+    // Determine precision based on step size
+    int precision = determinePrecision(step);
+
+    // Compute first tick correctly for both positive and negative values
+    double firstTick = std::ceil(minVal / step) * step;
+
+    // Generate tick marks, ensuring precision is maintained
+    for (double tick = firstTick; tick <= maxVal +step/10.; tick += step) {
+        ticks.push_back(tick);  // Use roundToPrecision for proper rounding
+    }
+
+    return ticks;
+}
+
+// Function to format a rounded number as a string
+std::string formatNumber(double num, double step) {
+    double neg_sign=false;
+    string result;
+    if (num<0)
+    {
+      result+="-";
+      num = -num;
+      neg_sign=true;
+    }
+    int precision = std::floor(std::log10(step));
+    double factor = std::pow(10, -precision);
+    int int_part = num/1;
+    std::ostringstream stream;
+    result+=to_string(int_part);
+    if (precision<0)
+    {
+      result+=".";
+      double rest = num-((double)int_part);
+      int to_add = -precision; // number of digits after comma
+      double rest_factor = rest*factor;
+      int rest_to_int = std::round(rest_factor);
+      int length_of_added =  std::floor(std::log10(rest_to_int)) + 1; // for example 12 has a length of 2
+      if (length_of_added>to_add)
+        {
+        if (to_string(rest_to_int)=="10")
+        {
+          int_part+=1;
+          if (neg_sign)
+            result = "-";
+          else
+            result = "";
+          result+=to_string(int_part);
+
+        }
+          
+        
+        }
+      else{
+        if (length_of_added>0)
+        {
+          for (int i =0; i < (to_add-length_of_added);i++)
+            result += "0";
+          result+=to_string(rest_to_int);
+        }
+        
+      }
+      
+    }
+    return result;
+}
+
+
+void Figure2D_IPE::draw_axes()
+{
+  auto x_ticks = generateAxisTicks(_fig.axes()[0].limits.lb(), _fig.axes()[0].limits.ub());
+  double stepSize_x = x_ticks[1] - x_ticks[0];
+  int precision_x = determinePrecision(stepSize_x);
+  auto y_ticks = generateAxisTicks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
+  double stepSize_y = y_ticks[1] - y_ticks[0];
+  int precision_y = determinePrecision(stepSize_y);
+
+  draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()},{_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.ub()}}, 0., {Color::black(),Color::black()});
+  draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()}}, 0., {Color::black(),Color::black()});
+  
+  for (auto x_tick : x_ticks) {
+    draw_polyline({{x_tick,_fig.axes()[1].limits.ub()},{x_tick,_fig.axes()[1].limits.ub()-0.02*_fig.axes()[1].limits.diam()}}, 0., {Color::black(),Color::black()});
+    _f_temp_content << "\n \
+      <text transformations=\"translations\" \n \ 
+      pos=\"" << scale_x(x_tick+0.01*_fig.axes()[0].limits.diam()) << " " << scale_y(_fig.axes()[1].limits.ub()-0.02*_fig.axes()[1].limits.diam()) << "\" \n \
+      stroke=\"black\" \n \
+      type=\"label\" \n \
+      width=\"" << scale_length(_fig.axes()[0].limits.diam()) << "\" \n \
+      height=\"" << scale_length(_fig.axes()[1].limits.diam()) << "\" \n \
+      depth=\"0\" \n \
+      valign=\"baseline\">" << formatNumber(x_tick,stepSize_x) << "</text>";
+  }
+
+  for (auto y_tick : y_ticks) {
+    draw_polyline({{_fig.axes()[0].limits.lb(),y_tick},{_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam(),y_tick}}, 0., {Color::black(),Color::black()});
+    _f_temp_content << "\n \
+      <text transformations=\"translations\" \n \
+      pos=\"" << scale_x(_fig.axes()[0].limits.lb()+0.01*_fig.axes()[0].limits.diam()) << " " << scale_y(y_tick+0.01*_fig.axes()[1].limits.diam()) << "\" \n \
+      stroke=\"black\" \n \
+      type=\"label\" \n \
+      width=\"" << scale_length(_fig.axes()[0].limits.diam()) << "\" \n \
+      height=\"" << scale_length(_fig.axes()[1].limits.diam()) << "\" \n \
+      depth=\"0\" \n \
+      valign=\"baseline\">" << formatNumber(y_tick,stepSize_y) << "</text>";
+  }
 }
 
 void Figure2D_IPE::draw_point(const Vector& c, const StyleProperties& s)

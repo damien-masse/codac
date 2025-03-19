@@ -85,6 +85,12 @@ void Figure2D::set_window_properties(const Vector& pos, const Vector& size)
     output_fig->update_window_properties();
 }
 
+void Figure2D::draw_axes()
+{
+  for(const auto& output_fig : _output_figures)
+    output_fig->draw_axes();
+}
+
 void Figure2D::center_viewbox(const Vector& c, const Vector& r)
 {
   assert_release(this->size() <= c.size() && this->size() <= r.size());
@@ -331,13 +337,13 @@ void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperti
 
   if(values.size() > 1)
   {
-    draw_polyline(values,s);
-
     _axes[0].limits = x.tdomain();
     _axes[1].limits = x.codomain();
 
     for(const auto& output_fig : _output_figures)
       output_fig->update_axes();
+      
+    draw_polyline(values,s);
   }
 }
 

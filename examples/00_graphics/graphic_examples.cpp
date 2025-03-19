@@ -62,6 +62,8 @@ int main(){
   // HSV color without and with opacity
   fig2->draw_box({{2.6,3.1},{2.6,3.1}},{Color({108,90,78},Model::HSV),Color({108,90,78,20},Model::HSV)});
 
+  fig2->draw_axes();
+
   Figure2D fig3 ("My Figure 3",GraphicOutput::VIBES|GraphicOutput::IPE);
   fig3.set_window_properties({800,250},{500,500});
 
@@ -77,7 +79,7 @@ int main(){
   custom_map[1] = Color({0,0,255});
 
   double subdivisions = 40.;
-  fig3.set_axes(axis(0,{-1,subdivisions+1}), axis(1,{-1.25,0}));
+  fig3.set_axes(axis(0,{-1,subdivisions+1}), axis(1,{-1.25,0.05}));
   for (double i=0.; i<subdivisions; i+=1.0)
   {
     double ratio = i/subdivisions;
@@ -89,7 +91,9 @@ int main(){
     fig3.draw_box({{i,i+1},{-6./5.,-5./5.}},{Color::black(),custom_map.color(ratio)});
   }
 
-  Figure2D fig4 ("My Figure 4",GraphicOutput::VIBES);
+  fig3.draw_axes();
+
+  Figure2D fig4 ("My Figure 4",GraphicOutput::VIBES|GraphicOutput::IPE);
 
   fig4.set_axes(axis(0,{-10,10}), axis(1,{-10,10}));
 

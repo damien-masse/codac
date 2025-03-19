@@ -78,6 +78,7 @@ namespace codac2
       const Vector& pos() const;
       const Vector& window_size() const;
       void set_window_properties(const Vector& pos, const Vector& size);
+      void draw_axes();
 
       void center_viewbox(const Vector& c, const Vector& r);
       double scaled_unit() const;
@@ -165,6 +166,12 @@ namespace codac2
       {
         auto_init();
         selected_fig()->set_window_properties(pos,size);
+      }
+
+      static void draw_axes()
+      {
+        auto_init();
+        selected_fig()->draw_axes();
       }
 
       // Geometric shapes
