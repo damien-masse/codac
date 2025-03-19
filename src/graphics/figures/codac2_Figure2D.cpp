@@ -331,13 +331,13 @@ void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperti
 
   if(values.size() > 1)
   {
-    draw_polyline(values,s);
-
     _axes[0].limits = x.tdomain();
     _axes[1].limits = x.codomain();
 
     for(const auto& output_fig : _output_figures)
       output_fig->update_axes();
+
+    draw_polyline(values,s);
   }
 }
 
