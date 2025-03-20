@@ -128,36 +128,36 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
 
 
 
-std::vector<double> generateAxisTicks(double minVal, double maxVal, int maxTicks = 5) {
+std::vector<double> generate_axis_ticks(double min_val, double max_val) {
     std::vector<double> ticks;
 
-    double range = maxVal - minVal;
-    double rawStep = range / maxTicks;
+    double range = max_val - min_val;
+    double raw_step = range / 5;
 
-    double magnitude = std::pow(10, std::floor(std::log10(rawStep)));
-    double normalizedStep = rawStep / magnitude;
+    double magnitude = std::pow(10, std::floor(std::log10(raw_step)));
+    double normalized_step = raw_step / magnitude;
 
     double step;
-    if (normalizedStep < 1.5) 
+    if (normalized_step < 1.5) 
       step = 1.0;
-    else if (normalizedStep < 3) 
+    else if (normalized_step < 3) 
       step = 2.0;
-    else if (normalizedStep < 7) 
+    else if (normalized_step < 7) 
       step = 5.0;
     else 
       step = 10.0;
 
     step *= magnitude;
 
-    double firstTick = std::ceil(minVal / step) * step;
+    double first_tick = std::ceil(min_val / step) * step;
 
-    for (double tick = firstTick; tick <= maxVal +step/10.; tick += step)
+    for (double tick = first_tick; tick <= max_val +step/10.; tick += step)
         ticks.push_back(tick);
 
     return ticks;
 }
 
-std::string formatNumber(double num, double step) 
+std::string format_number(double num, double step) 
 {
     string result;
     string sign = "";
@@ -214,24 +214,24 @@ std::string formatNumber(double num, double step)
 
 void Figure2D_IPE::draw_axes()
 {
-  auto x_ticks = generateAxisTicks(_fig.axes()[0].limits.lb(), _fig.axes()[0].limits.ub());
-  auto y_ticks = generateAxisTicks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
+  auto x_ticks = generate_axis_ticks(_fig.axes()[0].limits.lb(), _fig.axes()[0].limits.ub());
+  auto y_ticks = generate_axis_ticks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
 
-  draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()},{_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.ub()}}, 0., {Color::black(),Color::black()});
+  draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},{_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.lb()}}, 0., {Color::black(),Color::black()});
   draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()}}, 0., {Color::black(),Color::black()});
   
   for (auto x_tick : x_ticks) 
   {
-    draw_polyline({{x_tick,_fig.axes()[1].limits.ub()},{x_tick,_fig.axes()[1].limits.ub()-0.02*_fig.axes()[1].limits.diam()}}, 0., {Color::black(),Color::black()});
+    draw_polyline({{x_tick,_fig.axes()[1].limits.lb()},{x_tick,_fig.axes()[1].limits.lb()+0.02*_fig.axes()[1].limits.diam()}}, 0., {Color::black(),Color::black()});
     _f_temp_content << "\n \
       <text transformations=\"translations\" \n \
-      pos=\"" << scale_x(x_tick+0.01*_fig.axes()[0].limits.diam()) << " " << scale_y(_fig.axes()[1].limits.ub()-0.02*_fig.axes()[1].limits.diam()) << "\" \n \
+      pos=\"" << scale_x(x_tick+0.01*_fig.axes()[0].limits.diam()) << " " << scale_y(_fig.axes()[1].limits.lb()+0.01*_fig.axes()[1].limits.diam()) << "\" \n \
       stroke=\"black\" \n \
       type=\"label\" \n \
       width=\"" << scale_length(_fig.axes()[0].limits.diam()) << "\" \n \
       height=\"" << scale_length(_fig.axes()[1].limits.diam()) << "\" \n \
       depth=\"0\" \n \
-      valign=\"baseline\">" << formatNumber(x_tick,(x_ticks[1] - x_ticks[0])) << "</text>";
+      valign=\"baseline\">" << format_number(x_tick,(x_ticks[1] - x_ticks[0])) << "</text>";
   }
 
   for (auto y_tick : y_ticks) 
@@ -245,7 +245,7 @@ void Figure2D_IPE::draw_axes()
       width=\"" << scale_length(_fig.axes()[0].limits.diam()) << "\" \n \
       height=\"" << scale_length(_fig.axes()[1].limits.diam()) << "\" \n \
       depth=\"0\" \n \
-      valign=\"baseline\">" << formatNumber(y_tick, (y_ticks[1] - y_ticks[0])) << "</text>";
+      valign=\"baseline\">" << format_number(y_tick, (y_ticks[1] - y_ticks[0])) << "</text>";
   }
 }
 
