@@ -21,15 +21,15 @@ using namespace pybind11::literals;
 
 void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& pysep)
 {
-  py::class_<SepWrapper_<IntervalVector>> exported(m, "SepWrapper", pysep, SEPWRAPPER__INTERVALVECTOR_MAIN);
+  py::class_<SepWrapper<IntervalVector>> exported(m, "SepWrapper", pysep, SEPWRAPPER_INTERVALVECTOR_MAIN);
   exported
 
     .def(py::init<const IntervalVector&>(),
-      SEPWRAPPER__INTERVALVECTOR_SEPWRAPPER__CONST_INTERVALVECTOR_REF,
+      SEPWRAPPER_INTERVALVECTOR_SEPWRAPPER_CONST_INTERVALVECTOR_REF,
       "y"_a)
 
-    .def("separate", &SepWrapper_<IntervalVector>::separate,
-      BOXPAIR_SEPWRAPPER__INTERVALVECTOR_SEPARATE_CONST_INTERVALVECTOR_REF_CONST,
+    .def("separate", &SepWrapper<IntervalVector>::separate,
+      BOXPAIR_SEPWRAPPER_INTERVALVECTOR_SEPARATE_CONST_INTERVALVECTOR_REF_CONST,
       "x"_a)
   ;
 }

@@ -79,7 +79,7 @@ TEST_CASE("SepInverse - sep")
 {
   VectorVar x(2);
   AnalyticFunction f { {x}, vec(x[0],sqr(x[0]/7.)+sqr(x[1]/3.)) };
-  SepInverse s(f, SepWrapper_<IntervalVector>({{0,oo},{-oo,1}}));
+  SepInverse s(f, SepWrapper(IntervalVector({{0,oo},{-oo,1}})));
 
   {
     IntervalVector b({{0,0.8},{-2.28,-1.56}});

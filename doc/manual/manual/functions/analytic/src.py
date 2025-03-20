@@ -141,6 +141,18 @@ class TestAnalyticFunctionManual(unittest.TestCase):
     test.assertTrue(n == 3)
     test.assertTrue(m == 2)
 
+    # [9-beg]
+    # Forward evaluation
+    y = CosOp.fwd([0,PI/2]) # y = [0,1]
+
+    # Backward evaluation
+    x = Interval(0,PI) # prior value of [x]
+    CosOp.bwd([0,0.5], x) # [x] is contracted to [PI/3,PI/2]
+    # [9-end]
+
+    test.assertTrue(Approx(y) == Interval(0,1))
+    test.assertTrue(Approx(x) == Interval(PI/3,PI/2))
+
     
 if __name__ ==  '__main__':
   unittest.main()

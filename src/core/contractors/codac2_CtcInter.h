@@ -85,7 +85,7 @@ namespace codac2
   inline CtcInter<IntervalVector> operator&(const IntervalVector& c1, const C2& c2)
   {
     assert_release(c1.size() == c2.size());
-    return CtcInter<IntervalVector>(CtcWrapper_<IntervalVector>(c1),c2);
+    return CtcInter<IntervalVector>(CtcWrapper(c1),c2);
   }
 
   template<typename C1>
@@ -93,6 +93,6 @@ namespace codac2
   inline CtcInter<IntervalVector> operator&(const C1& c1, const IntervalVector& c2)
   {
     assert_release(c1.size() == c2.size());
-    return CtcInter<IntervalVector>(c1,CtcWrapper_<IntervalVector>(c2));
+    return CtcInter<IntervalVector>(c1,CtcWrapper(c2));
   }
 }

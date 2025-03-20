@@ -94,7 +94,7 @@ namespace codac2
   inline CtcUnion<IntervalVector> operator|(const IntervalVector& c1, const C2& c2)
   {
     assert_release(c1.size() == c2.size());
-    return CtcUnion<IntervalVector>(CtcWrapper_<IntervalVector>(c1),c2);
+    return CtcUnion<IntervalVector>(CtcWrapper(c1),c2);
   }
 
   template<typename C1>
@@ -102,6 +102,6 @@ namespace codac2
   inline CtcUnion<IntervalVector> operator|(const C1& c1, const IntervalVector& c2)
   {
     assert_release(c1.size() == c2.size());
-    return CtcUnion<IntervalVector>(c1,CtcWrapper_<IntervalVector>(c2));
+    return CtcUnion<IntervalVector>(c1,CtcWrapper(c2));
   }
 }
