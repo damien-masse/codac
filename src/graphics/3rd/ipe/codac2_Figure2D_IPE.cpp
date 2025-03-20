@@ -157,10 +157,11 @@ std::vector<double> generateAxisTicks(double minVal, double maxVal, int maxTicks
     return ticks;
 }
 
-std::string formatNumber(double num, double step) {
+std::string formatNumber(double num, double step) 
+{
     string result;
     string sign = "";
-    if (num<0)
+    if (num < 0)
     {
       sign = "-";
       num = -num;
@@ -168,42 +169,42 @@ std::string formatNumber(double num, double step) {
     
     int precision = std::floor(std::log10(step)); // precision required for the axis label
 
-    int int_part = num/1; // integer part of the number
+    int int_part = num / 1; // integer part of the number
 
     result = sign;  // sign of the number
     result += to_string(int_part);
     
-    if (precision>=0) // the number is an integer
+    if (precision >= 0) // the number is an integer
     {
       return result;
     }
+
     else
     {
-      result+=".";
-      double remainder = num-((double)int_part);  // remainder to add
-      int remainder_to_int = std::round(remainder*std::pow(10, -precision));
+      result += ".";
+      double remainder = num - ((double) int_part);  // remainder to add
+      int remainder_to_int = std::round(remainder * std::pow(10, -precision));
       int length_of_remainder =  std::floor(std::log10(remainder_to_int)) + 1; // for example 12 has a length of 2
 
       // this part is need for the specific case where a number like 1. is represented as 0.999... (int part gives 0 instead of 1)
-      if (length_of_remainder>-precision)
+      if (length_of_remainder > -precision)
         {
-          if (to_string(remainder_to_int)=="10")
+          if (to_string(remainder_to_int) == "10")
           {
-            int_part+=1;
+            int_part++;
             result = sign;
-            result+=to_string(int_part);
-
+            result += to_string(int_part);
           }
         }
-        
+
       else{
         if (length_of_remainder>0) // this assertion is useful to avoid issues with the approximation of 0
         {
           // we add the necessary zeros after the comma
-          for (int i =0; i < (-precision-length_of_remainder);i++)
+          for (int i =0; i < (-precision-length_of_remainder); i++)
             result += "0";
           // and we add the remainder
-          result+=to_string(remainder_to_int);
+          result += to_string(remainder_to_int);
         }
       }
     }
@@ -214,14 +215,13 @@ std::string formatNumber(double num, double step) {
 void Figure2D_IPE::draw_axes()
 {
   auto x_ticks = generateAxisTicks(_fig.axes()[0].limits.lb(), _fig.axes()[0].limits.ub());
-  double stepSize_x = x_ticks[1] - x_ticks[0];
   auto y_ticks = generateAxisTicks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
-  double stepSize_y = y_ticks[1] - y_ticks[0];
 
   draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()},{_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.ub()}}, 0., {Color::black(),Color::black()});
   draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()}}, 0., {Color::black(),Color::black()});
   
-  for (auto x_tick : x_ticks) {
+  for (auto x_tick : x_ticks) 
+  {
     draw_polyline({{x_tick,_fig.axes()[1].limits.ub()},{x_tick,_fig.axes()[1].limits.ub()-0.02*_fig.axes()[1].limits.diam()}}, 0., {Color::black(),Color::black()});
     _f_temp_content << "\n \
       <text transformations=\"translations\" \n \
@@ -231,10 +231,11 @@ void Figure2D_IPE::draw_axes()
       width=\"" << scale_length(_fig.axes()[0].limits.diam()) << "\" \n \
       height=\"" << scale_length(_fig.axes()[1].limits.diam()) << "\" \n \
       depth=\"0\" \n \
-      valign=\"baseline\">" << formatNumber(x_tick,stepSize_x) << "</text>";
+      valign=\"baseline\">" << formatNumber(x_tick,(x_ticks[1] - x_ticks[0])) << "</text>";
   }
 
-  for (auto y_tick : y_ticks) {
+  for (auto y_tick : y_ticks) 
+  {
     draw_polyline({{_fig.axes()[0].limits.lb(),y_tick},{_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam(),y_tick}}, 0., {Color::black(),Color::black()});
     _f_temp_content << "\n \
       <text transformations=\"translations\" \n \
@@ -244,7 +245,7 @@ void Figure2D_IPE::draw_axes()
       width=\"" << scale_length(_fig.axes()[0].limits.diam()) << "\" \n \
       height=\"" << scale_length(_fig.axes()[1].limits.diam()) << "\" \n \
       depth=\"0\" \n \
-      valign=\"baseline\">" << formatNumber(y_tick,stepSize_y) << "</text>";
+      valign=\"baseline\">" << formatNumber(y_tick, (y_ticks[1] - y_ticks[0])) << "</text>";
   }
 }
 
