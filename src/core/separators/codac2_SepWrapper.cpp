@@ -35,7 +35,7 @@ BoxPair SepWrapper<PavingInOut>::separate(const IntervalVector& x) const
     result.outer |= (box & x);
   }
 
-  // THe boundary belongs to both inner and outer
+  // The boundary belongs to both inner and outer
   for (const auto &box: P.intersecting_boxes(x, PavingInOut::bound))
   {
     result.inner |= (box & x);
