@@ -58,12 +58,12 @@ namespace codac2
   };
 
   template<>
-  class SepWrapper_<PavingInOut>: public Sep<SepWrapper_<PavingInOut>>
+  class SepWrapper<PavingInOut>: public Sep<SepWrapper<PavingInOut>>
   {
     public:
 
-      SepWrapper_(const PavingInOut& P)
-        : Sep<SepWrapper_<PavingInOut>>(P.size()), P(P)
+      SepWrapper(const PavingInOut& P)
+        : Sep<SepWrapper<PavingInOut>>(P.size()), P(P)
       { }
 
       BoxPair separate(const IntervalVector& x) const;

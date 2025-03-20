@@ -17,7 +17,7 @@ BoxPair SepWrapper<IntervalVector>::separate(const IntervalVector& x) const
   return SepCtcPair::separate(x);
 }
 
-BoxPair SepWrapper_<PavingInOut>::separate(const IntervalVector& x) const
+BoxPair SepWrapper<PavingInOut>::separate(const IntervalVector& x) const
 {
   assert(x.size() == P.size());
 
