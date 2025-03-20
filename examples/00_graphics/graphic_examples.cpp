@@ -64,7 +64,7 @@ int main(){
 
   fig2->draw_axes();
 
-  Figure2D fig3 ("My Figure 3",GraphicOutput::VIBES|GraphicOutput::IPE);
+  Figure2D fig3 ("ColorMap figure",GraphicOutput::VIBES|GraphicOutput::IPE);
   fig3.set_window_properties({800,250},{500,500});
 
   ColorMap cmap_haxby = ColorMap::haxby();
@@ -93,7 +93,7 @@ int main(){
 
   fig3.draw_axes();
 
-  Figure2D fig4 ("My Figure 4",GraphicOutput::VIBES|GraphicOutput::IPE);
+  Figure2D fig4 ("My Figure 4",GraphicOutput::VIBES);
 
   fig4.set_axes(axis(0,{-10,10}), axis(1,{-10,10}));
 
