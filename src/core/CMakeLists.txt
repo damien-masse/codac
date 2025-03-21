@@ -11,8 +11,12 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCartProd.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCross.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCross.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDet.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDet.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEllipse.cpp
@@ -165,6 +169,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepAction.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartProd.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartProd.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCross.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCross.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcBoundary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcBoundary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcPair.cpp
