@@ -13,7 +13,6 @@
 #include "codac2_Collection.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_Sep.h"
-#include "codac2_SepBase.h"
 
 namespace codac2
 {
