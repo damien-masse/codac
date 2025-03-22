@@ -1,9 +1,9 @@
 /** 
  *  codac2_SepWrapper.cpp
  * ----------------------------------------------------------------------------
- *  \date       2024
- *  \author     Simon Rohou
- *  \copyright  Copyright 2024 Codac Team
+ *  \date       2025
+ *  \author     Simon Rohou, Quentin Brateau
+ *  \copyright  Copyright 2025 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
