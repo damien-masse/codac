@@ -305,7 +305,7 @@ void Figure2D_IPE::draw_motor_boat(const Vector& x, float size, const StylePrope
 
   // Hull details
   begin_path_with_matrix(x,length,s_edge);
-  constexpr char hull_details[] = "120 80 m \n 104 64 l \n -56 64 l \n -56 -64 l \n 304 528 l \n 320 512 l \n";
+  constexpr char hull_details[] = "120 80 m \n 104 64 l \n -56 64 l \n -56 -64 l \n 104 -64 l \n 120 -80 l \n";
   _f_temp_content << hull_details << "</path>";
 
   // Engine
