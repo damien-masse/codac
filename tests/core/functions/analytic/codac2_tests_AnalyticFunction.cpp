@@ -430,4 +430,19 @@ TEST_CASE("AnalyticFunction")
     auto f = create_f();
     CHECK(Approx(f.eval(PI)) == -PI);
   }
+
+  {
+    ScalarVar x;
+    AnalyticFunction f({x},sqrt(x));
+    CHECK(Interval(0.).is_subset({0,oo}));
+    CHECK(Interval(0.,10.).is_subset({0,oo}));
+    CHECK(Approx(f.eval(EvalMode::NATURAL, 0.)) == 0.);
+    CHECK(Approx(f.eval(EvalMode::NATURAL, 1e-10),1e-3) == 0.);
+    // Cannot compute in pure centered form due to the
+    // definition domain of the derivative of sqrt:
+    CHECK(f.eval(EvalMode::CENTERED, 0.).is_empty());
+    CHECK(Approx(f.eval(EvalMode::CENTERED, 1e-10),1e-3) == 0.);
+    CHECK(Approx(f.eval(0.)) == 0.);
+    CHECK(Approx(f.eval(1e-10),1e-3) == 0.);
+  }
 }
