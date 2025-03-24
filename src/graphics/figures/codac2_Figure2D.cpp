@@ -371,6 +371,18 @@ void Figure2D::draw_AUV(const Vector& x, float size, const StyleProperties& s)
   }
 }
 
+void Figure2D::draw_motor_boat(const Vector& x, float size, const StyleProperties& s)
+{
+  assert_release(this->size() <= x.size()+1);
+  assert_release(size >= 0.);
+
+  for(const auto& output_fig : _output_figures)
+  {
+    assert_release(output_fig->j()+1 < x.size());
+    output_fig->draw_motor_boat(x,size,s);
+  }
+}
+
 void Figure2D::draw_paving(const PavingOut& p,
   const StyleProperties& boundary_style,const StyleProperties& outside_style)
 {

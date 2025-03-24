@@ -10,6 +10,7 @@ int main(){
   DefaultView::set_window_properties({600,600},{300,300});
   DefaultView::draw_box({{2.2,2.5},{2.2,2.5}},{Color::black(),Color::yellow(0.5)});
   DefaultView::draw_AUV({1,1,3.14/2},1.,{Color::black(),Color::yellow()});
+  DefaultView::draw_motor_boat({0,0,0}, 1., {Color::black(),Color::yellow()});
   DefaultView::draw_tank({2,1,3.14/2},1.,{Color::black(),Color::yellow()});
   DefaultView::draw_pie({2,2},{1.5,2.5},{(3*3.14/4)-0.5,(3*3.14/4)+0.5},{Color::blue(),Color::cyan()});
   DefaultView::draw_polyline({{2,-0.5},{4,0.5},{3,1.5},{4,2.5},{3,3}}, Color::red());

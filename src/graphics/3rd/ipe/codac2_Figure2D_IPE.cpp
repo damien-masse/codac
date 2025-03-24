@@ -368,15 +368,11 @@ void Figure2D_IPE::draw_tank(const Vector& x, float size, const StyleProperties&
   assert(j()+1 < x.size());
   assert(size >= 0.);
   
-  float length=size/4.0; // from VIBes : initial vehicle's length is 4
+  float length = size/4.0; // from VIBes : initial vehicle's length is 4
 
   begin_path_with_matrix(x,length,s);
-
   constexpr char tank_shape[] = " 1 -1.5 m \n -1 -1.5 l \n 0 -1.5 l \n 0 -1 l \n -1 -1 l \n -1 1 l \n 0 1 l \n 0 1.5 l \n -1 1.5 l \n 1 1.5 l \n 0 1.5 l \n 0 1 l \n 3 0.5 l \n 3 -0.5 l \n 0 -1 l \n 0 -1.5 l \n";
-
-  _f_temp_content << tank_shape;
-
-  _f_temp_content << "</path>";
+  _f_temp_content << tank_shape << "</path>";
 }
 
 void Figure2D_IPE::draw_AUV(const Vector& x, float size, const StyleProperties& s)
@@ -385,33 +381,68 @@ void Figure2D_IPE::draw_AUV(const Vector& x, float size, const StyleProperties& 
   assert(j()+1 < x.size());
   assert(size >= 0.);
 
-  float length=size/7.0; // from VIBes : initial vehicle's length is 7
+  float length = size/7.0; // from VIBes : initial vehicle's length is 7
 
-  _f_temp_content<<"\n<group>\n";
+  _f_temp_content << "\n<group>\n";
 
   // Body
-
   begin_path_with_matrix(x,length,s);
-
   constexpr char body_shape[] = " -4 0 m \n -2 1 l \n 2 1 l \n 2.17365 0.984808 l \n 2.34202 0.939693 l \n 2.5 0.866025 l \n 2.64279 0.766044 l \n 2.76604 0.642788 l \n 2.86603 0.5 l \n 2.93969 0.34202 l \n 2.98481 0.173648 l \n 3 0 l \n 2.98481 -0.173648 l \n 2.93969 -0.34202 l \n 2.86603 -0.5 l \n 2.76604 -0.642788 l \n 2.64279 -0.766044 l \n 2.5 -0.866025 l \n 2.34202 -0.939693 l \n 2.17365 -0.984808 l \n 2 -1 l \n -2 -1 l \n -4 0 l \n";
-
   _f_temp_content << body_shape;
-
   _f_temp_content << "</path>\n";
 
   // Propulsion unit
-
   constexpr char propeller_shape[] = " -4 1 m \n -3.25 1 l \n -3.25 -1 l \n -4 -1 l \n -4 1 l \n";
-
   begin_path_with_matrix(x,length,s);
+  _f_temp_content << propeller_shape << "</path>\n";
 
-  _f_temp_content << propeller_shape;
+  _f_temp_content << "</group>";
+}
 
-  _f_temp_content << "</path>\n";
-
-  _f_temp_content<<"</group>";
+void Figure2D_IPE::draw_motor_boat(const Vector& x, float size, const StyleProperties& s)
+{
+  assert(_fig.size() <= x.size()+1);
+  assert(j()+1 < x.size());
+  assert(size >= 0.);
   
+  float length = size/408.0; // from VIBes : initial vehicle's length is 408
 
+  StyleProperties s_edge = s; s_edge.fill_color = Color::none();
+  StyleProperties s_fill = s; s_fill.fill_color = s.stroke_color;
+
+  _f_temp_content << "\n<group>\n";
+
+  // Body shape
+  begin_path_with_matrix(x,length,s);
+  constexpr char body_shape[] = "-72 -80 m \n -72 80 l \n 120 80 l \n 184 80 \n 264 64 \n 312 32 \n 328 0 c \n 312 -32 \n 264 -64 \n 184 -80 \n 120 -80 \n -72 -80 c \n";
+  _f_temp_content << body_shape << "</path>";
+
+  // Left prop
+  begin_path_with_matrix(x,length,s_fill);
+  constexpr char left_prop[] = "-72 48 m \n -72 16 l \n -80 16 l \n -80 48 l \n h \n";
+  _f_temp_content << left_prop << "</path>";
+
+  // Right prop
+  begin_path_with_matrix(x,length,s_fill);
+  constexpr char right_prop[] = "-72 -16 m \n -72 -48 l \n -80 -48 l \n -80 -16 l \n h \n";
+  _f_temp_content << right_prop << "</path>";
+
+  // Hull details
+  begin_path_with_matrix(x,length,s_edge);
+  constexpr char hull_details[] = "120 80 m \n 104 64 l \n -56 64 l \n -56 -64 l \n 104 -64 l \n 120 -80 l \n";
+  _f_temp_content << hull_details << "</path>";
+
+  // Engine
+  begin_path_with_matrix(x,length,s_fill);
+  constexpr char engine[] = "-24 32 m \n -24 -32 l \n 40 -32 l \n 40 32 l \n h \n";
+  _f_temp_content << engine << "</path>";
+
+  // Circle
+  begin_path_with_matrix(x,length,s_edge);
+  constexpr char circle[] = "22.6274 \n 0 \n 0 \n 22.6274 \n 200 \n 0 \n e \n";
+  _f_temp_content << circle << "</path>";
+
+  _f_temp_content << "</group>";
 }
 
 double Figure2D_IPE::scale_x(double x) const
