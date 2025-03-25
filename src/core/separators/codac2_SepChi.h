@@ -24,12 +24,13 @@ namespace codac2
   {
     public:
 
-      template<typename S>
-        requires IsSepBaseOrPtr<S>
-      SepChi(const S& Sa, const S& Sb, const S& Sc)
+      template<typename S1, typename S2, typename S3>
+        requires IsSepBaseOrPtr<S1> && IsSepBaseOrPtr<S2> && IsSepBaseOrPtr<S3>
+      SepChi(const S1& Sa, const S2& Sb, const S3& Sc)
         : Sep<SepChi>(size_of(Sa)), _seps({Sa, Sb, Sc})
       { 
-        assert(size_of(Sa) == size_of(Sb) && size_of(Sa) == size_of(Sc) && "size of Sa, Sb, and Sc should be the same");
+        assert_release(size_of(Sa) == size_of(Sb) && size_of(Sa) == size_of(Sc)
+          && "size of Sa, Sb, and Sc should be the same");
       }
 
       BoxPair separate(const IntervalVector& x) const;
