@@ -63,13 +63,13 @@ namespace codac2
     public:
 
       SepWrapper(const PavingInOut& P)
-        : Sep<SepWrapper<PavingInOut>>(P.size()), P(P)
+        : Sep<SepWrapper<PavingInOut>>(P.size()), _P(P)
       { }
 
       BoxPair separate(const IntervalVector& x) const;
 
     protected:
     
-      const PavingInOut P;
+      const PavingInOut _P;
   };
 }

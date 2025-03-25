@@ -16,17 +16,15 @@ namespace codac2
 {
   BoxPair SepChi::separate(const IntervalVector& x) const
   {
+    assert_release(x.size() == _seps.front().size());
 
     std::vector<BoxPair> pairs;
     for (const auto& sep : _seps)
-    {
       pairs.push_back(sep->separate(x));
-    }
 
-    BoxPair pair_out(IntervalVector(x.size()), IntervalVector(x.size()));
-    pair_out.inner = (pairs[0].inner & pairs[1].inner) | (pairs[0].outer & pairs[2].inner);
-    pair_out.outer = (pairs[0].inner & pairs[1].outer) | (pairs[0].outer & pairs[2].outer);
-
-    return pair_out;
+    return {
+      (pairs[0].inner & pairs[1].inner) | (pairs[0].outer & pairs[2].inner),
+      (pairs[0].inner & pairs[1].outer) | (pairs[0].outer & pairs[2].outer)
+    };
   }
 }

@@ -19,24 +19,27 @@ BoxPair SepWrapper<IntervalVector>::separate(const IntervalVector& x) const
 
 BoxPair SepWrapper<PavingInOut>::separate(const IntervalVector& x) const
 {
-  assert(x.size() == P.size());
+  assert_release(x.size() == _P.size());
 
-  BoxPair result = BoxPair(IntervalVector::empty(x.size()), IntervalVector::empty(x.size()));
+  BoxPair result {
+    IntervalVector::empty(x.size()),
+    IntervalVector::empty(x.size())
+  };
 
   // Inner computation
-  for (const auto &box: P.intersecting_boxes(x, PavingInOut::outer_complem))
+  for (const auto &box: _P.intersecting_boxes(x, PavingInOut::outer_complem))
   {
     result.inner |= (box & x);
   }
 
   // Outer computation
-  for (const auto &box: P.intersecting_boxes(x, PavingInOut::inner))
+  for (const auto &box: _P.intersecting_boxes(x, PavingInOut::inner))
   {
     result.outer |= (box & x);
   }
 
   // The boundary belongs to both inner and outer
-  for (const auto &box: P.intersecting_boxes(x, PavingInOut::bound))
+  for (const auto &box: _P.intersecting_boxes(x, PavingInOut::bound))
   {
     result.inner |= (box & x);
     result.outer |= (box & x);
