@@ -201,6 +201,10 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_AUV_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
       "x"_a, "size"_a, "s"_a=StyleProperties())
 
+    .def("draw_motor_boat", &Figure2D::draw_motor_boat,
+      VOID_FIGURE2D_DRAW_MOTOR_BOAT_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "size"_a, "s"_a=StyleProperties())
+
     // Pavings
 
     .def("draw_paving", (void(Figure2D::*)(const PavingOut&,const StyleProperties&,const StyleProperties&))&Figure2D::draw_paving,
@@ -328,6 +332,10 @@ void export_Figure2D(py::module& m)
 
     .def_static("draw_AUV", &DefaultView::draw_AUV,
       STATIC_VOID_DEFAULTVIEW_DRAW_AUV_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "size"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_motor_boat", &DefaultView::draw_motor_boat,
+      STATIC_VOID_DEFAULTVIEW_DRAW_MOTOR_BOAT_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
       "x"_a, "size"_a, "s"_a=StyleProperties())
 
     // Pavings
