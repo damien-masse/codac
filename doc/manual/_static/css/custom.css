@@ -60,3 +60,30 @@ div[class^="highlight"] {
   background: #eeffcc;
   /*border: 1px solid #e1e4e5;*/
 }
+
+.bg-ok {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.bg-bok {
+  background-color: #b8e994;
+  color: white;
+}
+
+.bg-nok {
+  background-color: #e55039;
+  color: white;
+}
+
+td:has(.bg-ok) {
+  background-color: #2ecc71;
+}
+
+td:has(.bg-bok) {
+  background-color: #b8e994;
+}
+
+td:has(.bg-nok) {
+  background-color: #e55039;
+}

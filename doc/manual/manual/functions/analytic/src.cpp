@@ -150,5 +150,17 @@ TEST_CASE("AnalyticFunction - manual")
 
     CHECK(n == 3);
     CHECK(m == 2);
+
+    // [9-beg]
+    // Forward evaluation
+    Interval y = CosOp::fwd({0,PI/2}); // y = [0,1]
+
+    // Backward evaluation
+    Interval x(0,PI); // prior value of [x]
+    CosOp::bwd({0,0.5}, x); // [x] is contracted to [PI/3,PI/2]
+    // [9-end]
+
+    CHECK(Approx(y) == Interval(0,1));
+    CHECK(Approx(x) == Interval(PI/3,PI/2));
   }
 }

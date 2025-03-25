@@ -182,7 +182,7 @@ void Figure2D::draw_arrow(const Vector& p1, const Vector& p2, float tip_length, 
 
 void Figure2D::draw_polyline(const vector<Vector>& x, const StyleProperties& s)
 {
-  draw_polyline(x, 1e-3*scaled_unit(), s);
+  draw_polyline(x, 0., s);
 }
 
 void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const StyleProperties& s)
@@ -331,13 +331,13 @@ void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperti
 
   if(values.size() > 1)
   {
-    draw_polyline(values,s);
-
     _axes[0].limits = x.tdomain();
     _axes[1].limits = x.codomain();
 
     for(const auto& output_fig : _output_figures)
       output_fig->update_axes();
+
+    draw_polyline(values,s);
   }
 }
 
@@ -362,6 +362,18 @@ void Figure2D::draw_AUV(const Vector& x, float size, const StyleProperties& s)
   {
     assert_release(output_fig->j()+1 < x.size());
     output_fig->draw_AUV(x,size,s);
+  }
+}
+
+void Figure2D::draw_motor_boat(const Vector& x, float size, const StyleProperties& s)
+{
+  assert_release(this->size() <= x.size()+1);
+  assert_release(size >= 0.);
+
+  for(const auto& output_fig : _output_figures)
+  {
+    assert_release(output_fig->j()+1 < x.size());
+    output_fig->draw_motor_boat(x,size,s);
   }
 }
 

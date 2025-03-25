@@ -39,7 +39,7 @@ namespace codac2
         {
           Y w = complem_y & f_codomain;
           if(!w.is_empty() && !w.is_subset(y))
-            *this |= CtcInverse_<Y,X>(f, complem_y, with_centered_form, is_not_in);
+            *this |= CtcInverse<Y,X>(f, complem_y, with_centered_form, is_not_in);
         }
       }
 
@@ -51,7 +51,7 @@ namespace codac2
         assert_release(f.args().size() == 1 && "f must have only one arg");
         const bool is_not_in = true;
         
-        *this |= CtcInverse_<Y,X>(f, ctc_compl, with_centered_form, is_not_in);
+        *this |= CtcInverse<Y,X>(f, ctc_compl, with_centered_form, is_not_in);
       }
 
       void contract(X& x) const
