@@ -105,7 +105,9 @@ namespace codac2
           {
             auto x_ = eval_<false>(x...);
 
-            if(x_.da.size() == 0) // if the centered form is not available for this expression
+            // If the centered form is not available for this expression...
+            if(x_.da.size() == 0 // .. because some parts have not yet been implemented,
+              || !x_.def_domain) // .. or due to restrictions in the derivative definition domain
               return eval(EvalMode::NATURAL, x...);
 
             else

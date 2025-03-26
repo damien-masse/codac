@@ -168,21 +168,21 @@ This function can take an optional argument:
     fig.draw_polyline({{2,-0.5},{4,0.5},{3,1.5},{4,2.5},{3,3}}); // Polyline from (2,-0.5) to (4,0.5) to (3,1.5) to (4,2.5) to (3,3)
     fig.draw_polyline({{-0.8,0},{0,1.5}}, 0.2); // Polyline from (-0.8,0) to (0,1.5) with arrow head size 0.2
 
-draw_polygon
-------------
+draw_polygone
+-------------
 
-Draws a polygon on the figure. This function takes **1** argument:
-  - A vector of Vector : the polygon to draw.
+Draws a polygone on the figure. This function takes **1** argument:
+  - A vector of Vector : the polygone to draw.
 
 .. tabs::
 
   .. code-tab:: py
     
-    fig.draw_polygone([[2,4.5],[4,4.5],[4.2,3.5],[3.5,3]]) # Polygon with vertices (2,4.5), (4,4.5), (4.2,3.5) and (3.5,3)
+    fig.draw_polygone([[2,4.5],[4,4.5],[4.2,3.5],[3.5,3]]) # Polygone with vertices (2,4.5), (4,4.5), (4.2,3.5) and (3.5,3)
 
   .. code-tab:: c++
 
-    fig.draw_polygone({{2,4.5},{4,4.5},{4.2,3.5},{3.5,3}}); // Polygon with vertices (2,4.5), (4,4.5), (4.2,3.5) and (3.5,3)
+    fig.draw_polygone({{2,4.5},{4,4.5},{4.2,3.5},{3.5,3}}); // Polygone with vertices (2,4.5), (4,4.5), (4.2,3.5) and (3.5,3)
 
 draw_pie
 --------
@@ -252,7 +252,7 @@ draw_trajectory
 ---------------
 
 Draws a trajectory on the figure. This function takes **1** argument:
-  - An AnalyticTraj **OR** a SampledTraj: the trajectory to draw.
+  - An AnalyticTraj **OR** a SampledTraj of Vector : the trajectory to draw.
 
 Trajectories can be drawn with a ColorMap instead of the classic StyleProperties. This can be done by passing a ColorMap object as the second argument.
 
@@ -272,4 +272,114 @@ Trajectories can be drawn with a ColorMap instead of the classic StyleProperties
     ScalarVar t;
     AnalyticFunction f ({t},{a*sqrt(t)*cos(t),a*sqrt(t)*sin(t)});
     AnalyticTraj traj (f,{0,100});
-    fig4.draw_trajectory(traj,ColorMap::rainbow());
+    fig.draw_trajectory(traj,ColorMap::rainbow());
+
+plot_trajectory
+---------------
+
+Draws a trajectory on the figure. This function takes **1** argument:
+  - An SampledTraj of double : the trajectory to draw.
+
+.. tabs::
+
+  .. code-tab:: py
+    
+    t = ScalarVar()
+    f = AnalyticFunction([t], 2*cos(t)) # Function to sample
+    tdomain = [0,2*PI]  # Domain of the trajectory
+    sampled_traj = AnalyticTraj(f,tdomain).sampled(0.5) # Sampled trajectory with a step of 0.5
+    fig.plot_trajectory(sampled_traj)
+
+  .. code-tab:: c++
+
+    ScalarVar t;
+    AnalyticFunction f ({t},2*cos(t)); // Function to sample
+    Interval tdomain(0,2*PI); // Domain of the trajectory
+    SampledTraj sampled_traj = AnalyticTraj(f,tdomain).sampled(0.5); // Sampled trajectory with a step of 0.5
+    fig.plot_trajectory(sampled_traj);
+
+draw_tank
+---------
+
+Draws a car on the figure. This function takes **2D** arguments:
+  - A Vector : the position and the heading (in radian) of the car.
+  - A double : the size of the car.
+
+.. tabs::
+
+  .. code-tab:: py
+    
+    fig.draw_tank([2,1,PI/2],0.5,[Color.black(),Color.yellow()]) # Car with center (2,1), heading PI/2 and size 0.5
+
+  .. code-tab:: c++
+
+    fig.draw_tank({2,1,PI/2},0.5,{Color::black(),Color::yellow()}); // Car with center (2,1), heading PI/2 and size 0.5
+
+draw_AUV
+--------
+
+Draws an AUV on the figure. This function takes **2D** arguments:
+  - A Vector : the position and the heading (in radian) of the AUV.
+  - A double : the size of the AUV.
+
+.. tabs::
+
+  .. code-tab:: py
+    
+    fig.draw_AUV([1,1,PI/2],0.8,[Color.black(),Color.yellow()]) # AUV with center (1,1), heading PI/2 and size 0.8
+
+  .. code-tab:: c++
+
+    fig.draw_AUV({1,1,PI/2},0.8,{Color::black(),Color::yellow()});  // AUV with center (1,1), heading PI/2 and size 0.8
+
+draw_paving
+-----------
+
+Draws a paving on the figure. This function takes **1** argument:
+  - A PavingOut **OR** a PavingInOut : the paving to draw.
+
+A PavingOut is the result of a paving with contractors and a PavingInOut is the result of a paving with separators, see Pavers for contractors and separators.
+
+Contrary to the other functions, this function can take two or three StyleProperties objects as optional arguments.
+  - bound_s : the style of the bounding boxes.
+  - out_s : the style of the outside boxes.
+  - in_s : the style of the inside boxes (for PavingInOut only).
+
+.. tabs::
+
+  .. code-tab:: py
+    
+    ctc_wrapper = CtcWrapper(IntervalVector([[-0.5,0.5],[-0.5,0.5]]))
+    p = pave(IntervalVector([[-1,1],[-1,1]]),ctc_wrapper, 0.1)  # Paving with contractors (PavingOut)
+    fig.draw_paving(p)
+
+  .. code-tab:: c++
+
+    CtcWrapper_ ctc_wrapper(IntervalVector({{-0.5,0.5},{-0.5,0.5}}));
+    PavingOut p = pave(IntervalVector({{-1,1},{-1,1}}),ctc_wrapper, 0.1); // Paving with contractors (PavingOut)
+    fig.draw_paving(p);
+
+
+draw_subpaving
+--------------
+
+Draws a subpaving on the figure. This function takes **1** argument:
+  - A SubPavingOut **OR** a SubPavingInOut : the subpaving to draw.
+
+.. tabs::
+
+  .. code-tab:: py
+    
+    sep_wrapper = SepWrapper(IntervalVector([[-0.5,0.5],[-0.5,0.5]]))
+    p = pave(IntervalVector([[-1,1],[-1,1]]),sep_wrapper, 0.1)  # Paving with separators (PavingInOut)
+    v_cs = p.connected_subsets(PavingInOut.inner)   # vector of connected subsets (inner approximation)
+    for cs in v_cs:
+      fig.draw_subpaving(cs, Color.blue())
+
+  .. code-tab:: c++
+
+    SepWrapper_ sep_wrapper(IntervalVector({{-0.5,0.5},{-0.5,0.5}}));
+    auto p = pave(IntervalVector({{-1,1},{-1,1}}),sep_wrapper, 0.1); // Paving with separators (PavingInOut)
+    auto v_cs = p.connected_subsets(PavingInOut::inner); // vector of connected subsets (inner approximation)
+    for (auto cs : v_cs)
+      fig.draw_subpaving(cs,Color::blue());

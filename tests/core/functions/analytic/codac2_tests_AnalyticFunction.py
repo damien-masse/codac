@@ -375,5 +375,18 @@ class TestAnalyticFunction(unittest.TestCase):
     f = create_f()
     self.assertTrue(Approx(f.eval(PI)) == -PI)
 
+    x = ScalarVar()
+    f = AnalyticFunction([x],sqrt(x))
+    self.assertTrue(Interval(0.).is_subset([0,oo]))
+    self.assertTrue(Interval(0.,10.).is_subset([0,oo]))
+    self.assertTrue(Approx(f.eval(EvalMode.NATURAL, 0.)) == 0.)
+    self.assertTrue(Approx(f.eval(EvalMode.NATURAL, 1e-10),1e-3) == 0.)
+    # Cannot compute in pure centered form due to the
+    # definition domain of the derivative of sqrt:
+    self.assertTrue(f.eval(EvalMode.CENTERED, 0.).is_empty())
+    self.assertTrue(Approx(f.eval(EvalMode.CENTERED, 1e-10),1e-3) == 0.)
+    self.assertTrue(Approx(f.eval(0.)) == 0.)
+    self.assertTrue(Approx(f.eval(1e-10),1e-3) == 0.)
+
 if __name__ ==  '__main__':
   unittest.main()
