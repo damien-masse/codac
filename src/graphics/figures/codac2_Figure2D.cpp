@@ -342,7 +342,7 @@ void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperti
 
     for(const auto& output_fig : _output_figures)
       output_fig->update_axes();
-      
+
     draw_polyline(values,s);
   }
 }
