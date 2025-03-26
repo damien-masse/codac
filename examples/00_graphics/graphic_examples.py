@@ -59,8 +59,6 @@ fig2.draw_box([[2.6,3.1],[2.6,3.1]],[Color([108,90,78],Model.HSV),Color([108,90,
 # RGB color auto cast from list without and with opacity
 fig2.draw_box([[2.,2.3],[2.6,2.9]],[[255,0,255],[255,0,255,100]])
 
-fig2.draw_axes()
-
 fig3 = Figure2D("ColorMap figure", GraphicOutput.VIBES | GraphicOutput.IPE)
 fig3.set_window_properties([800,250],[500,500])
 
@@ -86,8 +84,6 @@ for i in range (subdivisions):
     fig3.draw_box([[i,i+1],[-4/5,-3/5]],[Color.black(),cmap_blue_tube.color(ratio)])
     fig3.draw_box([[i,i+1],[-5/5,-4/5]],[Color.black(),cmap_red_tube.color(ratio)])
     fig3.draw_box([[i,i+1],[-6/5,-5/5]],[Color.black(),custom_map.color(ratio)])
-
-fig3.draw_axes()
 
 fig4 = Figure2D("My figure 4", GraphicOutput.VIBES)
 

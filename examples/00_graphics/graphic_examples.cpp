@@ -63,8 +63,6 @@ int main(){
   // HSV color without and with opacity
   fig2->draw_box({{2.6,3.1},{2.6,3.1}},{Color({108,90,78},Model::HSV),Color({108,90,78,20},Model::HSV)});
 
-  fig2->draw_axes();
-
   Figure2D fig3 ("ColorMap figure",GraphicOutput::VIBES|GraphicOutput::IPE);
   fig3.set_window_properties({800,250},{500,500});
 
@@ -91,8 +89,6 @@ int main(){
     fig3.draw_box({{i,i+1},{-5/5.,-4./5.}},{Color::black(),cmap_red_tube.color(ratio)});
     fig3.draw_box({{i,i+1},{-6./5.,-5./5.}},{Color::black(),custom_map.color(ratio)});
   }
-
-  fig3.draw_axes();
 
   Figure2D fig4 ("My Figure 4",GraphicOutput::VIBES);
 

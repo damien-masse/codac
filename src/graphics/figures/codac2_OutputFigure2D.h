@@ -31,7 +31,6 @@ namespace codac2
       const Index& j() const;
       
       virtual void update_axes() = 0;
-      virtual void draw_axes() = 0;
       virtual void update_window_properties() = 0;
       virtual void center_viewbox(const Vector& c, const Vector& r) = 0;
 

@@ -29,7 +29,7 @@ namespace codac2
       void update_axes();
       void update_window_properties();
       void center_viewbox(const Vector& c, const Vector& r);
-      void begin_path(const StyleProperties& s,bool tip);
+      void begin_path(const StyleProperties& s,bool tip, std::string layer);
 
       /* For future doc:
       https://github.com/codac-team/codac/pull/126#discussion_r1829030491

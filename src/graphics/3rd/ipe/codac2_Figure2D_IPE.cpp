@@ -40,7 +40,8 @@ Figure2D_IPE::Figure2D_IPE(const Figure2D& fig)
 }
 
 Figure2D_IPE::~Figure2D_IPE()
-{
+{ 
+  draw_axes();
   print_header_page();
   _f_temp_content.close();
   _f.close();
@@ -86,14 +87,14 @@ int ipe_opacity(const Color& c)
   return (int)(10.*round(10.*(c.model()==Model::RGB ? (c[3]/255.):(c[3]/100.))));
 }
 
-void Figure2D_IPE::begin_path(const StyleProperties& s, bool tip=false)
+void Figure2D_IPE::begin_path(const StyleProperties& s, bool tip=false, std::string layer="alpha")
 {
   // substr is needed to remove the "#" at the beginning of hex_str (deprecated by IPE)
   _colors.emplace(ipe_str(s.stroke_color), s.stroke_color);
   _colors.emplace(ipe_str(s.fill_color), s.fill_color);
 
   _f_temp_content << "\n \
-    <path layer=\"alpha\" \n \
+    <path layer=\"" << layer << "\" \n \
     stroke=\"codac_color_" << ipe_str(s.stroke_color) << "\" \n \
     fill=\"codac_color_" << ipe_str(s.fill_color) << "\" \n \
     opacity=\"" << ipe_opacity(s.fill_color) << "%\" \n \
@@ -217,12 +218,23 @@ void Figure2D_IPE::draw_axes()
   auto x_ticks = generate_axis_ticks(_fig.axes()[0].limits.lb(), _fig.axes()[0].limits.ub());
   auto y_ticks = generate_axis_ticks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
 
-  draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},{_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.lb()}}, 0., {Color::black(),Color::black()});
-  draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()}}, 0., {Color::black(),Color::black()});
-  
+  begin_path(Color::black(), .0, "axes");
+  _f_temp_content << scale_x(_fig.axes()[0].limits.lb()) << " " << scale_y(_fig.axes()[1].limits.lb()) << " m \n";
+  _f_temp_content << scale_x(_fig.axes()[0].limits.ub()) << " " << scale_y(_fig.axes()[1].limits.lb()) << " l \n";
+  _f_temp_content << "</path>";
+
+  begin_path(Color::black(), .0, "axes");
+  _f_temp_content << scale_x(_fig.axes()[0].limits.lb()) << " " << scale_y(_fig.axes()[1].limits.lb()) << " m \n";
+  _f_temp_content << scale_x(_fig.axes()[0].limits.lb()) << " " << scale_y(_fig.axes()[1].limits.ub()) << " l \n";
+  _f_temp_content << "</path>";
+
   for (auto x_tick : x_ticks) 
   {
-    draw_polyline({{x_tick,_fig.axes()[1].limits.lb()},{x_tick,_fig.axes()[1].limits.lb()+0.02*_fig.axes()[1].limits.diam()}}, 0., {Color::black(),Color::black()});
+    begin_path(Color::black(), .0, "axes");
+    // draw_polyline({{x_tick,_fig.axes()[1].limits.lb()},{x_tick,_fig.axes()[1].limits.lb()+0.02*_fig.axes()[1].limits.diam()}}, 0., {Color::black(),Color::black()});
+    _f_temp_content << scale_x(x_tick) << " " << scale_y(_fig.axes()[1].limits.lb()) << " m \n";
+    _f_temp_content << scale_x(x_tick) << " " << scale_y(_fig.axes()[1].limits.lb()+0.02*_fig.axes()[1].limits.diam()) << " l \n";
+    _f_temp_content << "</path>";
     _f_temp_content << "\n \
       <text transformations=\"translations\" \n \
       pos=\"" << scale_x(x_tick+0.01*_fig.axes()[0].limits.diam()) << " " << scale_y(_fig.axes()[1].limits.lb()+0.01*_fig.axes()[1].limits.diam()) << "\" \n \
@@ -236,7 +248,11 @@ void Figure2D_IPE::draw_axes()
 
   for (auto y_tick : y_ticks) 
   {
-    draw_polyline({{_fig.axes()[0].limits.lb(),y_tick},{_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam(),y_tick}}, 0., {Color::black(),Color::black()});
+    begin_path(Color::black(), .0, "axes");
+    // draw_polyline({{_fig.axes()[0].limits.lb(),y_tick},{_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam(),y_tick}}, 0., {Color::black(),Color::black()});
+    _f_temp_content << scale_x(_fig.axes()[0].limits.lb()) << " " << scale_y(y_tick) << " m \n";
+    _f_temp_content << scale_x(_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam()) << " " << scale_y(y_tick) << " l \n";
+    _f_temp_content << "</path>";
     _f_temp_content << "\n \
       <text transformations=\"translations\" \n \
       pos=\"" << scale_x(_fig.axes()[0].limits.lb()+0.01*_fig.axes()[0].limits.diam()) << " " << scale_y(y_tick+0.01*_fig.axes()[1].limits.diam()) << "\" \n \
@@ -759,5 +775,6 @@ void Figure2D_IPE::print_header_page()
     </ipestyle> \n \
     <page> \n \
     <layer name=\"alpha\"/> \n \
-    <view layers=\"alpha\" active=\"alpha\"/>";
+    <layer name=\"axes\"/> \n \
+    <view layers=\"alpha axes\" active=\"alpha\"/>";
 }
