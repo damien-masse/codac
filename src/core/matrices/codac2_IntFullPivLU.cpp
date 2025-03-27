@@ -15,6 +15,7 @@
 #include "codac2_IntervalVector.h"
 #include "codac2_BoolInterval.h"
 #include "codac2_IntFullPivLU.h"
+#include "codac2_arith_mul.h"
 
 namespace codac2 {
 
@@ -282,7 +283,7 @@ IntervalMatrix IntFullPivLU::kernel() const {
          /* vect[c1] * matrixLU_(c1,c1) = z */
          vect[c1]=Interval();
          Interval tmp = matrixLU_(c1,c1);
-         bwd_mul(z,vect[c1],tmp);
+         MulOp::bwd(z,vect[c1],tmp);
          if (vect[c1].is_empty()) { 
              /* means that matrixLU_(c1,c1)=0.0 
 		and z!=0.0... that's bad news */
