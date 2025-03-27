@@ -10,6 +10,7 @@
 #pragma once
 
 #include <type_traits>
+#include "codac2_Ctc.h"
 #include "codac2_Sep.h"
 #include "codac2_Collection.h"
 #include "codac2_template_tools.h"

@@ -30,11 +30,11 @@ namespace py = pybind11;
 void export_OctaSym(py::module& m);
 
 // contractors
-//py::class_<Ctc,pyCtc> export_Ctc(py::module& m);
-py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector(py::module& m/*, py::class_<Ctc,pyCtc>& py_ctc*/);
+py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector(py::module& m);
 void export_CtcAction(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCartProd(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCtcBoundary(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcDist(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcEmpty(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcFixpoint(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcIdentity(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -48,7 +48,6 @@ void export_CtcProj(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcInter
 void export_CtcSegment(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcUnion(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcWrapper(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
-void export_directed_ctc(py::module& m);
 void export_linear_ctc(py::module& m);
 
 // domains
@@ -67,7 +66,7 @@ void export_Subpaving(py::module& m);
 // functions
 void export_ScalarVar(py::module& m);
 void export_VectorVar(py::module& m);
-void export_expression_operations(py::module& m);
+void export_MatrixVar(py::module& m);
 
 // geometry
 void export_Edge(py::module& m);
@@ -75,6 +74,7 @@ void export_geometry(py::module& m);
 void export_Polygon(py::module& m);
 
 // matrices
+void export_cart_prod(py::module& m);
 void export_arithmetic_add(
   py::class_<Vector>& py_V, py::class_<IntervalVector>& py_IV,
   py::class_<Matrix>& py_M, py::class_<IntervalMatrix>& py_IM,
@@ -97,6 +97,9 @@ py::class_<Matrix> export_Matrix(py::module& m);
 void export_Inversion(py::module& m);
 void export_IntFullPivLU(py::module& m);
 
+// operators
+void export_operators(py::module& m);
+
 // paver
 void export_pave(py::module& m);
 
@@ -116,6 +119,7 @@ void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& sep);
 
 // tools
 void export_Approx(py::module& m);
+void export_transformations(py::module& m);
 
 // trajectory
 void export_AnalyticTraj(py::module& m);
@@ -134,11 +138,11 @@ PYBIND11_MODULE(_core, m)
   export_OctaSym(m);
 
   // contractors
-  //auto py_ctc = export_Ctc(m);
-  auto py_ctc_iv = export_CtcIntervalVector(m/*,py_ctc*/);
+  auto py_ctc_iv = export_CtcIntervalVector(m);
   export_CtcAction(m, py_ctc_iv);
   export_CtcCartProd(m, py_ctc_iv);
   export_CtcCtcBoundary(m, py_ctc_iv);
+  export_CtcDist(m, py_ctc_iv);
   export_CtcEmpty(m, py_ctc_iv);
   export_CtcFixpoint(m, py_ctc_iv);
   export_CtcIdentity(m, py_ctc_iv);
@@ -156,10 +160,10 @@ PYBIND11_MODULE(_core, m)
   export_CtcSegment(m, py_ctc_iv);
   export_CtcUnion(m, py_ctc_iv);
   export_CtcWrapper(m, py_ctc_iv);
-  export_directed_ctc(m);
   export_linear_ctc(m);
 
   // matrices
+  export_cart_prod(m);
   py::class_<Row> exported_row_class(m, "Row", DOC_TO_BE_DEFINED);
   auto py_V = export_Vector(m);
   auto py_M = export_Matrix(m);
@@ -201,16 +205,21 @@ PYBIND11_MODULE(_core, m)
 
   export_ScalarExpr(m);
   export_VectorExpr(m);
+  export_MatrixExpr(m);
   export_AnalyticFunction<ScalarType>(m,"AnalyticFunction_Scalar");
   export_AnalyticFunction<VectorType>(m,"AnalyticFunction_Vector");
+  export_AnalyticFunction<MatrixType>(m,"AnalyticFunction_Matrix");
   export_ScalarVar(m);
   export_VectorVar(m);
-  export_expression_operations(m);
+  export_MatrixVar(m);
 
   // geometry
   export_Edge(m);
   export_geometry(m);
   export_Polygon(m);
+
+  // opearators
+  export_operators(m);
 
   // paver
   export_pave(m);
@@ -232,6 +241,7 @@ PYBIND11_MODULE(_core, m)
 
   // tools
   export_Approx(m);
+  export_transformations(m);
 
   // trajectory
   export_AnalyticTraj(m);

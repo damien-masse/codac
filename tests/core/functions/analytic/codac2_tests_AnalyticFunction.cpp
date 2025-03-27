@@ -9,12 +9,17 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <codac2_AnalyticFunction.h>
-#include <codac2_analytic_operations.h>
 #include <codac2_Approx.h>
 #include <codac2_math.h>
 
 using namespace std;
 using namespace codac2;
+
+auto create_f()
+{
+  ScalarVar x;
+  return AnalyticFunction({x}, x*cos(x));
+}
 
 TEST_CASE("AnalyticFunction")
 {
@@ -62,6 +67,14 @@ TEST_CASE("AnalyticFunction")
       {
         AnalyticFunction f({x}, pow(x,2));
         CHECK(Approx(f.eval(m, Interval(3))) == 9);
+      }
+      {
+        AnalyticFunction f({x}, x^2);
+        CHECK(Approx(f.eval(m, Interval(3))) == 9);
+      }
+      {
+        AnalyticFunction f({x}, (0.+x)^(1.*x));
+        CHECK(Approx(f.eval(m, Interval(3))) == 27);
       }
       {
         AnalyticFunction f({x}, cos(x));
@@ -331,5 +344,105 @@ TEST_CASE("AnalyticFunction")
     CHECK(g.eval(EvalMode::NATURAL,a) == 20);
     CHECK(g.eval(EvalMode::CENTERED,a) == 20);
     CHECK(g.eval(a) == 20);
+  }
+
+  // Sign, floor, ceil, min, max
+  {
+    ScalarVar x1, x2;
+
+    {
+      AnalyticFunction f({x1,x2}, 2*max(x1,x2+1));
+      CHECK(f.eval(0.,1.) == 4.);
+      CHECK(f.eval(2.,1.) == 4.);
+      CHECK(f.eval(3.,1.) == 6.);
+    }
+
+    {
+      AnalyticFunction f({x1,x2}, 2*min(x1,x2+1));
+      CHECK(f.eval(0.,1.) == 0.);
+      CHECK(f.eval(2.,1.) == 4.);
+      CHECK(f.eval(3.,1.) == 4.);
+    }
+
+    {
+      AnalyticFunction f({x1}, 2*sign(x1+1));
+      CHECK(f.eval(0.) == 2.);
+      CHECK(sign(Interval::zero()) == Interval(-1,1));
+      CHECK(sign(Interval(-0,0)) == Interval(-1,1));
+      CHECK(f.eval(-1.) == Interval(-2,2));
+      CHECK(f.eval(-2.) == -2.);
+    }
+
+    {
+      AnalyticFunction f({x1}, 2*floor(x1));
+      CHECK(f.eval(0.) == 0.);
+      CHECK(f.eval(1.5) == 2.);
+      CHECK(f.eval(-1.5) == -4.);
+    }
+
+    {
+      AnalyticFunction f({x1}, 2*ceil(x1));
+      CHECK(f.eval(0.) == 0.);
+      CHECK(f.eval(1.5) == 4.);
+      CHECK(f.eval(-1.5) == -2.);
+    }
+  }
+
+  // Issue #201 (in Python originally)
+  {
+    // Input argument is a list instead of a Vector
+    VectorVar x1(2);
+    AnalyticFunction f({x1}, 2.*x1);
+    // assumed to not be possible in C++: CHECK(f.eval({2,3}) == IntervalVector({{4},{6}}));
+  }
+
+  {
+    Matrix I({{0,2},{-1,0}});
+    VectorVar x(2);
+    AnalyticFunction f({x}, I*x);
+    CHECK(f.eval(IntervalVector({{0,1},{2,3}})) == IntervalVector({{4,6},{-1,0}}));
+  }
+
+  {
+    Matrix I({{1,0},{0,1}});
+    VectorVar x(2);
+    AnalyticFunction f({x}, I*I*x);
+    CHECK(f.eval(IntervalVector({{-1,1},{2,3}})) == IntervalVector({{-1,1},{2,3}}));
+  }
+
+  {
+    MatrixVar A(2,2);
+    VectorVar x(2);
+    AnalyticFunction h({A}, A*A);
+    AnalyticFunction f({x,A}, h(A)*x);
+    AnalyticFunction g({x}, f(x,Matrix({{0,2},{-1,0}})));
+    CHECK(g.eval(IntervalVector({{-1,1},{2,3}})) == IntervalVector({{-2,2},{-6,-4}}));
+  }
+
+  {
+    MatrixVar A(2,2);
+    AnalyticFunction f_det({A}, A(0,0)*A(1,1)-A(1,0)*A(0,1));
+    CHECK(f_det.eval(Matrix({{1,2},{3,4}})) == -2);
+    CHECK(f_det.eval(IntervalMatrix({{{0,1},{1,2}},{{2,3},{3,4}}})) == Interval(-6,2));
+  }
+
+  {
+    auto f = create_f();
+    CHECK(Approx(f.eval(PI)) == -PI);
+  }
+
+  {
+    ScalarVar x;
+    AnalyticFunction f({x},sqrt(x));
+    CHECK(Interval(0.).is_subset({0,oo}));
+    CHECK(Interval(0.,10.).is_subset({0,oo}));
+    CHECK(Approx(f.eval(EvalMode::NATURAL, 0.)) == 0.);
+    CHECK(Approx(f.eval(EvalMode::NATURAL, 1e-10),1e-3) == 0.);
+    // Cannot compute in pure centered form due to the
+    // definition domain of the derivative of sqrt:
+    CHECK(f.eval(EvalMode::CENTERED, 0.).is_empty());
+    CHECK(Approx(f.eval(EvalMode::CENTERED, 1e-10),1e-3) == 0.);
+    CHECK(Approx(f.eval(0.)) == 0.);
+    CHECK(Approx(f.eval(1e-10),1e-3) == 0.);
   }
 }

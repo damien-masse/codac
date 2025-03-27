@@ -12,14 +12,14 @@
 #include "codac2_AnalyticExpr.h"
 #include "codac2_ValueType.h"
 #include "codac2_analytic_variables.h"
+#include "codac2_component.h"
+#include "codac2_subvector.h"
+#include "codac2_analytic_constants.h"
 
 namespace codac2
 {
-  template<typename T>
-  struct AnalyticExprWrapper;
-
-  template<typename T>
-  AnalyticExprWrapper<typename ValueType<T>::Type> const_value(const T& x);
+  class ScalarVar;
+  class VectorVar;
 
   template<typename T>
   struct AnalyticExprWrapper : public std::shared_ptr<AnalyticExpr<T>>
@@ -42,6 +42,11 @@ namespace codac2
       : std::shared_ptr<AnalyticExpr<T>>({ std::dynamic_pointer_cast<AnalyticExpr<T>>(e.copy()) })
     { }
     
+    AnalyticExprWrapper(const MatrixVar& e)
+      requires std::is_same_v<T,MatrixType>
+      : std::shared_ptr<AnalyticExpr<T>>({ std::dynamic_pointer_cast<AnalyticExpr<T>>(e.copy()) })
+    { }
+    
     template<typename V>
     AnalyticExprWrapper(const V& e)
       requires std::is_same_v<typename ValueType<V>::Type,T>
@@ -52,6 +57,18 @@ namespace codac2
       requires std::is_same_v<T,VectorType>
     {
       return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,VectorType>>(*this,i) };
+    }
+
+    inline AnalyticExprWrapper<VectorType> subvector(Index i, Index j) const
+      requires std::is_same_v<T,VectorType>
+    {
+      return { std::make_shared<AnalyticOperationExpr<SubvectorOp,VectorType,VectorType>>(*this,i,j) };
+    }
+    
+    inline AnalyticExprWrapper<ScalarType> operator()(Index i, Index j) const
+      requires std::is_same_v<T,MatrixType>
+    {
+      return { std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,MatrixType>>(*this,i,j) };
     }
   };
 

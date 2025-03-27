@@ -99,6 +99,17 @@ double Figure2D::scaled_unit() const
   return std::max(_axes[0].limits.diam(),_axes[1].limits.diam()) / _window_size.max_coeff();
 }
 
+void Figure2D::auto_scale()
+{
+  Vector w = this->window_size();
+  if(_axes[0].limits.diam() > _axes[1].limits.diam())
+    w[1] *= _axes[1].limits.diam()/_axes[0].limits.diam();
+  else
+    w[0] *= _axes[0].limits.diam()/_axes[1].limits.diam();
+
+  this->set_window_properties(this->pos(), w);
+}
+
 bool Figure2D::is_default() const
 {
   return DefaultView::_selected_fig == this->weak_from_this().lock();
@@ -107,6 +118,11 @@ bool Figure2D::is_default() const
 void Figure2D::set_as_default()
 {
   DefaultView::set(this->shared_from_this());
+}
+
+void Figure2D::set_tdomain(const Interval& tdomain)
+{
+  _tdomain = tdomain;
 }
 
 void Figure2D::draw_point(const Vector& c, const StyleProperties& s)
@@ -166,7 +182,7 @@ void Figure2D::draw_arrow(const Vector& p1, const Vector& p2, float tip_length, 
 
 void Figure2D::draw_polyline(const vector<Vector>& x, const StyleProperties& s)
 {
-  draw_polyline(x, 1e-3*scaled_unit(), s);
+  draw_polyline(x, 0., s);
 }
 
 void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const StyleProperties& s)
@@ -175,6 +191,8 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
   assert_release(tip_length >= 0.); // 0 = disabled tip
   for([[maybe_unused]] const auto& xi : x)
   {
+    if(!(this->size() <= xi.size()))
+      cout << this->size() << "  -  " << xi.size() << endl;
     assert_release(this->size() <= xi.size());
   }
 
@@ -192,6 +210,19 @@ void Figure2D::draw_polygone(const vector<Vector>& x, const StyleProperties& s)
 
   for(const auto& output_fig : _output_figures)
     output_fig->draw_polygone(x,s);
+}
+
+void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s)
+{
+  assert_release(A.is_squared() && A.rows() == z.size());
+  assert_release(z.size() == 2);
+
+  auto a1 = A.col(0), a2 = A.col(1);
+
+  draw_polygone(vector<Vector>({
+      Vector(z+a1+a2), Vector(z-a1+a2),
+      Vector(z-a1-a2), Vector(z+a1-a2)
+    }), s);
 }
 
 void Figure2D::draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s)
@@ -258,11 +289,14 @@ void Figure2D::draw_ellipsoid(const Ellipsoid &e, const StyleProperties &s)
 void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s)
 {
   assert_release(this->size() <= x.size());
-  std::vector<Vector> values(x.nb_samples());
-  size_t i = 0;
+
+  std::vector<Vector> values;
   for(const auto& [ti,xi] : x)
-    values[i++] = xi;
-  draw_polyline(values,s);
+    if(_tdomain.contains(ti))
+      values.push_back(xi);
+
+  if(values.size() > 1)
+    draw_polyline(values,s);
 }
 
 void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s)
@@ -277,16 +311,34 @@ void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cma
   double range = x.tdomain().diam();
 
   for(auto it = x.begin(); std::next(it) != x.end(); ++it)
-  {
-    draw_polyline(
-      { it->second, std::next(it)->second },
-      cmap.color((it->first - x.begin()->first) / range));
-  }
+    if(_tdomain.contains(it->first))
+      draw_polyline(
+        { it->second, std::next(it)->second },
+        cmap.color((it->first - x.begin()->first) / range));
 }
 
 void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap)
 {
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), cmap);
+}
+
+void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s)
+{
+  std::vector<Vector> values;
+  for(const auto& [ti,xi] : x)
+    if(_tdomain.contains(ti))
+      values.push_back({ti,xi});
+
+  if(values.size() > 1)
+  {
+    _axes[0].limits = x.tdomain();
+    _axes[1].limits = x.codomain();
+
+    for(const auto& output_fig : _output_figures)
+      output_fig->update_axes();
+
+    draw_polyline(values,s);
+  }
 }
 
 void Figure2D::draw_tank(const Vector& x, float size, const StyleProperties& s)
@@ -310,6 +362,18 @@ void Figure2D::draw_AUV(const Vector& x, float size, const StyleProperties& s)
   {
     assert_release(output_fig->j()+1 < x.size());
     output_fig->draw_AUV(x,size,s);
+  }
+}
+
+void Figure2D::draw_motor_boat(const Vector& x, float size, const StyleProperties& s)
+{
+  assert_release(this->size() <= x.size()+1);
+  assert_release(size >= 0.);
+
+  for(const auto& output_fig : _output_figures)
+  {
+    assert_release(output_fig->j()+1 < x.size());
+    output_fig->draw_motor_boat(x,size,s);
   }
 }
 

@@ -80,7 +80,7 @@ namespace codac2
       {
         if constexpr(std::is_base_of_v<Domain,A>)
         {
-          CtcWrapper_<A> sx(x);
+          CtcWrapper<A> sx(x);
           return sx.copy();
         }
 
@@ -99,7 +99,7 @@ namespace codac2
       {
         if constexpr(std::is_base_of_v<Domain,A>)
         {
-          SepWrapper_<A> sx(x);
+          SepWrapper<A> sx(x);
           return sx.copy();
         }
 

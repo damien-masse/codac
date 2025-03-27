@@ -10,6 +10,7 @@ int main(){
   DefaultView::set_window_properties({600,600},{300,300});
   DefaultView::draw_box({{2.2,2.5},{2.2,2.5}},{Color::black(),Color::yellow(0.5)});
   DefaultView::draw_AUV({1,1,3.14/2},1.,{Color::black(),Color::yellow()});
+  DefaultView::draw_motor_boat({0,0,0}, 1., {Color::black(),Color::yellow()});
   DefaultView::draw_tank({2,1,3.14/2},1.,{Color::black(),Color::yellow()});
   DefaultView::draw_pie({2,2},{1.5,2.5},{(3*3.14/4)-0.5,(3*3.14/4)+0.5},{Color::blue(),Color::cyan()});
   DefaultView::draw_polyline({{2,-0.5},{4,0.5},{3,1.5},{4,2.5},{3,3}}, Color::red());
@@ -52,6 +53,7 @@ int main(){
   fig2->draw_ellipse({1,1},{0.5,2}, 0.2, {Color::blue(),Color::blue(0.3)});
   fig2->draw_line({1,1},{3,3}, Color::blue());
   fig2->draw_arrow({3,1},{2.2,2}, 0.2, {Color::red(),Color::black(0.3)});
+  fig2->draw_parallelepiped({1.5,2.8},Matrix({{0.5,0.4},{0,0.2}}), {Color::red(),Color::green(0.5)});
 
   // Colors
   // predefined colors without and with opacity
@@ -62,7 +64,6 @@ int main(){
   fig2->draw_box({{2.6,3.1},{2.6,3.1}},{Color({108,90,78},Model::HSV),Color({108,90,78,20},Model::HSV)});
 
   Figure2D fig3 ("My Figure 3",GraphicOutput::VIBES|GraphicOutput::IPE);
-  fig3.set_axes(axis(0,{-1,21}), axis(1,{-5.5,0.5}));
   fig3.set_window_properties({800,250},{500,500});
 
   ColorMap cmap_haxby = ColorMap::haxby();
@@ -71,14 +72,22 @@ int main(){
   ColorMap cmap_red_tube = ColorMap::red_tube();
   ColorMap cmap_rainbow = ColorMap::rainbow();
 
-  for (double i=0.; i<20; i++)
+  ColorMap custom_map;
+  custom_map[0] = Color({255,0,0});
+  custom_map[0.5] = Color({0,255,0});
+  custom_map[1] = Color({0,0,255});
+
+  double subdivisions = 40.;
+  fig3.set_axes(axis(0,{-1,subdivisions+1}), axis(1,{-1.25,0}));
+  for (double i=0.; i<subdivisions; i+=1.0)
   {
-    double ratio = i/20.;
-    fig3.draw_box({{i,i+1},{-1,0}},{Color::black(),cmap_haxby.color(ratio)});
-    fig3.draw_box({{i,i+1},{-2,-1}},{Color::black(),cmap_default.color(ratio)});
-    fig3.draw_box({{i,i+1},{-3,-2}},{Color::black(),cmap_blue_tube.color(ratio)});
-    fig3.draw_box({{i,i+1},{-4,-3}},{Color::black(),cmap_red_tube.color(ratio)});
-    fig3.draw_box({{i,i+1},{-5,-4}},{Color::black(),cmap_rainbow.color(ratio)});
+    double ratio = i/subdivisions;
+    fig3.draw_box({{i,i+1},{-1./5.,0}},{Color::black(),cmap_default.color(ratio)});
+    fig3.draw_box({{i,i+1},{-2./5.,-1./5.}},{Color::black(),cmap_haxby.color(ratio)});
+    fig3.draw_box({{i,i+1},{-3./5.,-2./5.}},{Color::black(),cmap_rainbow.color(ratio)});
+    fig3.draw_box({{i,i+1},{-4./5.,-3./5.}},{Color::black(),cmap_blue_tube.color(ratio)});
+    fig3.draw_box({{i,i+1},{-5/5.,-4./5.}},{Color::black(),cmap_red_tube.color(ratio)});
+    fig3.draw_box({{i,i+1},{-6./5.,-5./5.}},{Color::black(),custom_map.color(ratio)});
   }
 
   Figure2D fig4 ("My Figure 4",GraphicOutput::VIBES);

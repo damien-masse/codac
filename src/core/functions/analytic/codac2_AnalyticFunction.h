@@ -15,9 +15,10 @@
 #include "codac2_analytic_variables.h"
 #include "codac2_FunctionBase.h"
 #include "codac2_template_tools.h"
-#include "codac2_analytic_operations.h"
 #include "codac2_AnalyticExprWrapper.h"
 #include "codac2_ScalarExprList.h"
+#include "codac2_operators.h"
+#include "codac2_cart_prod.h"
 
 namespace codac2
 {
@@ -90,7 +91,7 @@ namespace codac2
           case EvalMode::CENTERED:
           {
             auto x_ = eval_<false>(x...);
-            auto flatten_x = cart_prod(x...);
+            auto flatten_x = IntervalVector(cart_prod(x...));
             assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
             
             if constexpr(std::is_same_v<T,ScalarType>)
@@ -104,12 +105,14 @@ namespace codac2
           {
             auto x_ = eval_<false>(x...);
 
-            if(x_.da.size() == 0) // if the centered form is not available for this expression
+            // If the centered form is not available for this expression...
+            if(x_.da.size() == 0 // .. because some parts have not yet been implemented,
+              || !x_.def_domain) // .. or due to restrictions in the derivative definition domain
               return eval(EvalMode::NATURAL, x...);
 
             else
             {
-              auto flatten_x = cart_prod(x...);
+              auto flatten_x = IntervalVector(cart_prod(x...));
               if constexpr(std::is_same_v<T,ScalarType>)
                 return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0]);
               else
@@ -142,10 +145,16 @@ namespace codac2
 
         else if constexpr(std::is_same_v<T,VectorType>)
         {
+          assert_release(this->args().size() == 1 && "unable (yet) to compute output size for multi-arg functions");
+
           // A dump evaluation is performed to estimate the dimension
           // of the image of this function. A natural evaluation is assumed
           // to be faster.
-          return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
+
+          if(dynamic_cast<ScalarVar*>(this->args()[0].get())) // if the argument is scalar
+            return eval(EvalMode::NATURAL, Interval()).size();
+          else
+            return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
         }
 
         else
@@ -167,7 +176,7 @@ namespace codac2
     protected:
 
       template<typename Y>
-      friend class CtcInverse;
+      friend class CtcInverse_;
 
       template<typename D>
       void add_value_to_arg_map(ValuesMap& v, const D& x, Index i) const
@@ -175,19 +184,24 @@ namespace codac2
         assert(i >= 0 && i < (Index)this->args().size());
         assert_release(size_of(x) == this->args()[i]->size() && "provided arguments do not match function inputs");
 
-        IntervalMatrix d = IntervalMatrix::zero(size_of(x), this->args().total_size());
-        
-        Index p = 0, j = 0;
-        for( ; j < i ; j++)
-          p += this->args()[j]->size();
+        using D_TYPE = typename ValueType<D>::Type;
 
-        for(Index k = p ; k < p+size_of(x) ; k++)
-          d(k-p,k) = 1.;
+        IntervalMatrix d(0,0); // derivatives disabled for matrix inputs
 
-        using D_DOMAIN = typename ValueType<D>::Type;
+        if constexpr(!std::is_same_v<D_TYPE,MatrixType>)
+        {
+          d = IntervalMatrix::zero(size_of(x), this->args().total_size());
+          
+          Index p = 0;
+          for(Index j = 0 ; j < i ; j++)
+            p += this->args()[j]->size();
+
+          for(Index k = p ; k < p+size_of(x) ; k++)
+            d(k-p,k) = 1.;
+        }
 
         v[this->args()[i]->unique_id()] = 
-          std::make_shared<D_DOMAIN>(typename D_DOMAIN::Domain(x).mid(), x, d, true);
+          std::make_shared<D_TYPE>(typename D_TYPE::Domain(x).mid(), x, d, true);
       }
 
       template<typename... Args>

@@ -11,6 +11,7 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <codac2_Paving.h>
+#include <codac2_Subpaving.h>
 #include <codac2_Figure2D.h>
 #include "codac2_py_Figure2D_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_matlab.h"
@@ -89,11 +90,17 @@ void export_Figure2D(py::module& m)
     .def("scaled_unit", &Figure2D::scaled_unit,
       DOUBLE_FIGURE2D_SCALED_UNIT_CONST)
   
+    .def("auto_scale", &Figure2D::auto_scale,
+      VOID_FIGURE2D_AUTO_SCALE)
+  
     .def("is_default", &Figure2D::is_default,
       BOOL_FIGURE2D_IS_DEFAULT_CONST)
   
     .def("set_as_default", &Figure2D::set_as_default,
       VOID_FIGURE2D_SET_AS_DEFAULT)
+  
+    .def("set_tdomain", &Figure2D::set_tdomain,
+      VOID_FIGURE2D_SET_TDOMAIN_CONST_INTERVAL_REF)
 
     // Geometric shapes
 
@@ -132,6 +139,10 @@ void export_Figure2D(py::module& m)
     .def("draw_polygone", (void(Figure2D::*)(const std::vector<Vector>&,const StyleProperties&))&Figure2D::draw_polygone,
       VOID_FIGURE2D_DRAW_POLYGONE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
+
+    .def("draw_parallelepiped", &Figure2D::draw_parallelepiped,
+      VOID_FIGURE2D_DRAW_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF_CONST_STYLEPROPERTIES_REF,
+      "z"_a, "A"_a, "s"_a=StyleProperties())
 
     .def("draw_pie", &Figure2D::draw_pie,
       VOID_FIGURE2D_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
@@ -175,6 +186,11 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
       "x"_a, "cmap"_a)
 
+    .def("plot_trajectory", (void(Figure2D::*)(const SampledTraj<double>&,const StyleProperties&))&Figure2D::plot_trajectory,
+      VOID_FIGURE2D_PLOT_TRAJECTORY_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
+
+
     // Robots
 
     .def("draw_tank", &Figure2D::draw_tank,
@@ -183,6 +199,10 @@ void export_Figure2D(py::module& m)
 
     .def("draw_AUV", &Figure2D::draw_AUV,
       VOID_FIGURE2D_DRAW_AUV_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "size"_a, "s"_a=StyleProperties())
+
+    .def("draw_motor_boat", &Figure2D::draw_motor_boat,
+      VOID_FIGURE2D_DRAW_MOTOR_BOAT_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
       "x"_a, "size"_a, "s"_a=StyleProperties())
 
     // Pavings
@@ -194,6 +214,14 @@ void export_Figure2D(py::module& m)
     .def("draw_paving", (void(Figure2D::*)(const PavingInOut&,const StyleProperties&,const StyleProperties&,const StyleProperties&))&Figure2D::draw_paving,
       VOID_FIGURE2D_DRAW_PAVING_CONST_PAVINGINOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
       "p"_a, "boundary_style"_a=StyleProperties::boundary(), "outside_style"_a=StyleProperties::outside(), "inside_style"_a=StyleProperties::inside())
+
+    .def("draw_subpaving", (void(Figure2D::*)(const Subpaving<PavingOut>&,const StyleProperties&))&Figure2D::draw_subpaving,
+      VOID_FIGURE2D_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "s"_a=StyleProperties())
+
+    .def("draw_subpaving", (void(Figure2D::*)(const Subpaving<PavingInOut>&,const StyleProperties&))&Figure2D::draw_subpaving,
+      VOID_FIGURE2D_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "s"_a=StyleProperties())
 
   ;
 
@@ -250,6 +278,10 @@ void export_Figure2D(py::module& m)
       STATIC_VOID_DEFAULTVIEW_DRAW_POLYGONE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
+    .def_static("draw_parallelepiped", &DefaultView::draw_parallelepiped,
+      STATIC_VOID_DEFAULTVIEW_DRAW_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF_CONST_STYLEPROPERTIES_REF,
+      "z"_a, "A"_a, "s"_a=StyleProperties())
+
     .def_static("draw_pie", &DefaultView::draw_pie,
       STATIC_VOID_DEFAULTVIEW_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "theta"_a, "s"_a=StyleProperties())
@@ -302,6 +334,10 @@ void export_Figure2D(py::module& m)
       STATIC_VOID_DEFAULTVIEW_DRAW_AUV_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
       "x"_a, "size"_a, "s"_a=StyleProperties())
 
+    .def_static("draw_motor_boat", &DefaultView::draw_motor_boat,
+      STATIC_VOID_DEFAULTVIEW_DRAW_MOTOR_BOAT_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "size"_a, "s"_a=StyleProperties())
+
     // Pavings
 
     .def_static("draw_paving", (void(*)(const PavingOut&,const StyleProperties&,const StyleProperties&))&DefaultView::draw_paving,
@@ -311,6 +347,14 @@ void export_Figure2D(py::module& m)
     .def_static("draw_paving", (void(*)(const PavingInOut&,const StyleProperties&,const StyleProperties&,const StyleProperties&))&DefaultView::draw_paving,
       STATIC_VOID_DEFAULTVIEW_DRAW_PAVING_CONST_PAVINGINOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
       "p"_a, "boundary_style"_a=StyleProperties::boundary(), "outside_style"_a=StyleProperties::outside(), "inside_style"_a=StyleProperties::inside())
+
+    .def_static("draw_subpaving", (void(*)(const Subpaving<PavingOut>&,const StyleProperties&))&DefaultView::draw_subpaving,
+      STATIC_VOID_DEFAULTVIEW_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_subpaving", (void(*)(const Subpaving<PavingInOut>&,const StyleProperties&))&DefaultView::draw_subpaving,
+      STATIC_VOID_DEFAULTVIEW_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "s"_a=StyleProperties())
 
   ;
 }

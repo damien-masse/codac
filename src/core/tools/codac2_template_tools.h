@@ -10,24 +10,11 @@
 #pragma once
 
 #include <memory>
-#include "codac2_Sep.h"
-#include "codac2_Ctc.h"
 #include "codac2_Matrix.h"
 #include "codac2_Vector.h"
 
 namespace codac2
 {
-  template<class C,class X>
-  concept IsCtcBaseOrPtr = (std::is_base_of_v<CtcBase<X>,C>
-      || std::is_same_v<std::shared_ptr<CtcBase<X>>,C>);
-
-  template<class C,class X>
-  concept IsCtcBase = std::is_base_of_v<CtcBase<X>,C>;
-
-  template<class S>
-  concept IsSepBaseOrPtr = (std::is_base_of_v<SepBase,S>
-    || std::is_base_of_v<S,std::shared_ptr<SepBase>>);
-
   template<class T>
   concept IsRealType = (std::is_same_v<double,T>
     || std::is_same_v<Vector,T>
@@ -43,20 +30,7 @@ namespace codac2
     return 1;
   }
 
-  inline Index size_of(const std::shared_ptr<CtcBase<IntervalVector>>& x)
-  {
-    return x->size();
-  }
-
-  inline Index size_of(const std::shared_ptr<SepBase>& x)
-  {
-    return x->size();
-  }
-
   template<typename T>
-    requires (!std::is_base_of_v<std::shared_ptr<CtcBase<IntervalVector>>,T>
-      && !std::is_base_of_v<std::shared_ptr<SepBase>,T>
-      && !std::is_same_v<int,T> && !std::is_same_v<double,T>)
   inline Index size_of(const T& x)
   {
     return x.size();
@@ -93,6 +67,18 @@ namespace codac2
         ++it;
     }
   }
+
+  template<typename C>
+    requires is_ctc_v<C>
+  inline Index size_of(const std::shared_ptr<C>& x)
+  {
+    return x->size();
+  }
+
+  template<typename S>
+    requires is_sep_v<S>
+  inline Index size_of(const std::shared_ptr<S>& x)
+  {
+    return x->size();
+  }
 }
-
-

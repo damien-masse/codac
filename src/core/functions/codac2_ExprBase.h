@@ -11,9 +11,10 @@
 
 #include <map>
 #include <memory>
+#include <cassert>
 #include <utility>
 #include "codac2_Domain.h"
-#include "codac2_directed_ctc.h"
+#include "codac2_Index.h"
 
 namespace codac2
 {

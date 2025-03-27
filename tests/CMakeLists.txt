@@ -41,6 +41,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/contractors/codac2_tests_CtcCartProd
   core/contractors/codac2_tests_CtcCtcBoundary
   core/contractors/codac2_tests_CtcFixpoint
+  core/contractors/codac2_tests_CtcInter
   core/contractors/codac2_tests_CtcInverse
   core/contractors/codac2_tests_CtcInverseNotIn
   core/contractors/codac2_tests_CtcLazy
@@ -51,12 +52,12 @@ list(APPEND SRC_TESTS # listing files without extension
   core/domains/codac2_tests_BoolInterval
   core/domains/ellipsoid/codac2_tests_Ellipsoid
   core/domains/interval/codac2_tests_Interval
-  core/domains/interval/codac2_tests_Interval_bwd
   core/domains/interval/codac2_tests_Interval_operations
   core/domains/interval/codac2_tests_IntervalMatrix
   core/domains/interval/codac2_tests_IntervalVector
 
   core/functions/analytic/codac2_tests_AnalyticFunction
+  ../doc/manual/manual/functions/analytic/src
 
   core/geometry/codac2_tests_geometry
   core/geometry/codac2_tests_Polygon
@@ -65,10 +66,13 @@ list(APPEND SRC_TESTS # listing files without extension
   core/matrices/codac2_tests_arithmetic_div
   core/matrices/codac2_tests_arithmetic_mul
   core/matrices/codac2_tests_arithmetic_sub
+  core/matrices/codac2_tests_cart_prod
   core/matrices/codac2_tests_Matrix
   core/matrices/codac2_tests_Vector
   core/matrices/codac2_tests_inversion
   core/matrices/codac2_tests_IntFullPivLU
+
+  core/operators/codac2_tests_operators
 
   core/separators/codac2_tests_SepCartProd
   core/separators/codac2_tests_SepCtcBoundary
@@ -78,6 +82,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/separators/codac2_tests_SepTransform
   
   core/tools/codac2_tests_Approx
+  core/tools/codac2_tests_transformations
   
   core/trajectory/codac2_tests_AnalyticTraj
   core/trajectory/codac2_tests_SampledTraj

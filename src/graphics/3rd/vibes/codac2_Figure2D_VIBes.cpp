@@ -142,6 +142,13 @@ void Figure2D_VIBes::draw_AUV(const Vector& x, float size, const StyleProperties
   vibes::drawAUV(x[i()],x[j()],180.*x[j()+1]/PI, size, to_vibes_style(s), _params);
 }
 
+void Figure2D_VIBes::draw_motor_boat(const Vector& x, float size, const StyleProperties& s)
+{
+  assert(_fig.size() <= x.size()+1);
+  assert(j()+1 < x.size());
+  vibes::drawMotorBoat(x[i()],x[j()],180.*x[j()+1]/PI, size, to_vibes_style(s), _params);
+}
+
 string Figure2D_VIBes::to_vibes_style(const StyleProperties& s)
 {
   return s.stroke_color.hex_str() + "[" + s.fill_color.hex_str() + "]";
