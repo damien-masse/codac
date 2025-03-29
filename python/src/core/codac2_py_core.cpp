@@ -42,6 +42,7 @@ void export_CtcInnerOuter(py::module& m, py::class_<CtcBase<IntervalVector>,pyCt
 void export_CtcInter(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcLazy(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcNot(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcPointCloud(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcPolar(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcPolygon(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcProj(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -153,6 +154,7 @@ PYBIND11_MODULE(_core, m)
   export_CtcInverseNotIn<VectorType>(m,"CtcInverseNotIn_IntervalVector",py_ctc_iv);
   export_CtcLazy(m, py_ctc_iv);
   export_CtcNot(m, py_ctc_iv);
+  export_CtcPointCloud(m, py_ctc_iv);
   export_CtcPolar(m, py_ctc_iv);
   export_CtcPolygon(m, py_ctc_iv);
   export_CtcProj(m, py_ctc_iv);

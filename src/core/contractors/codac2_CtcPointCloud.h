@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_CtcDist.h
+ *  \file codac2_CtcPointCloud.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -14,12 +14,15 @@
 
 namespace codac2
 {
-  class CtcDist : public Ctc<CtcDist,IntervalVector>
+  class CtcPointCloud : public Ctc<CtcPointCloud,IntervalVector>
   {
     public:
 
-      CtcDist();
+      CtcPointCloud(const std::vector<IntervalVector>& p);
       void contract(IntervalVector& x) const;
-      void contract(Interval& ax, Interval& ay, Interval& bx, Interval& by, Interval& d) const;
+
+    protected:
+
+      const std::vector<IntervalVector> _p;
   };
 }

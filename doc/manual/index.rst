@@ -121,6 +121,7 @@ User manual
       * CtcPolar
       * CtcSegment
       * CtcPolygon
+      * CtcPointCloud
       * CtcEllipse
       * CtcNoCross
    * Shape contractors

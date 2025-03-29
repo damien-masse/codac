@@ -31,6 +31,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcLazy.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcNot.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcUnion.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPointCloud.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPointCloud.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolar.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolygon.cpp

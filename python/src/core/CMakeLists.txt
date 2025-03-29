@@ -25,6 +25,7 @@
     contractors/codac2_py_CtcInverseNotIn.h
     contractors/codac2_py_CtcLazy.cpp
     contractors/codac2_py_CtcNot.cpp
+    contractors/codac2_py_CtcPointCloud.cpp
     contractors/codac2_py_CtcPolar.cpp
     contractors/codac2_py_CtcPolygon.cpp
     contractors/codac2_py_CtcProj.cpp
