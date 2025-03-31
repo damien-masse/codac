@@ -363,6 +363,7 @@ namespace codac2
        * \param s Style of the AUV (edge color and fill color)
        */
       void draw_AUV(const Vector& x, float size, const StyleProperties& s = StyleProperties());
+      void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties());
 
       // Pavings
       void draw_paving(const PavingOut& p,
@@ -541,6 +542,12 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_AUV(x,size,s);
+      }
+
+      static void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_motor_boat(x,size,s);
       }
 
       // Pavings

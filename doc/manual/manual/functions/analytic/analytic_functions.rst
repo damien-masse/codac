@@ -1,7 +1,7 @@
 .. _sec-functions-analytic-class:
 
-Build analytic functions
-========================
+Analytic inclusion functions
+============================
 
 The ``AnalyticFunction`` class allows to build analytic inclusion functions and evaluate them using interval analysis.
 
@@ -189,6 +189,8 @@ By default, the latter mode is used for evaluations. To select a specific mode, 
       :start-after: [6-beg]
       :end-before: [6-end]
       :dedent: 4
+
+Although this class is dedicated to inclusion functions, it can also be used for real evaluations (without interval outputs). The ``.real_eval()`` method can be used for this purpose.
 
 
 Interval automatic differentiation
