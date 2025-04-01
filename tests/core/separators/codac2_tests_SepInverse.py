@@ -53,7 +53,7 @@ class TestSepInverse(unittest.TestCase):
       x[0],
       sqr(x[0]/7.)+sqr(x[1]/3.)
     ])
-    s = SepInverse(f, SepWrapper([[0,oo],[-oo,1]]))
+    s = SepInverse(f, SepWrapper_IntervalVector([[0,oo],[-oo,1]]))
 
     b = IntervalVector([[0,0.8],[-2.28,-1.56]])
     inner,outer = s.separate(b)
