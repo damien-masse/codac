@@ -21,7 +21,5 @@ namespace codac2
       SepCross(const Edge& e, const IntervalVector &r) 
         : SepCtcPair(CtcCross(e, r), CtcNoCross(e, r))
       { }
-
-      BoxPair separate(const IntervalVector& x) const;
   };
 }

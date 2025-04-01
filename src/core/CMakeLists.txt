@@ -169,7 +169,6 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartProd.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepChi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepChi.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCross.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCross.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcBoundary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcBoundary.h
