@@ -363,17 +363,48 @@ namespace codac2
        * \param s Style of the AUV (edge color and fill color)
        */
       void draw_AUV(const Vector& x, float size, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a motor boat on the figure
+       * 
+       * \param x Coordinates of the motor boat
+       * \param size Size of the motor boat
+       * \param s Style of the motor boat (edge color and fill color)
+       */
       void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties());
 
       // Pavings
+
+      /**
+       * \brief Draws a paving on the figure
+       * 
+       * \param p PavingOut to draw (result of a paving with contractors)
+       * \param bound_s Style of the boundary of the paving
+       * \param out_s Style of the outside of the paving
+       */
       void draw_paving(const PavingOut& p,
         const StyleProperties& bound_s = StyleProperties::boundary(),
         const StyleProperties& out_s = StyleProperties::outside());
+
+      /**
+       * \brief Draws a paving on the figure
+       * 
+       * \param p PavingInOut to draw (result of a paving with separators)
+       * \param bound_s Style of the boundary of the paving
+       * \param out_s Style of the outside of the paving
+       * \param in_s Style of the inside of the paving
+       */
       void draw_paving(const PavingInOut& p,
         const StyleProperties& bound_s = StyleProperties::boundary(),
         const StyleProperties& out_s = StyleProperties::outside(),
         const StyleProperties& in_s = StyleProperties::inside());
 
+      /**
+       * \brief Draws a subpaving on the figure
+       * 
+       * \param p Subpaving to draw
+       * \param s Style of the subpaving
+       */
       template<typename P>
       void draw_subpaving(const Subpaving<P>& p, const StyleProperties& s = StyleProperties())
       {
