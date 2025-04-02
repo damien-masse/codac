@@ -29,6 +29,16 @@ StyleProperties::StyleProperties(std::initializer_list<Color> colors)
     fill_color = *std::prev(colors.end());
 }
 
+StyleProperties::StyleProperties(std::initializer_list<Color> colors, const string& layer_)
+  : stroke_color(*colors.begin()), layer(layer_)
+{
+  assert(colors.size() <= 2);
+  if (colors.size() == 1)
+    fill_color = Color::none();
+  else
+    fill_color = *std::prev(colors.end());
+}
+
 StyleProperties StyleProperties::inside()
 {
   StyleProperties s;

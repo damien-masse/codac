@@ -87,14 +87,14 @@ int ipe_opacity(const Color& c)
   return (int)(10.*round(10.*(c.model()==Model::RGB ? (c[3]/255.):(c[3]/100.))));
 }
 
-void Figure2D_IPE::begin_path(const StyleProperties& s, bool tip=false, std::string layer="alpha")
+void Figure2D_IPE::begin_path(const StyleProperties& s, bool tip)
 {
   // substr is needed to remove the "#" at the beginning of hex_str (deprecated by IPE)
   _colors.emplace(ipe_str(s.stroke_color), s.stroke_color);
   _colors.emplace(ipe_str(s.fill_color), s.fill_color);
 
   _f_temp_content << "\n \
-    <path layer=\"" << layer << "\" \n \
+    <path layer=\"" << s.layer << "\" \n \
     stroke=\"codac_color_" << ipe_str(s.stroke_color) << "\" \n \
     fill=\"codac_color_" << ipe_str(s.fill_color) << "\" \n \
     opacity=\"" << ipe_opacity(s.fill_color) << "%\" \n \
@@ -113,7 +113,7 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
   _colors.emplace(ipe_str(s.fill_color), s.fill_color);
 
   _f_temp_content << "\n \
-    <path layer=\"alpha\" \n \
+    <path layer=\"" << s.layer << "\" \n \
     stroke=\"codac_color_" << ipe_str(s.stroke_color) << "\" \n \
     fill=\"codac_color_" << ipe_str(s.fill_color) << "\" \n \
     opacity=\"" << ipe_opacity(s.fill_color) << "%\" \n \
@@ -212,56 +212,47 @@ std::string format_number(double num, double step)
     return result;
 }
 
+void Figure2D_IPE::draw_text(const Vector& c, const Vector& r, const std::string& text, const StyleProperties& s)
+{
+  assert(_fig.size() <= c.size());
+  _colors.emplace(ipe_str(s.stroke_color), s.stroke_color);
+  _colors.emplace(ipe_str(s.fill_color), s.fill_color);
+
+  _f_temp_content << "\n \
+    <text transformations=\"translations\" \n \
+    pos=\"" << scale_x(c[i()]) << " " << scale_y(c[j()]) << "\" \n \
+    stroke=\"codac_color_" << ipe_str(s.stroke_color) << "\" \n \
+    fill=\"codac_color_" << ipe_str(s.fill_color) << "\" \n \
+    opacity=\"" << ipe_opacity(s.fill_color) << "%\" \n \
+    stroke-opacity=\"" << ipe_opacity(s.stroke_color) << "%\" \n \
+    type=\"label\" \n \
+    width=\"" << scale_length(r[i()]) << "\" \n \
+    height=\"" << scale_length(r[j()]) << "\" \n \
+    depth=\"0\" \n \
+    valign=\"baseline\">" << text << "</text>";
+}
 
 void Figure2D_IPE::draw_axes()
 {
   auto x_ticks = generate_axis_ticks(_fig.axes()[0].limits.lb(), _fig.axes()[0].limits.ub());
   auto y_ticks = generate_axis_ticks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
 
-  begin_path(Color::black(), .0, "axes");
-  _f_temp_content << scale_x(_fig.axes()[0].limits.lb()) << " " << scale_y(_fig.axes()[1].limits.lb()) << " m \n";
-  _f_temp_content << scale_x(_fig.axes()[0].limits.ub()) << " " << scale_y(_fig.axes()[1].limits.lb()) << " l \n";
-  _f_temp_content << "</path>";
+  draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},
+                 {_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
 
-  begin_path(Color::black(), .0, "axes");
-  _f_temp_content << scale_x(_fig.axes()[0].limits.lb()) << " " << scale_y(_fig.axes()[1].limits.lb()) << " m \n";
-  _f_temp_content << scale_x(_fig.axes()[0].limits.lb()) << " " << scale_y(_fig.axes()[1].limits.ub()) << " l \n";
-  _f_temp_content << "</path>";
+  draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},
+                 {_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
 
   for (auto x_tick : x_ticks) 
   {
-    begin_path(Color::black(), .0, "axes");
-    // draw_polyline({{x_tick,_fig.axes()[1].limits.lb()},{x_tick,_fig.axes()[1].limits.lb()+0.02*_fig.axes()[1].limits.diam()}}, 0., {Color::black(),Color::black()});
-    _f_temp_content << scale_x(x_tick) << " " << scale_y(_fig.axes()[1].limits.lb()) << " m \n";
-    _f_temp_content << scale_x(x_tick) << " " << scale_y(_fig.axes()[1].limits.lb()+0.02*_fig.axes()[1].limits.diam()) << " l \n";
-    _f_temp_content << "</path>";
-    _f_temp_content << "\n \
-      <text transformations=\"translations\" \n \
-      pos=\"" << scale_x(x_tick+0.01*_fig.axes()[0].limits.diam()) << " " << scale_y(_fig.axes()[1].limits.lb()+0.01*_fig.axes()[1].limits.diam()) << "\" \n \
-      stroke=\"black\" \n \
-      type=\"label\" \n \
-      width=\"" << scale_length(_fig.axes()[0].limits.diam()) << "\" \n \
-      height=\"" << scale_length(_fig.axes()[1].limits.diam()) << "\" \n \
-      depth=\"0\" \n \
-      valign=\"baseline\">" << format_number(x_tick,(x_ticks[1] - x_ticks[0])) << "</text>";
+    draw_polyline({{x_tick,_fig.axes()[1].limits.lb()},{x_tick,_fig.axes()[1].limits.lb()+0.02*_fig.axes()[1].limits.diam()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
+    draw_text({x_tick+0.01*_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.lb()+0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(x_tick,(x_ticks[1] - x_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
   }
 
   for (auto y_tick : y_ticks) 
   {
-    begin_path(Color::black(), .0, "axes");
-    // draw_polyline({{_fig.axes()[0].limits.lb(),y_tick},{_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam(),y_tick}}, 0., {Color::black(),Color::black()});
-    _f_temp_content << scale_x(_fig.axes()[0].limits.lb()) << " " << scale_y(y_tick) << " m \n";
-    _f_temp_content << scale_x(_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam()) << " " << scale_y(y_tick) << " l \n";
-    _f_temp_content << "</path>";
-    _f_temp_content << "\n \
-      <text transformations=\"translations\" \n \
-      pos=\"" << scale_x(_fig.axes()[0].limits.lb()+0.01*_fig.axes()[0].limits.diam()) << " " << scale_y(y_tick+0.01*_fig.axes()[1].limits.diam()) << "\" \n \
-      stroke=\"black\" \n \
-      type=\"label\" \n \
-      width=\"" << scale_length(_fig.axes()[0].limits.diam()) << "\" \n \
-      height=\"" << scale_length(_fig.axes()[1].limits.diam()) << "\" \n \
-      depth=\"0\" \n \
-      valign=\"baseline\">" << format_number(y_tick, (y_ticks[1] - y_ticks[0])) << "</text>";
+    draw_polyline({{_fig.axes()[0].limits.lb(),y_tick},{_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam(),y_tick}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
+    draw_text({_fig.axes()[0].limits.lb()+0.01*_fig.axes()[0].limits.diam(),y_tick+0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(y_tick, (y_ticks[1] - y_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
   }
 }
 
@@ -272,7 +263,7 @@ void Figure2D_IPE::draw_point(const Vector& c, const StyleProperties& s)
   _colors.emplace(ipe_str(s.fill_color), s.fill_color);
 
   _f_temp_content << "\n \
-    <use layer=\"alpha\" \n \
+    <use layer=\"" << s.layer << "\" \n \
     name=\"mark/fdisk(sfx)\"  \n \
     pos=\"" << scale_x(c[i()]) << " " << scale_y(c[j()]) << "\" \n \
     stroke=\"codac_color_" << ipe_str(s.stroke_color) << "\" \n \
@@ -297,7 +288,7 @@ void Figure2D_IPE::draw_circle(const Vector& c, double r, const StyleProperties&
   assert(_fig.size() <= c.size());
   assert(r > 0.);
 
-  begin_path(s);
+  begin_path(s, false);
   _f_temp_content << scale_length(r) << " 0 0 " << scale_length(r) << " "
                   << scale_x(c[i()]) << " " << scale_y(c[j()]) << " e \n";
   _f_temp_content << "</path>";
@@ -308,7 +299,7 @@ void Figure2D_IPE::draw_ring(const Vector& c, const Interval& r, const StyleProp
   assert(_fig.size() <= c.size());
   assert(!r.is_empty() && r.lb() >= 0.);
 
-  begin_path(s);
+  begin_path(s, false);
   _f_temp_content << scale_length(r.lb()) << " 0 0 " << scale_length(r.lb()) << " "
                   << scale_x(c[i()]) << " " << scale_y(c[j()]) << " e \n";
   _f_temp_content << scale_length(r.ub()) << " 0 0 " << scale_length(r.ub()) << " "
@@ -346,7 +337,7 @@ void Figure2D_IPE::draw_pie(const Vector& c, const Interval& r, const Interval& 
   assert(_fig.size() <= c.size());
   assert(r.lb() >= 0.);
   
-  begin_path(s);
+  begin_path(s, false);
 
   Vector point1 ({r.lb() * std::cos(theta.lb()), r.lb() * std::sin(theta.lb())});
   Vector point2 ({r.ub() * std::cos(theta.lb()), r.ub() * std::sin(theta.lb())});
@@ -371,7 +362,7 @@ void Figure2D_IPE::draw_ellipse(const Vector& c, const Vector& ab, double theta,
   assert(c.size() == 2);
   assert(ab.size() == 2);
 
-  begin_path(s);
+  begin_path(s, false);
   _f_temp_content << scale_length(ab[0]) * std::cos(theta) << " " << scale_length(ab[0]) * std::sin(theta) << " " 
                   << - scale_length(ab[1]) * std::sin(theta) << " " << scale_length(ab[1]) * std::cos(theta) << " " 
                   << scale_x(c[i()]) << " " << scale_y(c[j()]) << " e \n";

@@ -18,10 +18,12 @@ namespace codac2
   {
     Color stroke_color = Color::black();
     Color fill_color = Color::none();
+    std::string layer = "alpha";
 
     StyleProperties();
     StyleProperties(const Color& stroke_color);
     StyleProperties(std::initializer_list<Color> colors);
+    StyleProperties(std::initializer_list<Color> colors, const std::string& layer);
 
     static StyleProperties inside();
     static StyleProperties outside();

@@ -29,7 +29,7 @@ namespace codac2
       void update_axes();
       void update_window_properties();
       void center_viewbox(const Vector& c, const Vector& r);
-      void begin_path(const StyleProperties& s,bool tip, std::string layer);
+      void begin_path(const StyleProperties& s,bool tip = false);
 
       /* For future doc:
       https://github.com/codac-team/codac/pull/126#discussion_r1829030491
@@ -48,8 +48,9 @@ namespace codac2
          pen="heavier" 
          matrix="0.00948009 11.9048 -11.9047 0.00948009 166.667 166.667">
       */
-      void begin_path_with_matrix(const Vector& x, float length, const StyleProperties& s);
+      void begin_path_with_matrix(const Vector& x, float length, const StyleProperties& s = StyleProperties());
 
+      void draw_text(const Vector& c,const Vector& r, const std::string& text, const StyleProperties& s = StyleProperties());
       void draw_axes();
 
       // Geometric shapes
