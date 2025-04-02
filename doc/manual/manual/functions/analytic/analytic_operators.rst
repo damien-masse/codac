@@ -61,6 +61,8 @@ When operators are available for operations 2--3, then an ``AnalyticFunction`` c
 .. |N|   replace:: :vertical:`Natur.`
 .. |C|   replace:: :vertical:`Centr.`
 .. |D|   replace:: :vertical:`Diff.`
+.. |CHI| replace:: :math:`\begin{split}\chi(x_1,x_2,x_3) =\\ \begin{cases}x_2 & \text{if } x_1 \leqslant 0, \\x_3 & \text{if } x_1>0.\end{cases}\end{split}`
+
 
 .. |AbsOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_abs.h"><code class="docutils literal notranslate"><span class="pre">AbsOp</span></code></a>`
 
@@ -71,6 +73,8 @@ When operators are available for operations 2--3, then an ``AnalyticFunction`` c
 .. |AtanOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_atan.h"><code class="docutils literal notranslate"><span class="pre">AtanOp</span></code></a>`
 
 .. |CeilOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_ceil.h"><code class="docutils literal notranslate"><span class="pre">CeilOp</span></code></a>`
+
+.. |ChiOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_chi.h"><code class="docutils literal notranslate"><span class="pre">ChiOp</span></code></a>`
 
 .. |CosOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_cos.h"><code class="docutils literal notranslate"><span class="pre">CosOp</span></code></a>`
 
@@ -225,6 +229,10 @@ If you notice any mathematical operators missing from the list below, feel free 
   |                                                     | | ``x1**x2`` (py)    |               |                                     |        |        |       |            |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathrm{arctan2}(y,x)`                       | ``atan2(y,x)``       | |Atan2Op|     | ``y``, ``x``: scalar                ||okk|   ||okk|   ||okk|  ||okk|       |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :bg-title:`Ternary operations`                                                                                                                                          |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | |CHI|                                               | ``chi(x1,x2,x3)``    | |ChiOp|       | ``x1``, ``x2``, ``x3``: scalar      ||okk|   ||nok|   ||nok|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :bg-title:`Vectorial / matricial operations`                                                                                                                            |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
