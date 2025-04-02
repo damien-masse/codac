@@ -115,6 +115,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan2.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_ceil.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_chi.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_component.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cos.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cosh.h
