@@ -21,8 +21,8 @@ using namespace pybind11::literals;
 
 void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& pysep)
 {
-  py::class_<SepWrapper<IntervalVector>> exported(m, "SepWrapper", pysep, SEPWRAPPER_INTERVALVECTOR_MAIN);
-  exported
+  py::class_<SepWrapper<IntervalVector>> exported_intervalvector(m, "SepWrapper_IntervalVector", pysep, SEPWRAPPER_INTERVALVECTOR_MAIN);
+  exported_intervalvector
 
     .def(py::init<const IntervalVector&>(),
       SEPWRAPPER_INTERVALVECTOR_SEPWRAPPER_CONST_INTERVALVECTOR_REF,
@@ -30,6 +30,18 @@ void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& pysep)
 
     .def("separate", &SepWrapper<IntervalVector>::separate,
       BOXPAIR_SEPWRAPPER_INTERVALVECTOR_SEPARATE_CONST_INTERVALVECTOR_REF_CONST,
+      "x"_a)
+  ;
+
+  py::class_<SepWrapper<PavingInOut>> exported_pavinginout(m, "SepWrapper_PavingInOut", pysep, SEPWRAPPER_INTERVALVECTOR_MAIN);
+  exported_pavinginout
+
+    .def(py::init<const PavingInOut&>(),
+      SEPWRAPPER_PAVINGINOUT_SEPWRAPPER_CONST_PAVINGINOUT_REF,
+      "y"_a)
+
+    .def("separate", &SepWrapper<PavingInOut>::separate,
+      BOXPAIR_SEPWRAPPER_PAVINGINOUT_SEPARATE_CONST_INTERVALVECTOR_REF_CONST,
       "x"_a)
   ;
 }

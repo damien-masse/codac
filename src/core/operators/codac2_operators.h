@@ -19,6 +19,7 @@
 #include "codac2_atan.h"
 #include "codac2_atan2.h"
 #include "codac2_ceil.h"
+#include "codac2_chi.h"
 #include "codac2_component.h"
 #include "codac2_cos.h"
 #include "codac2_cosh.h"

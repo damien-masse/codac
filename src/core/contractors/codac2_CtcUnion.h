@@ -16,7 +16,7 @@
 
 namespace codac2
 {
-  template<typename X>
+  template<typename X=IntervalVector>
   class CtcUnion : public Ctc<CtcUnion<X>,X>
   {
     public:

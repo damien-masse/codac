@@ -25,6 +25,7 @@
 #include "codac2_py_atan_docs.h"
 #include "codac2_py_atan2_docs.h"
 #include "codac2_py_ceil_docs.h"
+#include "codac2_py_chi_docs.h"
 #include "codac2_py_component_docs.h"
 #include "codac2_py_cos_docs.h"
 #include "codac2_py_cosh_docs.h"
@@ -283,6 +284,21 @@ void export_operators(py::module& m)
   m.def("ceil", [](const ScalarExpr& e1) { return ceil(e1); },
     SCALAREXPR_CEIL_CONST_SCALAREXPR_REF,
     "x1"_a);
+
+  py::class_<ChiOp>(m, "ChiOp")
+
+    .def_static("fwd", (Interval(*)(const Interval&,const Interval&,const Interval&)) &ChiOp::fwd,
+      STATIC_INTERVAL_CHIOP_FWD_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
+      "x1"_a, "x2"_a, "x3"_a)
+    .def_static("bwd", (void(*)(const Interval&,Interval&,Interval&,Interval&)) &ChiOp::bwd,
+      STATIC_VOID_CHIOP_BWD_CONST_INTERVAL_REF_INTERVAL_REF_INTERVAL_REF_INTERVAL_REF,
+      "y"_a, "x1"_a, "x2"_a, "x3"_a)
+
+  ;
+
+  m.def("chi", [](const ScalarExpr& e1, const ScalarExpr& e2, const ScalarExpr& e3) { return chi(e1,e2,e3); },
+    SCALAREXPR_CHI_CONST_SCALAREXPR_REF_CONST_SCALAREXPR_REF_CONST_SCALAREXPR_REF,
+    "x1"_a, "x2"_a, "x3"_a);
 
   py::class_<ComponentOp>(m, "ComponentOp")
 

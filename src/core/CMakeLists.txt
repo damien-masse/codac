@@ -11,6 +11,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCartProd.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCross.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCross.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.cpp
@@ -31,6 +33,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcLazy.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcNot.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcUnion.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPointCloud.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPointCloud.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolar.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolygon.cpp
@@ -111,6 +115,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan2.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_ceil.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_chi.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_component.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cos.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cosh.h
@@ -167,6 +172,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartProd.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepChi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepChi.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCross.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcBoundary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcBoundary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcPair.cpp

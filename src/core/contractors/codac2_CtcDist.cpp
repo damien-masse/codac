@@ -14,6 +14,10 @@
 using namespace std;
 using namespace codac2;
 
+CtcDist::CtcDist()
+  : Ctc<CtcDist,IntervalVector>(5)
+{ }
+
 void CtcDist::contract(IntervalVector& x) const
 {
   assert_release(x.size() == 5 && "dist constraint is 5d: <ax,ay,bx,bx,d>");
