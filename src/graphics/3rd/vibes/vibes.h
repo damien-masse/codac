@@ -1,6 +1,6 @@
 /// \file    vibes.h
 /// \brief   Vibes C++ API Header
-/// \author  Vincent Drevelle, Jeremy Nicola, Simon Rohou, Benoit Desrochers
+/// \author  Vincent Drevelle, Jeremy Nicola, Simon Rohou, Benoit Desrochers, Maël Godard
 /// \date    2013-2015
 /// \version 0.2.0beta
 //
@@ -221,8 +221,12 @@ namespace vibes {
   /// Start VIBes in file saving mode. All commands are saved to the specified file.
   void beginDrawing(const std::string &fileName);
 
+  /// Start VIBes in connected mode: connects to the VIBes viewer if needed.
+  void beginDrawingIfNeeded();
+
   /// Close connection to the viewer or the drawing file.
   void endDrawing();
+
 
   /** @} */ // end of group connection
 
@@ -338,11 +342,22 @@ namespace vibes {
   /// Draw a 2-D polygon from the list of abscissae \a x and the list of ordinates \a y
   VIBES_FUNC_COLOR_PARAM_2(drawPolygon,const std::vector<double> &,x, const std::vector<double> &,y)
 
+  /// Draw a text <text> at position <cx, cy>
+  VIBES_FUNC_COLOR_PARAM_3(drawText, const double&, top_left_x, const double&, top_left_y,
+                                      const std::string&, text)
+
+  /// Draw a text <text> at position <cx, cy> and with scale <scale>
+  VIBES_FUNC_COLOR_PARAM_4(drawText, const double&, top_left_x, const double&, top_left_y,
+                                      const std::string&, text, const double&, scale)
+
   /// Draw a 2-D vehicle at position (cx,cy)
   VIBES_FUNC_COLOR_PARAM_4(drawVehicle,const double &,cx, const double &,cy, const double &,rot, const double &,length)
 
   /// Draw a 2-D submarine (type AUV) at position (cx,cy)
   VIBES_FUNC_COLOR_PARAM_4(drawAUV,const double &,cx, const double &,cy, const double &,rot, const double &,length)
+
+  /// Draw a 2-D motor boat (type USV) at position (cx,cy)
+  VIBES_FUNC_COLOR_PARAM_4(drawMotorBoat,const double &,cx, const double &,cy, const double &,rot, const double &,length)
 
   /// Draw a 2-D tank at position (cx,cy)
   VIBES_FUNC_COLOR_PARAM_4(drawTank,const double &,cx, const double &,cy, const double &,rot, const double &,length)
@@ -369,11 +384,14 @@ namespace vibes {
                                      const double &,r_min, const double &,r_max)
 
   /// Draw a raster image with upper left corner at position <ulb, yub>
-  /// and with <xres, yres> pixel resolution.
+  /// and with <width, height> size. Possibly with a rotation <rot> in degrees.
   /// The color used for transparency is throw the pen color
   VIBES_FUNC_COLOR_PARAM_5(drawRaster, const std::string&, rasterFilename,
                                        const double &,ulb, const double &, yub,
-                                       const double &,xres, const double &, yres);
+                                       const double &,width, const double &, height);
+  VIBES_FUNC_COLOR_PARAM_6(drawRaster, const std::string&, rasterFilename,
+                                       const double &,ulb, const double &, yub,
+                                       const double &,width, const double &, height, const double &, rot);
 
   /// @}
   /// @name Objects grouping and deletion
@@ -460,7 +478,7 @@ namespace vibes {
     * \param params Optional attributes
     *
     * Draws a circle of radius \a r with center at (\a cx , \a cy ).
-    * This functions internally calls drawEllipse
+    * This functions internally calls \fn drawEllipse
     */
   inline void drawCircle(const double &cx, const double &cy, const double &r, Params params)
   {
@@ -511,15 +529,15 @@ namespace vibes {
     inline void drawBoxes(const std::vector<ibex::IntervalVector> &boxes, Params params){
         std::vector<std::vector<double> > bounds;
         for(unsigned int i=0;i<boxes.size();i++)
-	{
-	    std::vector<double> boundsI;
-	    boundsI.push_back(boxes[i][0].lb());
-	    boundsI.push_back(boxes[i][0].ub());
-	    boundsI.push_back(boxes[i][1].lb());
-	    boundsI.push_back(boxes[i][1].ub());
-	    bounds.push_back(boundsI);
-	}
-	vibes::drawBoxes(bounds, params);
+  {
+      std::vector<double> boundsI;
+      boundsI.push_back(boxes[i][0].lb());
+      boundsI.push_back(boxes[i][0].ub());
+      boundsI.push_back(boxes[i][1].lb());
+      boundsI.push_back(boxes[i][1].ub());
+      bounds.push_back(boundsI);
+  }
+  vibes::drawBoxes(bounds, params);
     }
   #endif //#ifdef __IBEX_INTERVAL_VECTOR_H__
 }

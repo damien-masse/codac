@@ -10,57 +10,28 @@
 #pragma once
 
 #include <memory>
-#include "codac2_Sep.h"
-#include "codac2_Ctc.h"
+#include "codac2_Matrix.h"
+#include "codac2_Vector.h"
 
 namespace codac2
 {
   template<class T>
-  concept IsMatrix = (std::is_same_v<Matrix,T> 
-      || std::is_same_v<MatrixBaseBlock<EigenMatrix<double>&,double>,T> 
-      || std::is_same_v<MatrixBaseBlock<const EigenMatrix<double>&,double>,T>);
+  concept IsRealType = (std::is_same_v<double,T>
+    || std::is_same_v<Vector,T>
+    || std::is_same_v<Matrix,T>);
 
-  template<class T>
-  concept IsIntervalMatrix = (std::is_same_v<IntervalMatrix,T> 
-      || std::is_same_v<MatrixBaseBlock<EigenMatrix<Interval>&,Interval>,T> 
-      || std::is_same_v<MatrixBaseBlock<const EigenMatrix<Interval>&,Interval>,T>);
-
-  template<class C,class X>
-  concept IsCtcBaseOrPtr = (std::is_base_of_v<CtcBase<X>,C>
-      || std::is_same_v<std::shared_ptr<CtcBase<X>>,C>);
-
-  template<class C,class X>
-  concept IsCtcBase = std::is_base_of_v<CtcBase<X>,C>;
-
-  template<class S>
-  concept IsSepBaseOrPtr = (std::is_base_of_v<SepBase,S>
-    || std::is_base_of_v<S,std::shared_ptr<SepBase>>);
-
-  inline size_t size_of(int x)
+  inline Index size_of([[maybe_unused]] int x)
   {
     return 1;
   }
   
-  inline size_t size_of(double x)
+  inline Index size_of([[maybe_unused]] double x)
   {
     return 1;
   }
 
-  inline size_t size_of(const std::shared_ptr<CtcBase<IntervalVector>>& x)
-  {
-    return x->size();
-  }
-
-  inline size_t size_of(const std::shared_ptr<SepBase>& x)
-  {
-    return x->size();
-  }
-
   template<typename T>
-    requires (!std::is_base_of_v<std::shared_ptr<CtcBase<IntervalVector>>,T>
-      && !std::is_base_of_v<std::shared_ptr<SepBase>,T>
-      && !std::is_same_v<int,T> && !std::is_same_v<double,T>)
-  inline size_t size_of(const T& x)
+  inline Index size_of(const T& x)
   {
     return x.size();
   }
@@ -78,7 +49,7 @@ namespace codac2
   }
 
   template<class... T>
-  size_t size_first_item(const T&... x)
+  Index size_first_item(const T&... x)
   {
     return size_of(std::get<0>(std::make_tuple(x...)));
   }
@@ -96,6 +67,18 @@ namespace codac2
         ++it;
     }
   }
+
+  template<typename C>
+    requires is_ctc_v<C>
+  inline Index size_of(const std::shared_ptr<C>& x)
+  {
+    return x->size();
+  }
+
+  template<typename S>
+    requires is_sep_v<S>
+  inline Index size_of(const std::shared_ptr<S>& x)
+  {
+    return x->size();
+  }
 }
-
-

@@ -11,7 +11,10 @@
 
 #include <memory>
 #include <iostream>
+#include "codac2_Index.h"
 #include "codac2_assert.h"
+#include "codac2_TypeInfo.h"
+#include "codac2_IntervalVector.h"
 
 namespace codac2
 {
@@ -41,13 +44,13 @@ namespace codac2
     
       using ContractedType = X;
 
-      CtcBase(size_t n)
+      CtcBase(Index n)
         : _n(n)
       {
         assert(n > 0);
       }
 
-      size_t size() const
+      Index size() const
       {
         return _n;
       }
@@ -58,7 +61,7 @@ namespace codac2
 
     protected:
 
-      const size_t _n;
+      const Index _n;
   };
 
   template<typename C,typename X_>
@@ -66,7 +69,7 @@ namespace codac2
   {
     public:
     
-      Ctc(size_t n)
+      Ctc(Index n)
         : CtcBase<X_>(n)
       { }
 
@@ -75,4 +78,24 @@ namespace codac2
         return std::make_shared<C>(*dynamic_cast<const C*>(this));
       }
   };
+
+  template<class C,class X>
+  concept IsCtcBaseOrPtr = (std::is_base_of_v<CtcBase<X>,C>
+      || std::is_same_v<std::shared_ptr<CtcBase<X>>,C>);
+
+  template<class C,class X>
+  concept IsCtcBase = std::is_base_of_v<CtcBase<X>,C>;
+  
+
+  template<typename C>
+    requires (IsCtcBase<C,Interval>) || (IsCtcBase<C,IntervalVector>)
+  struct is_interval_based<C> : std::false_type {};
+
+  template<typename C>
+    requires (IsCtcBase<C,Interval>) || (IsCtcBase<C,IntervalVector>)
+  struct is_ctc<C> : std::true_type {};
+
+  template<typename C>
+    requires (IsCtcBase<C,Interval>) || (IsCtcBase<C,IntervalVector>)
+  struct is_sep<C> : std::false_type {};
 }

@@ -2,7 +2,7 @@
  *  \file codac2_Figure2D.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -12,9 +12,12 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "codac2_Index.h"
 #include "codac2_Figure2DInterface.h"
 #include "codac2_OutputFigure2D.h"
 #include "codac2_Paving.h"
+#include "codac2_ColorMap.h"
+#include "codac2_Ellipsoid.h"
 
 #define DEFAULT_FIG_NAME "Codac - default view"
 
@@ -34,12 +37,12 @@ namespace codac2
 
   struct FigureAxis
   {
-    size_t dim_id;
+    Index dim_id;
     Interval limits;
     std::string label;
   };
 
-  inline FigureAxis axis(size_t dim_id, const Interval& limits, const std::string& label = "")
+  inline FigureAxis axis(Index dim_id, const Interval& limits, const std::string& label = "")
   {
     assert_release(dim_id >= 0);
     //assert_release(!limits.is_empty());
@@ -64,10 +67,13 @@ namespace codac2
       Figure2D(const std::string& name, GraphicOutput o, bool set_as_default = false);
 
       const std::string& name() const;
-      size_t size() const;
+      Index size() const;
 
       const std::vector<FigureAxis>& axes() const;
       void set_axes(const FigureAxis& axis1, const FigureAxis& axis2);
+
+      const Index& i() const;
+      const Index& j() const;
 
       const Vector& pos() const;
       const Vector& window_size() const;
@@ -75,24 +81,37 @@ namespace codac2
 
       void center_viewbox(const Vector& c, const Vector& r);
       double scaled_unit() const;
+      void auto_scale();
 
       bool is_default() const;
       void set_as_default();
+
+      void set_tdomain(const Interval& tdomain);
 
       // Geometric shapes
       void draw_point(const Vector& c, const StyleProperties& s = StyleProperties());
       void draw_box(const IntervalVector& x, const StyleProperties& s = StyleProperties());
       void draw_circle(const Vector& c, double r, const StyleProperties& s = StyleProperties());
       void draw_ring(const Vector& c, const Interval& r, const StyleProperties& s = StyleProperties());
+      void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s = StyleProperties());
+      void draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s = StyleProperties());
       void draw_polyline(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
       void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& s = StyleProperties());
       void draw_polygone(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
+      void draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s = StyleProperties());
       void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s = StyleProperties());
       void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& s = StyleProperties());
+      void draw_ellipsoid(const Ellipsoid& e, const StyleProperties& s = StyleProperties());
+      void draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties());
+      void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s = StyleProperties());
+      void draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap);
+      void draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap);
+      void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties());
 
       // Robots
       void draw_tank(const Vector& x, float size, const StyleProperties& s = StyleProperties());
       void draw_AUV(const Vector& x, float size, const StyleProperties& s = StyleProperties());
+      void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties());
 
       // Pavings
       void draw_paving(const PavingOut& p,
@@ -116,6 +135,7 @@ namespace codac2
       Vector _pos {50,50}, _window_size {500,500};
       std::vector<FigureAxis> _axes { axis(0,{0,1}), axis(1,{0,1}) };
       std::vector<std::shared_ptr<OutputFigure2D>> _output_figures;
+      Interval _tdomain;
 
       friend DefaultView;
   };
@@ -174,6 +194,18 @@ namespace codac2
         selected_fig()->draw_ring(c,r,s);
       }
 
+      static void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_line(p1,p2,s);
+      }
+
+      static void draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_arrow(p1,p2,tip_length,s);
+      }
+
       static void draw_polyline(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
@@ -192,6 +224,12 @@ namespace codac2
         selected_fig()->draw_polygone(x,s);
       }
 
+      static void draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_parallelepiped(z,A,s);
+      }
+
       static void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s = StyleProperties())
       {
         auto_init();
@@ -202,6 +240,42 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_ellipse(c,ab,theta,s);
+      }
+
+      static void draw_ellipsoid(const Ellipsoid& e, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_ellipsoid(e,s);
+      }
+
+      static void draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_trajectory(x,s);
+      }
+
+      static void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_trajectory(x,s);
+      }
+
+      static void draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap)
+      {
+        auto_init();
+        selected_fig()->draw_trajectory(x,cmap);
+      }
+
+      static void draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap)
+      {
+        auto_init();
+        selected_fig()->draw_trajectory(x,cmap);
+      }
+
+      static void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->plot_trajectory(x,s);
       }
 
       // Robots
@@ -216,6 +290,12 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_AUV(x,size,s);
+      }
+
+      static void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_motor_boat(x,size,s);
       }
 
       // Pavings

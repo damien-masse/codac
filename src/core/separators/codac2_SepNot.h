@@ -13,7 +13,6 @@
 #include "codac2_Sep.h"
 #include "codac2_SepWrapper.h"
 #include "codac2_Collection.h"
-#include "codac2_template_tools.h"
 
 namespace codac2
 {
@@ -22,7 +21,7 @@ namespace codac2
     public:
 
       SepNot(const IntervalVector& x)
-        : Sep<SepNot>(x.size()), _sep(SepWrapper_<IntervalVector>(x))
+        : Sep<SepNot>(x.size()), _sep(SepWrapper(x))
       { }
 
       template<typename S>

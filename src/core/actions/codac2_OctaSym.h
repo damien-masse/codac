@@ -2,7 +2,7 @@
  *  \file codac2_OctaSym.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou, Luc Jaulin
+ *  \author     Simon Rohou, Luc Jaulin, Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -10,10 +10,12 @@
 #pragma once
 
 #include <vector>
-#include "codac2_Vector.h"
+#include "codac2_matrices.h"
+#include "codac2_Matrix.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_CtcWrapper.h"
-#include "codac2_template_tools.h"
+#include "codac2_AnalyticFunction.h"
+
 
 namespace codac2
 {
@@ -42,7 +44,22 @@ namespace codac2
 
       OctaSym operator*(const OctaSym& s) const;
 
-      IntervalVector operator()(const IntervalVector& x) const;
+      Matrix permutation_matrix() const;
+
+      int _sign(int a) const
+      {
+        return (a > 0) ? 1 : ((a < 0) ? -1 : 0);
+      }
+
+      template<typename T>
+      Mat<T,-1,1> operator()(const Mat<T,-1,1>& x) const
+      {
+        assert_release(x.size() == (Index)size());
+        Mat<T,-1,1> x_(size());
+        for(size_t i = 0 ; i < size() ; i++)
+          x_[i] = _sign((*this)[i])*x[std::abs((*this)[i])-1];
+        return x_;
+      }
 
       template<typename C>
         requires IsCtcBaseOrPtr<C,IntervalVector>
@@ -50,7 +67,7 @@ namespace codac2
       // -> is defined in CtcAction class
 
       template<typename S>
-        requires IsSepBaseOrPtr<S>
+        requires is_sep_v<S>
       SepAction operator()(const S& s) const;
       // -> is defined in SepAction class
 

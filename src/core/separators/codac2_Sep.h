@@ -22,8 +22,8 @@ namespace codac2
         : _bp { x._bp }
       { }
 
-      BoxPair(const IntervalVector& inner, const IntervalVector& outer)
-        : _bp { inner, outer }
+      BoxPair(const IntervalVector& inner_, const IntervalVector& outer_)
+        : _bp { inner_, outer_ }
       { }
 
       BoxPair& operator=(const BoxPair& x)
@@ -50,13 +50,13 @@ namespace codac2
   {
     public:
 
-      SepBase(size_t n)
+      SepBase(Index n)
         : _n(n)
       {
         assert(n > 0);
       }
 
-      size_t size() const
+      Index size() const
       {
         return _n;
       }
@@ -66,15 +66,15 @@ namespace codac2
 
     protected:
 
-      const size_t _n;
+      const Index _n;
   };
-
+  
   template<typename S>
   class Sep : public SepBase
   {
     public:
 
-      Sep(size_t n)
+      Sep(Index n)
         : SepBase(n)
       { }
 
@@ -83,4 +83,21 @@ namespace codac2
         return std::make_shared<S>(*dynamic_cast<const S*>(this));
       }
   };
+  
+  template<class S>
+  concept IsSepBaseOrPtr = (std::is_base_of_v<SepBase,S>
+    || std::is_base_of_v<S,std::shared_ptr<SepBase>>);
+
+
+  template<typename S>
+    requires (IsSepBaseOrPtr<S>)
+  struct is_interval_based<S> : std::false_type {};
+
+  template<typename S>
+    requires (IsSepBaseOrPtr<S>)
+  struct is_ctc<S> : std::false_type {};
+
+  template<typename S>
+    requires (IsSepBaseOrPtr<S>)
+  struct is_sep<S> : std::true_type {};
 }

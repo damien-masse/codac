@@ -13,7 +13,6 @@
 #include "codac2_IntervalVector.h"
 #include "codac2_CtcWrapper.h"
 #include "codac2_Collection.h"
-#include "codac2_template_tools.h"
 
 namespace codac2
 {
@@ -23,7 +22,7 @@ namespace codac2
 
       CtcCartProd(const Collection<CtcBase<IntervalVector>>& ctcs)
         : Ctc<CtcCartProd,IntervalVector>([ctcs] {
-            size_t n = 0;
+            Index n = 0;
             for(const auto& ci : ctcs)
               n += ci->size();
             return n;
@@ -46,7 +45,7 @@ namespace codac2
       {
         assert_release(x.size() == this->size());
 
-        size_t i = 0;
+        Index i = 0;
         for(const auto& ci : _ctcs)
         {
           IntervalVector xi = x.subvector(i,i+ci->size()-1);
@@ -63,7 +62,7 @@ namespace codac2
   };
 
   template<typename... C>
-    requires (IsCtcBaseOrPtr<C,IntervalVector> && ...)
+    requires ((is_ctc_v<C>) || ...) && (!(is_sep_v<C>) && ...)
   inline CtcCartProd cart_prod(const C&... c)
   {
     return CtcCartProd(c...);
