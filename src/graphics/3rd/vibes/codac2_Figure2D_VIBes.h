@@ -43,10 +43,11 @@ namespace codac2
       void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties());
 
       static std::string to_vibes_style(const StyleProperties& s);
+      static std::string to_vibes_style(const LineStyle& l);
 
     protected:
 
       static int _has_been_initialized;
-      const vibes::Params _params;
+      vibes::Params _params;
   };
 }

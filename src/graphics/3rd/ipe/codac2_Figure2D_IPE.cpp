@@ -37,6 +37,9 @@ Figure2D_IPE::Figure2D_IPE(const Figure2D& fig)
   for(const auto& ci : codac_colors)
     // substr is needed to remove the "#" at the beginning of hex_str (deprecated by IPE)
     _colors.emplace(ci.hex_str().substr(1), ci);
+
+  _layers.push_back("alpha");
+  _layers.push_back("axes");
 }
 
 Figure2D_IPE::~Figure2D_IPE()
@@ -87,11 +90,33 @@ int ipe_opacity(const Color& c)
   return (int)(10.*round(10.*(c.model()==Model::RGB ? (c[3]/255.):(c[3]/100.))));
 }
 
+std::string to_ipe_linestyle(const LineStyle& ls)
+{
+  switch(ls)
+  {
+    case LineStyle::SOLID:
+      return "normal";
+    case LineStyle::DASHED:
+      return "dashed";
+    case LineStyle::DOTTED:
+      return "dotted";
+    case LineStyle::DASH_DOTTED:
+      return "dash dotted";
+    case LineStyle::DASH_DOT_DOTTED:
+      return "dash dot dotted";
+    default:
+      return "solid";
+  }
+}
+
 void Figure2D_IPE::begin_path(const StyleProperties& s, bool tip)
 {
   // substr is needed to remove the "#" at the beginning of hex_str (deprecated by IPE)
   _colors.emplace(ipe_str(s.stroke_color), s.stroke_color);
   _colors.emplace(ipe_str(s.fill_color), s.fill_color);
+
+  if (std::find(_layers.begin(), _layers.end(), s.layer) == _layers.end())
+      _layers.push_back(s.layer); 
 
   _f_temp_content << "\n \
     <path layer=\"" << s.layer << "\" \n \
@@ -99,6 +124,7 @@ void Figure2D_IPE::begin_path(const StyleProperties& s, bool tip)
     fill=\"codac_color_" << ipe_str(s.fill_color) << "\" \n \
     opacity=\"" << ipe_opacity(s.fill_color) << "%\" \n \
     stroke-opacity=\"" << ipe_opacity(s.stroke_color) << "%\" \n \
+    dash=\"" << to_ipe_linestyle(s.line_style) << "\" \n \
     pen=\"heavier\"";
   if (tip)
     _f_temp_content << "\n \
@@ -112,12 +138,16 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
   _colors.emplace(ipe_str(s.stroke_color), s.stroke_color);
   _colors.emplace(ipe_str(s.fill_color), s.fill_color);
 
+  if (std::find(_layers.begin(), _layers.end(), s.layer) == _layers.end())
+      _layers.push_back(s.layer); 
+
   _f_temp_content << "\n \
     <path layer=\"" << s.layer << "\" \n \
     stroke=\"codac_color_" << ipe_str(s.stroke_color) << "\" \n \
     fill=\"codac_color_" << ipe_str(s.fill_color) << "\" \n \
     opacity=\"" << ipe_opacity(s.fill_color) << "%\" \n \
     stroke-opacity=\"" << ipe_opacity(s.stroke_color) << "%\" \n \
+    dash=\"" << to_ipe_linestyle(s.line_style) << "\" \n \
     pen=\"heavier\" \n \
     matrix=";
 
@@ -288,7 +318,7 @@ void Figure2D_IPE::draw_circle(const Vector& c, double r, const StyleProperties&
   assert(_fig.size() <= c.size());
   assert(r > 0.);
 
-  begin_path(s, false);
+  begin_path(s);
   _f_temp_content << scale_length(r) << " 0 0 " << scale_length(r) << " "
                   << scale_x(c[i()]) << " " << scale_y(c[j()]) << " e \n";
   _f_temp_content << "</path>";
@@ -299,7 +329,7 @@ void Figure2D_IPE::draw_ring(const Vector& c, const Interval& r, const StyleProp
   assert(_fig.size() <= c.size());
   assert(!r.is_empty() && r.lb() >= 0.);
 
-  begin_path(s, false);
+  begin_path(s);
   _f_temp_content << scale_length(r.lb()) << " 0 0 " << scale_length(r.lb()) << " "
                   << scale_x(c[i()]) << " " << scale_y(c[j()]) << " e \n";
   _f_temp_content << scale_length(r.ub()) << " 0 0 " << scale_length(r.ub()) << " "
@@ -337,7 +367,7 @@ void Figure2D_IPE::draw_pie(const Vector& c, const Interval& r, const Interval& 
   assert(_fig.size() <= c.size());
   assert(r.lb() >= 0.);
   
-  begin_path(s, false);
+  begin_path(s);
 
   Vector point1 ({r.lb() * std::cos(theta.lb()), r.lb() * std::sin(theta.lb())});
   Vector point2 ({r.ub() * std::cos(theta.lb()), r.ub() * std::sin(theta.lb())});
@@ -362,7 +392,7 @@ void Figure2D_IPE::draw_ellipse(const Vector& c, const Vector& ab, double theta,
   assert(c.size() == 2);
   assert(ab.size() == 2);
 
-  begin_path(s, false);
+  begin_path(s);
   _f_temp_content << scale_length(ab[0]) * std::cos(theta) << " " << scale_length(ab[0]) * std::sin(theta) << " " 
                   << - scale_length(ab[1]) * std::sin(theta) << " " << scale_length(ab[1]) * std::cos(theta) << " " 
                   << scale_x(c[i()]) << " " << scale_y(c[j()]) << " e \n";
@@ -390,7 +420,7 @@ void Figure2D_IPE::draw_AUV(const Vector& x, float size, const StyleProperties& 
 
   float length = size/7.0; // from VIBes : initial vehicle's length is 7
 
-  _f_temp_content << "\n<group>\n";
+  _f_temp_content << "\n<group layer=\"" << s.layer<< "\">\n";
 
   // Body
   begin_path_with_matrix(x,length,s);
@@ -417,7 +447,7 @@ void Figure2D_IPE::draw_motor_boat(const Vector& x, float size, const StylePrope
   StyleProperties s_edge = s; s_edge.fill_color = Color::none();
   StyleProperties s_fill = s; s_fill.fill_color = s.stroke_color;
 
-  _f_temp_content << "\n<group>\n";
+  _f_temp_content << "\n<group layer=\"" << s.layer<< "\">\n";
 
   // Body shape
   begin_path_with_matrix(x,length,s);
@@ -764,8 +794,11 @@ void Figure2D_IPE::print_header_page()
     <tiling name=\"falling\" angle=\"-60\" step=\"4\" width=\"1\"/> \n \
     <tiling name=\"rising\" angle=\"30\" step=\"4\" width=\"1\"/> \n \
     </ipestyle> \n \
-    <page> \n \
-    <layer name=\"alpha\"/> \n \
-    <layer name=\"axes\"/> \n \
-    <view layers=\"alpha axes\" active=\"alpha\"/>";
+    <page> \n ";
+  for (auto layer : _layers)
+    _f << "<layer name=\"" << layer << "\"/> \n";
+  _f << "<view layers=\" ";
+  for (auto layer : _layers)
+    _f  << layer <<  " ";
+  _f << "\" active=\"alpha\"/> \n ";
 }

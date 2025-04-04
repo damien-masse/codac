@@ -37,5 +37,6 @@ namespace codac2
     protected:
 
       const Figure2D& _fig;
+      std::vector<std::string> _layers;
   };
 }
