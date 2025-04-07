@@ -14,6 +14,7 @@
     contractors/codac2_py_Ctc.h
     contractors/codac2_py_CtcAction.cpp
     contractors/codac2_py_CtcCartProd.cpp
+    contractors/codac2_py_CtcCross.cpp
     contractors/codac2_py_CtcCtcBoundary.cpp
     contractors/codac2_py_CtcDist.cpp
     contractors/codac2_py_CtcEmpty.cpp
@@ -25,6 +26,7 @@
     contractors/codac2_py_CtcInverseNotIn.h
     contractors/codac2_py_CtcLazy.cpp
     contractors/codac2_py_CtcNot.cpp
+    contractors/codac2_py_CtcPointCloud.cpp
     contractors/codac2_py_CtcPolar.cpp
     contractors/codac2_py_CtcPolygon.cpp
     contractors/codac2_py_CtcProj.cpp
@@ -75,6 +77,8 @@
     separators/codac2_py_Sep.h
     separators/codac2_py_SepAction.cpp
     separators/codac2_py_SepCartProd.cpp
+    separators/codac2_py_SepChi.cpp
+    separators/codac2_py_SepCross.cpp
     separators/codac2_py_SepCtcBoundary.cpp
     separators/codac2_py_SepCtcPair.cpp
     separators/codac2_py_SepInter.cpp

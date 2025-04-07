@@ -13,12 +13,13 @@
 #include "codac2_Collection.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_Sep.h"
+#include "codac2_template_tools.h"
 
 namespace codac2
 {
   /**
    * \brief A separator on the Chi constraint
-   * If [x] \in Sa, then Sb, else Sc
+   * If [x] in Sa, then Sb, else Sc
    */
   class SepChi : public Sep<SepChi>
   {

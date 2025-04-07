@@ -121,8 +121,9 @@ User manual
       * CtcPolar
       * CtcSegment
       * CtcPolygon
+      * CtcPointCloud
       * CtcEllipse
-      * CtcNoCross
+      * CtcCross / CtcNoCross
    * Shape contractors
       * CtcCtcBoundary
       * CtcWrapper
@@ -159,6 +160,7 @@ User manual
       * SepPolarCart or SepCartPolar
       * SepPolygon
       * SepEllipse
+      * SepCross
    * Shape separators
       * SepCtcBoundary
       * SepWrapper
