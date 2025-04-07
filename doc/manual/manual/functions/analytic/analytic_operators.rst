@@ -3,6 +3,8 @@
 Analytic operators
 ==================
 
+  Main author: `Simon Rohou <https://www.simon-rohou.fr/research/>`_
+  
 .. raw:: html
 
   <style>
