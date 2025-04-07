@@ -60,68 +60,351 @@ namespace codac2
   template<typename P>
   class Subpaving;
 
+  /**
+   * \class Figure2D
+   * \brief Figure2D class, used for 2D display
+   * 
+   * This class is used to display 2D figures. Currently, it interacts with VIBes and IPE.
+   * 
+   * For VIBes, the server must be launched before using this class.
+   * 
+   * For IPE, an xml file is generated and can be opened with the IPE editor.
+   */
+
   class Figure2D : public Figure2DInterface, public std::enable_shared_from_this<Figure2D>
   {
     public:
 
+      /**
+       * \brief Creates a new Figure2D object, with a given name and output
+       * 
+       * \param name Name of the figure
+       * \param o Output of the figure, can be VIBes or IPE (or both)
+       */
       Figure2D(const std::string& name, GraphicOutput o, bool set_as_default = false);
 
+      /**
+       * \brief Getter for the name of the figure
+       * 
+       * \return The name of the figure
+       */
       const std::string& name() const;
+      
+      /**
+       * \brief Getter for the size of the figure
+       * 
+       * \return The size of the figure
+       */
       Index size() const;
 
+      /**
+       * \brief Getter for the axes of the figure
+       * 
+       * \return A vector of the axes of the figure
+       */
       const std::vector<FigureAxis>& axes() const;
+
+      /**
+       * \brief Setter for the axes of the figure
+       * 
+       * \param axis1 First axis (horizontal)
+       * \param axis2 Second axis (vertical)
+       */
       void set_axes(const FigureAxis& axis1, const FigureAxis& axis2);
 
+      /**
+       * \brief Getter for the index of the horizontal axis
+       * 
+       * \return The index of the horizontal axis
+       */
       const Index& i() const;
+
+      /**
+       * \brief Getter for the index of the vertical axis
+       * 
+       * \return The index of the vertical axis
+       */
       const Index& j() const;
 
+      /**
+       * \brief Getter for the position of the figure
+       * 
+       * \return The position of the figure
+       */
       const Vector& pos() const;
+
+      /**
+       * \brief getter for the size of the window
+       * 
+       * \return The size of the window
+       */
       const Vector& window_size() const;
+
+      /**
+       * \brief Setter for the position and size of the window
+       * 
+       * \param pos Position of the window
+       * \param size Size of the window
+       */
       void set_window_properties(const Vector& pos, const Vector& size);
 
+      /**
+       * \brief VIBes only: center the viewbox on a given point with a given radius
+       * 
+       * \param c Center of the viewbox
+       * \param r Radius of the viewbox
+       */
       void center_viewbox(const Vector& c, const Vector& r);
+
+      /**
+       * \brief Getter for the scaling factor of the figure
+       * 
+       * \return The scaling factor of the figure
+       */
       double scaled_unit() const;
+
+      /**
+       * \brief VIBes only: auto scale the figure
+       */
       void auto_scale();
 
+      /**
+       * \return True if the figure is the default view
+       * 
+       * \return True if the figure is the default view, false otherwise
+       */
       bool is_default() const;
+
+      /**
+       * \brief Sets the figure as the default view
+       */
       void set_as_default();
 
+      /**
+       * \brief Setter for the time domain of the figure
+       * 
+       * \param tdomain The new time domain
+       */
       void set_tdomain(const Interval& tdomain);
 
       // Geometric shapes
+
+      /**
+       * \brief Draws a point on the figure
+       * 
+       * \param c Coordinates of the point
+       * \param s Style of the point (edge color and fill color)
+       */
       void draw_point(const Vector& c, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a box on the figure
+       * 
+       * \param x Box to draw
+       * \param s Style of the box (edge color and fill color)
+       */
       void draw_box(const IntervalVector& x, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a circle on the figure
+       * 
+       * \param c Center of the circle
+       * \param r Radius of the circle
+       * \param s Style of the circle (edge color and fill color)
+       */
       void draw_circle(const Vector& c, double r, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a ring on the figure
+       * 
+       * \param c Center of the ring
+       * \param r Inner and outer radius of the ring
+       * \param s Style of the ring (edge color and fill color)
+       */
       void draw_ring(const Vector& c, const Interval& r, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a line on the figure
+       * 
+       * \param p1 First point of the line
+       * \param p2 Second point of the line
+       * \param s Style of the line (edge color)
+       */
       void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws an arrow on the figure
+       * 
+       * \param p1 First point of the arrow
+       * \param p2 Second point of the arrow
+       * \param tip_length Length of the tip of the arrow
+       * \param s Style of the arrow (edge color and fill color)
+       */
       void draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a polyline on the figure
+       * 
+       * \param x Vector of the points of the polyline
+       * \param s Style of the polyline (edge color)
+       */
       void draw_polyline(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a polyline on the figure
+       * 
+       * \param x Vector of the points of the polyline
+       * \param tip_length Length of the tip of the arrow
+       * \param s Style of the polyline (edge color and fill color)
+       */
       void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a polygone on the figure
+       * 
+       * \param x Vector of the points of the polygone
+       * \param s Style of the polygone (edge color and fill color)
+       */
       void draw_polygone(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a parallelepiped z+A*[-1,1]^2 on the figure
+       * 
+       * \param z Coordinates of the center of the parallelepiped
+       * \param A Matrix of the parallelepiped
+       * \param s Style of the parallelepiped (edge color and fill color)
+       */
       void draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a pie on the figure
+       * 
+       * \param c Center of the pie
+       * \param r Inner and outer radius of the pie
+       * \param theta Start and end angle of the pie (in radians)
+       * \param s Style of the pie (edge color and fill color)
+       */
       void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws an ellipse on the figure
+       * 
+       * \param c Center of the ellipse
+       * \param ab Half-lengths of the ellipse
+       * \param theta Rotation angle of the ellipse (in radians)
+       * \param s Style of the ellipse (edge color and fill color)
+       */
       void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws an ellipsoid on the figure
+       * 
+       * \param e Ellipsoid to draw
+       * \param s Style of the ellipsoid (edge color and fill color)
+       */
       void draw_ellipsoid(const Ellipsoid& e, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a trajectory on the figure
+       * 
+       * \param x Trajectory to draw
+       * \param s Style of the trajectory (edge color)
+       */
       void draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a trajectory on the figure
+       * 
+       * \param x Trajectory to draw
+       * \param s Style of the trajectory (edge color)
+       */
       void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Plots a trajectory on the figure with a colormap
+       * 
+       * \param x Trajectory to plot
+       * \param cmap Colormap to use
+       */
       void draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap);
+
+      /**
+       * \brief Plots a trajectory on the figure with a colormap
+       * 
+       * \param x Trajectory to plot
+       * \param cmap Colormap to use
+       */
       void draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap);
+
+      /**
+       * \brief Plots a trajectory on the figure (x-axis is the time)
+       * 
+       * \param x Trajectory to plot
+       * \param s Style of the trajectory (edge color)
+       */
       void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties());
 
       // Robots
+
+      /**
+       * \brief Draws a tank on the figure
+       * 
+       * \param x Coordinates of the tank
+       * \param size Size of the tank
+       * \param s Style of the tank (edge color and fill color)
+       */
       void draw_tank(const Vector& x, float size, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws an AUV on the figure
+       * 
+       * \param x Coordinates of the AUV
+       * \param size Size of the AUV
+       * \param s Style of the AUV (edge color and fill color)
+       */
       void draw_AUV(const Vector& x, float size, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a motor boat on the figure
+       * 
+       * \param x Coordinates of the motor boat
+       * \param size Size of the motor boat
+       * \param s Style of the motor boat (edge color and fill color)
+       */
       void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties());
 
       // Pavings
+
+      /**
+       * \brief Draws a paving on the figure
+       * 
+       * \param p PavingOut to draw (result of a paving with contractors)
+       * \param bound_s Style of the boundary of the paving
+       * \param out_s Style of the outside of the paving
+       */
       void draw_paving(const PavingOut& p,
         const StyleProperties& bound_s = StyleProperties::boundary(),
         const StyleProperties& out_s = StyleProperties::outside());
+
+      /**
+       * \brief Draws a paving on the figure
+       * 
+       * \param p PavingInOut to draw (result of a paving with separators)
+       * \param bound_s Style of the boundary of the paving
+       * \param out_s Style of the outside of the paving
+       * \param in_s Style of the inside of the paving
+       */
       void draw_paving(const PavingInOut& p,
         const StyleProperties& bound_s = StyleProperties::boundary(),
         const StyleProperties& out_s = StyleProperties::outside(),
         const StyleProperties& in_s = StyleProperties::inside());
 
+      /**
+       * \brief Draws a subpaving on the figure
+       * 
+       * \param p Subpaving to draw
+       * \param s Style of the subpaving
+       */
       template<typename P>
       void draw_subpaving(const Subpaving<P>& p, const StyleProperties& s = StyleProperties())
       {
