@@ -3,6 +3,8 @@
 Styles, colors and color maps
 =============================
 
+  Main author: `Maël Godard <https://godardma.github.io>`_
+
 Style
 -----
 

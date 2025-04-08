@@ -117,7 +117,7 @@ User manual
       * CtcInverse
       * CtcInverseNotIn
    * Geometric contractors
-      * CtcDist
+      * :ref:`sec-ctc-geom-ctcdist`
       * CtcPolar
       * CtcSegment
       * CtcPolygon
@@ -269,6 +269,7 @@ Development
    manual/installation/index.rst
    manual/intervals/index.rst
    manual/functions/index.rst
+   manual/contractors/index.rst
    manual/ellipsoids/index.rst
    manual/visualization/index.rst
    manual/tools/index.rst

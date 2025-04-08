@@ -3,7 +3,7 @@
 The Ellipsoid class
 ===================
 
-*Main author:* `Morgan Louédec <https://morgan-louedec.fr/>`_
+  Main author: `Morgan Louédec <https://morgan-louedec.fr>`_
 
 This page describes the Ellipsoid classes used in Codac 2 as well as some functions with ellipsoids.
 Additional mathematical information is provided :ref:`here<sec-ellipsoids-intro>`.

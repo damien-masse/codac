@@ -3,6 +3,8 @@
 The 2D Figure classes
 =====================
 
+  Main author: `Maël Godard <https://godardma.github.io>`_
+
 This page describes the classes used in Codac for 2D visualization.
 
 .. _subsec-graphics-2d-figures-graphical-outputs:

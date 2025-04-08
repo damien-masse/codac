@@ -87,3 +87,32 @@ td:has(.bg-bok) {
 td:has(.bg-nok) {
   background-color: #e55039;
 }
+
+.cpp + .sphinx-tabs::before { /* for examples following a Doxygen block */
+  content: "Example of use:";
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: var(--font-size--small);
+  text-transform: uppercase;
+}
+
+.cpp + .sphinx-tabs { /* for examples following a Doxygen block */
+  margin-left: 2rem;
+}
+
+.math-wrapper { /* removing centering of equations */
+  overflow-x: visible;
+}
+
+h1 + blockquote { /* for displaying main authors */
+  margin: .1rem .5rem 1rem 1rem;
+}
+
+h1 + blockquote div p { /* for displaying main authors */
+  margin: 0;
+  font-size: small;
+}
+
+article .align-default {
+  text-align: left;
+}
