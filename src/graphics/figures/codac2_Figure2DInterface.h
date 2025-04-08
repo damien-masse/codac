@@ -28,7 +28,14 @@ namespace codac2
    * 
    * This class is purely virtual and should not be used directly. It is used as an interface for the Figure2D class.
    * 
-   */
+   * This interface contains the “low-level” methods that need to be overloaded
+   * to implement graphic primitives in the output view. The Figure2D class may
+   * contain methods not listed here: these methods are more “high-level” and do
+   * not require a specific implementation related to the graphic tool.
+   * For example, Figure2D::draw_line calls Figure2D::draw_polyline (a line is a
+   * special case of a two-point polyline), so only draw_polyline needs to be
+   * implemented in this interface.
+  */
   class Figure2DInterface
   {
     public:
