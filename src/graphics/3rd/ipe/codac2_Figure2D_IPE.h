@@ -20,6 +20,12 @@
 
 namespace codac2
 {
+  /**
+   * \class Figure2D_IPE
+   * \brief IPE output class
+   * 
+   * This class is used to manage the IPE output. It generates an XML file that can be opened with the IPE editor.
+   */
   class Figure2D_IPE : public OutputFigure2D
   {
     public:
