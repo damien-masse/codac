@@ -169,14 +169,14 @@ namespace codac2
       static Color white(float alpha = 1.)      { return Color({255., 255., 255., (float) (alpha*255.)}); };
 
       /**
-       * \brief Gray color
+       * \brief Green color
        * 
        * \param alpha Alpha value between 0. (transparent) and 1. (opaque)
        */
       static Color green(float alpha = 1.)      { return Color({144., 242., 0.,   (float) (alpha*255.)}); };
 
       /**
-       * \brief Red color
+       * \brief Blue color
        * 
        * \param alpha Alpha value between 0. (transparent) and 1. (opaque)
        */
@@ -190,14 +190,14 @@ namespace codac2
       static Color cyan(float alpha = 1.)       { return Color({75.,  207., 250., (float) (alpha*255.)}); };
 
       /**
-       * \brief Magenta color
+       * \brief Yellow color
        * 
        * \param alpha Alpha value between 0. (transparent) and 1. (opaque)
        */
       static Color yellow(float alpha = 1.)     { return Color({255., 211., 42.,  (float) (alpha*255.)}); };
 
       /**
-       * \brief Orange color
+       * \brief Red color
        * 
        * \param alpha Alpha value between 0. (transparent) and 1. (opaque)
        */

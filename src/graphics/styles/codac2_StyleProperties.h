@@ -57,7 +57,7 @@ namespace codac2
     StyleProperties(const Color& stroke_color);
 
     /**
-     * \brief Constructor from a stroke color and a layer
+     * \brief Constructor from a stroke color and a layer name
      * 
      * \param stroke_color Stroke color
      * \param layer Layer name
@@ -73,7 +73,7 @@ namespace codac2
     StyleProperties(const Color& stroke_color, const LineStyle& line_style);
 
     /**
-     * \brief Constructor from a stroke color, a line style and a layer
+     * \brief Constructor from a stroke color, a line style and a layer name
      * 
      * \param stroke_color Stroke color
      * \param line_style Line style
@@ -89,7 +89,7 @@ namespace codac2
     StyleProperties(std::initializer_list<Color> colors);
 
     /**
-     * \brief Constructor from a stroke and eventually a fill color and a layer
+     * \brief Constructor from a stroke and eventually a fill color and a layer name
      * 
      * \param colors list of colors (stroke color and eventually fill color)
      * \param layer Layer name
@@ -105,7 +105,7 @@ namespace codac2
     StyleProperties(std::initializer_list<Color> colors, const LineStyle& line_style);
 
     /**
-     * \brief Constructor from a stroke and eventually a fill color, a line style and a layer
+     * \brief Constructor from a stroke and eventually a fill color, a line style and a layer name
      * 
      * \param colors list of colors (stroke color and eventually fill color)
      * \param line_style Line style
