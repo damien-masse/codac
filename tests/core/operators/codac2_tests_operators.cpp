@@ -384,3 +384,11 @@ TEST_CASE("bwd mul operations")
   //cout << x << endl;
   //cout << x2 << endl;
 }
+
+TEST_CASE("test cross prod")
+{
+  CHECK(CrossProdOp::fwd(Vector({1,0,0}),Vector({0,1,0})) == Vector({0,0,1}));
+  CHECK(CrossProdOp::fwd(Vector({0,1,0}),Vector({0,0,1})) == Vector({1,0,0}));
+  CHECK(CrossProdOp::fwd(Vector({0,0,1}),Vector({1,0,0})) == Vector({0,1,0}));
+  CHECK(CrossProdOp::fwd(Vector({1,2,3}),Vector({2,4,6})) == Vector({0,0,0}));
+}

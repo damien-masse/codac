@@ -327,5 +327,16 @@ class TestInterval_bwd(unittest.TestCase):
     x = Interval(-1.57079632679489678, 1.1780972450961728626)
     self.assertFalse(tan(x).is_empty())
 
+  def tests_cross_prod(self):
+
+    self.assertTrue(
+      CrossProdOp.fwd(Vector([1,0,0]),Vector([0,1,0])) == Vector([0,0,1]))
+    self.assertTrue(
+      CrossProdOp.fwd(Vector([0,1,0]),Vector([0,0,1])) == Vector([1,0,0]))
+    self.assertTrue(
+      CrossProdOp.fwd(Vector([0,0,1]),Vector([1,0,0])) == Vector([0,1,0]))
+    self.assertTrue(
+      CrossProdOp.fwd(Vector([1,2,3]),Vector([2,4,6])) == Vector([0,0,0]))
+
 if __name__ ==  '__main__':
   unittest.main()
