@@ -36,6 +36,7 @@ namespace codac2
 
   inline IntervalVector CrossProdOp::fwd(const IntervalVector& x1, const IntervalVector& x2)
   {
+    assert_release(x1.size() == 3 && x2.size() == 3);
     return {
       x1[1]*x2[2] - x1[2]*x2[1],
       x1[2]*x2[0] - x1[0]*x2[2],
@@ -63,6 +64,7 @@ namespace codac2
 
   inline void CrossProdOp::bwd([[maybe_unused]] const IntervalVector& y, [[maybe_unused]] IntervalVector& x1, [[maybe_unused]] IntervalVector& x2)
   {
+    assert_release(y.size() == 3 && x1.size() == 3 && x2.size() == 3);
     // todo
   }
 }
