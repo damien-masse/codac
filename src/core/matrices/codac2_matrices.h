@@ -111,7 +111,7 @@ namespace codac2
   inline auto abs(const Eigen::MatrixBase<OtherDerived>& x)
   {
     using M = Eigen::MatrixBase<OtherDerived>;
-    Eigen::Matrix<typename M::Scalar,M::RowsAtCompileTime,M::ColsAtCompileTime> a(x);
+    Eigen::Matrix<typename M::Scalar,M::RowsAtCompileTime,M::ColsAtCompileTime> a(x.rows(),x.cols());
 
     for(Index i = 0 ; i < x.rows() ; i++)
       for(Index j = 0 ; j < x.cols() ; j++)
@@ -123,6 +123,27 @@ namespace codac2
       }
 
     return a;
+  }
+
+  template<typename OtherDerived>
+    requires (!Eigen::IsIntervalDomain<typename OtherDerived::Scalar>)
+  inline auto floor(const Eigen::MatrixBase<OtherDerived>& x)
+  {
+    return x.array().floor().matrix();
+  }
+
+  template<typename OtherDerived>
+    requires (!Eigen::IsIntervalDomain<typename OtherDerived::Scalar>)
+  inline auto ceil(const Eigen::MatrixBase<OtherDerived>& x)
+  {
+    return x.array().ceil().matrix();
+  }
+
+  template<typename OtherDerived>
+    requires (!Eigen::IsIntervalDomain<typename OtherDerived::Scalar>)
+  inline auto round(const Eigen::MatrixBase<OtherDerived>& x)
+  {
+    return x.array().round().matrix();
   }
 
   template<typename Scalar,int RowsAtCompileTime,int ColsAtCompileTime>
