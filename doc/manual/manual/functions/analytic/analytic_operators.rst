@@ -82,6 +82,8 @@ When operators are available for operations 2--3, then an ``AnalyticFunction`` c
 
 .. |CoshOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_cosh.h"><code class="docutils literal notranslate"><span class="pre">CoshOp</span></code></a>`
 
+.. |CrossProdOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_cross_prod.h"><code class="docutils literal notranslate"><span class="pre">CrossProdOp</span></code></a>`
+
 .. |DetOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_det.h"><code class="docutils literal notranslate"><span class="pre">DetOp</span></code></a>`
 
 .. |ExpOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_exp.h"><code class="docutils literal notranslate"><span class="pre">ExpOp</span></code></a>`
@@ -219,6 +221,8 @@ If you notice any mathematical operators missing from the list below, feel free 
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathbf{X}_1/x_2`                            | ``X1/x2``            |               | ``X1``: matrix, ``x2``: scalar      ||okk|   ||nok|   ||nok|  ||nok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :math:`\mathbf{x}_1\times\mathbf{x}_2`              | ``cross_prod(x1,x2)``| |CrossProdOp| | ``x1``, ``x2``: vector              ||okk|   ||nok|   ||nok|  ||nok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\max(x_1,x_2)`                               | ``max(x1,x2)``       | |MaxOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+

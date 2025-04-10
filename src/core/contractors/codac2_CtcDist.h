@@ -18,7 +18,7 @@ namespace codac2
    * \class CtcDist
    * 
    * \brief Implements the distance constraint on \f$\mathbf{a}\in\mathbb{R}^2\f$,
-   * \f$\mathbf{b}\in\mathbb{R}^2\f$ and \f$d\in\mathbb{R}\f$ such that
+   * \f$\mathbf{b}\in\mathbb{R}^2\f$ and \f$d\in\mathbb{R}\f$ such that:
    * 
    * @f[
    * d^2=(a_1-b_1)^2+(a_2-b_2)^2.
