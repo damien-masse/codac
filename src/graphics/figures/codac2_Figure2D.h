@@ -805,23 +805,6 @@ namespace codac2
        * \brief Draws a subpaving on the figure
        * 
        * \param p Subpaving to draw
-       * \param boundary_style Style of the boundary of the paving
-       * \param outside_style Style of the outside of the paving
-       * \param inside_style Style of the inside of the paving
-       */
-      static void draw_subpaving(const PavingInOut& p,
-        const StyleProperties& boundary_style = StyleProperties::boundary(),
-        const StyleProperties& outside_style = StyleProperties::outside(),
-        const StyleProperties& inside_style = StyleProperties::inside())
-      {
-        auto_init();
-        selected_fig()->draw_paving(p, boundary_style, outside_style, inside_style);
-      }
-
-      /**
-       * \brief Draws a subpaving on the figure
-       * 
-       * \param p Subpaving to draw
        * \param s Style of the subpaving
        */
       template<typename P>

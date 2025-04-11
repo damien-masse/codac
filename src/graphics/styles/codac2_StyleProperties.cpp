@@ -15,23 +15,26 @@ using namespace codac2;
 StyleProperties::StyleProperties()
 { }
 
-StyleProperties::StyleProperties(const Color& stroke_color_)
+StyleProperties::StyleProperties(const Color& stroke_color_, const std::string& param1, const std::string& param2)
   : stroke_color(stroke_color_), fill_color(Color::none())
-{ }
+{ 
+  if (param1 != "")
+  {
+    if (StyleProperties::available_line_styles().contains(param1))
+      line_style = param1;
+    else
+      layer = param1;
+  }
+  if (param2 != "")
+  {
+    if (StyleProperties::available_line_styles().contains(param2))
+      line_style = param2;
+    else
+      layer = param2;
+  }
+}
 
-StyleProperties::StyleProperties(const Color& stroke_color_, const string& layer_)
-  : stroke_color(stroke_color_), fill_color(Color::none()), layer(layer_)
-{ }
-
-StyleProperties::StyleProperties(const Color& stroke_color_, const LineStyle& line_style_)
-  : stroke_color(stroke_color_), fill_color(Color::none()), line_style(line_style_)
-{ }
-
-StyleProperties::StyleProperties(const Color& stroke_color_, const LineStyle& line_style_, const string& layer_)
-  : stroke_color(stroke_color_), fill_color(Color::none()), line_style(line_style_), layer(layer_)
-{ }
-
-StyleProperties::StyleProperties(std::initializer_list<Color> colors)
+StyleProperties::StyleProperties(std::initializer_list<Color> colors, const std::string& param1, const std::string& param2)
   : stroke_color(*colors.begin())
 {
   assert(colors.size() <= 2);
@@ -39,37 +42,25 @@ StyleProperties::StyleProperties(std::initializer_list<Color> colors)
     fill_color = Color::none();
   else
     fill_color = *std::prev(colors.end());
+
+  if (param1 != "")
+  {
+    if (StyleProperties::available_line_styles().contains(param1))
+    line_style = param1;
+    else
+      layer = param1;
+  }
+  
+  if (param2 != "")
+  {
+    if (StyleProperties::available_line_styles().contains(param2))
+      line_style = param2;
+    else
+      layer = param2;
+  }
 }
 
-StyleProperties::StyleProperties(std::initializer_list<Color> colors, const string& layer_)
-  : stroke_color(*colors.begin()), layer(layer_)
-{
-  assert(colors.size() <= 2);
-  if (colors.size() == 1)
-    fill_color = Color::none();
-  else
-    fill_color = *std::prev(colors.end());
-}
 
-StyleProperties::StyleProperties(std::initializer_list<Color> colors, const LineStyle& line_style_)
-  : stroke_color(*colors.begin()), line_style(line_style_)
-{
-  assert(colors.size() <= 2);
-  if (colors.size() == 1)
-    fill_color = Color::none();
-  else
-    fill_color = *std::prev(colors.end());
-}
-
-StyleProperties::StyleProperties(std::initializer_list<Color> colors, const LineStyle& line_style_, const string& layer_)
-  : stroke_color(*colors.begin()), line_style(line_style_), layer(layer_)
-{
-  assert(colors.size() <= 2);
-  if (colors.size() == 1)
-    fill_color = Color::none();
-  else
-    fill_color = *std::prev(colors.end());
-}
 
 StyleProperties StyleProperties::inside()
 {

@@ -167,15 +167,6 @@ namespace codac2
        */
       static std::string to_vibes_style(const StyleProperties& s);
 
-      /**
-       * \brief Converts a LineStyle object to a VIBes style string
-       * 
-       * \param l LineStyle object to convert
-       * 
-       * \return VIBes style string
-       */
-      static std::string to_vibes_style(const LineStyle& l);
-
     protected:
 
       static int _has_been_initialized;

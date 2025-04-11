@@ -90,23 +90,20 @@ int ipe_opacity(const Color& c)
   return (int)(10.*round(10.*(c.model()==Model::RGB ? (c[3]/255.):(c[3]/100.))));
 }
 
-std::string to_ipe_linestyle(const LineStyle& ls)
+std::string to_ipe_linestyle(const std::string& ls)
 {
-  switch(ls)
-  {
-    case LineStyle::SOLID:
-      return "normal";
-    case LineStyle::DASHED:
-      return "dashed";
-    case LineStyle::DOTTED:
-      return "dotted";
-    case LineStyle::DASH_DOTTED:
-      return "dash dotted";
-    case LineStyle::DASH_DOT_DOTTED:
-      return "dash dot dotted";
-    default:
-      return "solid";
-  }
+  if (ls == "-")
+    return "normal";
+  else if (ls == "--")
+    return "dashed";
+  else if (ls == "..")
+    return "dotted";
+  else if (ls == "-.")
+    return "dash dotted";
+  else if (ls == "-..")
+    return "dash dot dotted";
+  else
+    return "solid";
 }
 
 void Figure2D_IPE::begin_path(const StyleProperties& s, bool tip)
@@ -115,7 +112,7 @@ void Figure2D_IPE::begin_path(const StyleProperties& s, bool tip)
   _colors.emplace(ipe_str(s.stroke_color), s.stroke_color);
   _colors.emplace(ipe_str(s.fill_color), s.fill_color);
 
-  if (std::find(_layers.begin(), _layers.end(), s.layer) == _layers.end())
+  if (std::find(_layers.begin(), _layers.end(), s.layer) == _layers.end() && s.layer != "")
       _layers.push_back(s.layer); 
 
   _f_temp_content << "\n \
@@ -138,7 +135,7 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
   _colors.emplace(ipe_str(s.stroke_color), s.stroke_color);
   _colors.emplace(ipe_str(s.fill_color), s.fill_color);
 
-  if (std::find(_layers.begin(), _layers.end(), s.layer) == _layers.end())
+  if ((std::find(_layers.begin(), _layers.end(), s.layer) == _layers.end()) && s.layer != "")
       _layers.push_back(s.layer); 
 
   _f_temp_content << "\n \
@@ -273,13 +270,13 @@ void Figure2D_IPE::draw_axes()
   draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},
                  {_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
 
-  for (auto x_tick : x_ticks) 
+  for (const auto& x_tick : x_ticks) 
   {
     draw_polyline({{x_tick,_fig.axes()[1].limits.lb()},{x_tick,_fig.axes()[1].limits.lb()+0.02*_fig.axes()[1].limits.diam()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
     draw_text({x_tick+0.01*_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.lb()+0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(x_tick,(x_ticks[1] - x_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
   }
 
-  for (auto y_tick : y_ticks) 
+  for (const auto& y_tick : y_ticks) 
   {
     draw_polyline({{_fig.axes()[0].limits.lb(),y_tick},{_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam(),y_tick}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
     draw_text({_fig.axes()[0].limits.lb()+0.01*_fig.axes()[0].limits.diam(),y_tick+0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(y_tick, (y_ticks[1] - y_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
@@ -795,10 +792,10 @@ void Figure2D_IPE::print_header_page()
     <tiling name=\"rising\" angle=\"30\" step=\"4\" width=\"1\"/> \n \
     </ipestyle> \n \
     <page> \n ";
-  for (auto layer : _layers)
+  for (const auto& layer : _layers)
     _f << "<layer name=\"" << layer << "\"/> \n";
   _f << "<view layers=\" ";
-  for (auto layer : _layers)
+  for (const auto& layer : _layers)
     _f  << layer <<  " ";
   _f << "\" active=\"alpha\"/> \n ";
 }

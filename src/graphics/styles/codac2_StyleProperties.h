@@ -10,24 +10,11 @@
 #pragma once
 
 #include <string>
+#include <set>
 #include "codac2_Color.h"
 
 namespace codac2
 {
-  /**
-   * \enum LineStyle
-   * \brief Line style enumeration, for dashes and dots
-   * 
-   * This enum is used to specify the line style of a shape, either solid, dashed, dotted, dash-dotted or dash-dot-dotted.
-   */
-  enum LineStyle
-  {
-    SOLID,
-    DASHED,
-    DOTTED,
-    DASH_DOTTED,
-    DASH_DOT_DOTTED
-  };
 
   /**
    * \struct StyleProperties
@@ -39,7 +26,7 @@ namespace codac2
   {
     Color stroke_color = Color::black();
     Color fill_color = Color::none();
-    LineStyle line_style = LineStyle::SOLID;
+    std::string line_style = "-";
     std::string layer = "alpha";
 
     /**
@@ -50,68 +37,22 @@ namespace codac2
     StyleProperties();
 
     /**
-     * \brief Constructor from a stroke color
+     * \brief Constructor from a stroke color, and two optional parameters
      * 
      * \param stroke_color Stroke color
+     * \param param1 Optional parameter, can be layer name or line style
+     * \param param2 Optional parameter, can be layer name or line style
      */
-    StyleProperties(const Color& stroke_color);
+    StyleProperties(const Color& stroke_color, const std::string& param1 = "", const std::string& param2 = "");
 
     /**
-     * \brief Constructor from a stroke color and a layer name
-     * 
-     * \param stroke_color Stroke color
-     * \param layer Layer name
-     */
-    StyleProperties(const Color& stroke_color, const std::string& layer);
-
-    /**
-     * \brief Constructor from a stroke color and a line style
-     * 
-     * \param stroke_color Stroke color
-     * \param line_style Line style
-     */
-    StyleProperties(const Color& stroke_color, const LineStyle& line_style);
-
-    /**
-     * \brief Constructor from a stroke color, a line style and a layer name
-     * 
-     * \param stroke_color Stroke color
-     * \param line_style Line style
-     * \param layer Layer name
-     */
-    StyleProperties(const Color& stroke_color, const LineStyle& line_style, const std::string& layer);
-
-    /**
-     * \brief Constructor from a stroke and eventually a fill color
+     * \brief Constructor from a stroke and eventually a fill color, and two optional parameters
      * 
      * \param colors list of colors (stroke color and eventually fill color)
+     * \param param1 Optional parameter, can be layer name or line style
+     * \param param2 Optional parameter, can be layer name or line style
      */
-    StyleProperties(std::initializer_list<Color> colors);
-
-    /**
-     * \brief Constructor from a stroke and eventually a fill color and a layer name
-     * 
-     * \param colors list of colors (stroke color and eventually fill color)
-     * \param layer Layer name
-     */
-    StyleProperties(std::initializer_list<Color> colors, const std::string& layer);
-
-    /**
-     * \brief Constructor from a stroke and eventually a fill color and a line style
-     * 
-     * \param colors list of colors (stroke color and eventually fill color)
-     * \param line_style Line style
-     */
-    StyleProperties(std::initializer_list<Color> colors, const LineStyle& line_style);
-
-    /**
-     * \brief Constructor from a stroke and eventually a fill color, a line style and a layer name
-     * 
-     * \param colors list of colors (stroke color and eventually fill color)
-     * \param line_style Line style
-     * \param layer Layer name
-     */
-    StyleProperties(std::initializer_list<Color> colors, const LineStyle& line_style, const std::string& layer);
+    StyleProperties(std::initializer_list<Color> colors, const std::string& param1 = "", const std::string& param2 = "");
 
     /**
      * \brief Predefined "inside" style, dark gray edge and green fill
@@ -127,5 +68,15 @@ namespace codac2
      * \brief Predefined "boundary" style, dark gray edge and yellow fill
      */
     static StyleProperties boundary();
+
+    /**
+     * \brief Set of available line styles
+     */
+    static std::set<std::string> available_line_styles()
+    {
+      std::set<std::string> line_styles={"-", "--", "..", "-.", "-.."};
+      return line_styles;
+    };
+
   };
 }

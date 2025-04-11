@@ -66,7 +66,7 @@ void Figure2D_VIBes::draw_point(const Vector& c, const StyleProperties& s)
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   vibes::drawPoint(c[i()],c[j()],2, to_vibes_style(s), _params);
@@ -82,7 +82,7 @@ void Figure2D_VIBes::draw_box(const IntervalVector& x, const StyleProperties& s)
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   vibes::drawBox(x[i()].lb(),x[i()].ub(),x[j()].lb(),x[j()].ub(), to_vibes_style(s), _params);
@@ -99,7 +99,7 @@ void Figure2D_VIBes::draw_circle(const Vector& c, double r, const StylePropertie
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   vibes::drawCircle(c[i()],c[j()],r, to_vibes_style(s), _params);
@@ -116,7 +116,7 @@ void Figure2D_VIBes::draw_ring(const Vector& c, const Interval& r, const StylePr
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   vibes::drawRing(c[i()],c[j()],r.lb(),r.ub(), to_vibes_style(s), _params);
@@ -133,7 +133,7 @@ void Figure2D_VIBes::draw_polyline(const std::vector<Vector>& x, float tip_lengt
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   vector<double> vx(x.size()), vy(x.size());
@@ -159,7 +159,7 @@ void Figure2D_VIBes::draw_polygone(const std::vector<Vector>& x, const StyleProp
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
   
   vector<double> vx(x.size()), vy(x.size());
@@ -183,7 +183,7 @@ void Figure2D_VIBes::draw_pie(const Vector& c, const Interval& r, const Interval
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   // Corrected a bug in VIBEs in case of r=[..,oo] (the pie disappears when zoomed in)
@@ -201,7 +201,7 @@ void Figure2D_VIBes::draw_ellipse(const Vector& c, const Vector& ab, double thet
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   vibes::drawEllipse(c[0],c[1], ab[0],ab[1], 180.*theta/PI, to_vibes_style(s), _params);
@@ -218,7 +218,7 @@ void Figure2D_VIBes::draw_tank(const Vector& x, float size, const StylePropertie
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   vibes::drawTank(x[i()],x[j()],180.*x[j()+1]/PI, size, to_vibes_style(s), _params);
@@ -235,7 +235,7 @@ void Figure2D_VIBes::draw_AUV(const Vector& x, float size, const StyleProperties
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   vibes::drawAUV(x[i()],x[j()],180.*x[j()+1]/PI, size, to_vibes_style(s), _params);
@@ -252,7 +252,7 @@ void Figure2D_VIBes::draw_motor_boat(const Vector& x, float size, const StylePro
       _layers.push_back(s.layer);
     }
 
-  _params["LineStyle"] = to_vibes_style(s.line_style);
+  _params["LineStyle"] = s.line_style;
   _params["group"] = s.layer;
 
   vibes::drawMotorBoat(x[i()],x[j()],180.*x[j()+1]/PI, size, to_vibes_style(s), _params);
@@ -261,23 +261,4 @@ void Figure2D_VIBes::draw_motor_boat(const Vector& x, float size, const StylePro
 std::string Figure2D_VIBes::to_vibes_style(const StyleProperties& s)
 {
   return s.stroke_color.hex_str() + "[" + s.fill_color.hex_str() + "]";
-}
-
-std::string Figure2D_VIBes::to_vibes_style(const LineStyle& l)
-{
-  switch(l)
-  {
-    case LineStyle::SOLID:
-      return "-";
-    case LineStyle::DASHED:
-      return "--";
-    case LineStyle::DOTTED:
-      return "..";
-    case LineStyle::DASH_DOTTED:
-      return "-.";
-    case LineStyle::DASH_DOT_DOTTED:
-      return "-..";
-    default:
-      return "-";
-  }
 }
