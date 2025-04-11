@@ -23,6 +23,7 @@
 #include "codac2_component.h"
 #include "codac2_cos.h"
 #include "codac2_cosh.h"
+#include "codac2_cross_prod.h"
 #include "codac2_det.h"
 #include "codac2_exp.h"
 #include "codac2_floor.h"

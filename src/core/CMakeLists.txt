@@ -119,6 +119,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_component.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cos.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cosh.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cross_prod.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_det.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_exp.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_floor.h

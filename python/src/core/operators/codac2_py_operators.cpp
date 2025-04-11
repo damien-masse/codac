@@ -29,6 +29,7 @@
 #include "codac2_py_component_docs.h"
 #include "codac2_py_cos_docs.h"
 #include "codac2_py_cosh_docs.h"
+#include "codac2_py_cross_prod_docs.h"
 #include "codac2_py_det_docs.h"
 #include "codac2_py_exp_docs.h"
 #include "codac2_py_floor_docs.h"
@@ -347,6 +348,21 @@ void export_operators(py::module& m)
   m.def("cosh", [](const ScalarExpr& e1) { return cosh(e1); },
     SCALAREXPR_COSH_CONST_SCALAREXPR_REF,
     "x1"_a);
+
+  py::class_<CrossProdOp>(m, "CrossProdOp")
+
+    .def_static("fwd", (IntervalVector(*)(const IntervalVector&,const IntervalVector&)) &CrossProdOp::fwd,
+      STATIC_INTERVALVECTOR_CROSSPRODOP_FWD_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF,
+      "x1"_a, "x2"_a)
+    .def_static("bwd", (void(*)(const IntervalVector&,IntervalVector&,IntervalVector&)) &CrossProdOp::bwd,
+      STATIC_VOID_CROSSPRODOP_BWD_CONST_INTERVALVECTOR_REF_INTERVALVECTOR_REF_INTERVALVECTOR_REF,
+      "y"_a, "x1"_a, "x2"_a)
+
+  ;
+
+  m.def("cross_prod", [](const VectorExpr& e1, const VectorExpr& e2) { return cross_prod(e1,e2); },
+    VECTOREXPR_CROSS_PROD_CONST_VECTOREXPR_REF_CONST_VECTOREXPR_REF,
+    "x1"_a, "x2"_a);
 
   py::class_<DetOp>(m, "DetOp")
 
