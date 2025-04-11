@@ -19,7 +19,7 @@
 #include "codac2_ColorMap.h"
 #include "codac2_Ellipsoid.h"
 
-#define DEFAULT_FIG_NAME "Codac - default view"
+#define DEFAULT_FIG_NAME "Codac - default figure"
 
 namespace codac2
 {
@@ -54,7 +54,7 @@ namespace codac2
     return { dim_id, limits, axis_label };
   }
 
-  class DefaultView;
+  class DefaultFigure;
   class PavingOut;
   class PavingInOut;
   template<typename P>
@@ -422,18 +422,18 @@ namespace codac2
       std::vector<std::shared_ptr<OutputFigure2D>> _output_figures;
       Interval _tdomain;
 
-      friend DefaultView;
+      friend DefaultFigure;
   };
 
   /**
-   * \class DefaultView
+   * \class DefaultFigure
    * \brief Default view class, used to manage the default figure
    * 
    * This class is used to manage the default figure. By default it only interacts with VIBes.
    * 
    * Any figure can be set as the default view.
    */
-  class DefaultView
+  class DefaultFigure
   {
     public:
 

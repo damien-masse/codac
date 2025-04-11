@@ -54,9 +54,9 @@ TEST_CASE("CtcDist - manual")
       0.1 // paver precision
     );
 
-    DefaultView::draw_ring(b1, y1);
-    DefaultView::draw_ring(b2, y2);
-    DefaultView::draw_circle({0,0}, 0.1, {Color::red(),Color::red()});
+    DefaultFigure::draw_ring(b1, y1);
+    DefaultFigure::draw_ring(b2, y2);
+    DefaultFigure::draw_circle({0,0}, 0.1, {Color::red(),Color::red()});
     // [ctcdist-3-end]
   }
 }

@@ -37,4 +37,4 @@ c = p.connected_subsets()
 # c = p.connected_subsets(outer_complem)
 
 for bi in c[1].boxes():
-  DefaultView.draw_box(bi,[Color.red(),Color.red()])
+  DefaultFigure.draw_box(bi,[Color.red(),Color.red()])

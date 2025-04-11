@@ -6,7 +6,7 @@
   Main author: `Maël Godard <https://godardma.github.io>`_
 
 This page lists all the 2D drawing functions available in Codac. Note that the functions described here on a
-:ref:`Figure2D <subsec-graphics-2d-figures-figure2d>` object also work on the :ref:`DefaultView <subsec-graphics-2d-figures-defaultview>`.
+:ref:`Figure2D <subsec-graphics-2d-figures-figure2d>` object also work on the :ref:`DefaultFigure <subsec-graphics-2d-figures-DefaultFigure>`.
 
 For example : 
 
@@ -17,16 +17,16 @@ For example :
     # On a figure
     fig.draw_box([[2.2,2.5],[2.2,2.5]])
 
-    # On the DefaultView
-    DefaultView.draw_box([[2.2,2.5],[2.2,2.5]])
+    # On the DefaultFigure
+    DefaultFigure.draw_box([[2.2,2.5],[2.2,2.5]])
 
   .. code-tab:: c++
 
     // On a figure
     fig.draw_box({{2.2,2.5},{2.2,2.5}});
 
-    // On the DefaultView
-    DefaultView::draw_box({{2.2,2.5},{2.2,2.5}});
+    // On the DefaultFigure
+    DefaultFigure::draw_box({{2.2,2.5},{2.2,2.5}});
 
 In addition to the arguments described here for every function, an optionnal argument of type StyleProperties can be added to choose the edge
 and fill color (by default black edge no fill). This object can be deduced from one or two Color objects, see :ref:`this page <sec-graphics-colors>` 

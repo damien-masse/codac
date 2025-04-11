@@ -19,8 +19,8 @@
 using namespace std;
 using namespace codac2;
 
-shared_ptr<Figure2D> DefaultView::_default_fig = nullptr;
-shared_ptr<Figure2D> DefaultView::_selected_fig = DefaultView::_default_fig;
+shared_ptr<Figure2D> DefaultFigure::_default_fig = nullptr;
+shared_ptr<Figure2D> DefaultFigure::_selected_fig = DefaultFigure::_default_fig;
 
 Figure2D::Figure2D(const std::string& name, GraphicOutput o, bool set_as_default_)
   : _name(name)
@@ -112,12 +112,12 @@ void Figure2D::auto_scale()
 
 bool Figure2D::is_default() const
 {
-  return DefaultView::_selected_fig == this->weak_from_this().lock();
+  return DefaultFigure::_selected_fig == this->weak_from_this().lock();
 }
 
 void Figure2D::set_as_default()
 {
-  DefaultView::set(this->shared_from_this());
+  DefaultFigure::set(this->shared_from_this());
 }
 
 void Figure2D::set_tdomain(const Interval& tdomain)
