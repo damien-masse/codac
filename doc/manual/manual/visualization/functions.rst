@@ -6,7 +6,7 @@
   Main author: `Maël Godard <https://godardma.github.io>`_
 
 This page lists all the 2D drawing functions available in Codac. Note that the functions described here on a
-:ref:`Figure2D <subsec-graphics-2d-figures-figure2d>` object also work on the :ref:`DefaultFigure <subsec-graphics-2d-figures-DefaultFigure>`.
+:ref:`Figure2D <subsec-graphics-2d-figures-figure2d>` object also work on the :ref:`DefaultFigure <subsec-graphics-2d-figures-defaultfigure>`.
 
 For example : 
 
