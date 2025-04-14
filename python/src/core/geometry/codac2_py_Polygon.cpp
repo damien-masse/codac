@@ -34,6 +34,9 @@ void export_Polygon(py::module& m)
     .def("edges", &Polygon::edges,
       CONST_VECTOR_EDGE_REF_POLYGON_EDGES_CONST)
 
+    .def("unsorted_vertices", &Polygon::unsorted_vertices,
+      LIST_VECTOR_POLYGON_UNSORTED_VERTICES_CONST)
+
     .def("contains", &Polygon::contains,
       BOOLINTERVAL_POLYGON_CONTAINS_CONST_VECTOR_REF_CONST,
       "p"_a)

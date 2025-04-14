@@ -37,6 +37,10 @@ void export_Edge(py::module& m)
     .def("intersects", &Edge::intersects,
       BOOLINTERVAL_EDGE_INTERSECTS_CONST_EDGE_REF_CONST,
       "e"_a)
+
+    .def("contains", &Edge::contains,
+      BOOLINTERVAL_EDGE_CONTAINS_CONST_VECTOR_REF_CONST,
+      "p"_a)
   ;
 
   py::implicitly_convertible<py::list,Edge>();
