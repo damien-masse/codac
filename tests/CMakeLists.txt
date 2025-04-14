@@ -60,6 +60,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/functions/analytic/codac2_tests_AnalyticFunction
   ../doc/manual/manual/functions/analytic/src
 
+  core/geometry/codac2_tests_Edge
   core/geometry/codac2_tests_geometry
   core/geometry/codac2_tests_Polygon
 
@@ -70,6 +71,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/matrices/codac2_tests_cart_prod
   core/matrices/codac2_tests_Matrix
   core/matrices/codac2_tests_Vector
+  core/matrices/codac2_tests_hull
   core/matrices/codac2_tests_inversion
 
   core/operators/codac2_tests_operators

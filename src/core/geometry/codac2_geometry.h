@@ -14,5 +14,44 @@
 
 namespace codac2
 {
-  BoolInterval orientation(const IntervalVector& p1, const IntervalVector& p2, const IntervalVector& p3);
+  enum class OrientationInterval
+  {
+    EMPTY = 0x00,
+    COLINEAR = 0x01,
+    CLOCKWISE = 0x02,
+    COUNTERCLOCKWISE = 0x04,
+    UNKNOWN = 0x01 | 0x02 | 0x04
+  };
+
+  constexpr OrientationInterval operator|(OrientationInterval a, OrientationInterval b)
+  { return static_cast<OrientationInterval>(static_cast<int>(a) | static_cast<int>(b)); }
+
+  /**
+   * \brief Streams out a OrientationInterval
+   * 
+   * \param os the stream to be updated
+   * \param x the orientation interval to stream out
+   * \return a reference to the updated stream
+   */
+  inline std::ostream& operator<<(std::ostream& os, const OrientationInterval& x)
+  {
+    if(x == OrientationInterval::EMPTY)
+      os << "[ empty ]";
+    else if(x == OrientationInterval::COLINEAR)
+      os << "[ col ]";
+    else if(x == OrientationInterval::CLOCKWISE)
+      os << "[ cw ]";
+    else if(x == OrientationInterval::COUNTERCLOCKWISE)
+      os << "[ ccw ]";
+    else if(x == (OrientationInterval::COLINEAR | OrientationInterval::CLOCKWISE))
+      os << "[ col, cw ]";
+    else if(x == (OrientationInterval::COLINEAR | OrientationInterval::COUNTERCLOCKWISE))
+      os << "[ col, ccw ]";
+    else if(x == OrientationInterval::UNKNOWN)
+      os << "[ col, cw, ccw ]";
+    return os;
+  }
+
+  OrientationInterval orientation(const IntervalVector& p1, const IntervalVector& p2, const IntervalVector& p3);
+  BoolInterval aligned(const IntervalVector& p1, const IntervalVector& p2, const IntervalVector& p3);
 }

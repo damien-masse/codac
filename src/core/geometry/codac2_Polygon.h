@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <list>
 #include <vector>
 #include <utility>
 #include "codac2_IntervalVector.h"
@@ -27,6 +28,7 @@ namespace codac2
       Polygon(const std::vector<Edge>& edges);
 
       const std::vector<Edge>& edges() const;
+      std::list<Vector> unsorted_vertices() const;
       BoolInterval contains(const Vector& p) const;
 
     protected:

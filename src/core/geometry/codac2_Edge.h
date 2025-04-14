@@ -13,6 +13,7 @@
 #include <utility>
 #include "codac2_Vector.h"
 #include "codac2_BoolInterval.h"
+#include "codac2_IntervalVector.h"
 
 namespace codac2
 {
@@ -20,8 +21,12 @@ namespace codac2
   {
     public:
 
-      Edge(std::initializer_list<Vector> vertices);
-      Edge(const std::vector<Vector>& vertices);
+      Edge(const std::array<Vector,2>& x);
+      Edge(const Vector& x1, const Vector& x2);
+
+      IntervalVector box() const;
+
       BoolInterval intersects(const Edge& e) const;
+      BoolInterval contains(const Vector& p) const;
   };
 }
