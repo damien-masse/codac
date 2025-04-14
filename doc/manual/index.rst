@@ -94,7 +94,7 @@ User manual
 
 * Contractors
    * What are contractors?
-   * The Ctc class
+   * How to build a contractor
    * Basic contractors
       * CtcIdentity
       * CtcEmpty
@@ -142,7 +142,7 @@ User manual
 
 * Separators
    * What are separators?
-   * The Sep class
+   * How to build a separator
    * Basic separators
       * SepCtcPair
    * Set separators
