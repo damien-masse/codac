@@ -52,6 +52,34 @@ namespace codac2
     return os;
   }
 
+  /**
+   * \brief Computes the orientation of an ordered triplet of 2D points.
+   *
+   * Determines whether the sequence of points (``p1``,``p2``,``p3``) makes a
+   * counterclockwise turn, a clockwise turn, or if the points are colinear.
+   * Depending on floating point uncertainties, the test may not be able to conclude
+   * (a ``UNKNOWN`` value would then be returned).
+   *
+   * \param p1 First point (2d ``Vector``) of the triplet.
+   * \param p2 Second point (2d ``Vector``) of the triplet.
+   * \param p3 Third point (2d ``Vector``) of the triplet.
+   * 
+   * \return an orientation of type ``OrientationInterval``
+   */
   OrientationInterval orientation(const IntervalVector& p1, const IntervalVector& p2, const IntervalVector& p3);
+
+  /**
+   * \brief Checks whether three 2D points are aligned (colinear).
+   *
+   * Determines if the points lie on the same straight line using an 
+   * orientation test (cross product). Depending on floating point uncertainties,
+   * the test may not be able to conclude (a ``UNKNOWN`` value would then be returned).
+   *
+   * \param p1 First point (2d ``Vector``) of the triplet.
+   * \param p2 Second point (2d ``Vector``) of the triplet.
+   * \param p3 Third point (2d ``Vector``) of the triplet.
+   * 
+   * \return a ``BooleanInterval``
+   */
   BoolInterval aligned(const IntervalVector& p1, const IntervalVector& p2, const IntervalVector& p3);
 }
