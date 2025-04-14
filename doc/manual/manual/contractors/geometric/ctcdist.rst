@@ -76,8 +76,6 @@ We assume that two distances are received from the landmarks. Considering bounde
 
 The :math:`\mathcal{C}_{\textrm{dist}}` applies on 5d boxes but we are only interested in paving the :math:`(x_1,x_2)` space, so we will project the distance contractors associated with each landmark on :math:`(x_1,x_2)` using :math:`\mathcal{C}_{\textrm{proj}}`. The projection is restricted to the measurements and the position of the landmarks.
 
-Finally, we pave the intersection of each projected contractor.
-
 .. tabs::
 
   .. group-tab:: Python
@@ -95,6 +93,26 @@ Finally, we pave the intersection of each projected contractor.
       :start-after: [ctcdist-3-beg]
       :end-before: [ctcdist-3-end]
       :dedent: 4
+
+Finally, we pave the intersection of each projected contractor.
+
+.. tabs::
+
+  .. group-tab:: Python
+
+    .. literalinclude:: src.py
+      :language: py
+      :start-after: [ctcdist-4-beg]
+      :end-before: [ctcdist-4-end]
+      :dedent: 6
+
+  .. group-tab:: C++
+
+    .. literalinclude:: src.cpp
+      :language: c++
+      :start-after: [ctcdist-4-beg]
+      :end-before: [ctcdist-4-end]
+      :dedent: 6
 
 We obtain the following approximation:
 
