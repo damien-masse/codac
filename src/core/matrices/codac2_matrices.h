@@ -146,17 +146,6 @@ namespace codac2
     return x.array().round().matrix();
   }
 
-  template<typename Scalar,int RowsAtCompileTime,int ColsAtCompileTime>
-    requires Eigen::IsIntervalDomain<Scalar>
-  inline auto hull(const std::list<Eigen::Matrix<Scalar,RowsAtCompileTime,ColsAtCompileTime>>& l)
-  {
-    assert_release(!l.empty());
-    Eigen::Matrix<Scalar,RowsAtCompileTime,ColsAtCompileTime> h(l.front());
-    for(const auto& li : l)
-      h |= li;
-    return h;
-  }
-
   inline Eigen::IOFormat codac_row_fmt()
   {
     return Eigen::IOFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, " ", "", "", "", "[ ", " ]");
