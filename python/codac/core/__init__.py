@@ -168,9 +168,34 @@ class Approx:
     return str(self.a)
 
 
+def hull(*args):
+  # -1: to be defined, 0: IntervalVector, 1: IntervalMatrix
+  lst = []
+  mode = -1
+
+  for arg in args:
+    if isinstance(arg, (Vector)):
+      mode = 0
+      lst.append(IntervalVector(arg))
+    elif isinstance(arg, (IntervalVector)):
+      mode = 0
+      lst.append(arg)
+    elif isinstance(arg, (Matrix)):
+      mode = 1
+      lst.append(IntervalMatrix(arg))
+    elif isinstance(arg, (IntervalMatrix)):
+      mode = 1
+      lst.append(arg)
+
+  if mode == 0:
+    return hull_intervalvector(lst)
+  else:
+    return hull_intervalmatrix(lst)
+
+
 def cart_prod(*args):
   # -1: to be defined, 0: vector, 1: intervalvector, 2: ctc, 3: sep
-  lst=[]
+  lst = []
   mode = -1
 
   for arg in args:
