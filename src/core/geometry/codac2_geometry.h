@@ -14,12 +14,20 @@
 
 namespace codac2
 {
+  /**
+   * \enum OrientationInterval
+   * \brief Enumeration representing feasible orientations.
+   * Can be used to assess an oriented angle, or the alignement of three points.
+   * 
+   * The logical operator ``|`` can be used to combine ``OrientationInterval`` values.
+   */
   enum class OrientationInterval
   {
-    EMPTY = 0x00,
     COLINEAR = 0x01,
     CLOCKWISE = 0x02,
     COUNTERCLOCKWISE = 0x04,
+    EMPTY = 0x00,
+    /** ``UNKNOWN``: the orientation can be either clockwise, counter-clockwise, or aligned. */
     UNKNOWN = 0x01 | 0x02 | 0x04
   };
 
