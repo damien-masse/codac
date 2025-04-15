@@ -1,9 +1,9 @@
 /** 
  *  \file codac2_cross_prod.h
  * ----------------------------------------------------------------------------
- *  \date       2024
- *  \author     Simon Rohou, Gilles Chabert
- *  \copyright  Copyright 2024 Codac Team
+ *  \date       2025
+ *  \author     Simon Rohou
+ *  \copyright  Copyright 2025 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
 

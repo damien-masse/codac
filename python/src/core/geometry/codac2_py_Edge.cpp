@@ -23,13 +23,24 @@ void export_Edge(py::module& m)
   py::class_<Edge> exported(m, "Edge", EDGE_MAIN);
   exported
 
-    .def(py::init<const std::vector<Vector>&>(),
-      EDGE_EDGE_CONST_VECTOR_VECTOR_REF,
-      "vertices"_a)
+    .def(py::init<const std::array<Vector,2>&>(),
+      EDGE_EDGE_CONST_ARRAY_VECTOR2_REF,
+      "x"_a)
+
+    .def(py::init<const Vector&,const Vector&>(),
+      EDGE_EDGE_CONST_VECTOR_REF_CONST_VECTOR_REF,
+      "x1"_a, "x2"_a)
+
+    .def("box", &Edge::box,
+      INTERVALVECTOR_EDGE_BOX_CONST)
 
     .def("intersects", &Edge::intersects,
       BOOLINTERVAL_EDGE_INTERSECTS_CONST_EDGE_REF_CONST,
       "e"_a)
+
+    .def("contains", &Edge::contains,
+      BOOLINTERVAL_EDGE_CONTAINS_CONST_VECTOR_REF_CONST,
+      "p"_a)
   ;
 
   py::implicitly_convertible<py::list,Edge>();

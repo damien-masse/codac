@@ -62,6 +62,7 @@
     matrices/codac2_py_arithmetic_sub.cpp
     matrices/codac2_py_arithmetic_mul.cpp
     matrices/codac2_py_arithmetic_div.cpp
+    matrices/codac2_py_hull.cpp
     matrices/codac2_py_inversion.cpp
     matrices/codac2_py_Matrix.cpp
     matrices/codac2_py_MatrixBase.h

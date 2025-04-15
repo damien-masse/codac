@@ -20,7 +20,30 @@ using namespace pybind11::literals;
 
 void export_geometry(py::module& m)
 {
+  py::enum_<OrientationInterval>(m, "OrientationInterval")
+
+    .value("EMPTY", OrientationInterval::EMPTY)
+    .value("COLINEAR", OrientationInterval::COLINEAR)
+    .value("CLOCKWISE", OrientationInterval::CLOCKWISE)
+    .value("COUNTERCLOCKWISE", OrientationInterval::COUNTERCLOCKWISE)
+    .value("UNKNOWN", OrientationInterval::UNKNOWN)
+
+    .def(py::self | py::self,
+      ORIENTATIONINTERVAL_OPERATOROR_ORIENTATIONINTERVAL_ORIENTATIONINTERVAL)
+
+    .def("__repr__", [](const OrientationInterval& x) {
+          std::ostringstream s;
+          s << x;
+          return string(s.str()); 
+        },
+      OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_ORIENTATIONINTERVAL_REF)
+  ;
+
   m.def("orientation", &orientation,
-    BOOLINTERVAL_ORIENTATION_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF,
+    ORIENTATIONINTERVAL_ORIENTATION_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF,
+    "p1"_a, "p2"_a, "p3"_a);
+
+  m.def("aligned", &aligned,
+    BOOLINTERVAL_ALIGNED_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF,
     "p1"_a, "p2"_a, "p3"_a);
 }

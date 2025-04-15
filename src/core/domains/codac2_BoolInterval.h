@@ -15,7 +15,7 @@ namespace codac2
 {
   enum class BoolInterval
   {
-    EMPTY = 0x01 & 0x02,
+    EMPTY = 0x00,
     FALSE = 0x01,
     TRUE = 0x02,
     UNKNOWN = 0x01 | 0x02

@@ -3,7 +3,7 @@ Contractors
 
 .. toctree::
 
-  geometric/ctcdist.rst
+  CtcDist <geometric/ctcdist>
 
 ..   What are contractors? <http://codac.io>
 ..   The Ctc class <http://codac.io>

@@ -7,6 +7,7 @@
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
+#include <iostream>
 #include <catch2/catch_test_macros.hpp>
 #include <codac2_Polygon.h>
 
@@ -15,7 +16,47 @@ using namespace codac2;
 
 TEST_CASE("Polygon")
 {
-  CHECK(Polygon({{3,-1},{3,4},{5,6},{-1,1}}).contains({{3.1},{3}}) == BoolInterval::FALSE);
-  CHECK(Polygon({{3,-1},{3,4},{5,6},{-1,1}}).contains({{2.9},{3}}) == BoolInterval::TRUE);
-  CHECK(Polygon({{3,-1},{3,4},{5,6},{-1,1}}).contains({{3},{3}}) == BoolInterval::UNKNOWN);
+  Polygon p1({{3,-1},{3,4},{5,6},{-1,1}});
+  CHECK(p1.contains({3.1,3}) == BoolInterval::FALSE);
+  CHECK(p1.contains({2.9,3}) == BoolInterval::TRUE);
+  CHECK(p1.contains({3,3}) == BoolInterval::TRUE);
+  CHECK(p1.contains({0,1}) == BoolInterval::TRUE);
+  CHECK(p1.contains({4,1}) == BoolInterval::FALSE);
+  CHECK(p1.contains({2,4}) == BoolInterval::FALSE);
+  CHECK(p1.contains({2.8,4}) == BoolInterval::TRUE);
+  CHECK(p1.contains({3,4}) == BoolInterval::TRUE);
+  CHECK(p1.contains({4,4}) == BoolInterval::FALSE);
+  CHECK(p1.contains({5,6}) == BoolInterval::TRUE);
+  CHECK(p1.contains({6,6}) == BoolInterval::FALSE);
+
+  {
+    Edge transect(Vector({next_float(-oo),3}), Vector({3,3}));
+    Edge e1(Vector({5,6}),Vector({-1,1})), e2(Vector({3,-1}),Vector({3,4}));
+    CHECK(transect.intersects(e1) == BoolInterval::TRUE);
+    CHECK(transect.intersects(e2) == BoolInterval::TRUE);
+  }
+
+  Polygon p2({{0,0},{0,1},{1,1},{1,0}});
+  CHECK(p2.contains({0,0}) == BoolInterval::TRUE);
+  CHECK(p2.contains({1,1}) == BoolInterval::TRUE);
+  CHECK(p2.contains({0,2}) == BoolInterval::FALSE);
+  CHECK(p2.contains({2,0}) == BoolInterval::FALSE);
+  CHECK(p2.contains({0.5,1}) == BoolInterval::TRUE);
+  CHECK(p2.contains({1,0.5}) == BoolInterval::TRUE);
+
+  {
+    Edge transect(Vector({next_float(-oo),2}), Vector({0,2}));
+    Edge e1(Vector({0,0}),Vector({0,1}));
+    Edge e2(Vector({0,1}),Vector({1,1}));
+    Edge e3(Vector({1,1}),Vector({1,0}));
+    Edge e4(Vector({1,0}),Vector({0,0}));
+
+    CHECK(transect.intersects(e1) == BoolInterval::FALSE);
+    CHECK(transect.intersects(e2) == BoolInterval::FALSE);
+    CHECK(transect.intersects(e3) == BoolInterval::FALSE);
+    CHECK(transect.intersects(e4) == BoolInterval::FALSE);
+  }
+
+  Polygon p3({{0,1},{1,0},{0,0}});
+  CHECK(p3.contains({1,1}) == BoolInterval::FALSE);
 }
