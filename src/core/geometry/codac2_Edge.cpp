@@ -96,10 +96,10 @@ namespace codac2
   
   IntervalVector proj_intersection(const Edge& e1, const Edge& e2)
   {
-    const double& x1 = e1[0][0], &y1 = e1[0][1];
-    const double& x2 = e1[1][0], &y2 = e1[1][1];
-    const double& x3 = e2[0][0], &y3 = e2[0][1];
-    const double& x4 = e2[1][0], &y4 = e2[1][1];
+    Interval x1 = e1[0][0], y1 = e1[0][1];
+    Interval x2 = e1[1][0], y2 = e1[1][1];
+    Interval x3 = e2[0][0], y3 = e2[0][1];
+    Interval x4 = e2[1][0], y4 = e2[1][1];
 
     Interval c = ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
 
@@ -110,7 +110,7 @@ namespace codac2
       // Or not
       //   => no intersection point => empty output
 
-      if(aligned(e1[0],e1[1],e2[0]) & BoolInterval::TRUE)
+      if((aligned(e1[0],e1[1],e2[0]) & BoolInterval::TRUE) == BoolInterval::TRUE)
         return IntervalVector(2);
       else
         return IntervalVector::empty(2);

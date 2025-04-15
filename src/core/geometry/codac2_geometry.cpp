@@ -36,7 +36,7 @@ namespace codac2
   {
     assert_release(p1.size() == 2 && p2.size() == 2 && p3.size() == 2);
 
-    Interval cross_product = (p2[0]-p1[0]) * (p3[1]-p1[1]) - (p2[1]-p1[1]) * (p3[0]-p1[0]);
+    Interval cross_product = (p2[0]-p1[0])*(p3[1]-p1[1])-(p2[1]-p1[1])*(p3[0]-p1[0]);
 
     if(cross_product == 0.)
       return BoolInterval::TRUE;
