@@ -31,7 +31,7 @@ void export_BoolInterval(py::module& m)
     .value("UNKNOWN", BoolInterval::UNKNOWN)
 
     .def(py::self & py::self,
-      BOOLINTERVAL_OPERATORAND_BOOLINTERVAL_BOOLINTERVAL)
+      INT_OPERATORAND_BOOLINTERVAL_BOOLINTERVAL)
 
     .def(py::self | py::self,
       BOOLINTERVAL_OPERATOROR_BOOLINTERVAL_BOOLINTERVAL)

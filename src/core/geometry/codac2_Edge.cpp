@@ -93,4 +93,35 @@ namespace codac2
 
     return BoolInterval::FALSE;
   }
+  
+  IntervalVector proj_intersection(const Edge& e1, const Edge& e2)
+  {
+    const double& x1 = e1[0][0], &y1 = e1[0][1];
+    const double& x2 = e1[1][0], &y2 = e1[1][1];
+    const double& x3 = e2[0][0], &y3 = e2[0][1];
+    const double& x4 = e2[1][0], &y4 = e2[1][1];
+
+    Interval c = ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
+
+    if(c == 0.) // e1 and e2 are parallel
+    {
+      // They are then either colinear
+      //   => infinite intersection points
+      // Or not
+      //   => no intersection point => empty output
+
+      if(aligned(e1[0],e1[1],e2[0]) & BoolInterval::TRUE)
+        return IntervalVector(2);
+      else
+        return IntervalVector::empty(2);
+    }
+
+    Interval a = (x1*y2-y1*x2);
+    Interval b = (x3*y4-y3*x4);
+
+    return {
+      (a*(x3-x4)-(x1-x2)*b)/c,
+      (a*(y3-y4)-(y1-y2)*b)/c
+    };
+  }
 }

@@ -43,5 +43,9 @@ void export_Edge(py::module& m)
       "p"_a)
   ;
 
+  m.def("proj_intersection", &proj_intersection,
+    INTERVALVECTOR_PROJ_INTERSECTION_CONST_EDGE_REF_CONST_EDGE_REF,
+    "e1"_a, "e2"_a);
+  
   py::implicitly_convertible<py::list,Edge>();
 }

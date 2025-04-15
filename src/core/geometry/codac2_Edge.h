@@ -29,4 +29,6 @@ namespace codac2
       BoolInterval intersects(const Edge& e) const;
       BoolInterval contains(const Vector& p) const;
   };
+
+  IntervalVector proj_intersection(const Edge& e1, const Edge& e2);
 }

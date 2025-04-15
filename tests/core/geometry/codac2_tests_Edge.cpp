@@ -9,6 +9,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <codac2_Edge.h>
+#include <codac2_Approx.h>
 
 using namespace std;
 using namespace codac2;
@@ -39,6 +40,42 @@ TEST_CASE("Edge")
     CHECK(e2.contains(p1) == BoolInterval::FALSE);
     CHECK(e3.contains(p2) != BoolInterval::FALSE);
     CHECK(e3.contains(p3) == BoolInterval::FALSE);
+  }
+
+  SECTION("proj_intersection")
+  {
+    CHECK(proj_intersection({{0,0},{1,1}}, {{3,3},{4,4}})
+      == IntervalVector(2));
+
+    CHECK(proj_intersection({{0,0},{1,0}}, {{0,2},{1,2}})
+      == IntervalVector::empty(2));
+
+    CHECK(proj_intersection({{2,0},{6,4}},{{6,5},{5,6}})
+      == Approx(IntervalVector({6.5,4.5})));
+
+    CHECK(proj_intersection({{-0.7,0.7},{0,1}}, {{-1,0},{-0.7,-0.7}})
+      == Approx(IntervalVector({-1.2069,0.4828}), 1e-4));
+
+    CHECK(proj_intersection({{1,2},{2,3}}, {{8,4},{7,4}})
+      == IntervalVector({3,4}));
+
+    CHECK(proj_intersection({{4,11},{8,11}}, {{12,12},{12,16}})
+      == IntervalVector({12,11}));
+
+    CHECK(proj_intersection({{1,2},{1,2}}, {{8,4},{7,4}})
+      == IntervalVector(2));
+
+    CHECK(proj_intersection({{0,1},{0,2}}, {{2,1},{2,2}})
+      == IntervalVector::empty(2));
+
+    CHECK(proj_intersection({{-4,4},{0,0}}, {{0,0},{4,4}})
+      == IntervalVector({0,0}));
+
+    CHECK(proj_intersection({{-4,4},{0,0}}, {{4,4},{0,0}})
+      == IntervalVector({0,0}));
+
+    CHECK(proj_intersection({{0,4},{4,0}}, {{4,4},{0,0}})
+      == IntervalVector({2,2}));
   }
 
 /* Former tests from Codac 1

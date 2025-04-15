@@ -29,8 +29,8 @@ namespace codac2
     UNKNOWN = 0x01 | 0x02
   };
 
-  constexpr BoolInterval operator&(BoolInterval a, BoolInterval b)
-  { return static_cast<BoolInterval>(static_cast<int>(a) & static_cast<int>(b)); }
+  constexpr int operator&(BoolInterval a, BoolInterval b)
+  { return static_cast<int>(static_cast<int>(a) & static_cast<int>(b)); }
 
   constexpr BoolInterval operator|(BoolInterval a, BoolInterval b)
   { return static_cast<BoolInterval>(static_cast<int>(a) | static_cast<int>(b)); }
