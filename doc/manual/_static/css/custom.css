@@ -116,3 +116,8 @@ h1 + blockquote div p { /* for displaying main authors */
 article .align-default {
   text-align: left;
 }
+
+dl.cpp:not(dl.cpp dl.cpp) { /* for displaying a border on doxygen blocks */
+  border-left: 5px solid var(--color-background-border);
+  padding-left: 5px;
+}
