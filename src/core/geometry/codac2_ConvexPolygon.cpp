@@ -46,24 +46,37 @@ namespace codac2
 
   ConvexPolygon operator&(const ConvexPolygon& p1, const ConvexPolygon& p2)
   {
-    vector<IntervalVector> inter_vertices;
+    vector<IntervalVector> inter;
 
     for(const auto& v1 : p1.unsorted_vertices())
       if((p2.contains(v1) & BoolInterval::TRUE) == BoolInterval::TRUE)
-        inter_vertices.push_back(v1);
+        inter.push_back(v1);
 
     for(const auto& v2 : p2.unsorted_vertices())
       if((p1.contains(v2) & BoolInterval::TRUE) == BoolInterval::TRUE)
-        inter_vertices.push_back(v2);
+        inter.push_back(v2);
 
     for(const auto& e1 : p1.edges())
       for(const auto& e2 : p2.edges())
       {
         auto x = e1 & e2;
         if(!x.is_empty())
-          inter_vertices.push_back(x.mid());
+        {
+          // In case of colinear edges, the intersection would result in
+          // a large box (infinite solutions): end points are kept.
+          if((colinear(e1,e2) & BoolInterval::TRUE) == BoolInterval::TRUE)
+          {
+            if(e1[0].intersects(x)) inter.push_back(e1[0]);
+            if(e1[1].intersects(x)) inter.push_back(e1[1]);
+            if(e2[0].intersects(x)) inter.push_back(e2[0]);
+            if(e2[1].intersects(x)) inter.push_back(e2[1]);
+          }
+
+          else
+            inter.push_back(x);
+        }
       }
-    
-    return ConvexPolygon(inter_vertices);
+
+    return ConvexPolygon(inter);
   }
 }

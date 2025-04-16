@@ -34,4 +34,7 @@ namespace codac2
 
   IntervalVector operator&(const Edge& e1, const Edge& e2);
   IntervalVector proj_intersection(const Edge& e1, const Edge& e2);
+  BoolInterval colinear(const Edge& e1, const Edge& e2);
+
+  std::ostream& operator<<(std::ostream& str, const Edge& e);
 }

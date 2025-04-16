@@ -25,22 +25,22 @@ namespace codac2
     : Polygon(vectorVector_to_vectorIntervalVector(vertices))
   { }
 
-  Polygon::Polygon(const std::vector<IntervalVector>& vertices)
+  Polygon::Polygon(const std::vector<IntervalVector>& v)
     : _edges(
-      [vertices]
+      [v]
       {
-        assert_release(vertices.size() > 1);
+        assert_release(!v.empty());
         vector<Edge> edges;
 
-        Index i = 0;
-        for(const auto& vi : vertices)
+        for(size_t i = 0 ; i < v.size() ; i++)
         {
-          assert_release(vi.size() == 2);
+          assert_release(v[i].size() == 2);
 
-          if(i == 0) edges.push_back({ vi, vi });
-          else       edges.push_back({ edges[i-1][1], vi });
+          if(i > 0 && v[i] == v[i-1])
+            continue; // same consecutive vertices are merged
 
-          i++;
+          if(i == 0) edges.push_back({ v[i], v[i] });
+          else       edges.push_back({ edges[i-1][1], v[i] });
         }
 
         edges[0][0] = edges[edges.size()-1][1]; // closing the polygon
@@ -57,12 +57,30 @@ namespace codac2
   { }
   
   Polygon::Polygon(const IntervalVector& x)
-    : Polygon({
-        { x[0].lb(), x[1].lb() },
-        { x[0].ub(), x[1].lb() },
-        { x[0].ub(), x[1].ub() },
-        { x[0].lb(), x[1].ub() },
-      })
+    : Polygon([&x]() -> std::vector<IntervalVector> {
+      assert_release(!x.is_empty());
+      
+      if(x[0].is_degenerated())
+        return {
+          { x[0].lb(),x[1].lb() },
+          { x[0].lb(),x[1].ub() }
+        };
+
+      else if(x[1].is_degenerated())
+        return {
+          { x[0].lb(),x[1].lb() },
+          { x[1].ub(),x[1].lb() }
+        };
+
+      else
+        return {
+          // Built in counterclockwise order
+          { x[0].lb(), x[1].lb() },
+          { x[0].ub(), x[1].lb() },
+          { x[0].ub(), x[1].ub() },
+          { x[0].lb(), x[1].ub() }
+        };
+      }())
   { }
   
   const vector<Edge>& Polygon::edges() const
@@ -194,11 +212,8 @@ namespace codac2
     for(size_t i = 0 ; i < p.edges().size() ; i++)
     {
       if(i != 0) str << ", ";
-      str << p.edges()[i][1];
+      str << p.edges()[i][0];
     }
-
-    if(p.edges().size() > 1)
-      str << ", " << p.edges()[0][0];
 
     str << " }";
     return str;

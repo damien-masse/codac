@@ -51,8 +51,8 @@ namespace codac2
 
   void swap(IntervalVector& x1, IntervalVector& x2)
   {
-    IntervalVector x_ = x1;
-    x1 = x2; x2 = x_;
+    IntervalVector x1_ = x1;
+    x1 = x2; x2 = x1_;
   }
 
   Interval dist(const IntervalVector& p1, const IntervalVector& p2)
@@ -86,7 +86,8 @@ namespace codac2
       }
 
     // Place the bottom-most point at first position
-    
+      
+      assert(id_min < pts.size());
       swap(pts[0], pts[id_min]);
 
     // Sort n-1 points in increasing order of the angle they and the point P0 make with the x-axis
@@ -101,7 +102,7 @@ namespace codac2
             return true;
 
           else if((o == OrientationInterval::UNKNOWN || o == OrientationInterval::COLINEAR)
-              && dist(p0, p1).mid() <= dist(p0, p2).mid())
+              && dist(p0, p1).mid() < dist(p0, p2).mid())
             return true;
 
           return false;
@@ -128,31 +129,23 @@ namespace codac2
         m++; // Update size of modified array
       }
 
-      cout << "POINTS " << endl;
-      for(const auto& ui : pts)
-        cout << ui.mid() << endl;
-      cout << endl;
     // Create an empty stack and push first three points to it.
 
       list<IntervalVector> l({ pts[0], pts[1], pts[2] });
 
     // Process remaining n-3 points
 
-        cout << "#############" << endl;
       for(size_t i = 3 ; i < m ; i++)
       {
-        cout << i << endl;
         // Keep removing top while the angle formed by
         // points next-to-top, top, and pts[i] makes
         // a non-left turn
         while(l.size() > 1 &&
           orientation(*std::prev(std::prev(l.end())), l.back(), pts[i]) == OrientationInterval::COUNTERCLOCKWISE)
         {
-          cout << *std::prev(std::prev(l.end())) << " - " << l.back() << " - " << pts[i] << endl;
-          cout << "orient = " << orientation(*std::prev(std::prev(l.end())), l.back(), pts[i]) << endl;
           l.pop_back();
         }
-        cout << "__" << endl;
+        
         l.push_back(pts[i]);
       }
 

@@ -107,16 +107,16 @@ namespace codac2
   
   IntervalVector proj_intersection(const Edge& e1, const Edge& e2)
   {
-    Interval x1 = e1[0][0], y1 = e1[0][1];
-    Interval x2 = e1[1][0], y2 = e1[1][1];
-    Interval x3 = e2[0][0], y3 = e2[0][1];
-    Interval x4 = e2[1][0], y4 = e2[1][1];
+    const auto& x1 = e1[0][0], &y1 = e1[0][1];
+    const auto& x2 = e1[1][0], &y2 = e1[1][1];
+    const auto& x3 = e2[0][0], &y3 = e2[0][1];
+    const auto& x4 = e2[1][0], &y4 = e2[1][1];
 
     Interval c = ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
 
-    if(c == 0.) // e1 and e2 are parallel
+    if(c.contains(0.)) // e1 and e2 may be parallel
     {
-      // They are then either colinear
+      // They are then either possibly colinear
       //   => infinite intersection points
       // Or not
       //   => no intersection point => empty output
@@ -134,5 +134,32 @@ namespace codac2
       (a*(x3-x4)-(x1-x2)*b)/c,
       (a*(y3-y4)-(y1-y2)*b)/c
     };
+  }
+
+  BoolInterval colinear(const Edge& e1, const Edge& e2)
+  {
+    const auto& x1 = e1[0][0], &y1 = e1[0][1];
+    const auto& x2 = e1[1][0], &y2 = e1[1][1];
+    const auto& x3 = e2[0][0], &y3 = e2[0][1];
+    const auto& x4 = e2[1][0], &y4 = e2[1][1];
+
+    Interval c = ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
+    auto a = aligned(e1[0],e1[1],e2[0]);
+
+    if(c == 0 && a == BoolInterval::TRUE)
+      return BoolInterval::TRUE;
+
+    else if(c.contains(0.) // e1 and e2 may be parallel
+      && (a & BoolInterval::TRUE) == BoolInterval::TRUE)
+      return BoolInterval::UNKNOWN;
+
+    else
+      return BoolInterval::FALSE;
+  }
+
+  ostream& operator<<(ostream& str, const Edge& e)
+  {
+    str << e[0] << "--" << e[1];
+    return str;
   }
 }
