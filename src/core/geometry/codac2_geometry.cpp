@@ -7,6 +7,7 @@
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
+#include <iostream>
 #include "codac2_geometry.h"
 
 using namespace std;
@@ -100,11 +101,15 @@ namespace codac2
             return true;
 
           else if((o == OrientationInterval::UNKNOWN || o == OrientationInterval::COLINEAR)
-             && dist(p0, p1).ub() <= dist(p0, p2).lb())
+              && dist(p0, p1).mid() <= dist(p0, p2).mid())
             return true;
 
           return false;
         });
+
+        // Removing duplicates
+        auto last = std::unique(pts.begin(), pts.end());
+        pts.erase(last, pts.end());
 
     // If two or more points make same angle with p0,
     // remove all but the one that is farthest from p0
@@ -117,28 +122,37 @@ namespace codac2
       {
         // Keep removing i while angle of i and i+1 is same
         // with respect to p0
-        while(i < pts.size()-1
-          && (aligned(p0, pts[i], pts[i+1]) & BoolInterval::TRUE) == BoolInterval::TRUE)
+        while(i < pts.size()-1 && aligned(p0, pts[i], pts[i+1]) == BoolInterval::TRUE)
           i++;
         pts[m] = pts[i];
         m++; // Update size of modified array
       }
 
+      cout << "POINTS " << endl;
+      for(const auto& ui : pts)
+        cout << ui.mid() << endl;
+      cout << endl;
     // Create an empty stack and push first three points to it.
 
       list<IntervalVector> l({ pts[0], pts[1], pts[2] });
-      assert(l.back() == pts[2]);
 
     // Process remaining n-3 points
 
+        cout << "#############" << endl;
       for(size_t i = 3 ; i < m ; i++)
       {
+        cout << i << endl;
         // Keep removing top while the angle formed by
         // points next-to-top, top, and pts[i] makes
         // a non-left turn
         while(l.size() > 1 &&
           orientation(*std::prev(std::prev(l.end())), l.back(), pts[i]) == OrientationInterval::COUNTERCLOCKWISE)
+        {
+          cout << *std::prev(std::prev(l.end())) << " - " << l.back() << " - " << pts[i] << endl;
+          cout << "orient = " << orientation(*std::prev(std::prev(l.end())), l.back(), pts[i]) << endl;
           l.pop_back();
+        }
+        cout << "__" << endl;
         l.push_back(pts[i]);
       }
 

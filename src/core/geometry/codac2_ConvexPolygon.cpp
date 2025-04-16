@@ -63,8 +63,7 @@ namespace codac2
         if(!x.is_empty())
           inter_vertices.push_back(x.mid());
       }
-for(const auto& vi : inter_vertices)
-  cout << "-   " << vi << endl;
+    
     return ConvexPolygon(inter_vertices);
   }
 }
