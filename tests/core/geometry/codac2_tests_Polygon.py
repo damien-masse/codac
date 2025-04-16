@@ -10,7 +10,7 @@
 import unittest
 from codac import *
 
-class TestGeometry(unittest.TestCase):
+class TestPolygon(unittest.TestCase):
 
   def tests_Polygon(self):
 

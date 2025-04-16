@@ -37,9 +37,9 @@ namespace codac2
   /**
    * \brief Streams out a OrientationInterval
    * 
-   * \param os the stream to be updated
-   * \param x the orientation interval to stream out
-   * \return a reference to the updated stream
+   * \param os The stream to be updated
+   * \param x The orientation interval to stream out
+   * \return A Reference to the updated stream
    */
   inline std::ostream& operator<<(std::ostream& os, const OrientationInterval& x)
   {
@@ -63,16 +63,16 @@ namespace codac2
   /**
    * \brief Computes the orientation of an ordered triplet of 2D points.
    *
-   * Determines whether the sequence of points (``p1``,``p2``,``p3``) makes a
-   * counterclockwise turn, a clockwise turn, or if the points are colinear.
+   * Determines whether the oriented angle \f$\widehat{p_1 p_2 p_3}\f$ is positive
+   * (counterclockwise), negative (clockwise), or if the points are colinear (flat or 0 angle).
    * Depending on floating point uncertainties, the test may not be able to conclude
    * (a ``UNKNOWN`` value would then be returned).
    *
-   * \param p1 First point (2d ``Vector``) of the triplet.
-   * \param p2 Second point (2d ``Vector``) of the triplet.
-   * \param p3 Third point (2d ``Vector``) of the triplet.
+   * \param p1 First point (2d ``IntervalVector``) of the triplet.
+   * \param p2 Second point (2d ``IntervalVector``) of the triplet (vertex of the angle).
+   * \param p3 Third point (2d ``IntervalVector``) of the triplet.
    * 
-   * \return an orientation of type ``OrientationInterval``
+   * \return An orientation of type ``OrientationInterval``
    */
   OrientationInterval orientation(const IntervalVector& p1, const IntervalVector& p2, const IntervalVector& p3);
 
@@ -83,11 +83,25 @@ namespace codac2
    * orientation test (cross product). Depending on floating point uncertainties,
    * the test may not be able to conclude (a ``UNKNOWN`` value would then be returned).
    *
-   * \param p1 First point (2d ``Vector``) of the triplet.
-   * \param p2 Second point (2d ``Vector``) of the triplet.
-   * \param p3 Third point (2d ``Vector``) of the triplet.
+   * \param p1 First point (2d ``IntervalVector``) of the triplet.
+   * \param p2 Second point (2d ``IntervalVector``) of the triplet.
+   * \param p3 Third point (2d ``IntervalVector``) of the triplet.
    * 
-   * \return a ``BooleanInterval``
+   * \return A ``BooleanInterval``
    */
   BoolInterval aligned(const IntervalVector& p1, const IntervalVector& p2, const IntervalVector& p3);
+
+  /**
+   * \brief Computes the convex hull of a set of 2d points.
+   *
+   * Given a set of 2d points enclosed in tiny boxes, the function computes
+   * their convex hull. The method is based on a Graham scan algorithm.
+   * The output list of the algorithm is a subset of the input list,
+   * with same uncertainties and a possible different order.
+   * 
+   * \param pts 2d points in any order
+   * 
+   * \return Points on the convex hull in counterclockwise order.
+   */
+  std::vector<IntervalVector> convex_hull(std::vector<IntervalVector> pts);
 }

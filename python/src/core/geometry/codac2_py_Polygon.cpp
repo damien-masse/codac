@@ -35,11 +35,22 @@ void export_Polygon(py::module& m)
       CONST_VECTOR_EDGE_REF_POLYGON_EDGES_CONST)
 
     .def("unsorted_vertices", &Polygon::unsorted_vertices,
-      LIST_VECTOR_POLYGON_UNSORTED_VERTICES_CONST)
+      LIST_INTERVALVECTOR_POLYGON_UNSORTED_VERTICES_CONST)
 
     .def("contains", &Polygon::contains,
-      BOOLINTERVAL_POLYGON_CONTAINS_CONST_VECTOR_REF_CONST,
+      BOOLINTERVAL_POLYGON_CONTAINS_CONST_INTERVALVECTOR_REF_CONST,
       "p"_a)
+    
+    .def(py::self == py::self,
+      BOOL_POLYGON_OPERATOREQ_CONST_POLYGON_REF_CONST,
+      "p"_a)
+
+    .def("__repr__", [](const Polygon& x) {
+          std::ostringstream stream;
+          stream << x;
+          return string(stream.str()); 
+        },
+      OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_POLYGON_REF)
 
   ;
 

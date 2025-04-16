@@ -17,18 +17,21 @@
 
 namespace codac2
 {
-  class Edge : public std::array<Vector,2>
+  class Edge : public std::array<IntervalVector,2>
   {
     public:
 
-      Edge(const std::array<Vector,2>& x);
-      Edge(const Vector& x1, const Vector& x2);
+      Edge(const std::array<IntervalVector,2>& x);
+      Edge(const IntervalVector& x1, const IntervalVector& x2);
 
       IntervalVector box() const;
 
       BoolInterval intersects(const Edge& e) const;
-      BoolInterval contains(const Vector& p) const;
+      BoolInterval contains(const IntervalVector& p) const;
+
+      bool operator==(const Edge& p) const;
   };
 
+  IntervalVector operator&(const Edge& e1, const Edge& e2);
   IntervalVector proj_intersection(const Edge& e1, const Edge& e2);
 }

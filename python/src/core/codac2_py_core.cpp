@@ -71,6 +71,7 @@ void export_VectorVar(py::module& m);
 void export_MatrixVar(py::module& m);
 
 // geometry
+void export_ConvexPolygon(py::module& m);
 void export_Edge(py::module& m);
 void export_geometry(py::module& m);
 void export_Polygon(py::module& m);
@@ -223,6 +224,7 @@ PYBIND11_MODULE(_core, m)
   export_Edge(m);
   export_geometry(m);
   export_Polygon(m);
+  export_ConvexPolygon(m);
 
   // opearators
   export_operators(m);

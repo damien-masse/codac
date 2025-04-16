@@ -14,6 +14,13 @@
 using namespace std;
 using namespace codac2;
 
+Interval hull(double x)
+{
+  if(x == -oo) return { -oo, next_float(-oo) };
+  if(x == oo)  return { previous_float(oo), oo };
+  else return { x };
+}
+
 TEST_CASE("Edge")
 {
   SECTION("intersects")
@@ -25,16 +32,16 @@ TEST_CASE("Edge")
     CHECK(Edge({{0,0},{10,10}}).intersects(Edge({{1,1},{9,9}})) == BoolInterval::TRUE);
     CHECK(Edge({{1,1},{9,9}}).intersects(Edge({{0,0},{10,10}})) == BoolInterval::TRUE);
 
-    CHECK(Edge(Vector({next_float(-oo),2}),Vector({0,2})).intersects(Edge(Vector({0,0}),Vector({0,1}))) == BoolInterval::FALSE);
-    CHECK(Edge(Vector({next_float(-oo),2}),Vector({0,2})).intersects(Edge(Vector({0,0}),Vector({0,2}))) == BoolInterval::TRUE);
+    CHECK(Edge(IntervalVector({hull(-oo),2}),Vector({0,2})).intersects(Edge(Vector({0,0}),Vector({0,1}))) == BoolInterval::FALSE);
+    CHECK(Edge(IntervalVector({hull(-oo),2}),Vector({0,2})).intersects(Edge(Vector({0,0}),Vector({0,2}))) == BoolInterval::TRUE);
   }
 
-  SECTION("intersects bis")
+  SECTION("contains bis")
   {
-    Vector p1({0.,0.}), p2({1.5,3.}), p3({0.,2.});
-    Edge e1(Vector({-10.,-10.}), Vector({10.,10.}));
-    Edge e2(Vector({1.,1.}), Vector({10.,10.}));
-    Edge e3(Vector({0.,0.}), Vector({2.,4.}));
+    Vector p1({0,0.}), p2({1.5,3.}), p3({0,2.});
+    Edge e1(Vector({-10,-10.}), Vector({10,10.}));
+    Edge e2(Vector({1.,1.}), Vector({10,10.}));
+    Edge e3(Vector({0,0.}), Vector({2.,4.}));
 
     CHECK(e1.contains(p1) != BoolInterval::FALSE);
     CHECK(e2.contains(p1) == BoolInterval::FALSE);
@@ -78,36 +85,43 @@ TEST_CASE("Edge")
       == IntervalVector({2,2}));
   }
 
-/* Former tests from Codac 1
-  SECTION("Intersection, line/line")
+  SECTION("intersection")
   {
-    CHECK((ThickEdge(ThickPoint(0.,0.), ThickPoint(0.,0.)) & ThickEdge(ThickPoint(0.,0.), ThickPoint(5.,0.))) == ThickPoint(0.,0.)); // degenerate line, horizontal edge line
-    CHECK((ThickEdge(ThickPoint(0.,0.), ThickPoint(0.,0.)) & ThickEdge(ThickPoint(0.,0.), ThickPoint(0.,5.))) == ThickPoint(0.,0.)); // degenerate line, vertical edge line
+    CHECK((Edge({0,0},{0,0}) & Edge({0,0},{5,0})) == IntervalVector({0,0})); // degenerate line, horizontal edge line
+    CHECK((Edge({0,0},{0,0}) & Edge({0,0},{0,5})) == IntervalVector({0,0})); // degenerate line, vertical edge line
 
-    CHECK((ThickEdge(ThickPoint(0.,0.), ThickPoint(0.,1.)) & ThickEdge(ThickPoint(0.,0.), ThickPoint(0.,5.))) == ThickPoint(0.,Interval(0.,1.))); // vertical edge line (colinear)
-    CHECK((ThickEdge(ThickPoint(0.,0.), ThickPoint(0.,1.)) & ThickEdge(ThickPoint(0.,0.), ThickPoint(0.,0.5))) == ThickPoint(0.,Interval(0.,0.5))); // vertical edge line (colinear)
-    CHECK((ThickEdge(ThickPoint(0.,0.), ThickPoint(1.,0.)) & ThickEdge(ThickPoint(0.,0.), ThickPoint(5.,0.))) == ThickPoint(Interval(0.,1.),0.)); // horizontal edge line (colinear)
-    CHECK((ThickEdge(ThickPoint(0.,0.), ThickPoint(1.,0.)) & ThickEdge(ThickPoint(0.,0.), ThickPoint(0.5,0.))) == ThickPoint(Interval(0.,0.5),0.)); // horizontal edge line (colinear)
+    CHECK((Edge({0,0},{0,1}) & Edge({0,0},{0,5.0})) == IntervalVector({0,{0,1.}})); // vertical edge line (colinear)
+    CHECK((Edge({0,0},{0,1}) & Edge({0,0},{0,0.5})) == IntervalVector({0,{0,0.5}})); // vertical edge line (colinear)
+    CHECK((Edge({0,0},{1,0}) & Edge({0,0},{5.0,0})) == IntervalVector({{0,1.},0})); // horizontal edge line (colinear)
+    CHECK((Edge({0,0},{1,0}) & Edge({0,0},{0.5,0})) == IntervalVector({{0,0.5},0})); // horizontal edge line (colinear)
 
-    CHECK((ThickEdge(ThickPoint(7.,4.), ThickPoint(7.,5.)) & ThickEdge(ThickPoint(7.,6.), ThickPoint(7.,8.))) == ThickPoint(Interval::EMPTY_SET,Interval::EMPTY_SET)); // vertical edge line (colinear), no intersection
-    CHECK((ThickEdge(ThickPoint(4.,7.), ThickPoint(5.,7.)) & ThickEdge(ThickPoint(6.,7.), ThickPoint(8.,7.))) == ThickPoint(Interval::EMPTY_SET,Interval::EMPTY_SET)); // horizontal edge line (colinear), no intersection
+    CHECK((Edge({7,4},{7,5}) & Edge({7,6},{7,8})) == IntervalVector::empty(2)); // vertical edge line (colinear), no intersection
+    CHECK((Edge({4,7},{5,7}) & Edge({6,7},{8,7})) == IntervalVector::empty(2)); // horizontal edge line (colinear), no intersection
 
-    CHECK((ThickEdge(ThickPoint(0.,0.), ThickPoint(3.,0.)) & ThickEdge(ThickPoint(1.,2.), ThickPoint(1.,-999.))) == ThickPoint(1.,0.)); // perpendicular intersection
-    CHECK((ThickEdge(ThickPoint(0.5,-1.), ThickPoint(0.5,5.)) & ThickEdge(ThickPoint(-3.,2.), ThickPoint(5.,2.))) == ThickPoint(0.5,2.)); // perpendicular intersection
+    CHECK((Edge({0,0},{3,0}) & Edge({1,2},{1,-999})) == IntervalVector({1,0})); // perpendicular intersection
+    CHECK((Edge({0.5,-1},{0.5,5}) & Edge({-3,2},{5,2})) == IntervalVector({0.5,2})); // perpendicular intersection
 
-    CHECK((ThickEdge(ThickPoint(0.,0.), ThickPoint(3.,0.)) & ThickEdge(ThickPoint(1.,-10.), ThickPoint(1.,-999.))) == ThickPoint(Interval::EMPTY_SET,Interval::EMPTY_SET)); // perpendicular lines, no intersection
-    CHECK((ThickEdge(ThickPoint(0.5,-1.), ThickPoint(0.5,5.)) & ThickEdge(ThickPoint(-3.,-2.), ThickPoint(5.,-2.))) == ThickPoint(Interval::EMPTY_SET,Interval::EMPTY_SET)); // perpendicular lines, no intersection
+    CHECK((Edge({0,0},{3,0}) & Edge({1,-10},{1,-999})) == IntervalVector::empty(2)); // perpendicular lines, no intersection
+    CHECK((Edge({0.5,-1},{0.5,5}) & Edge({-3,-2},{5,-2})) == IntervalVector::empty(2)); // perpendicular lines, no intersection
 
-    CHECK((ThickEdge(ThickPoint(8.,4.), ThickPoint(9.,2.)) & ThickEdge(ThickPoint(7.,3.), ThickPoint(9.,3.))) == ThickPoint(8.5, 3.)); // perpendicular oblique lines
-    CHECK((ThickEdge(ThickPoint(8.,4.), ThickPoint(9.,2.)) & ThickEdge(ThickPoint(8.5,8.), ThickPoint(8.5,0.))) == ThickPoint(8.5, 3.)); // perpendicular oblique lines
+    CHECK((Edge({8,4},{9,2}) & Edge({7,3},{9,3})) == IntervalVector({8.5,3})); // perpendicular oblique lines
+    CHECK((Edge({8,4},{9,2}) & Edge({8.5,8},{8.5,0})) == IntervalVector({8.5,3})); // perpendicular oblique lines
 
-    CHECK((ThickEdge(ThickPoint(8.,4.), ThickPoint(9.,2.)) & ThickEdge(ThickPoint(7.,3.), ThickPoint(7.5,3.))) == ThickPoint(Interval::EMPTY_SET,Interval::EMPTY_SET)); // secant oblique lines, no intersection
-    CHECK((ThickEdge(ThickPoint(8.,4.), ThickPoint(9.,2.)) & ThickEdge(ThickPoint(8.5,8.), ThickPoint(8.5,7.))) == ThickPoint(Interval::EMPTY_SET,Interval::EMPTY_SET)); // secant oblique lines, no intersection
-    CHECK((ThickEdge(ThickPoint(6.,-1.), ThickPoint(8.,1.)) & ThickEdge(ThickPoint(7.5,0.), ThickPoint(9.,0.))) == ThickPoint(Interval::EMPTY_SET,Interval::EMPTY_SET)); // secant oblique lines, no intersection
-    CHECK((ThickEdge(ThickPoint(6.,-1.), ThickPoint(8.,1.)) & ThickEdge(ThickPoint(6.5,0.5), ThickPoint(6.5,2.))) == ThickPoint(Interval::EMPTY_SET,Interval::EMPTY_SET)); // secant oblique lines, no intersection
+    CHECK((Edge({8,4},{9,2}) & Edge({7.,3},{7.5,3})) == IntervalVector::empty(2)); // secant oblique lines, no intersection
+    CHECK((Edge({8,4},{9,2}) & Edge({8.5,8},{8.5,7})) == IntervalVector::empty(2)); // secant oblique lines, no intersection
+    CHECK((Edge({6,-1},{8,1}) & Edge({7.5,0},{9,0})) == IntervalVector::empty(2)); // secant oblique lines, no intersection
+    CHECK((Edge({6,-1},{8,1}) & Edge({6.5,0.5},{6.5,2})) == IntervalVector::empty(2)); // secant oblique lines, no intersection
   
     // Other tests
-    CHECK((ThickEdge(ThickPoint(8.,14.), ThickPoint(6.,13.)) & ThickEdge(ThickPoint(1.,1.), ThickPoint(1.,14.))) == ThickPoint(Interval::EMPTY_SET,Interval::EMPTY_SET));
+    CHECK((Edge({8,14},{6,13}) & Edge({1,1},{1,14})) == IntervalVector::empty(2));
+    CHECK((Edge({hull(-oo),0},{1,0}) & Edge({0,1},{0,-1})) == IntervalVector::zero(2));
+    CHECK((Edge({0,0},{1,2}) & Edge({0.5,0},{0.5,2})) == IntervalVector({0.5,1}));
+    CHECK((Edge({-1,-1},{0,0}) & Edge({9,3},{0,0})) == IntervalVector({0,0}));
+    CHECK((Edge({0,0},{10,0}) & Edge({2,0},{8,0})) == IntervalVector({{2,8},{0}})); // colinear case
+    CHECK((Edge({0,0},{10,10}) & Edge({2,2},{8,8})) == IntervalVector({{2,8},{2,8}})); // colinear case
+    CHECK((Edge({0,0},{10,0}) & Edge({2,1},{8,1})) == IntervalVector::empty(2)); // parallel case
+
+    CHECK((Edge({2,0},{6,4}) & Edge({6,5},{5,6})) == IntervalVector::empty(2));
+    CHECK(proj_intersection(Edge({2,0},{6,4}), Edge({6,5},{5,6})) == IntervalVector({6.5,4.5}));
   }
-*/
 }

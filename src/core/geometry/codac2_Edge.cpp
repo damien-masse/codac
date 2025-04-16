@@ -17,19 +17,19 @@ using namespace codac2;
 
 namespace codac2
 {
-  Edge::Edge(const std::array<Vector,2>& x)
-    : std::array<Vector,2>(x)
+  Edge::Edge(const std::array<IntervalVector,2>& x)
+    : std::array<IntervalVector,2>(x)
   {
     assert_release(x[0].size() == 2 && x[1].size() == 2);
   }
 
-  Edge::Edge(const Vector& x1, const Vector& x2)
-    : Edge(std::array<Vector,2>({ x1, x2 }))
+  Edge::Edge(const IntervalVector& x1, const IntervalVector& x2)
+    : Edge(std::array<IntervalVector,2>({ x1, x2 }))
   { }
 
   IntervalVector Edge::box() const
   {
-    return hull((*this)[0], (*this)[1]);
+    return hull((*this)[0],(*this)[1]);
   }
 
   BoolInterval Edge::intersects(const Edge& e) const
@@ -57,16 +57,16 @@ namespace codac2
 
     else // special cases of colinearity
     {
-      if(o1 == OrientationInterval::COLINEAR && box().contains(e1))
+      if(o1 == OrientationInterval::COLINEAR && box().is_superset(e1))
         return BoolInterval::TRUE;
 
-      else if(o2 == OrientationInterval::COLINEAR && box().contains(e2))
+      else if(o2 == OrientationInterval::COLINEAR && box().is_superset(e2))
         return BoolInterval::TRUE;
 
-      else if(o3 == OrientationInterval::COLINEAR && e.box().contains(x1))
+      else if(o3 == OrientationInterval::COLINEAR && e.box().is_superset(x1))
         return BoolInterval::TRUE;
 
-      else if(o4 == OrientationInterval::COLINEAR && e.box().contains(x2))
+      else if(o4 == OrientationInterval::COLINEAR && e.box().is_superset(x2))
         return BoolInterval::TRUE;
 
       else
@@ -74,9 +74,9 @@ namespace codac2
     }
   }
 
-  BoolInterval Edge::contains(const Vector& p) const
+  BoolInterval Edge::contains(const IntervalVector& p) const
   {
-    if(box().contains(p))
+    if(box().is_superset(p))
     {
       switch(orientation((*this)[0], (*this)[1], p))
       {
@@ -92,6 +92,17 @@ namespace codac2
     }
 
     return BoolInterval::FALSE;
+  }
+
+  bool Edge::operator==(const Edge& p) const
+  {
+    return ((*this)[0] == p[0] && (*this)[1] == p[1])
+      || ((*this)[1] == p[0] && (*this)[0] == p[1]);
+  }
+  
+  IntervalVector operator&(const Edge& e1, const Edge& e2)
+  {
+    return e1.box() & e2.box() & proj_intersection(e1,e2);
   }
   
   IntervalVector proj_intersection(const Edge& e1, const Edge& e2)

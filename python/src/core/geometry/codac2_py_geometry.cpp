@@ -46,4 +46,8 @@ void export_geometry(py::module& m)
   m.def("aligned", &aligned,
     BOOLINTERVAL_ALIGNED_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF,
     "p1"_a, "p2"_a, "p3"_a);
+
+  m.def("convex_hull", &convex_hull,
+    VECTOR_INTERVALVECTOR_CONVEX_HULL_VECTOR_INTERVALVECTOR,
+    "pts"_a);
 }

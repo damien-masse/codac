@@ -23,12 +23,12 @@ void export_Edge(py::module& m)
   py::class_<Edge> exported(m, "Edge", EDGE_MAIN);
   exported
 
-    .def(py::init<const std::array<Vector,2>&>(),
-      EDGE_EDGE_CONST_ARRAY_VECTOR2_REF,
+    .def(py::init<const std::array<IntervalVector,2>&>(),
+      EDGE_EDGE_CONST_ARRAY_INTERVALVECTOR2_REF,
       "x"_a)
 
-    .def(py::init<const Vector&,const Vector&>(),
-      EDGE_EDGE_CONST_VECTOR_REF_CONST_VECTOR_REF,
+    .def(py::init<const IntervalVector&,const IntervalVector&>(),
+      EDGE_EDGE_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF,
       "x1"_a, "x2"_a)
 
     .def("box", &Edge::box,
@@ -39,8 +39,21 @@ void export_Edge(py::module& m)
       "e"_a)
 
     .def("contains", &Edge::contains,
-      BOOLINTERVAL_EDGE_CONTAINS_CONST_VECTOR_REF_CONST,
+      BOOLINTERVAL_EDGE_CONTAINS_CONST_INTERVALVECTOR_REF_CONST,
       "p"_a)
+
+    .def(py::self == py::self,
+      BOOL_EDGE_OPERATOREQ_CONST_EDGE_REF_CONST,
+      "e"_a)
+
+    .def("__and__",
+        [](const Edge& e1, const Edge& e2) -> IntervalVector
+        {
+          return e1 & e2;
+        },
+      INTERVALVECTOR_OPERATORAND_CONST_EDGE_REF_CONST_EDGE_REF,
+      "e2"_a);
+
   ;
 
   m.def("proj_intersection", &proj_intersection,

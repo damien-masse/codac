@@ -24,15 +24,21 @@ namespace codac2
 
       Polygon(std::initializer_list<Vector> vertices);
       Polygon(const std::vector<Vector>& vertices);
+      explicit Polygon(const std::vector<IntervalVector>& vertices);
       Polygon(std::initializer_list<Edge> edges);
       Polygon(const std::vector<Edge>& edges);
+      explicit Polygon(const IntervalVector& x);
 
       const std::vector<Edge>& edges() const;
-      std::list<Vector> unsorted_vertices() const;
-      BoolInterval contains(const Vector& p) const;
+      std::list<IntervalVector> unsorted_vertices() const;
+      BoolInterval contains(const IntervalVector& p) const;
+
+      bool operator==(const Polygon& p) const;
 
     protected:
 
       const std::vector<Edge> _edges;
   };
+
+  std::ostream& operator<<(std::ostream& str, const Polygon& p);
 }

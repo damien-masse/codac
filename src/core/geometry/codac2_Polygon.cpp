@@ -10,6 +10,7 @@
 #include <iostream>
 #include "codac2_Polygon.h"
 #include "codac2_geometry.h"
+#include "codac2_template_tools.h"
 
 using namespace std;
 using namespace codac2;
@@ -21,6 +22,10 @@ namespace codac2
   { }
 
   Polygon::Polygon(const std::vector<Vector>& vertices)
+    : Polygon(vectorVector_to_vectorIntervalVector(vertices))
+  { }
+
+  Polygon::Polygon(const std::vector<IntervalVector>& vertices)
     : _edges(
       [vertices]
       {
@@ -51,26 +56,38 @@ namespace codac2
     : _edges(edges)
   { }
   
+  Polygon::Polygon(const IntervalVector& x)
+    : Polygon({
+        { x[0].lb(), x[1].lb() },
+        { x[0].ub(), x[1].lb() },
+        { x[0].ub(), x[1].ub() },
+        { x[0].lb(), x[1].ub() },
+      })
+  { }
+  
   const vector<Edge>& Polygon::edges() const
   {
     return _edges;
   }
   
-  list<Vector> Polygon::unsorted_vertices() const
+  list<IntervalVector> Polygon::unsorted_vertices() const
   {
-    list<Vector> l;
+    list<IntervalVector> l;
     for(const auto& ei : _edges)
       l.push_back(ei[0]);
 
     // Removing duplicates
-    l.sort([](const Vector& a, const Vector& b) {
-        return a[0] < b[0] || (a[0] == b[0] && a[1] < b[1]);
+    l.sort([](const IntervalVector& a, const IntervalVector& b) {
+        return a[0].lb() < b[0].lb()
+         || (a[0].lb() == b[0].lb() && a[1].lb() < b[1].lb())
+         || (a[0].lb() == b[0].lb() && a[1].lb() == b[1].lb() && a[0].ub() < b[0].ub())
+         || (a[0].lb() == b[0].lb() && a[1].lb() == b[1].lb() && a[0].ub() == b[0].ub() && a[1].ub() < b[1].ub());
       });
     l.unique();
     return l;
   }
 
-  BoolInterval Polygon::contains(const Vector& p) const
+  BoolInterval Polygon::contains(const IntervalVector& p) const
   {
     assert_release(p.size() == 2);
 
@@ -83,7 +100,7 @@ namespace codac2
 
     bool retry;
     double eps = 0.;
-    Edge transect(Vector(2),Vector(2));
+    Edge transect(IntervalVector(2),IntervalVector(2));
     // ^ selected transect (horizontal ray) for crossing the polygon.
     // Odd number of crossing => point is inside
     // Even number of crossing => point is outside
@@ -97,7 +114,7 @@ namespace codac2
       retry = false;
 
       // Horizontal ray candidate:
-      Edge try_transect { Vector({next_float(-oo),p[1] + eps}), p };
+      Edge try_transect { {{-oo,next_float(-oo)},p[1]+eps}, p };
 
       // The ray may pass through the vertices, we must double counting
       for(const auto& pi : unsorted_vertices())
@@ -146,5 +163,44 @@ namespace codac2
     }
     
     return (i%2 == 0) ? BoolInterval::FALSE : BoolInterval::TRUE;
+  }
+
+  bool Polygon::operator==(const Polygon& p) const
+  {
+    size_t n = _edges.size();
+    if(p.edges().size() != n)
+      return false;
+
+    size_t i; // looking for same reference of first value
+    for(i = 0 ; i < n ; i++)
+      if(_edges[0] == p.edges()[i])
+        break;
+
+    size_t way = 1;
+    if(n > 1)
+      way = (_edges[1] == p.edges()[(i+1)%n]) ? 1 : -1;
+
+    for(size_t j = 0 ; j < n ; j++)
+      if(_edges[j] != p.edges()[(i+way*j+n)%n])
+        return false;
+
+    return true;
+  }
+
+  ostream& operator<<(ostream& str, const Polygon& p)
+  {
+    str << "{ ";
+
+    for(size_t i = 0 ; i < p.edges().size() ; i++)
+    {
+      if(i != 0) str << ", ";
+      str << p.edges()[i][1];
+    }
+
+    if(p.edges().size() > 1)
+      str << ", " << p.edges()[0][0];
+
+    str << " }";
+    return str;
   }
 }
