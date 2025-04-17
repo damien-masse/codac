@@ -31,6 +31,7 @@ namespace codac2
 
       const std::vector<Edge>& edges() const;
       std::list<IntervalVector> unsorted_vertices() const;
+      std::vector<IntervalVector> sorted_vertices() const;
       BoolInterval contains(const IntervalVector& p) const;
 
       bool operator==(const Polygon& p) const;

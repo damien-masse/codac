@@ -141,6 +141,20 @@ namespace codac2
     l.unique();
     return l;
   }
+  
+  vector<IntervalVector> Polygon::sorted_vertices() const
+  {
+    vector<IntervalVector> v;
+    size_t n = _edges.size();
+
+    for(size_t i = 0 ; i < n ; i++)
+      v.push_back({ _edges[i][0][0], _edges[i][0][1] });
+
+    if(_edges[0][0] != _edges[n-1][1])
+      v.push_back({ _edges[n-1][1][0], _edges[n-1][1][1] });
+
+    return v;
+  }
 
   BoolInterval Polygon::contains(const IntervalVector& p) const
   {
@@ -252,15 +266,12 @@ namespace codac2
   {
     str << "{ ";
 
-    size_t n = p.edges().size();
-    for(size_t i = 0 ; i < n ; i++)
+    auto v = p.sorted_vertices();
+    for(size_t i = 0 ; i < v.size() ; i++)
     {
-      if(i != 0) str << " -- ";
-      str << p.edges()[i][0];
+      if(i > 0) str << " -- ";
+      str << " -- " << v[i];
     }
-
-    if(p.edges()[0][0] != p.edges()[n-1][1])
-      str << " -- " << p.edges()[n-1][1];
 
     str << " }";
     return str;

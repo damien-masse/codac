@@ -212,6 +212,19 @@ void Figure2D::draw_polygone(const vector<Vector>& x, const StyleProperties& s)
     output_fig->draw_polygone(x,s);
 }
 
+void Figure2D::draw_polygone(const Polygon& x, const StyleProperties& s)
+{
+  vector<Vector> w;
+  for(const auto& vi : x.sorted_vertices())
+  {
+    if(!vi.is_degenerated())
+      draw_point(vi.mid(),s); // revealing thick points
+    w.push_back(vi.mid());
+  }
+
+  return draw_polygone(w, s);
+}
+
 void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s)
 {
   assert_release(A.is_squared() && A.rows() == z.size());

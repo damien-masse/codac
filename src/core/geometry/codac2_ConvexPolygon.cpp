@@ -48,12 +48,12 @@ namespace codac2
   {
     vector<IntervalVector> inter;
 
-    auto v1 = p1.unsorted_vertices();
+    auto v1 = p1.sorted_vertices();
     for(const auto& vi : v1)
       if((p2.contains(vi) & BoolInterval::TRUE) == BoolInterval::TRUE)
         inter.push_back(vi);
 
-    auto v2 = p2.unsorted_vertices();
+    auto v2 = p2.sorted_vertices();
     for(const auto& vi : p2.unsorted_vertices())
       if((p1.contains(vi) & BoolInterval::TRUE) == BoolInterval::TRUE)
         inter.push_back(vi);
