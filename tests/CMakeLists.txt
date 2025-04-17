@@ -64,6 +64,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/geometry/codac2_tests_Edge
   core/geometry/codac2_tests_geometry
   core/geometry/codac2_tests_Polygon
+  ../doc/manual/manual/geometry/src
 
   core/matrices/codac2_tests_arithmetic_add
   core/matrices/codac2_tests_arithmetic_div
