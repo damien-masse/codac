@@ -12,6 +12,7 @@
 #include <pybind11/stl.h>
 #include <codac2_Edge.h>
 #include "codac2_py_Edge_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
+#include "codac2_py_matlab.h"
 
 using namespace std;
 using namespace codac2;
@@ -30,6 +31,18 @@ void export_Edge(py::module& m)
     .def(py::init<const IntervalVector&,const IntervalVector&>(),
       EDGE_EDGE_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF,
       "x1"_a, "x2"_a)
+
+    .def("__getitem__", [](const Edge& e, Index_type index) -> const IntervalVector&
+        {
+          matlab::test_integer(index);
+          return e[matlab::input_index(index)];
+        }, py::return_value_policy::reference_internal)
+
+    .def("__setitem__", [](Edge& e, Index_type index, const IntervalVector& x)
+        {
+          matlab::test_integer(index);
+          e[matlab::input_index(index)] = x;
+        })
 
     .def("box", &Edge::box,
       INTERVALVECTOR_EDGE_BOX_CONST)
@@ -58,6 +71,10 @@ void export_Edge(py::module& m)
 
   m.def("proj_intersection", &proj_intersection,
     INTERVALVECTOR_PROJ_INTERSECTION_CONST_EDGE_REF_CONST_EDGE_REF,
+    "e1"_a, "e2"_a);
+
+  m.def("colinear", &colinear,
+    BOOLINTERVAL_COLINEAR_CONST_EDGE_REF_CONST_EDGE_REF,
     "e1"_a, "e2"_a);
   
   py::implicitly_convertible<py::list,Edge>();

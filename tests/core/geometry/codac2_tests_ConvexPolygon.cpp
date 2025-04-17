@@ -16,6 +16,26 @@
 using namespace std;
 using namespace codac2;
 
+TEST_CASE("ConvexPolygon - degenerate cases")
+{
+  {
+    ConvexPolygon p1({{0,4}});
+    CHECK(p1.edges().size() == 1);
+    CHECK(p1.edges()[0][0] == IntervalVector({0,4}));
+    CHECK(p1.edges()[0][1] == IntervalVector({0,4}));
+  }
+
+  {
+    ConvexPolygon p1({{0,4},{2,8}});
+    CHECK(p1.edges().size() == 2);
+    CHECK(p1.edges()[0][0] == IntervalVector({2,8}));
+    CHECK(p1.edges()[0][1] == IntervalVector({0,4}));
+    CHECK(p1.edges()[1][0] == IntervalVector({0,4}));
+    CHECK(p1.edges()[1][1] == IntervalVector({2,8}));
+    CHECK(p1 == ConvexPolygon({{2,8},{0,4}}));
+  }
+}
+
 TEST_CASE("ConvexPolygon - intersection")
 {
   {
@@ -114,6 +134,7 @@ TEST_CASE("ConvexPolygon - intersection")
     ConvexPolygon p2({{4,1},{4,5}});
 
     auto q = p1 & p2;
+    
     CHECK(Approx<Polygon>(q) == Polygon({{4,4.4},{4,1.6}}));
     CHECK(q.unsorted_vertices().size() == 2);
   }

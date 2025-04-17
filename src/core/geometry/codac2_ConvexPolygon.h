@@ -25,5 +25,6 @@ namespace codac2
       explicit ConvexPolygon(const IntervalVector& x);
   };
 
+  // The intersection of two convex polygons is a convex polygon
   ConvexPolygon operator&(const ConvexPolygon& p1, const ConvexPolygon& p2);
 }
