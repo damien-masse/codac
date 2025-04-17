@@ -32,18 +32,34 @@ namespace codac2
         assert_release(!v.empty());
         vector<Edge> edges;
 
-        for(size_t i = 0 ; i < v.size() ; i++)
+        if(v.size() == 1)
         {
-          assert_release(v[i].size() == 2);
-
-          if(i > 0 && v[i] == v[i-1])
-            continue; // same consecutive vertices are merged
-
-          if(i == 0) edges.push_back({ v[i], v[i] });
-          else       edges.push_back({ edges[i-1][1], v[i] });
+          assert_release(v[0].size() == 2);
+          edges = { Edge(v[0],v[0]) };
         }
 
-        edges[0][0] = edges[edges.size()-1][1]; // closing the polygon
+        else if(v.size() == 2)
+        {
+          assert_release(v[0].size() == 2 && v[1].size() == 2);
+          edges = { Edge(v[0],v[1]) };
+        }
+
+        else
+        {
+          for(size_t i = 0 ; i < v.size() ; i++)
+          {
+            assert_release(v[i].size() == 2);
+
+            if(i > 0 && v[i] == v[i-1])
+              continue; // same consecutive vertices are merged
+
+            if(i == 0) edges.push_back({ v[i], v[i] });
+            else       edges.push_back({ edges[i-1][1], v[i] });
+          }
+
+          edges[0][0] = edges[edges.size()-1][1]; // closing the polygon
+        }
+        
         return edges;
       }())
   { }
@@ -94,6 +110,10 @@ namespace codac2
     for(const auto& ei : _edges)
       l.push_back(ei[0]);
 
+    size_t n = _edges.size();
+    if(_edges[0][0] != _edges[n-1][1])
+      l.push_back(_edges[n-1][1]);
+
     // Removing duplicates
     l.sort([](const IntervalVector& a, const IntervalVector& b) {
         return a[0].lb() < b[0].lb()
@@ -115,6 +135,11 @@ namespace codac2
       if(b == BoolInterval::TRUE || b == BoolInterval::UNKNOWN)
         return b;
     }
+
+    if(_edges.size() <= 2) // if the polygon has no volume
+      // Then it contains a point only if the point is on one of,
+      // its edges, which has been tested before
+      return BoolInterval::FALSE;
 
     bool retry;
     double eps = 0.;
@@ -209,11 +234,15 @@ namespace codac2
   {
     str << "{ ";
 
-    for(size_t i = 0 ; i < p.edges().size() ; i++)
+    size_t n = p.edges().size();
+    for(size_t i = 0 ; i < n ; i++)
     {
-      if(i != 0) str << ", ";
+      if(i != 0) str << " -- ";
       str << p.edges()[i][0];
     }
+
+    if(p.edges()[0][0] != p.edges()[n-1][1])
+      str << " -- " << p.edges()[n-1][1];
 
     str << " }";
     return str;

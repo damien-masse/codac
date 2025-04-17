@@ -57,6 +57,7 @@ namespace codac2
         inter.push_back(v2);
 
     for(const auto& e1 : p1.edges())
+    {
       for(const auto& e2 : p2.edges())
       {
         auto x = e1 & e2;
@@ -76,7 +77,8 @@ namespace codac2
             inter.push_back(x);
         }
       }
-
+    }
+    
     return ConvexPolygon(inter);
   }
 }

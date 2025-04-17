@@ -65,7 +65,14 @@ void export_Edge(py::module& m)
           return e1 & e2;
         },
       INTERVALVECTOR_OPERATORAND_CONST_EDGE_REF_CONST_EDGE_REF,
-      "e2"_a);
+      "e2"_a)
+
+    .def("__repr__", [](const Edge& x) {
+          std::ostringstream stream;
+          stream << x;
+          return string(stream.str()); 
+        },
+      OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_EDGE_REF)
 
   ;
 

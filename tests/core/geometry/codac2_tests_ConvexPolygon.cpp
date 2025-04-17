@@ -27,11 +27,9 @@ TEST_CASE("ConvexPolygon - degenerate cases")
 
   {
     ConvexPolygon p1({{0,4},{2,8}});
-    CHECK(p1.edges().size() == 2);
-    CHECK(p1.edges()[0][0] == IntervalVector({2,8}));
-    CHECK(p1.edges()[0][1] == IntervalVector({0,4}));
-    CHECK(p1.edges()[1][0] == IntervalVector({0,4}));
-    CHECK(p1.edges()[1][1] == IntervalVector({2,8}));
+    CHECK(p1.edges().size() == 1);
+    CHECK(p1.edges()[0][0] == IntervalVector({0,4}));
+    CHECK(p1.edges()[0][1] == IntervalVector({2,8}));
     CHECK(p1 == ConvexPolygon({{2,8},{0,4}}));
   }
 }
@@ -65,42 +63,42 @@ TEST_CASE("ConvexPolygon - intersection")
       }));
   }
 
-  { // Polygons intersections, test 3 (big box)
+  { // Big box
     ConvexPolygon p1({{1,2},{3,4},{5,1},{2,1}});
     ConvexPolygon p2(IntervalVector({{-10,10},{-10,10}}));
 
     CHECK((p1 & p2) == p1); // same polygon
   }
 
-  { // Polygons intersections, test 4 (inner box)
+  { // Inner box
     ConvexPolygon p1({{1,2},{3,4},{5,1},{2,1}});
     ConvexPolygon p2(IntervalVector({{2.8,3},{2.8,3}}));
 
     CHECK((p1 & p2) == p2); // same box
   }
 
-  { // Polygons intersections, test 5
+  {
     ConvexPolygon p1({{2,1},{3,1},{4,2},{4,3},{3,4},{2,4},{1,3},{1,2}});
     ConvexPolygon p2(IntervalVector({{1,4},{1,4}}));
 
     CHECK((p1 & p2) == p1); // same polygon
   }
 
-  { // Polygons intersections, test 6 (shifted polygon points declaration)
+  { // Shifted polygon points declaration
     ConvexPolygon p1({{3,4},{2,4},{1,3},{1,2},{2,1},{3,1},{4,2},{4,3}});
     ConvexPolygon p2(IntervalVector({{1,4},{1,4}}));
 
     CHECK((p1 & p2) == p1); // same polygon
   }
 
-  { // Polygons intersections, test 7 (degenerate case)
+  { // Degenerate case
     ConvexPolygon p1({{4000,200}});
     ConvexPolygon p2(IntervalVector({4000,200}));
 
     CHECK((p1 & p2) == p1); // same polygon
   }
 
-  { // Polygons intersections, test 8
+  {
     ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
     ConvexPolygon p2(IntervalVector({{2,6},{1,5}}));
 
@@ -110,7 +108,7 @@ TEST_CASE("ConvexPolygon - intersection")
     CHECK(q.unsorted_vertices().size() == 4);
   }
 
-  { // Polygons intersections, test 9
+  {
     ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
     ConvexPolygon p2(IntervalVector({{3,5},{1,5}}));
 
@@ -120,16 +118,30 @@ TEST_CASE("ConvexPolygon - intersection")
     CHECK(q.unsorted_vertices().size() == 4);
   }
 
-  { // Polygons intersections, test 10 (degenerated box)
+  { // Degenerated box
     ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
     ConvexPolygon p2(IntervalVector({{4},{1,5}}));
+
+    CHECK(p1.edges()[0] == Edge({{2,4},{1,1}}));
+    CHECK(p1.edges()[1] == Edge({{1,1},{6,2}}));
+    CHECK(p1.edges()[2] == Edge({{6,2},{7,5}}));
+    CHECK(p1.edges()[3] == Edge({{7,5},{2,4}}));
+    CHECK(p1.edges().size() == 4);
+
+    CHECK(p2.edges()[0] == Edge({{4,1},{4,5}}));
+    CHECK(p2.edges().size() == 1);
+
+    CHECK((p1.edges()[0] & p2.edges()[0]) == IntervalVector::empty(2));
+    CHECK(Approx(p1.edges()[1] & p2.edges()[0]) == IntervalVector({4,1.6}));
+    CHECK((p1.edges()[2] & p2.edges()[0]) == IntervalVector::empty(2));
+    CHECK(Approx(p1.edges()[3] & p2.edges()[0]) == IntervalVector({4,4.4}));
 
     auto q = p1 & p2;
     CHECK(Approx<Polygon>(q) == Polygon({{4,4.4},{4,1.6}}));
     CHECK(q.unsorted_vertices().size() == 2);
   }
 
-  { // Polygons intersections, test 10 (degenerated polygon)
+  { // Degenerated polygon
     ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
     ConvexPolygon p2({{4,1},{4,5}});
 

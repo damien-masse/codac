@@ -159,7 +159,7 @@ namespace codac2
 
   ostream& operator<<(ostream& str, const Edge& e)
   {
-    str << e[0] << "--" << e[1];
+    str << e[0] << " -- " << e[1];
     return str;
   }
 }
