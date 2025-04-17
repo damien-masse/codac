@@ -14,7 +14,23 @@
 using namespace std;
 using namespace codac2;
 
-TEST_CASE("Polygon")
+TEST_CASE("Polygon base")
+{
+  Polygon p1({{3,4}});
+  CHECK(p1 == Polygon({{3,4}}));
+
+  Polygon p2({{3,4},{1,2}});
+  CHECK(p2 == Polygon({{3,4},{1,2}}));
+  CHECK(p2 == Polygon({{1,2},{3,4}}));
+
+  Polygon p3({{3,4},{1,2},{5,1}});
+  CHECK(p3 == Polygon({{3,4},{1,2},{5,1}}));
+  CHECK(p3 == Polygon({{1,2},{5,1},{3,4}}));
+  CHECK(p3 == Polygon({{5,1},{1,2},{3,4}}));
+  CHECK(p3 == Polygon({{1,2},{3,4},{5,1}}));
+}
+
+TEST_CASE("Polygon contains")
 {
   Polygon p1({{3,-1},{3,4},{5,6},{-1,1}});
   CHECK(p1.contains({3.1,3}) == BoolInterval::FALSE);

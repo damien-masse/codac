@@ -219,12 +219,13 @@ namespace codac2
       if(_edges[0] == p.edges()[i])
         break;
 
-    size_t way = 1;
+    int way = 1;
     if(n > 1)
       way = (_edges[1] == p.edges()[(i+1)%n]) ? 1 : -1;
+    assert(way == 1 || (way == -1 && _edges[1] == p.edges()[(i-1+2*n)%n]));
 
     for(size_t j = 0 ; j < n ; j++)
-      if(_edges[j] != p.edges()[(i+way*j+n)%n])
+      if(_edges[j] != p.edges()[(i+way*j+2*n)%n])
         return false;
 
     return true;
