@@ -134,12 +134,13 @@ namespace codac2
           if(Approx<Edge>(p1.edges()[0], p2._eps) == p2._x.edges()[i])
             break;
 
-        size_t way = 1;
+        int way = 1;
         if(n > 1)
           way = (Approx<Edge>(p1.edges()[1], p2._eps) == p2._x.edges()[(i+1)%n]) ? 1 : -1;
+        assert(way == 1 || (way == -1 && p1.edges()[1] == p2._x.edges()[(i-1+2*n)%n]));
 
         for(size_t j = 0 ; j < n ; j++)
-          if(Approx<Edge>(p1.edges()[j], p2._eps) != p2._x.edges()[(i+way*j+n)%n])
+          if(Approx<Edge>(p1.edges()[j], p2._eps) != p2._x.edges()[(i+way*j+2*n)%n])
             return false;
 
         return true;
