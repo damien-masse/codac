@@ -12,6 +12,36 @@ from codac import *
 
 class TestConvexPolygon(unittest.TestCase):
 
+  def tests_ConvexPolygon_degenerate_base(self):
+
+    p = ConvexPolygon([[1,2],[1,2]])
+    self.assertTrue(len(p.unsorted_vertices()) == 1)
+
+    p = ConvexPolygon([[1,3],[1,2],[1,2]])
+    self.assertTrue(len(p.unsorted_vertices()) == 2)
+
+    p = ConvexPolygon([[1,2],[1,3],[1,2],[1,2]])
+    self.assertTrue(len(p.unsorted_vertices()) == 2)
+
+    p = ConvexPolygon([[1,2],[1,3],[1,3],[1,2],[1,2]])
+    self.assertTrue(len(p.unsorted_vertices()) == 2)
+
+    self.assertTrue(len(convex_hull([[1,2],[1,2],[1,2]])) == 1)
+    p = ConvexPolygon([[1,2],[1,2],[1,2]])
+    self.assertTrue(len(p.unsorted_vertices()) == 1)
+
+    p = ConvexPolygon([[1,2],[1,3]])
+    self.assertTrue(len(p.unsorted_vertices()) == 2)
+
+    p = ConvexPolygon([[1,2],[1,3],[1,2]])
+    self.assertTrue(len(p.unsorted_vertices()) == 2)
+
+    p = ConvexPolygon([[1,2],[1,3],[1,2],[1,2]])
+    self.assertTrue(len(p.unsorted_vertices()) == 2)
+
+    p = ConvexPolygon([[1,2],[1,3],[1,3],[1,2]])
+    self.assertTrue(len(p.unsorted_vertices()) == 2)
+
   def tests_ConvexPolygon_degenerate_cases(self):
 
     p1 = ConvexPolygon([[0,4]])
@@ -98,19 +128,19 @@ class TestConvexPolygon(unittest.TestCase):
     p2 = ConvexPolygon(IntervalVector([[4],[1,5]]))
     print("11 ", p1 & p2)
 
-    self.assertTrue(p1.edges()[0] == Edge([[2,4],[1,1]]))
-    self.assertTrue(p1.edges()[1] == Edge([[1,1],[6,2]]))
-    self.assertTrue(p1.edges()[2] == Edge([[6,2],[7,5]]))
-    self.assertTrue(p1.edges()[3] == Edge([[7,5],[2,4]]))
+    self.assertTrue(p1.edges()[0] == Edge([[1,1],[6,2]]))
+    self.assertTrue(p1.edges()[1] == Edge([[6,2],[7,5]]))
+    self.assertTrue(p1.edges()[2] == Edge([[7,5],[2,4]]))
+    self.assertTrue(p1.edges()[3] == Edge([[2,4],[1,1]]))
     self.assertTrue(len(p1.edges()) == 4)
 
     self.assertTrue(p2.edges()[0] == Edge([[4,1],[4,5]]))
     self.assertTrue(len(p2.edges()) == 1)
 
-    self.assertTrue((p1.edges()[0] & p2.edges()[0]) == IntervalVector.empty(2))
-    self.assertTrue(Approx(p1.edges()[1] & p2.edges()[0]) == IntervalVector([4,1.6]))
-    self.assertTrue((p1.edges()[2] & p2.edges()[0]) == IntervalVector.empty(2))
-    self.assertTrue(Approx(p1.edges()[3] & p2.edges()[0]) == IntervalVector([4,4.4]))
+    self.assertTrue((p1.edges()[1] & p2.edges()[0]) == IntervalVector.empty(2))
+    self.assertTrue(Approx(p1.edges()[0] & p2.edges()[0]) == IntervalVector([4,1.6]))
+    self.assertTrue((p1.edges()[3] & p2.edges()[0]) == IntervalVector.empty(2))
+    self.assertTrue(Approx(p1.edges()[2] & p2.edges()[0]) == IntervalVector([4,4.4]))
 
     q = p1 & p2
     self.assertTrue(Approx(q) == Polygon([[4,4.4],[4,1.6]]))

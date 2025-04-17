@@ -48,37 +48,38 @@ namespace codac2
   {
     vector<IntervalVector> inter;
 
-    for(const auto& v1 : p1.unsorted_vertices())
-      if((p2.contains(v1) & BoolInterval::TRUE) == BoolInterval::TRUE)
-        inter.push_back(v1);
+    auto v1 = p1.unsorted_vertices();
+    for(const auto& vi : v1)
+      if((p2.contains(vi) & BoolInterval::TRUE) == BoolInterval::TRUE)
+        inter.push_back(vi);
 
-    for(const auto& v2 : p2.unsorted_vertices())
-      if((p1.contains(v2) & BoolInterval::TRUE) == BoolInterval::TRUE)
-        inter.push_back(v2);
+    auto v2 = p2.unsorted_vertices();
+    for(const auto& vi : p2.unsorted_vertices())
+      if((p1.contains(vi) & BoolInterval::TRUE) == BoolInterval::TRUE)
+        inter.push_back(vi);
 
-    for(const auto& e1 : p1.edges())
-    {
-      for(const auto& e2 : p2.edges())
-      {
-        auto x = e1 & e2;
-        if(!x.is_empty())
+    if(v1.size() > 1 && v2.size() > 1)
+      for(const auto& e1 : p1.edges())
+        for(const auto& e2 : p2.edges())
         {
-          // In case of colinear edges, the intersection would result in
-          // a large box (infinite solutions): end points are kept.
-          if((colinear(e1,e2) & BoolInterval::TRUE) == BoolInterval::TRUE)
+          auto x = e1 & e2;
+          if(!x.is_empty())
           {
-            if(e1[0].intersects(x)) inter.push_back(e1[0]);
-            if(e1[1].intersects(x)) inter.push_back(e1[1]);
-            if(e2[0].intersects(x)) inter.push_back(e2[0]);
-            if(e2[1].intersects(x)) inter.push_back(e2[1]);
-          }
+            // In case of colinear edges, the intersection would result in
+            // a large box (infinite solutions): end points are kept.
+            if((colinear(e1,e2) & BoolInterval::TRUE) == BoolInterval::TRUE)
+            {
+              if(e1[0].intersects(x)) inter.push_back(e1[0]);
+              if(e1[1].intersects(x)) inter.push_back(e1[1]);
+              if(e2[0].intersects(x)) inter.push_back(e2[0]);
+              if(e2[1].intersects(x)) inter.push_back(e2[1]);
+            }
 
-          else
-            inter.push_back(x);
+            else
+              inter.push_back(x);
+          }
         }
-      }
-    }
-    
+
     return ConvexPolygon(inter);
   }
 }

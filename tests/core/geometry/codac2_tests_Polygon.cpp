@@ -76,3 +76,29 @@ TEST_CASE("Polygon contains")
   Polygon p3({{0,1},{1,0},{0,0}});
   CHECK(p3.contains({1,1}) == BoolInterval::FALSE);
 }
+
+TEST_CASE("Polygon contains - degenerated cases")
+{
+  Polygon p1({{1,1}});
+  CHECK(p1.contains(IntervalVector({1,1})) == BoolInterval::TRUE);
+  CHECK(p1.contains(IntervalVector({2,1})) == BoolInterval::FALSE);
+  CHECK(p1.contains(IntervalVector({2,2})) == BoolInterval::FALSE);
+  CHECK(p1.contains(IntervalVector({1,2})) == BoolInterval::FALSE);
+  CHECK(p1.contains(IntervalVector({-10,1})) == BoolInterval::FALSE);
+  CHECK(p1.contains(IntervalVector({10,1})) == BoolInterval::FALSE);
+
+  Polygon p2({{1,1},{3,2}});
+  CHECK(p2.contains(IntervalVector({1,1})) == BoolInterval::TRUE);
+  CHECK(p2.contains(IntervalVector({3,2})) == BoolInterval::TRUE);
+  CHECK(p2.contains(IntervalVector({2,1.5})) == BoolInterval::TRUE);
+
+  Polygon p3({{1,1},{3,1}});
+  CHECK(p3.contains(IntervalVector({1,1})) == BoolInterval::TRUE);
+  CHECK(p3.contains(IntervalVector({3,1})) == BoolInterval::TRUE);
+  CHECK(p3.contains(IntervalVector({2,1})) == BoolInterval::TRUE);
+
+  Polygon p4({{1,1},{1,3}});
+  CHECK(p4.contains(IntervalVector({1,1})) == BoolInterval::TRUE);
+  CHECK(p4.contains(IntervalVector({1,3})) == BoolInterval::TRUE);
+  CHECK(p4.contains(IntervalVector({1,2})) == BoolInterval::TRUE);
+}

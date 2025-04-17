@@ -25,6 +25,11 @@ namespace codac2
     : Polygon(vectorVector_to_vectorIntervalVector(vertices))
   { }
 
+  Interval dist_(const IntervalVector& a, const IntervalVector& b)
+  {
+    return sqr(a[0]-b[0])+sqr(a[1]-b[1]);
+  }
+
   Polygon::Polygon(const std::vector<IntervalVector>& v)
     : _edges(
       [v]
@@ -46,18 +51,30 @@ namespace codac2
 
         else
         {
-          for(size_t i = 0 ; i < v.size() ; i++)
+          vector<IntervalVector> v_noaligned { v[0] };
+
+          size_t farthest = 1, n = v.size();
+          for(size_t i = 1 ; i < n+1 ; i++)
           {
-            assert_release(v[i].size() == 2);
+            if(v[i-1] == v[i%n])
+              continue;
 
-            if(i > 0 && v[i] == v[i-1])
-              continue; // same consecutive vertices are merged
+            if(i < n && aligned(v[i-1],v[i%n],v[(i+1)%n]) == BoolInterval::TRUE)
+            {
+              if(dist_(v[i-1],v[farthest%n]).mid() < dist_(v[i-1],v[(i+1)%n]).mid())
+                farthest = std::max(farthest,(i+1)%n);
+            }
 
-            if(i == 0) edges.push_back({ v[i], v[i] });
-            else       edges.push_back({ edges[i-1][1], v[i] });
+            else
+            {
+              if(farthest%n != 0)
+                v_noaligned.push_back(v[farthest%n]);
+              farthest = i+1;
+            }
           }
 
-          edges[0][0] = edges[edges.size()-1][1]; // closing the polygon
+          for(size_t i = 0 ; i < v_noaligned.size() ; i++)
+            edges.push_back({ v_noaligned[i], v_noaligned[(i+1)%v_noaligned.size()] });
         }
         
         return edges;

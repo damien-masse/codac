@@ -54,5 +54,30 @@ class TestPolygon(unittest.TestCase):
     p3 = Polygon([[0,1],[1,0],[0,0]])
     self.assertTrue(p3.contains([1,1]) == BoolInterval.FALSE)
 
+  def tests_Polygon_degenerated_cases(self):
+
+    p1 = Polygon([[1,1]])
+    self.assertTrue(p1.contains(IntervalVector([1,1])) == BoolInterval.TRUE)
+    self.assertTrue(p1.contains(IntervalVector([2,1])) == BoolInterval.FALSE)
+    self.assertTrue(p1.contains(IntervalVector([2,2])) == BoolInterval.FALSE)
+    self.assertTrue(p1.contains(IntervalVector([1,2])) == BoolInterval.FALSE)
+    self.assertTrue(p1.contains(IntervalVector([-10,1])) == BoolInterval.FALSE)
+    self.assertTrue(p1.contains(IntervalVector([10,1])) == BoolInterval.FALSE)
+
+    p2 = Polygon([[1,1],[3,2]])
+    self.assertTrue(p2.contains(IntervalVector([1,1])) == BoolInterval.TRUE)
+    self.assertTrue(p2.contains(IntervalVector([3,2])) == BoolInterval.TRUE)
+    self.assertTrue(p2.contains(IntervalVector([2,1.5])) == BoolInterval.TRUE)
+
+    p3 = Polygon([[1,1],[3,1]])
+    self.assertTrue(p3.contains(IntervalVector([1,1])) == BoolInterval.TRUE)
+    self.assertTrue(p3.contains(IntervalVector([3,1])) == BoolInterval.TRUE)
+    self.assertTrue(p3.contains(IntervalVector([2,1])) == BoolInterval.TRUE)
+
+    p4 = Polygon([[1,1],[1,3]])
+    self.assertTrue(p4.contains(IntervalVector([1,1])) == BoolInterval.TRUE)
+    self.assertTrue(p4.contains(IntervalVector([1,3])) == BoolInterval.TRUE)
+    self.assertTrue(p4.contains(IntervalVector([1,2])) == BoolInterval.TRUE)
+
 if __name__ ==  '__main__':
   unittest.main()

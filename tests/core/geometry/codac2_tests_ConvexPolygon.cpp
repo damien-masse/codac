@@ -12,9 +12,59 @@
 #include <codac2_ConvexPolygon.h>
 #include <codac2_Figure2D.h>
 #include <codac2_Approx.h>
+#include <codac2_geometry.h>
 
 using namespace std;
 using namespace codac2;
+
+TEST_CASE("ConvexPolygon - base")
+{
+  {
+    ConvexPolygon p(vector<IntervalVector>({{1,2},{1,2}}));
+    CHECK(p.unsorted_vertices().size() == 1);
+  }
+
+  {
+    ConvexPolygon p(vector<IntervalVector>({{1,3},{1,2},{1,2}}));
+    CHECK(p.unsorted_vertices().size() == 2);
+  }
+
+  {
+    ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,2},{1,2}}));
+    CHECK(p.unsorted_vertices().size() == 2);
+  }
+
+  {
+    ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,3},{1,2},{1,2}}));
+    CHECK(p.unsorted_vertices().size() == 2);
+  }
+
+  {
+    CHECK(convex_hull(vector<IntervalVector>({{1,2},{1,2},{1,2}})).size() == 1);
+    ConvexPolygon p(vector<IntervalVector>({{1,2},{1,2},{1,2}}));
+    CHECK(p.unsorted_vertices().size() == 1);
+  }
+
+  {
+    ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3}}));
+    CHECK(p.unsorted_vertices().size() == 2);
+  }
+
+  {
+    ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,2}}));
+    CHECK(p.unsorted_vertices().size() == 2);
+  }
+
+  {
+    ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,2},{1,2}}));
+    CHECK(p.unsorted_vertices().size() == 2);
+  }
+
+  {
+    ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,3},{1,2}}));
+    CHECK(p.unsorted_vertices().size() == 2);
+  }
+}
 
 TEST_CASE("ConvexPolygon - degenerate cases")
 {
@@ -122,19 +172,19 @@ TEST_CASE("ConvexPolygon - intersection")
     ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
     ConvexPolygon p2(IntervalVector({{4},{1,5}}));
 
-    CHECK(p1.edges()[0] == Edge({{2,4},{1,1}}));
-    CHECK(p1.edges()[1] == Edge({{1,1},{6,2}}));
-    CHECK(p1.edges()[2] == Edge({{6,2},{7,5}}));
-    CHECK(p1.edges()[3] == Edge({{7,5},{2,4}}));
+    CHECK(p1.edges()[0] == Edge({{1,1},{6,2}}));
+    CHECK(p1.edges()[1] == Edge({{6,2},{7,5}}));
+    CHECK(p1.edges()[2] == Edge({{7,5},{2,4}}));
+    CHECK(p1.edges()[3] == Edge({{2,4},{1,1}}));
     CHECK(p1.edges().size() == 4);
 
     CHECK(p2.edges()[0] == Edge({{4,1},{4,5}}));
     CHECK(p2.edges().size() == 1);
 
-    CHECK((p1.edges()[0] & p2.edges()[0]) == IntervalVector::empty(2));
-    CHECK(Approx(p1.edges()[1] & p2.edges()[0]) == IntervalVector({4,1.6}));
-    CHECK((p1.edges()[2] & p2.edges()[0]) == IntervalVector::empty(2));
-    CHECK(Approx(p1.edges()[3] & p2.edges()[0]) == IntervalVector({4,4.4}));
+    CHECK((p1.edges()[1] & p2.edges()[0]) == IntervalVector::empty(2));
+    CHECK(Approx(p1.edges()[0] & p2.edges()[0]) == IntervalVector({4,1.6}));
+    CHECK((p1.edges()[3] & p2.edges()[0]) == IntervalVector::empty(2));
+    CHECK(Approx(p1.edges()[2] & p2.edges()[0]) == IntervalVector({4,4.4}));
 
     auto q = p1 & p2;
     CHECK(Approx<Polygon>(q) == Polygon({{4,4.4},{4,1.6}}));
