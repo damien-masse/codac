@@ -37,14 +37,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mathjax_stmaryrd.js
         set(NULL_DEST "/dev/null")
       endif()
 
-      #add_custom_target(api
-      #                  COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation... "
-      #                  COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} > ${NULL_DEST}
-      #                  COMMAND ${CMAKE_COMMAND} -E echo "done."
-      #                  )
-
       message(STATUS "Building API Documentation (mandatory for Python binding)")
       execute_process(COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} OUTPUT_QUIET)
+      add_custom_target(api COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} OUTPUT_QUIET)
 
       install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/api/html 
               DESTINATION share/doc/${CMAKE_PROJECT_NAME}/api

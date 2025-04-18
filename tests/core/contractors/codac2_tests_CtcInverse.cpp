@@ -131,42 +131,42 @@ TEST_CASE("CtcInverse")
 
     {
       IntervalVector b({{0,0.8},{-2.28,-1.56}});
-      //DefaultView::draw_box(b);
+      //DefaultFigure::draw_box(b);
       c.contract(b);
       CHECK(b == IntervalVector::empty(2));
-      //DefaultView::draw_box(b,Color::blue());
+      //DefaultFigure::draw_box(b,Color::blue());
     }
 
     {
       IntervalVector b({{4,5.4},{-0.05,2.45}});
-      //DefaultView::draw_box(b);
+      //DefaultFigure::draw_box(b);
       c.contract(b);
       CHECK(Approx(b,1e-2) == IntervalVector({{4.0397,5.40},{1.9089,2.45}}));
-      //DefaultView::draw_box(b,Color::blue());
+      //DefaultFigure::draw_box(b,Color::blue());
     }
 
     {
       IntervalVector b({{6.25,6.7},{0.9,1.85}});
-      //DefaultView::draw_box(b);
+      //DefaultFigure::draw_box(b);
       c.contract(b);
       CHECK(Approx(b,1e-2) == IntervalVector({{6.25,6.67},{0.9,1.351}}));
-      //DefaultView::draw_box(b,Color::blue());
+      //DefaultFigure::draw_box(b,Color::blue());
     }
 
     {
       IntervalVector b({{-6,-5},{0,2}});
-      //DefaultView::draw_box(b);
+      //DefaultFigure::draw_box(b);
       c.contract(b);
       CHECK(b == IntervalVector::empty(2));
-      //DefaultView::draw_box(b,Color::blue());
+      //DefaultFigure::draw_box(b,Color::blue());
     }
 
     {
       IntervalVector b({{2,3},{-1,1}});
-      //DefaultView::draw_box(b);
+      //DefaultFigure::draw_box(b);
       c.contract(b);
       CHECK(b == IntervalVector::empty(2));
-      //DefaultView::draw_box(b,Color::blue());
+      //DefaultFigure::draw_box(b,Color::blue());
     }
   }
   
@@ -231,7 +231,7 @@ TEST_CASE("ParabolasExample")
   IntervalVector x0 {{0,1},{0,1},{0.05,0.18},{0.05,0.18}};
 
   //draw_while_paving(x0, ctc, 0.001);
-  //DefaultView::set_axes(axis(0,{0.11,0.23}), axis(1,{0.1,0.22}));
+  //DefaultFigure::set_axes(axis(0,{0.11,0.23}), axis(1,{0.1,0.22}));
 
   auto p = pave(x0, ctc, 0.01);
   auto cs = p.connected_subsets();
@@ -244,5 +244,5 @@ TEST_CASE("ParabolasExample")
   }));
 
   //for(const auto& bi : cs)
-  //  DefaultView::draw_box(bi.box().subvector(0,1));
+  //  DefaultFigure::draw_box(bi.box().subvector(0,1));
 }

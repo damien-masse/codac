@@ -19,6 +19,7 @@ extensions = [
     'sphinx_math_dollar',
     'sphinx.ext.mathjax',
     'sphinx_tabs.tabs',
+    'breathe',
 ]
 
 templates_path = ['_templates']
@@ -70,4 +71,8 @@ mathjax3_config = {
     "inlineMath": [['\\(', '\\)']],
     "displayMath": [["\\[", "\\]"]],
   }
+}
+
+breathe_projects = {
+  "codac": "../api/xml"
 }

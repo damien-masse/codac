@@ -16,7 +16,7 @@
 
 namespace codac2
 {
-  template<typename X>
+  template<typename X=IntervalVector>
   class CtcInter : public Ctc<CtcInter<X>,X>
   {
     public:

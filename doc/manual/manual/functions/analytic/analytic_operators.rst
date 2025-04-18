@@ -3,6 +3,8 @@
 Analytic operators
 ==================
 
+  Main author: `Simon Rohou <https://www.simon-rohou.fr/research/>`_
+  
 .. raw:: html
 
   <style>
@@ -61,6 +63,8 @@ When operators are available for operations 2--3, then an ``AnalyticFunction`` c
 .. |N|   replace:: :vertical:`Natur.`
 .. |C|   replace:: :vertical:`Centr.`
 .. |D|   replace:: :vertical:`Diff.`
+.. |CHI| replace:: :math:`\begin{split}\chi(x_1,x_2,x_3) =\\ \begin{cases}x_2 & \text{if } x_1 \leqslant 0, \\x_3 & \text{if } x_1>0.\end{cases}\end{split}`
+
 
 .. |AbsOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_abs.h"><code class="docutils literal notranslate"><span class="pre">AbsOp</span></code></a>`
 
@@ -72,9 +76,13 @@ When operators are available for operations 2--3, then an ``AnalyticFunction`` c
 
 .. |CeilOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_ceil.h"><code class="docutils literal notranslate"><span class="pre">CeilOp</span></code></a>`
 
+.. |ChiOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_chi.h"><code class="docutils literal notranslate"><span class="pre">ChiOp</span></code></a>`
+
 .. |CosOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_cos.h"><code class="docutils literal notranslate"><span class="pre">CosOp</span></code></a>`
 
 .. |CoshOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_cosh.h"><code class="docutils literal notranslate"><span class="pre">CoshOp</span></code></a>`
+
+.. |CrossProdOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_cross_prod.h"><code class="docutils literal notranslate"><span class="pre">CrossProdOp</span></code></a>`
 
 .. |DetOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_det.h"><code class="docutils literal notranslate"><span class="pre">DetOp</span></code></a>`
 
@@ -214,9 +222,11 @@ If you notice any mathematical operators missing from the list below, feel free 
   | :math:`\mathbf{X}_1/x_2`                            | ``X1/x2``            |               | ``X1``: matrix, ``x2``: scalar      ||okk|   ||nok|   ||nok|  ||nok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
-  | :math:`\max(x_1,x_2)`                               | ``max(x1,x2)``       | |MaxOp|       | ``x1``, ``x2``: scalar              ||okk|   ||nok|   ||nok|  ||okk|       |
+  | :math:`\mathbf{x}_1\times\mathbf{x}_2`              | ``cross_prod(x1,x2)``| |CrossProdOp| | ``x1``, ``x2``: vector              ||okk|   ||nok|   ||nok|  ||nok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
-  | :math:`\min(x_1,x_2)`                               | ``min(x1,x2)``       | |MinOp|       | ``x1``, ``x2``: scalar              ||okk|   ||nok|   ||nok|  ||okk|       |
+  | :math:`\max(x_1,x_2)`                               | ``max(x1,x2)``       | |MaxOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :math:`\min(x_1,x_2)`                               | ``min(x1,x2)``       | |MinOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`x_1\bmod x_2`                                | ``mod(x1,x2)``       | |ModOp|       | ``x1``, ``x2``: scalar              ||nok|   ||nok|   ||nok|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
@@ -225,6 +235,10 @@ If you notice any mathematical operators missing from the list below, feel free 
   |                                                     | | ``x1**x2`` (py)    |               |                                     |        |        |       |            |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathrm{arctan2}(y,x)`                       | ``atan2(y,x)``       | |Atan2Op|     | ``y``, ``x``: scalar                ||okk|   ||okk|   ||okk|  ||okk|       |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :bg-title:`Ternary operations`                                                                                                                                          |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | |CHI|                                               | ``chi(x1,x2,x3)``    | |ChiOp|       | ``x1``, ``x2``, ``x3``: scalar      ||okk|   ||nok|   ||nok|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :bg-title:`Vectorial / matricial operations`                                                                                                                            |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
