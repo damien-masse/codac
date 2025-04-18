@@ -89,12 +89,12 @@
 
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_ConvexPolygon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_ConvexPolygon.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Edge.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Edge.h
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_geometry.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_geometry.h
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Polygon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Polygon.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Segment.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Segment.h
     
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_abs.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_acos.h

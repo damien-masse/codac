@@ -157,13 +157,13 @@ class Approx:
       self.a = Approx_Matrix(x,eps)
     elif isinstance(x, (IntervalMatrix)):
       self.a = Approx_IntervalMatrix(x,eps)
-    elif isinstance(x, (Edge)):
-      self.a = Approx_Edge(x,eps)
+    elif isinstance(x, (Segment)):
+      self.a = Approx_Segment(x,eps)
     elif isinstance(x, (Polygon,ConvexPolygon)):
       self.a = Approx_Polygon(x,eps)
     else:
       codac_error("Approx: can only build Approx for: \
-        double, Interval, [Interval]Vector, Matrix, [Interval]Matrix, Edge, [Convex]Polygon")
+        double, Interval, [Interval]Vector, Matrix, [Interval]Matrix, Segment, [Convex]Polygon")
 
   def __eq__(self, x):
     return self.a == x

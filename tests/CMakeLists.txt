@@ -61,9 +61,9 @@ list(APPEND SRC_TESTS # listing files without extension
   ../doc/manual/manual/functions/analytic/src
 
   core/geometry/codac2_tests_ConvexPolygon
-  core/geometry/codac2_tests_Edge
   core/geometry/codac2_tests_geometry
   core/geometry/codac2_tests_Polygon
+  core/geometry/codac2_tests_Segment
   ../doc/manual/manual/geometry/src
 
   core/matrices/codac2_tests_arithmetic_add

@@ -52,8 +52,8 @@ class TestPolygon(unittest.TestCase):
     self.assertTrue(p1.contains([5,6]) == BoolInterval.TRUE)
     self.assertTrue(p1.contains([6,6]) == BoolInterval.FALSE)
 
-    transect = Edge(Vector([next_float(-oo),3]), Vector([3,3]))
-    e1,e2 = Edge(Vector([5,6]),Vector([-1,1])), Edge(Vector([3,-1]),Vector([3,4]))
+    transect = Segment(Vector([next_float(-oo),3]), Vector([3,3]))
+    e1,e2 = Segment(Vector([5,6]),Vector([-1,1])), Segment(Vector([3,-1]),Vector([3,4]))
     self.assertTrue(transect.intersects(e1) == BoolInterval.TRUE)
     self.assertTrue(transect.intersects(e2) == BoolInterval.TRUE)
 
@@ -65,11 +65,11 @@ class TestPolygon(unittest.TestCase):
     self.assertTrue(p2.contains([0.5,1]) == BoolInterval.TRUE)
     self.assertTrue(p2.contains([1,0.5]) == BoolInterval.TRUE)
 
-    transect = Edge(Vector([next_float(-oo),2]), Vector([0,2]))
-    e1 = Edge(Vector([0,0]),Vector([0,1]))
-    e2 = Edge(Vector([0,1]),Vector([1,1]))
-    e3 = Edge(Vector([1,1]),Vector([1,0]))
-    e4 = Edge(Vector([1,0]),Vector([0,0]))
+    transect = Segment(Vector([next_float(-oo),2]), Vector([0,2]))
+    e1 = Segment(Vector([0,0]),Vector([0,1]))
+    e2 = Segment(Vector([0,1]),Vector([1,1]))
+    e3 = Segment(Vector([1,1]),Vector([1,0]))
+    e4 = Segment(Vector([1,0]),Vector([0,0]))
 
     self.assertTrue(transect.intersects(e1) == BoolInterval.FALSE)
     self.assertTrue(transect.intersects(e2) == BoolInterval.FALSE)

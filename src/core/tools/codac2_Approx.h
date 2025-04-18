@@ -88,21 +88,21 @@ namespace codac2
   };
   
   template<>
-  class Approx<Edge>
+  class Approx<Segment>
   {
     public:
 
-      explicit Approx(const Edge& x, double eps = DEFAULT_EPS)
+      explicit Approx(const Segment& x, double eps = DEFAULT_EPS)
         : _x(x), _eps(eps)
       { }
 
-      friend bool operator==(const Edge& p1, const Approx<Edge>& p2)
+      friend bool operator==(const Segment& p1, const Approx<Segment>& p2)
       {
         return (Approx<IntervalVector>(p1[0], p2._eps) == p2._x[0] && Approx<IntervalVector>(p1[1], p2._eps) == p2._x[1])
           || (Approx<IntervalVector>(p1[1], p2._eps) == p2._x[0] && Approx<IntervalVector>(p1[0], p2._eps) == p2._x[1]);
       }
 
-      friend std::ostream& operator<<(std::ostream& os, const Approx<Edge>& x)
+      friend std::ostream& operator<<(std::ostream& os, const Approx<Segment>& x)
       {
         os << "Approx(" << x._x << ")";
         return os;
@@ -110,7 +110,7 @@ namespace codac2
     
     private:
 
-      const Edge _x;
+      const Segment _x;
       const double _eps;
   };
   
@@ -131,16 +131,16 @@ namespace codac2
 
         size_t i; // looking for same reference of first value
         for(i = 0 ; i < n ; i++)
-          if(Approx<Edge>(p1.edges()[0], p2._eps) == p2._x.edges()[i])
+          if(Approx<Segment>(p1.edges()[0], p2._eps) == p2._x.edges()[i])
             break;
 
         int way = 1;
         if(n > 1)
-          way = (Approx<Edge>(p1.edges()[1], p2._eps) == p2._x.edges()[(i+1)%n]) ? 1 : -1;
+          way = (Approx<Segment>(p1.edges()[1], p2._eps) == p2._x.edges()[(i+1)%n]) ? 1 : -1;
         assert(way == 1 || (way == -1 && p1.edges()[1] == p2._x.edges()[(i-1+2*n)%n]));
 
         for(size_t j = 0 ; j < n ; j++)
-          if(Approx<Edge>(p1.edges()[j], p2._eps) != p2._x.edges()[(i+way*j+2*n)%n])
+          if(Approx<Segment>(p1.edges()[j], p2._eps) != p2._x.edges()[(i+way*j+2*n)%n])
             return false;
 
         return true;

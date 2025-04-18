@@ -37,7 +37,7 @@ namespace codac2
     : _edges(
       [v]
       {
-        vector<Edge> edges;
+        vector<Segment> edges;
 
         switch(v.size())
         {
@@ -50,14 +50,14 @@ namespace codac2
           case 1:
           {
             assert_release(v[0].size() == 2);
-            edges = { Edge(v[0],v[0]) };
+            edges = { Segment(v[0],v[0]) };
             break;
           }
 
           case 2:
           {
             assert_release(v[0].size() == 2 && v[1].size() == 2);
-            edges = { Edge(v[0],v[1]) };
+            edges = { Segment(v[0],v[1]) };
             break;
           }
 
@@ -94,11 +94,11 @@ namespace codac2
       }())
   { }
 
-  Polygon::Polygon(initializer_list<Edge> edges)
+  Polygon::Polygon(initializer_list<Segment> edges)
     : _edges(edges)
   { }
 
-  Polygon::Polygon(const vector<Edge>& edges)
+  Polygon::Polygon(const vector<Segment>& edges)
     : _edges(edges)
   { }
   
@@ -131,7 +131,7 @@ namespace codac2
       }())
   { }
   
-  const vector<Edge>& Polygon::edges() const
+  const vector<Segment>& Polygon::edges() const
   {
     return _edges;
   }
@@ -203,7 +203,7 @@ namespace codac2
 
     bool retry;
     double eps = 0.;
-    Edge transect(IntervalVector(2),IntervalVector(2));
+    Segment transect(IntervalVector(2),IntervalVector(2));
     // ^ selected transect (horizontal ray) for crossing the polygon.
     // Odd number of crossing => point is inside
     // Even number of crossing => point is outside
@@ -217,7 +217,7 @@ namespace codac2
       retry = false;
 
       // Horizontal ray candidate:
-      Edge try_transect { {{-oo,next_float(-oo)},p[1]+eps}, p };
+      Segment try_transect { {{-oo,next_float(-oo)},p[1]+eps}, p };
 
       // The ray may pass through the vertices, we must double counting
       for(const auto& pi : unsorted_vertices())

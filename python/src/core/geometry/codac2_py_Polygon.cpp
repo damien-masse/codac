@@ -27,12 +27,12 @@ void export_Polygon(py::module& m)
       POLYGON_POLYGON_CONST_VECTOR_VECTOR_REF,
       "vertices"_a)
 
-    .def(py::init<const std::vector<Edge>&>(),
-      POLYGON_POLYGON_CONST_VECTOR_EDGE_REF,
+    .def(py::init<const std::vector<Segment>&>(),
+      POLYGON_POLYGON_CONST_VECTOR_SEGMENT_REF,
       "edges"_a)
 
     .def("edges", &Polygon::edges,
-      CONST_VECTOR_EDGE_REF_POLYGON_EDGES_CONST)
+      CONST_VECTOR_SEGMENT_REF_POLYGON_EDGES_CONST)
 
     .def("unsorted_vertices", &Polygon::unsorted_vertices,
       LIST_INTERVALVECTOR_POLYGON_UNSORTED_VERTICES_CONST)

@@ -32,11 +32,11 @@ namespace codac2
     : Polygon(convex_hull(vertices))
   { }
 
-  ConvexPolygon::ConvexPolygon(std::initializer_list<Edge> edges)
-    : ConvexPolygon(std::vector<Edge>(edges))
+  ConvexPolygon::ConvexPolygon(std::initializer_list<Segment> edges)
+    : ConvexPolygon(std::vector<Segment>(edges))
   { }
 
-  ConvexPolygon::ConvexPolygon(const vector<Edge>& edges)
+  ConvexPolygon::ConvexPolygon(const vector<Segment>& edges)
     : Polygon([edges] {
       auto l = Polygon(edges).unsorted_vertices();
       return convex_hull({ l.begin(), l.end() });

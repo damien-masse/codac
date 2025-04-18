@@ -14,7 +14,7 @@
 #include <utility>
 #include "codac2_IntervalVector.h"
 #include "codac2_BoolInterval.h"
-#include "codac2_Edge.h"
+#include "codac2_Segment.h"
 
 namespace codac2
 {
@@ -25,11 +25,11 @@ namespace codac2
       Polygon(std::initializer_list<Vector> vertices);
       Polygon(const std::vector<Vector>& vertices);
       explicit Polygon(const std::vector<IntervalVector>& vertices);
-      Polygon(std::initializer_list<Edge> edges);
-      Polygon(const std::vector<Edge>& edges);
+      Polygon(std::initializer_list<Segment> edges);
+      Polygon(const std::vector<Segment>& edges);
       explicit Polygon(const IntervalVector& x);
 
-      const std::vector<Edge>& edges() const;
+      const std::vector<Segment>& edges() const;
       std::list<IntervalVector> unsorted_vertices() const;
       std::vector<IntervalVector> sorted_vertices() const;
 
@@ -49,7 +49,7 @@ namespace codac2
 
       Polygon();
 
-      const std::vector<Edge> _edges;
+      const std::vector<Segment> _edges;
   };
 
   std::ostream& operator<<(std::ostream& str, const Polygon& p);

@@ -172,13 +172,13 @@ TEST_CASE("ConvexPolygon - intersection")
     ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
     ConvexPolygon p2(IntervalVector({{4},{1,5}}));
 
-    CHECK(p1.edges()[0] == Edge({{1,1},{6,2}}));
-    CHECK(p1.edges()[1] == Edge({{6,2},{7,5}}));
-    CHECK(p1.edges()[2] == Edge({{7,5},{2,4}}));
-    CHECK(p1.edges()[3] == Edge({{2,4},{1,1}}));
+    CHECK(p1.edges()[0] == Segment({{1,1},{6,2}}));
+    CHECK(p1.edges()[1] == Segment({{6,2},{7,5}}));
+    CHECK(p1.edges()[2] == Segment({{7,5},{2,4}}));
+    CHECK(p1.edges()[3] == Segment({{2,4},{1,1}}));
     CHECK(p1.edges().size() == 4);
 
-    CHECK(p2.edges()[0] == Edge({{4,1},{4,5}}));
+    CHECK(p2.edges()[0] == Segment({{4,1},{4,5}}));
     CHECK(p2.edges().size() == 1);
 
     CHECK((p1.edges()[1] & p2.edges()[0]) == IntervalVector::empty(2));

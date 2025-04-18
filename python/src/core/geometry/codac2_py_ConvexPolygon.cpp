@@ -27,8 +27,8 @@ void export_ConvexPolygon(py::module& m)
       CONVEXPOLYGON_CONVEXPOLYGON_CONST_VECTOR_VECTOR_REF,
       "vertices"_a)
 
-    .def(py::init<const std::vector<Edge>&>(),
-      CONVEXPOLYGON_CONVEXPOLYGON_CONST_VECTOR_EDGE_REF,
+    .def(py::init<const std::vector<Segment>&>(),
+      CONVEXPOLYGON_CONVEXPOLYGON_CONST_VECTOR_SEGMENT_REF,
       "edges"_a)
 
     .def(py::init<const IntervalVector&>(),

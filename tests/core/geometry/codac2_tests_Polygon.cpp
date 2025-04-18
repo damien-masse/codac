@@ -57,8 +57,8 @@ TEST_CASE("Polygon contains")
   CHECK(p1.contains({6,6}) == BoolInterval::FALSE);
 
   {
-    Edge transect(Vector({next_float(-oo),3}), Vector({3,3}));
-    Edge e1(Vector({5,6}),Vector({-1,1})), e2(Vector({3,-1}),Vector({3,4}));
+    Segment transect(Vector({next_float(-oo),3}), Vector({3,3}));
+    Segment e1(Vector({5,6}),Vector({-1,1})), e2(Vector({3,-1}),Vector({3,4}));
     CHECK(transect.intersects(e1) == BoolInterval::TRUE);
     CHECK(transect.intersects(e2) == BoolInterval::TRUE);
   }
@@ -72,11 +72,11 @@ TEST_CASE("Polygon contains")
   CHECK(p2.contains({1,0.5}) == BoolInterval::TRUE);
 
   {
-    Edge transect(Vector({next_float(-oo),2}), Vector({0,2}));
-    Edge e1(Vector({0,0}),Vector({0,1}));
-    Edge e2(Vector({0,1}),Vector({1,1}));
-    Edge e3(Vector({1,1}),Vector({1,0}));
-    Edge e4(Vector({1,0}),Vector({0,0}));
+    Segment transect(Vector({next_float(-oo),2}), Vector({0,2}));
+    Segment e1(Vector({0,0}),Vector({0,1}));
+    Segment e2(Vector({0,1}),Vector({1,1}));
+    Segment e3(Vector({1,1}),Vector({1,0}));
+    Segment e4(Vector({1,0}),Vector({0,0}));
 
     CHECK(transect.intersects(e1) == BoolInterval::FALSE);
     CHECK(transect.intersects(e2) == BoolInterval::FALSE);

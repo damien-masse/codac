@@ -20,8 +20,8 @@ namespace codac2
       ConvexPolygon(std::initializer_list<Vector> vertices);
       ConvexPolygon(const std::vector<Vector>& vertices);
       explicit ConvexPolygon(const std::vector<IntervalVector>& vertices);
-      ConvexPolygon(std::initializer_list<Edge> edges);
-      ConvexPolygon(const std::vector<Edge>& edges);
+      ConvexPolygon(std::initializer_list<Segment> edges);
+      ConvexPolygon(const std::vector<Segment>& edges);
       explicit ConvexPolygon(const IntervalVector& x);
 
       /**

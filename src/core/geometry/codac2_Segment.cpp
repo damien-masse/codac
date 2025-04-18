@@ -1,5 +1,5 @@
 /** 
- *  codac2_Edge.cpp
+ *  codac2_Segment.cpp
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -17,22 +17,22 @@ using namespace codac2;
 
 namespace codac2
 {
-  Edge::Edge(const std::array<IntervalVector,2>& x)
+  Segment::Segment(const std::array<IntervalVector,2>& x)
     : std::array<IntervalVector,2>(x)
   {
     assert_release(x[0].size() == 2 && x[1].size() == 2);
   }
 
-  Edge::Edge(const IntervalVector& x1, const IntervalVector& x2)
-    : Edge(std::array<IntervalVector,2>({ x1, x2 }))
+  Segment::Segment(const IntervalVector& x1, const IntervalVector& x2)
+    : Segment(std::array<IntervalVector,2>({ x1, x2 }))
   { }
 
-  IntervalVector Edge::box() const
+  IntervalVector Segment::box() const
   {
     return hull((*this)[0],(*this)[1]);
   }
 
-  BoolInterval Edge::intersects(const Edge& e) const
+  BoolInterval Segment::intersects(const Segment& e) const
   {
     const auto& x1 = (*this)[0];
     const auto& x2 = (*this)[1];
@@ -74,7 +74,7 @@ namespace codac2
     }
   }
 
-  BoolInterval Edge::contains(const IntervalVector& p) const
+  BoolInterval Segment::contains(const IntervalVector& p) const
   {
     if(box().is_superset(p))
     {
@@ -94,18 +94,18 @@ namespace codac2
     return BoolInterval::FALSE;
   }
 
-  bool Edge::operator==(const Edge& p) const
+  bool Segment::operator==(const Segment& p) const
   {
     return ((*this)[0] == p[0] && (*this)[1] == p[1])
       || ((*this)[1] == p[0] && (*this)[0] == p[1]);
   }
   
-  IntervalVector operator&(const Edge& e1, const Edge& e2)
+  IntervalVector operator&(const Segment& e1, const Segment& e2)
   {
     return e1.box() & e2.box() & proj_intersection(e1,e2);
   }
   
-  IntervalVector proj_intersection(const Edge& e1, const Edge& e2)
+  IntervalVector proj_intersection(const Segment& e1, const Segment& e2)
   {
     const auto& x1 = e1[0][0], &y1 = e1[0][1];
     const auto& x2 = e1[1][0], &y2 = e1[1][1];
@@ -136,7 +136,7 @@ namespace codac2
     };
   }
 
-  BoolInterval colinear(const Edge& e1, const Edge& e2)
+  BoolInterval colinear(const Segment& e1, const Segment& e2)
   {
     const auto& x1 = e1[0][0], &y1 = e1[0][1];
     const auto& x2 = e1[1][0], &y2 = e1[1][1];
@@ -157,7 +157,7 @@ namespace codac2
       return BoolInterval::FALSE;
   }
 
-  ostream& operator<<(ostream& str, const Edge& e)
+  ostream& operator<<(ostream& str, const Segment& e)
   {
     str << e[0] << " -- " << e[1];
     return str;

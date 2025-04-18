@@ -54,9 +54,9 @@
     functions/analytic/codac2_py_AnalyticExprWrapper.h
 
     geometry/codac2_py_ConvexPolygon.cpp
-    geometry/codac2_py_Edge.cpp
     geometry/codac2_py_geometry.cpp
     geometry/codac2_py_Polygon.cpp
+    geometry/codac2_py_Segment.cpp
 
     matrices/codac2_py_cart_prod.cpp
     matrices/codac2_py_arithmetic_add.cpp

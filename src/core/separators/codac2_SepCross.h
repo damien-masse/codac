@@ -18,7 +18,7 @@ namespace codac2
   {
     public:
 
-      SepCross(const Edge& e, const IntervalVector &r) 
+      SepCross(const Segment& e, const IntervalVector &r) 
         : SepCtcPair(CtcCross(e, r), CtcNoCross(e, r))
       { }
   };

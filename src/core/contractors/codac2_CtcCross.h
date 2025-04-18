@@ -11,7 +11,7 @@
 
 #include "codac2_Ctc.h"
 #include "codac2_IntervalVector.h"
-#include "codac2_Edge.h"
+#include "codac2_Segment.h"
 
 namespace codac2
 {
@@ -19,7 +19,7 @@ namespace codac2
   {
     public:
 
-      CtcCross(const Edge& e, const IntervalVector &r)
+      CtcCross(const Segment& e, const IntervalVector &r)
         : Ctc<CtcCross,IntervalVector>(2), _e(e), _r(r)
       {
         assert_release(_r.size() == 2 && "only 2d segments are supported");
@@ -29,7 +29,7 @@ namespace codac2
 
     protected:
 
-      const Edge _e;
+      const Segment _e;
       const IntervalVector _r;
   };
 
@@ -37,7 +37,7 @@ namespace codac2
   {
     public:
 
-      CtcNoCross(const Edge& e, const IntervalVector &r)
+      CtcNoCross(const Segment& e, const IntervalVector &r)
         : Ctc<CtcNoCross,IntervalVector>(2), _e(e), _r(r)
       {
         assert_release(_r.size() == 2 && "only 2d segments are supported");
@@ -47,7 +47,7 @@ namespace codac2
 
     protected:
 
-      const Edge _e;
+      const Segment _e;
       const IntervalVector _r;
   };
 }

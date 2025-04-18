@@ -117,13 +117,13 @@ class TestConvexPolygon(unittest.TestCase):
     p1 = ConvexPolygon([[1,1],[2,4],[7,5],[6,2]])
     p2 = ConvexPolygon(IntervalVector([[4],[1,5]]))
 
-    self.assertTrue(p1.edges()[0] == Edge([[1,1],[6,2]]))
-    self.assertTrue(p1.edges()[1] == Edge([[6,2],[7,5]]))
-    self.assertTrue(p1.edges()[2] == Edge([[7,5],[2,4]]))
-    self.assertTrue(p1.edges()[3] == Edge([[2,4],[1,1]]))
+    self.assertTrue(p1.edges()[0] == Segment([[1,1],[6,2]]))
+    self.assertTrue(p1.edges()[1] == Segment([[6,2],[7,5]]))
+    self.assertTrue(p1.edges()[2] == Segment([[7,5],[2,4]]))
+    self.assertTrue(p1.edges()[3] == Segment([[2,4],[1,1]]))
     self.assertTrue(len(p1.edges()) == 4)
 
-    self.assertTrue(p2.edges()[0] == Edge([[4,1],[4,5]]))
+    self.assertTrue(p2.edges()[0] == Segment([[4,1],[4,5]]))
     self.assertTrue(len(p2.edges()) == 1)
 
     self.assertTrue((p1.edges()[1] & p2.edges()[0]) == IntervalVector.empty(2))
