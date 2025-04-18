@@ -39,17 +39,21 @@ class TestCtcDistManual(unittest.TestCase):
     c = CtcDist() # generic distance contractor
     c1 = CtcProj(c, [0,1], cart_prod(b1,y1)) # projection involving data
     c2 = CtcProj(c, [0,1], cart_prod(b2,y2))
-
-    draw_while_paving( # calling a paver algorithm for graphic output
-      [[-3,5],[-2.5,5.5]], # initial 2d box
-      c1 & c2, # intersection of the two projected contractors
-      0.1 # paver precision
-    )
-
-    DefaultFigure.draw_ring(b1, y1)
-    DefaultFigure.draw_ring(b2, y2)
-    DefaultFigure.draw_circle([0,0], 0.1, [Color.red(),Color.red()])
     # [ctcdist-3-end]
+
+    if False: # graphic outputs is disabled for tests
+
+      # [ctcdist-4-beg]
+      draw_while_paving( # calling a paver algorithm for graphic output
+        [[-3,5],[-2.5,5.5]], # initial 2d box
+        c1 & c2, # intersection of the two projected contractors
+        0.1 # paver precision
+      )
+
+      DefaultFigure.draw_ring(b1, y1)
+      DefaultFigure.draw_ring(b2, y2)
+      DefaultFigure.draw_circle([0,0], 0.1, [Color.red(),Color.red()])
+      # [ctcdist-4-end]
 
     #DefaultFigure.draw_circle(b1, y1.lb()); DefaultFigure.draw_circle(b1, y1.ub())
     #DefaultFigure.draw_circle(b2, y2.lb()); DefaultFigure.draw_circle(b2, y2.ub())

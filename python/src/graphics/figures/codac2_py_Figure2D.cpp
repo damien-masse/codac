@@ -13,6 +13,7 @@
 #include <codac2_Paving.h>
 #include <codac2_Subpaving.h>
 #include <codac2_Figure2D.h>
+#include <codac2_Polygon.h>
 #include "codac2_py_Figure2D_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_matlab.h"
 #include "codac2_py_cast.h"
@@ -138,6 +139,10 @@ void export_Figure2D(py::module& m)
 
     .def("draw_polygone", (void(Figure2D::*)(const std::vector<Vector>&,const StyleProperties&))&Figure2D::draw_polygone,
       VOID_FIGURE2D_DRAW_POLYGONE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
+
+    .def("draw_polygone", (void(Figure2D::*)(const Polygon&,const StyleProperties&))&Figure2D::draw_polygone,
+      VOID_FIGURE2D_DRAW_POLYGONE_CONST_POLYGON_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
     .def("draw_parallelepiped", &Figure2D::draw_parallelepiped,
@@ -276,6 +281,10 @@ void export_Figure2D(py::module& m)
 
     .def_static("draw_polygone", (void(*)(const std::vector<Vector>&,const StyleProperties&))&DefaultFigure::draw_polygone,
       STATIC_VOID_DEFAULTFIGURE_DRAW_POLYGONE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_polygone", (void(*)(const Polygon&,const StyleProperties&))&DefaultFigure::draw_polygone,
+      STATIC_VOID_DEFAULTFIGURE_DRAW_POLYGONE_CONST_POLYGON_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
     .def_static("draw_parallelepiped", &DefaultFigure::draw_parallelepiped,

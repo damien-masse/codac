@@ -18,6 +18,7 @@
 #include "codac2_Paving.h"
 #include "codac2_ColorMap.h"
 #include "codac2_Ellipsoid.h"
+#include "codac2_Polygon.h"
 
 #define DEFAULT_FIG_NAME "Codac - default figure"
 
@@ -268,6 +269,14 @@ namespace codac2
        * \param s Style of the polygone (edge color and fill color)
        */
       void draw_polygone(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a ``Polygon`` object on the figure
+       * 
+       * \param x the ``Polygon`` object to be displayed
+       * \param s Style of the polygone (edge color and fill color)
+       */
+      void draw_polygone(const Polygon& x, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a parallelepiped z+A*[-1,1]^2 on the figure
@@ -594,6 +603,18 @@ namespace codac2
        * \param s Style of the polygone (edge color and fill color)
        */
       static void draw_polygone(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_polygone(x,s);
+      }
+
+      /**
+       * \brief Draws a ``Polygon`` object on the figure
+       * 
+       * \param x the ``Polygon`` object to be drawn
+       * \param s Style of the polygone (edge color and fill color)
+       */
+      static void draw_polygone(const Polygon& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
         selected_fig()->draw_polygone(x,s);

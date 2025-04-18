@@ -157,9 +157,13 @@ class Approx:
       self.a = Approx_Matrix(x,eps)
     elif isinstance(x, (IntervalMatrix)):
       self.a = Approx_IntervalMatrix(x,eps)
+    elif isinstance(x, (Segment)):
+      self.a = Approx_Segment(x,eps)
+    elif isinstance(x, (Polygon,ConvexPolygon)):
+      self.a = Approx_Polygon(x,eps)
     else:
       codac_error("Approx: can only build Approx for: \
-        double, Interval, Vector, IntervalVector, Matrix, IntervalMatrix")
+        double, Interval, [Interval]Vector, Matrix, [Interval]Matrix, Segment, [Convex]Polygon")
 
   def __eq__(self, x):
     return self.a == x
@@ -168,9 +172,34 @@ class Approx:
     return str(self.a)
 
 
+def hull(*args):
+  # -1: to be defined, 0: IntervalVector, 1: IntervalMatrix
+  lst = []
+  mode = -1
+
+  for arg in args:
+    if isinstance(arg, (Vector)):
+      mode = 0
+      lst.append(IntervalVector(arg))
+    elif isinstance(arg, (IntervalVector)):
+      mode = 0
+      lst.append(arg)
+    elif isinstance(arg, (Matrix)):
+      mode = 1
+      lst.append(IntervalMatrix(arg))
+    elif isinstance(arg, (IntervalMatrix)):
+      mode = 1
+      lst.append(arg)
+
+  if mode == 0:
+    return hull_intervalvector(lst)
+  else:
+    return hull_intervalmatrix(lst)
+
+
 def cart_prod(*args):
   # -1: to be defined, 0: vector, 1: intervalvector, 2: ctc, 3: sep
-  lst=[]
+  lst = []
   mode = -1
 
   for arg in args:

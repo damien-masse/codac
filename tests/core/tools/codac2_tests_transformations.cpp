@@ -45,10 +45,10 @@ TEST_CASE("Affine transformation")
 
     SampledTraj<Vector> dst = AnalyticTraj(f_dst,{-1,3}).sampled(0.01);
 
-  //DefaultView::set_window_properties({75,75},{700,700});
-  //DefaultView::set_axes(axis(0,{-8,4}), axis(1,{-4,8}));
-  //DefaultView::draw_trajectory(src, Color::blue());
-  //DefaultView::draw_trajectory(dst, Color::red());
+  //DefaultFigure::set_window_properties({75,75},{700,700});
+  //DefaultFigure::set_axes(axis(0,{-8,4}), axis(1,{-4,8}));
+  //DefaultFigure::draw_trajectory(src, Color::blue());
+  //DefaultFigure::draw_trajectory(dst, Color::red());
 
   // Computing the transformation
 
@@ -60,7 +60,7 @@ TEST_CASE("Affine transformation")
     for(const auto& [ti,src_i] : src)
       dst_estim.set(ti, tr*Eigen::Vector2d(src_i));
 
-  //DefaultView::draw_trajectory(dst_estim, Color::purple());
+  //DefaultFigure::draw_trajectory(dst_estim, Color::purple());
 
   double scale = tr.linear().col(0).norm();
   Matrix rotation_matrix = tr.linear() / scale;

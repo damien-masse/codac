@@ -25,8 +25,8 @@ void export_SepCross(py::module& m, py::class_<SepBase,pySep>& pysep)
   py::class_<SepCross> exported(m, "SepCross", pysep, SEPCROSS_MAIN);
   exported
 
-    .def(py::init<const Edge&, const IntervalVector&>(),
-      SEPCROSS_SEPCROSS_CONST_EDGE_REF_CONST_INTERVALVECTOR_REF,
+    .def(py::init<const Segment&, const IntervalVector&>(),
+      SEPCROSS_SEPCROSS_CONST_SEGMENT_REF_CONST_INTERVALVECTOR_REF,
       "e"_a, "r"_a)
 
     .def("separate", &SepCross::separate,

@@ -94,7 +94,7 @@ User manual
 
 * Contractors
    * What are contractors?
-   * The Ctc class
+   * How to build a contractor
    * Basic contractors
       * CtcIdentity
       * CtcEmpty
@@ -142,7 +142,7 @@ User manual
 
 * Separators
    * What are separators?
-   * The Sep class
+   * How to build a separator
    * Basic separators
       * SepCtcPair
    * Set separators
@@ -180,9 +180,10 @@ User manual
    * What is a CN?
    * The ContractorNetwork class
 
-* Geometry
-   * Geometrical tools
-   * Polygons and convex polygons
+* :ref:`sec-geom`
+   * :ref:`sec-geom-utils`
+   * :ref:`sec-geom-segment`
+   * :ref:`sec-geom-polygon`
    * Polyhedron
 
 * :ref:`sec-ellipsoids`
@@ -270,6 +271,7 @@ Development
    manual/intervals/index.rst
    manual/functions/index.rst
    manual/contractors/index.rst
+   manual/geometry/index.rst
    manual/ellipsoids/index.rst
    manual/visualization/index.rst
    manual/tools/index.rst
