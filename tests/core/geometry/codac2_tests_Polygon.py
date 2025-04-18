@@ -12,6 +12,31 @@ from codac import *
 
 class TestPolygon(unittest.TestCase):
 
+  def tests_polygon_base(self):
+
+    p1 = Polygon([[3,4]])
+    self.assertTrue(p1 == Polygon([[3,4]]))
+
+    p2 = Polygon([[3,4],[1,2]])
+    self.assertTrue(p2 == Polygon([[3,4],[1,2]]))
+    self.assertTrue(p2 == Polygon([[1,2],[3,4]]))
+
+    p3 = Polygon([[3,4],[1,2],[5,1]])
+    self.assertTrue(p3 == Polygon([[3,4],[1,2],[5,1]]))
+    self.assertTrue(p3 == Polygon([[1,2],[5,1],[3,4]]))
+    self.assertTrue(p3 == Polygon([[5,1],[1,2],[3,4]]))
+    self.assertTrue(p3 == Polygon([[1,2],[3,4],[5,1]]))
+
+  def tests_empty_polygon(self):
+
+    p1 = Polygon.empty()
+    self.assertTrue(p1.contains(IntervalVector([1,1])) == BoolInterval.FALSE)
+    self.assertTrue(p1.contains(IntervalVector(2)) == BoolInterval.FALSE)
+    self.assertTrue(p1.is_empty())
+    self.assertTrue(len(p1.edges()) == 0)
+    self.assertTrue(len(p1.unsorted_vertices()) == 0)
+    self.assertTrue(len(p1.sorted_vertices()) == 0)
+
   def tests_Polygon(self):
 
     p1 = Polygon([[3,-1],[3,4],[5,6],[-1,1]])

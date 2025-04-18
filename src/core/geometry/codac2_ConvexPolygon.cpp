@@ -17,6 +17,9 @@ using namespace codac2;
 
 namespace codac2
 {
+  ConvexPolygon::ConvexPolygon()
+  { }
+  
   ConvexPolygon::ConvexPolygon(std::initializer_list<Vector> vertices)
     : ConvexPolygon(std::vector<Vector>(vertices))
   { }
@@ -43,6 +46,11 @@ namespace codac2
   ConvexPolygon::ConvexPolygon(const IntervalVector& x)
     : Polygon(x)
   { }
+  
+  ConvexPolygon ConvexPolygon::empty()
+  {
+    return ConvexPolygon();
+  }
 
   ConvexPolygon operator&(const ConvexPolygon& p1, const ConvexPolygon& p2)
   {

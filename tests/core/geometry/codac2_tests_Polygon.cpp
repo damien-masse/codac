@@ -30,6 +30,17 @@ TEST_CASE("Polygon base")
   CHECK(p3 == Polygon({{1,2},{3,4},{5,1}}));
 }
 
+TEST_CASE("Empty polygon")
+{
+  Polygon p1 = Polygon::empty();
+  CHECK(p1.contains(IntervalVector({1,1})) == BoolInterval::FALSE);
+  CHECK(p1.contains(IntervalVector(2)) == BoolInterval::FALSE);
+  CHECK(p1.is_empty());
+  CHECK(p1.edges().size() == 0);
+  CHECK(p1.unsorted_vertices().size() == 0);
+  CHECK(p1.sorted_vertices().size() == 0);
+}
+
 TEST_CASE("Polygon contains")
 {
   Polygon p1({{3,-1},{3,4},{5,6},{-1,1}});

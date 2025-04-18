@@ -17,6 +17,9 @@ using namespace codac2;
 
 namespace codac2
 {
+  Polygon::Polygon()
+  { }
+
   Polygon::Polygon(initializer_list<Vector> vertices)
     : Polygon(std::vector<Vector>(vertices))
   { }
@@ -34,47 +37,57 @@ namespace codac2
     : _edges(
       [v]
       {
-        assert_release(!v.empty());
         vector<Edge> edges;
 
-        if(v.size() == 1)
+        switch(v.size())
         {
-          assert_release(v[0].size() == 2);
-          edges = { Edge(v[0],v[0]) };
-        }
-
-        else if(v.size() == 2)
-        {
-          assert_release(v[0].size() == 2 && v[1].size() == 2);
-          edges = { Edge(v[0],v[1]) };
-        }
-
-        else
-        {
-          vector<IntervalVector> v_noaligned { v[0] };
-
-          size_t farthest = 1, n = v.size();
-          for(size_t i = 1 ; i < n+1 ; i++)
+          case 0:
           {
-            if(v[i-1] == v[i%n])
-              continue;
-
-            if(i < n && aligned(v[i-1],v[i%n],v[(i+1)%n]) == BoolInterval::TRUE)
-            {
-              if(dist_(v[i-1],v[farthest%n]).mid() < dist_(v[i-1],v[(i+1)%n]).mid())
-                farthest = std::max(farthest,(i+1)%n);
-            }
-
-            else
-            {
-              if(farthest%n != 0)
-                v_noaligned.push_back(v[farthest%n]);
-              farthest = i+1;
-            }
+            // Empty polygon has no edge
+            break;
           }
 
-          for(size_t i = 0 ; i < v_noaligned.size() ; i++)
-            edges.push_back({ v_noaligned[i], v_noaligned[(i+1)%v_noaligned.size()] });
+          case 1:
+          {
+            assert_release(v[0].size() == 2);
+            edges = { Edge(v[0],v[0]) };
+            break;
+          }
+
+          case 2:
+          {
+            assert_release(v[0].size() == 2 && v[1].size() == 2);
+            edges = { Edge(v[0],v[1]) };
+            break;
+          }
+
+          default:
+          {
+            vector<IntervalVector> v_noaligned { v[0] };
+
+            size_t farthest = 1, n = v.size();
+            for(size_t i = 1 ; i < n+1 ; i++)
+            {
+              if(v[i-1] == v[i%n])
+                continue;
+
+              if(i < n && aligned(v[i-1],v[i%n],v[(i+1)%n]) == BoolInterval::TRUE)
+              {
+                if(dist_(v[i-1],v[farthest%n]).mid() < dist_(v[i-1],v[(i+1)%n]).mid())
+                  farthest = std::max(farthest,(i+1)%n);
+              }
+
+              else
+              {
+                if(farthest%n != 0)
+                  v_noaligned.push_back(v[farthest%n]);
+                farthest = i+1;
+              }
+            }
+
+            for(size_t i = 0 ; i < v_noaligned.size() ; i++)
+              edges.push_back({ v_noaligned[i], v_noaligned[(i+1)%v_noaligned.size()] });
+          }
         }
         
         return edges;
@@ -90,29 +103,31 @@ namespace codac2
   { }
   
   Polygon::Polygon(const IntervalVector& x)
-    : Polygon([&x]() -> std::vector<IntervalVector> {
-      assert_release(!x.is_empty());
-      
-      if(x[0].is_degenerated())
-        return {
-          { x[0].lb(),x[1].lb() },
-          { x[0].lb(),x[1].ub() }
-        };
+    : Polygon([&x]() -> std::vector<IntervalVector>
+      {
+        if(x.is_empty())
+          return { };
+        
+        else if(x[0].is_degenerated())
+          return {
+            { x[0].lb(),x[1].lb() },
+            { x[0].lb(),x[1].ub() }
+          };
 
-      else if(x[1].is_degenerated())
-        return {
-          { x[0].lb(),x[1].lb() },
-          { x[1].ub(),x[1].lb() }
-        };
+        else if(x[1].is_degenerated())
+          return {
+            { x[0].lb(),x[1].lb() },
+            { x[1].ub(),x[1].lb() }
+          };
 
-      else
-        return {
-          // Built in counterclockwise order
-          { x[0].lb(), x[1].lb() },
-          { x[0].ub(), x[1].lb() },
-          { x[0].ub(), x[1].ub() },
-          { x[0].lb(), x[1].ub() }
-        };
+        else
+          return {
+            // Built in counterclockwise order
+            { x[0].lb(), x[1].lb() },
+            { x[0].ub(), x[1].lb() },
+            { x[0].ub(), x[1].ub() },
+            { x[0].lb(), x[1].ub() }
+          };
       }())
   { }
   
@@ -124,36 +139,50 @@ namespace codac2
   list<IntervalVector> Polygon::unsorted_vertices() const
   {
     list<IntervalVector> l;
-    for(const auto& ei : _edges)
-      l.push_back(ei[0]);
 
-    size_t n = _edges.size();
-    if(_edges[0][0] != _edges[n-1][1])
-      l.push_back(_edges[n-1][1]);
+    if(!is_empty())
+    {
+      for(const auto& ei : _edges)
+        l.push_back(ei[0]);
 
-    // Removing duplicates
-    l.sort([](const IntervalVector& a, const IntervalVector& b) {
-        return a[0].lb() < b[0].lb()
-         || (a[0].lb() == b[0].lb() && a[1].lb() < b[1].lb())
-         || (a[0].lb() == b[0].lb() && a[1].lb() == b[1].lb() && a[0].ub() < b[0].ub())
-         || (a[0].lb() == b[0].lb() && a[1].lb() == b[1].lb() && a[0].ub() == b[0].ub() && a[1].ub() < b[1].ub());
-      });
-    l.unique();
+      size_t n = _edges.size();
+      if(_edges[0][0] != _edges[n-1][1])
+        l.push_back(_edges[n-1][1]);
+
+      // Removing duplicates
+      l.sort([](const IntervalVector& a, const IntervalVector& b) {
+          return a[0].lb() < b[0].lb()
+           || (a[0].lb() == b[0].lb() && a[1].lb() < b[1].lb())
+           || (a[0].lb() == b[0].lb() && a[1].lb() == b[1].lb() && a[0].ub() < b[0].ub())
+           || (a[0].lb() == b[0].lb() && a[1].lb() == b[1].lb() && a[0].ub() == b[0].ub() && a[1].ub() < b[1].ub());
+        });
+      l.unique();
+    }
+    
     return l;
   }
   
   vector<IntervalVector> Polygon::sorted_vertices() const
   {
     vector<IntervalVector> v;
-    size_t n = _edges.size();
 
-    for(size_t i = 0 ; i < n ; i++)
-      v.push_back({ _edges[i][0][0], _edges[i][0][1] });
+    if(!is_empty())
+    {
+      size_t n = _edges.size();
 
-    if(_edges[0][0] != _edges[n-1][1])
-      v.push_back({ _edges[n-1][1][0], _edges[n-1][1][1] });
+      for(size_t i = 0 ; i < n ; i++)
+        v.push_back({ _edges[i][0][0], _edges[i][0][1] });
+
+      if(_edges[0][0] != _edges[n-1][1])
+        v.push_back({ _edges[n-1][1][0], _edges[n-1][1][1] });
+    }
 
     return v;
+  }
+
+  bool Polygon::is_empty() const
+  {
+    return _edges.empty();
   }
 
   BoolInterval Polygon::contains(const IntervalVector& p) const
@@ -238,9 +267,17 @@ namespace codac2
     
     return (i%2 == 0) ? BoolInterval::FALSE : BoolInterval::TRUE;
   }
+  
+  Polygon Polygon::empty()
+  {
+    return Polygon();
+  }
 
   bool Polygon::operator==(const Polygon& p) const
   {
+    if(is_empty() || p.is_empty())
+      return is_empty() && p.is_empty();
+
     size_t n = _edges.size();
     if(p.edges().size() != n)
       return false;

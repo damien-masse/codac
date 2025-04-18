@@ -32,11 +32,22 @@ namespace codac2
       const std::vector<Edge>& edges() const;
       std::list<IntervalVector> unsorted_vertices() const;
       std::vector<IntervalVector> sorted_vertices() const;
+
+      bool is_empty() const;
       BoolInterval contains(const IntervalVector& p) const;
 
       bool operator==(const Polygon& p) const;
 
+      /**
+       * \brief Provides an empty polygon
+       * 
+       * \return an empty set
+       */
+      static Polygon empty();
+
     protected:
+
+      Polygon();
 
       const std::vector<Edge> _edges;
   };

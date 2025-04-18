@@ -23,6 +23,17 @@ namespace codac2
       ConvexPolygon(std::initializer_list<Edge> edges);
       ConvexPolygon(const std::vector<Edge>& edges);
       explicit ConvexPolygon(const IntervalVector& x);
+
+      /**
+       * \brief Provides an empty convex polygon
+       * 
+       * \return an empty set
+       */
+      static ConvexPolygon empty();
+
+    protected:
+
+      ConvexPolygon();
   };
 
   // The intersection of two convex polygons is a convex polygon

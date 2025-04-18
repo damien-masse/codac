@@ -37,6 +37,12 @@ void export_Polygon(py::module& m)
     .def("unsorted_vertices", &Polygon::unsorted_vertices,
       LIST_INTERVALVECTOR_POLYGON_UNSORTED_VERTICES_CONST)
 
+    .def("sorted_vertices", &Polygon::sorted_vertices,
+      VECTOR_INTERVALVECTOR_POLYGON_SORTED_VERTICES_CONST)
+
+    .def("is_empty", &Polygon::is_empty,
+      BOOL_POLYGON_IS_EMPTY_CONST)
+
     .def("contains", &Polygon::contains,
       BOOLINTERVAL_POLYGON_CONTAINS_CONST_INTERVALVECTOR_REF_CONST,
       "p"_a)
@@ -51,6 +57,9 @@ void export_Polygon(py::module& m)
           return string(stream.str()); 
         },
       OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_POLYGON_REF)
+
+    .def_static("empty", &Polygon::empty,
+      STATIC_POLYGON_POLYGON_EMPTY)
 
   ;
 

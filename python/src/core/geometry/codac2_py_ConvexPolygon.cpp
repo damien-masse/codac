@@ -41,7 +41,10 @@ void export_ConvexPolygon(py::module& m)
           return p1 & p2;
         },
       CONVEXPOLYGON_OPERATORAND_CONST_CONVEXPOLYGON_REF_CONST_CONVEXPOLYGON_REF,
-      "p2"_a);
+      "p2"_a)
+
+    .def_static("empty", &ConvexPolygon::empty,
+      STATIC_CONVEXPOLYGON_CONVEXPOLYGON_EMPTY)
 
   ;
 

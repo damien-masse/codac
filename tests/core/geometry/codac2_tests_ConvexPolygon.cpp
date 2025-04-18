@@ -200,4 +200,70 @@ TEST_CASE("ConvexPolygon - intersection")
     CHECK(Approx<Polygon>(q) == Polygon({{4,4.4},{4,1.6}}));
     CHECK(q.unsorted_vertices().size() == 2);
   }
+
+  { // Point intersection
+    ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
+    ConvexPolygon p2({{2,4},{-4,4},{0,8}});
+
+    auto q = p1 & p2;
+    
+    CHECK(q == Polygon({{2,4}}));
+    CHECK(q.unsorted_vertices().size() == 1);
+  }
+
+  { // Point intersection, line polygon
+    ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
+    ConvexPolygon p2({{2,4},{-4,4}});
+
+    auto q = p1 & p2;
+    
+    CHECK(q == Polygon({{2,4}}));
+    CHECK(q.unsorted_vertices().size() == 1);
+  }
+
+  { // Empty intersection
+    ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
+    ConvexPolygon p2({{5,1.5},{8,2},{8,0},{5,0}});
+
+    auto q = p1 & p2;
+    
+    CHECK(q == Polygon::empty());
+    CHECK(q.unsorted_vertices().size() == 0);
+    CHECK(q.is_empty());
+  }
+
+  { // Empty intersection, degenerate case
+    ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
+    ConvexPolygon p2({{5,1.5},{80,2}});
+
+    auto q = p1 & p2;
+    
+    CHECK(q == Polygon::empty());
+    CHECK(q.unsorted_vertices().size() == 0);
+    CHECK(q.is_empty());
+  }
+
+  { // Intersection of empty polygons
+    ConvexPolygon p1 = ConvexPolygon::empty();
+    ConvexPolygon p2 = ConvexPolygon::empty();
+    auto q = p1 & p2;
+    CHECK(q == Polygon::empty());
+    CHECK(q.is_empty());
+  }
+
+  { // Intersection of a polygon and one empty polygon
+    ConvexPolygon p1({{1,1},{2,4},{7,5},{6,2}});
+    ConvexPolygon p2 = ConvexPolygon::empty();
+    auto q = p1 & p2;
+    CHECK(q == Polygon::empty());
+    CHECK(q.is_empty());
+  }
+
+  { // Intersection of a polygon and one empty polygon (line)
+    ConvexPolygon p1({{5,1.5},{80,2}});
+    ConvexPolygon p2 = ConvexPolygon::empty();
+    auto q = p1 & p2;
+    CHECK(q == Polygon::empty());
+    CHECK(q.is_empty());
+  }
 }
