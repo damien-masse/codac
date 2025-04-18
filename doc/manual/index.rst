@@ -180,9 +180,10 @@ User manual
    * What is a CN?
    * The ContractorNetwork class
 
-* Geometry
+* :ref:`sec-geom`
    * :ref:`sec-geom-utils`
-   * Polygons and convex polygons
+   * :ref:`sec-geom-segment`
+   * :ref:`sec-geom-polygon`
    * Polyhedron
 
 * :ref:`sec-ellipsoids`

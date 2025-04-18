@@ -132,4 +132,26 @@ TEST_CASE("geometry - manual")
     CHECK(a == BoolInterval::TRUE);
     CHECK(b == BoolInterval::UNKNOWN);
   }
+
+  {
+    //DefaultView::set_axes(axis(0,{-1,11}), axis(1,{0,12}));
+    
+    // [polygon-1-beg]
+    // ConvexPolygons are defined from sets of vertices in any order
+    ConvexPolygon p1({ // drawn in red
+      {4,2},{1,8},{2,10},{2,3},
+      {1,6},{8,6},{7,3},{5,11},{7,10}
+    });
+    ConvexPolygon p2({ // drawn in blue
+      {5,1},{7,1},{9,3},{4,3},{4,5},
+      {9,6},{5,6},{8,8},{6,7}
+    });
+
+    ConvexPolygon p3 = p1 & p2;
+    // [polygon-1-end]
+
+    //DefaultView::draw_polygone(p1, Color::red());
+    //DefaultView::draw_polygone(p2, Color::blue());
+    //DefaultView::draw_polygone(p3, {Color::none(),Color::blue(0.2)});
+  }
 }
