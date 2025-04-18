@@ -97,7 +97,11 @@ td:has(.bg-nok) {
 }
 
 .cpp + .sphinx-tabs { /* for examples following a Doxygen block */
-  margin-left: 2rem;
+  margin-left: calc(10px + 2rem);
+}
+
+.cpp + .sphinx-tabs + figure { /* for figures following examples following a Doxygen block */
+  margin-left: calc(10px + 2rem);
 }
 
 .math-wrapper { /* removing centering of equations */
