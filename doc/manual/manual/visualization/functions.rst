@@ -128,7 +128,7 @@ Geometric shapes
 .. doxygenfunction:: codac2::Figure2D::draw_polyline(const std::vector<Vector>&, float, const StyleProperties&)
   :project: codac
 
-.. doxygenfunction:: codac2::Figure2D::draw_polygone(const std::vector<Vector>&, const StyleProperties&)
+.. doxygenfunction:: codac2::Figure2D::draw_polygon(const std::vector<Vector>&, const StyleProperties&)
   :project: codac
 
 .. doxygenfunction:: codac2::Figure2D::draw_parallelepiped(const Vector&, const Matrix&, const StyleProperties&)

@@ -149,7 +149,7 @@ void Figure2D_VIBes::draw_polyline(const std::vector<Vector>& x, float tip_lengt
     vibes::drawLine(vx,vy, to_vibes_style(s), _params);
 }
 
-void Figure2D_VIBes::draw_polygone(const std::vector<Vector>& x, const StyleProperties& s)
+void Figure2D_VIBes::draw_polygon(const std::vector<Vector>& x, const StyleProperties& s)
 {
   assert(x.size() > 1);
 
