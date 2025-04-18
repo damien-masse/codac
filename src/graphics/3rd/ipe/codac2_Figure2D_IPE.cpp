@@ -350,7 +350,7 @@ void Figure2D_IPE::draw_polyline(const std::vector<Vector>& x, float tip_length,
   _f_temp_content << "</path>";
 }
 
-void Figure2D_IPE::draw_polygone(const std::vector<Vector>& x, const StyleProperties& s)
+void Figure2D_IPE::draw_polygon(const std::vector<Vector>& x, const StyleProperties& s)
 {
   assert(x.size() > 1);
 

@@ -137,12 +137,12 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_POLYLINE_CONST_VECTOR_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
       "x"_a, "r"_a, "s"_a=StyleProperties())
 
-    .def("draw_polygone", (void(Figure2D::*)(const std::vector<Vector>&,const StyleProperties&))&Figure2D::draw_polygone,
-      VOID_FIGURE2D_DRAW_POLYGONE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+    .def("draw_polygon", (void(Figure2D::*)(const std::vector<Vector>&,const StyleProperties&))&Figure2D::draw_polygon,
+      VOID_FIGURE2D_DRAW_POLYGON_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
-    .def("draw_polygone", (void(Figure2D::*)(const Polygon&,const StyleProperties&))&Figure2D::draw_polygone,
-      VOID_FIGURE2D_DRAW_POLYGONE_CONST_POLYGON_REF_CONST_STYLEPROPERTIES_REF,
+    .def("draw_polygon", (void(Figure2D::*)(const Polygon&,const StyleProperties&))&Figure2D::draw_polygon,
+      VOID_FIGURE2D_DRAW_POLYGON_CONST_POLYGON_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
     .def("draw_parallelepiped", &Figure2D::draw_parallelepiped,
@@ -279,12 +279,12 @@ void export_Figure2D(py::module& m)
       STATIC_VOID_DEFAULTFIGURE_DRAW_POLYLINE_CONST_VECTOR_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
       "x"_a, "r"_a, "s"_a=StyleProperties())
 
-    .def_static("draw_polygone", (void(*)(const std::vector<Vector>&,const StyleProperties&))&DefaultFigure::draw_polygone,
-      STATIC_VOID_DEFAULTFIGURE_DRAW_POLYGONE_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+    .def_static("draw_polygon", (void(*)(const std::vector<Vector>&,const StyleProperties&))&DefaultFigure::draw_polygon,
+      STATIC_VOID_DEFAULTFIGURE_DRAW_POLYGON_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
-    .def_static("draw_polygone", (void(*)(const Polygon&,const StyleProperties&))&DefaultFigure::draw_polygone,
-      STATIC_VOID_DEFAULTFIGURE_DRAW_POLYGONE_CONST_POLYGON_REF_CONST_STYLEPROPERTIES_REF,
+    .def_static("draw_polygon", (void(*)(const Polygon&,const StyleProperties&))&DefaultFigure::draw_polygon,
+      STATIC_VOID_DEFAULTFIGURE_DRAW_POLYGON_CONST_POLYGON_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
     .def_static("draw_parallelepiped", &DefaultFigure::draw_parallelepiped,

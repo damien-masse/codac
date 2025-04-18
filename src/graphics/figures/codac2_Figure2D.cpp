@@ -198,7 +198,7 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
     output_fig->draw_polyline(x,tip_length,s);
 }
 
-void Figure2D::draw_polygone(const vector<Vector>& x, const StyleProperties& s)
+void Figure2D::draw_polygon(const vector<Vector>& x, const StyleProperties& s)
 {
   assert_release(x.size() > 1);
   for([[maybe_unused]] const auto& xi : x)
@@ -207,10 +207,10 @@ void Figure2D::draw_polygone(const vector<Vector>& x, const StyleProperties& s)
   }
 
   for(const auto& output_fig : _output_figures)
-    output_fig->draw_polygone(x,s);
+    output_fig->draw_polygon(x,s);
 }
 
-void Figure2D::draw_polygone(const Polygon& x, const StyleProperties& s)
+void Figure2D::draw_polygon(const Polygon& x, const StyleProperties& s)
 {
   vector<Vector> w;
   for(const auto& vi : x.sorted_vertices())
@@ -220,7 +220,7 @@ void Figure2D::draw_polygone(const Polygon& x, const StyleProperties& s)
     w.push_back(vi.mid());
   }
 
-  return draw_polygone(w, s);
+  return draw_polygon(w, s);
 }
 
 void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s)
@@ -230,7 +230,7 @@ void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const Style
 
   auto a1 = A.col(0), a2 = A.col(1);
 
-  draw_polygone(vector<Vector>({
+  draw_polygon(vector<Vector>({
       Vector(z+a1+a2), Vector(z-a1+a2),
       Vector(z-a1-a2), Vector(z+a1-a2)
     }), s);

@@ -30,7 +30,7 @@ TEST_CASE("CtcPolygon")
   CHECK(x.is_empty());
 
   //draw_while_paving({{-3,7},{-3,8}}, c, 0.1);
-  //DefaultFigure::draw_polygone({{3,-1},{3,4},{5,6},{-1,1}});
+  //DefaultFigure::draw_polygon({{3,-1},{3,4},{5,6},{-1,1}});
 }
 
 TEST_CASE("CtcPolygon - tests from Codac1")

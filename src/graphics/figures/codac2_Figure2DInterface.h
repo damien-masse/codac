@@ -91,7 +91,7 @@ namespace codac2
        * \param x Vector of the points of the polygone
        * \param s Style of the polygone (edge color and fill color)
        */
-      virtual void draw_polygone(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_polygon(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties()) = 0;
 
       /**
        * \brief Draws a pie on the figure
