@@ -10,6 +10,7 @@ Because computations are based on interval arithmetic, all these functions provi
 .. toctree::
 
    utils.rst
+   Segment.rst
 
 ..   Geometrical tools <http://codac.io>
 ..   Polygons and convex polygons <http://codac.io>

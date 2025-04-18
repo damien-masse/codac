@@ -65,5 +65,51 @@ class TestGeometryManual(unittest.TestCase):
     test.assertTrue(hull[5] == IntervalVector([0,3]))
     test.assertTrue(hull[6] == IntervalVector([0.5,1.2]))
 
+    # [segment-1-beg]
+    u1,v1 = Segment([[0,0],[2,2]]),Segment([[2,4],[0,6]])
+    p1 = u1 & v1 # the two segments do not intersect
+    # p1 == IntervalVector.empty(2)
+
+    u2,v2 = Segment([[4,0],[0,4]]),Segment([[2,0],[4,2]])
+    p2 = u2 & v2
+    # p2 == IntervalVector([3,1])
+
+    u3,v3 = Segment([[1,1],[4,4]]),Segment([[2,2],[5,5]])
+    p3 = u3 & v3 # the two segments are colinear
+    # p3 == IntervalVector([[2,4],[2,4]])
+    # [segment-1-end]
+    test.assertTrue(p1.is_empty())
+    test.assertTrue(p2 == IntervalVector([3,1]))
+    test.assertTrue(p3 == IntervalVector([[2,4],[2,4]]))
+
+    # [segment-2-beg]
+    u1,v1 = Segment([[0,0],[2,2]]),Segment([[2,4],[0,6]])
+    p1 = proj_intersection(u1,v1)
+    # p1 == IntervalVector([3,3])
+
+    u2,v2 = Segment([[4,0],[0,4]]),Segment([[2,0],[4,2]])
+    p2 = proj_intersection(u2,v2)
+    # p2 == IntervalVector([3,1])
+
+    u3,v3 = Segment([[1,1],[4,4]]),Segment([[2,2],[5,5]])
+    p3 = proj_intersection(u3,v3)
+    # p3 == IntervalVector([[-oo,oo],[-oo,oo]])
+    # [segment-2-end]
+    test.assertTrue(p1 == IntervalVector([3,3]))
+    test.assertTrue(p2 == IntervalVector([3,1]))
+    test.assertTrue(p3 == IntervalVector(2))
+
+    # [segment-3-beg]
+    p1,p2,p3,p4 = [0,0],[1,1],[1.1,1.1],[10,10]
+
+    a = colinear(Segment(p1,p2),Segment(p1,p4))
+    # a == BoolInterval.TRUE
+    
+    b = colinear(Segment(p1,p3),Segment(p1,p4))
+    # b == BoolInterval.UNKNOWN (due to floating point uncertainty)
+    # [segment-3-end]
+    test.assertTrue(a == BoolInterval.TRUE)
+    test.assertTrue(b == BoolInterval.UNKNOWN)
+
 if __name__ ==  '__main__':
   unittest.main()

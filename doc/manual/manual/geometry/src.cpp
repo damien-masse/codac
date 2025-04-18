@@ -80,4 +80,56 @@ TEST_CASE("geometry - manual")
     //for(const auto& vi : v)
     //  DefaultView::draw_point(vi.mid());
   }
+
+  {
+    // [segment-1-beg]
+    Segment u1({{0,0},{2,2}}), v1({{2,4},{0,6}});
+    auto p1 = u1 & v1; // the two segments do not intersect
+    // p1 == IntervalVector::empty(2)
+
+    Segment u2({{4,0},{0,4}}), v2({{2,0},{4,2}});
+    auto p2 = u2 & v2;
+    // p2 == IntervalVector({3,1})
+
+    Segment u3({{1,1},{4,4}}), v3({{2,2},{5,5}});
+    auto p3 = u3 & v3; // the two segments are colinear
+    // p3 == IntervalVector({{2,4},{2,4}})
+    // [segment-1-end]
+    CHECK(p1 == IntervalVector::empty(2));
+    CHECK(p2 == IntervalVector({3,1}));
+    CHECK(p3 == IntervalVector({{2,4},{2,4}}));
+  }
+
+  {
+    // [segment-2-beg]
+    Segment u1({{0,0},{2,2}}), v1({{2,4},{0,6}});
+    auto p1 = proj_intersection(u1,v1);
+    // p1 == IntervalVector({3,3})
+
+    Segment u2({{4,0},{0,4}}), v2({{2,0},{4,2}});
+    auto p2 = proj_intersection(u2,v2);
+    // p2 == IntervalVector({3,1})
+
+    Segment u3({{1,1},{4,4}}), v3({{2,2},{5,5}});
+    auto p3 = proj_intersection(u3,v3);
+    // p3 == IntervalVector({{-oo,oo},{-oo,oo}})
+    // [segment-2-end]
+    CHECK(p1 == IntervalVector({3,3}));
+    CHECK(p2 == IntervalVector({3,1}));
+    CHECK(p3 == IntervalVector(2));
+  }
+
+  {
+    // [segment-3-beg]
+    IntervalVector p1({0,0}), p2({1,1}), p3({1.1,1.1}), p4({10,10});
+
+    BoolInterval a = colinear(Segment(p1,p2),Segment(p1,p4));
+    // a == BoolInterval::TRUE
+
+    BoolInterval b = colinear(Segment(p1,p3),Segment(p1,p4));
+    // b == BoolInterval::UNKNOWN (due to floating point uncertainty)
+    // [segment-3-end]
+    CHECK(a == BoolInterval::TRUE);
+    CHECK(b == BoolInterval::UNKNOWN);
+  }
 }
