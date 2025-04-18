@@ -57,7 +57,7 @@ class TestSepPolygon(unittest.TestCase):
     # Check a box inside the hole
 
     x = IntervalVector([[0],[0]]).inflate(0.5)
-    #DefaultView.draw_box(x,Color::purple())
+    #DefaultFigure.draw_box(x,Color::purple())
     inner,outer = s.separate(x)
     self.assertTrue(inner == x)
     self.assertTrue(outer.is_empty())
@@ -65,7 +65,7 @@ class TestSepPolygon(unittest.TestCase):
     # Check a box inside the polygon
 
     x = IntervalVector([[5],[-5]]).inflate(0.5)
-    #DefaultView.draw_box(x,Color::purple())
+    #DefaultFigure.draw_box(x,Color::purple())
     inner,outer = s.separate(x)
     self.assertTrue(inner.is_empty())
     self.assertTrue(outer == x)
@@ -73,7 +73,7 @@ class TestSepPolygon(unittest.TestCase):
     # Check a box outside the polygon
 
     x = IntervalVector([[-1],[8]]).inflate(0.5)
-    #DefaultView.draw_box(x,Color::purple())
+    #DefaultFigure.draw_box(x,Color::purple())
     inner,outer = s.separate(x)
     self.assertTrue(inner == x)
     self.assertTrue(outer.is_empty())

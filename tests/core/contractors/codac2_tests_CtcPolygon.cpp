@@ -30,7 +30,7 @@ TEST_CASE("CtcPolygon")
   CHECK(x.is_empty());
 
   //draw_while_paving({{-3,7},{-3,8}}, c, 0.1);
-  //DefaultView::draw_polygone({{3,-1},{3,4},{5,6},{-1,1}});
+  //DefaultFigure::draw_polygone({{3,-1},{3,4},{5,6},{-1,1}});
 }
 
 TEST_CASE("CtcPolygon - tests from Codac1")
@@ -57,7 +57,7 @@ TEST_CASE("CtcPolygon - tests from Codac1")
     // Check a box inside the hole
     {
       IntervalVector x = IntervalVector({0,0}).inflate(0.5);
-      //DefaultView::draw_box(x,Color::purple());
+      //DefaultFigure::draw_box(x,Color::purple());
       c.contract(x);
       CHECK(x.is_empty());
     }
@@ -65,7 +65,7 @@ TEST_CASE("CtcPolygon - tests from Codac1")
     // Check a box inside the polygon
     {
       IntervalVector x = IntervalVector({5,-5}).inflate(0.5), _x(x);
-      //DefaultView::draw_box(x,Color::purple());
+      //DefaultFigure::draw_box(x,Color::purple());
       c.contract(x);
       CHECK(x == _x);
     }
@@ -73,7 +73,7 @@ TEST_CASE("CtcPolygon - tests from Codac1")
     // Check a box outside the polygon
     {
       IntervalVector x = IntervalVector({-1,8}).inflate(0.5);
-      //DefaultView::draw_box(x,Color::purple());
+      //DefaultFigure::draw_box(x,Color::purple());
       c.contract(x);
       CHECK(x.is_empty());
     }

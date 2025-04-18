@@ -60,7 +60,7 @@ TEST_CASE("SepPolygon - tests from Codac1")
     // Check a box inside the hole
     {
       IntervalVector x = IntervalVector({0,0}).inflate(0.5);
-      //DefaultView::draw_box(x,Color::purple());
+      //DefaultFigure::draw_box(x,Color::purple());
       auto xs = s.separate(x);
       CHECK(xs.inner == x);
       CHECK(xs.outer.is_empty());
@@ -69,7 +69,7 @@ TEST_CASE("SepPolygon - tests from Codac1")
     // Check a box inside the polygon
     {
       IntervalVector x = IntervalVector({5,-5}).inflate(0.5);
-      //DefaultView::draw_box(x,Color::purple());
+      //DefaultFigure::draw_box(x,Color::purple());
       auto xs = s.separate(x);
       CHECK(xs.inner.is_empty());
       CHECK(xs.outer == x);
@@ -78,7 +78,7 @@ TEST_CASE("SepPolygon - tests from Codac1")
     // Check a box outside the polygon
     {
       IntervalVector x = IntervalVector({-1,8}).inflate(0.5);
-      //DefaultView::draw_box(x,Color::purple());
+      //DefaultFigure::draw_box(x,Color::purple());
       auto xs = s.separate(x);
       CHECK(xs.inner == x);
       CHECK(xs.outer.is_empty());

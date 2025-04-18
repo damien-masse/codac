@@ -50,13 +50,13 @@ class TestCtcDistManual(unittest.TestCase):
         0.1 # paver precision
       )
 
-      DefaultView.draw_ring(b1, y1)
-      DefaultView.draw_ring(b2, y2)
-      DefaultView.draw_circle([0,0], 0.1, [Color.red(),Color.red()])
+      DefaultFigure.draw_ring(b1, y1)
+      DefaultFigure.draw_ring(b2, y2)
+      DefaultFigure.draw_circle([0,0], 0.1, [Color.red(),Color.red()])
       # [ctcdist-4-end]
 
-    #DefaultView.draw_circle(b1, y1.lb()); DefaultView.draw_circle(b1, y1.ub())
-    #DefaultView.draw_circle(b2, y2.lb()); DefaultView.draw_circle(b2, y2.ub())
+    #DefaultFigure.draw_circle(b1, y1.lb()); DefaultFigure.draw_circle(b1, y1.ub())
+    #DefaultFigure.draw_circle(b2, y2.lb()); DefaultFigure.draw_circle(b2, y2.ub())
 
 if __name__ ==  '__main__':
   unittest.main()

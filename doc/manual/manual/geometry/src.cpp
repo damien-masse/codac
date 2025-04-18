@@ -56,7 +56,7 @@ TEST_CASE("geometry - manual")
   }
 
   {
-    //DefaultView::set_axes(axis(0,{-1,4.5}), axis(1,{0,5}));
+    //DefaultFigure::set_axes(axis(0,{-1,4.5}), axis(1,{0,5}));
 
     // [geometry-3-beg]
     vector<IntervalVector> v {
@@ -76,9 +76,9 @@ TEST_CASE("geometry - manual")
     CHECK(hull[5] == IntervalVector({0,3}));
     CHECK(hull[6] == IntervalVector({0.5,1.2}));
 
-    //DefaultView::draw_polygone(ConvexPolygon(v), {Color::blue(),Color::blue(0.1)});
+    //DefaultFigure::draw_polygone(ConvexPolygon(v), {Color::blue(),Color::blue(0.1)});
     //for(const auto& vi : v)
-    //  DefaultView::draw_point(vi.mid());
+    //  DefaultFigure::draw_point(vi.mid());
   }
 
   {
@@ -134,7 +134,7 @@ TEST_CASE("geometry - manual")
   }
 
   {
-    //DefaultView::set_axes(axis(0,{-1,11}), axis(1,{0,12}));
+    //DefaultFigure::set_axes(axis(0,{-1,11}), axis(1,{0,12}));
     
     // [polygon-1-beg]
     // ConvexPolygons are defined from sets of vertices in any order
@@ -150,8 +150,8 @@ TEST_CASE("geometry - manual")
     ConvexPolygon p3 = p1 & p2;
     // [polygon-1-end]
 
-    //DefaultView::draw_polygone(p1, Color::red());
-    //DefaultView::draw_polygone(p2, Color::blue());
-    //DefaultView::draw_polygone(p3, {Color::none(),Color::blue(0.2)});
+    //DefaultFigure::draw_polygone(p1, Color::red());
+    //DefaultFigure::draw_polygone(p2, Color::blue());
+    //DefaultFigure::draw_polygone(p3, {Color::none(),Color::blue(0.2)});
   }
 }

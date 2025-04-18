@@ -78,9 +78,9 @@ TEST_CASE("convex_hull")
   CHECK(hull.size() == 4);
 
   //for(const auto& vi : v)
-  //  DefaultView::draw_point(vi.mid(), Color::red());
+  //  DefaultFigure::draw_point(vi.mid(), Color::red());
   //for(size_t i = 0 ; i < hull.size() ; i++)
-  //  DefaultView::draw_line(hull[i].mid(), hull[(i+1)%hull.size()].mid(), Color::red());
+  //  DefaultFigure::draw_line(hull[i].mid(), hull[(i+1)%hull.size()].mid(), Color::red());
 
   v = vector<IntervalVector> {
     {1,3},{1,4},{1.5,2},{2,1},{2,2},{3,0},
@@ -102,9 +102,9 @@ TEST_CASE("convex_hull")
   CHECK(hull.size() == 9);
 
   //for(const auto& vi : v)
-  //  DefaultView::draw_point(vi.mid(), Color::blue());
+  //  DefaultFigure::draw_point(vi.mid(), Color::blue());
   //for(size_t i = 0 ; i < hull.size() ; i++)
-  //  DefaultView::draw_line(hull[i].mid(), hull[(i+1)%hull.size()].mid(), Color::blue());
+  //  DefaultFigure::draw_line(hull[i].mid(), hull[(i+1)%hull.size()].mid(), Color::blue());
 
   v = vector<IntervalVector> {
     {0.307007,0.0340742},
@@ -120,9 +120,9 @@ TEST_CASE("convex_hull")
   CHECK(hull.size() == 3);
 
   //for(const auto& vi : v)
-  //  DefaultView::draw_point(vi.mid(), Color::blue());
+  //  DefaultFigure::draw_point(vi.mid(), Color::blue());
   //for(size_t i = 0 ; i < hull.size() ; i++)
-  //  DefaultView::draw_line(hull[i].mid(), hull[(i+1)%hull.size()].mid(), Color::blue());
+  //  DefaultFigure::draw_line(hull[i].mid(), hull[(i+1)%hull.size()].mid(), Color::blue());
 
   // Other test
 
@@ -151,7 +151,7 @@ TEST_CASE("convex_hull")
   CHECK(hull.size() == 7);
 
   //for(const auto& vi : v)
-  //  DefaultView::draw_point(vi.mid(), Color::blue());
+  //  DefaultFigure::draw_point(vi.mid(), Color::blue());
   //for(size_t i = 0 ; i < hull.size() ; i++)
-  //  DefaultView::draw_line(hull[i].mid(), hull[(i+1)%hull.size()].mid(), Color::blue());
+  //  DefaultFigure::draw_line(hull[i].mid(), hull[(i+1)%hull.size()].mid(), Color::blue());
 }
