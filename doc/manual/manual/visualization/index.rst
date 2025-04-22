@@ -4,6 +4,7 @@ Visualization
 =============
 
 .. toctree::
+   :maxdepth: 2
 
    figures.rst
    functions.rst
