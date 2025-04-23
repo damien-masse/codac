@@ -14,8 +14,8 @@ int main()
   // [codac-capd-2-beg]
   capd::IMap vectorField("par:l,g;var:t,w;fun:w,-sin(t)*g/l - 0.5*w;");
  
-  vectorField.setParameter("l",capd::interval(2.)); // length of the pendulum equal to 2
-  vectorField.setParameter("g",capd::interval(10.));  // gravity acceleration equal to 10
+  vectorField.setParameter("l",capd::Interval(2.)); // length of the pendulum equal to 2
+  vectorField.setParameter("g",capd::Interval(10.));  // gravity acceleration equal to 10
   // [codac-capd-2-end]
 
   // the solver, is uses high order enclosure method to verify the existence 
@@ -28,8 +28,8 @@ int main()
 
   // [codac-capd-4-beg]
   capd::ITimeMap timeMap(solver);
-  capd::interval initialTime (0.);  // initial time (t0)
-  capd::interval finalTime (20.); // final time (tf)
+  capd::Interval initialTime (0.);  // initial time (t0)
+  capd::Interval finalTime (20.); // final time (tf)
   // [codac-capd-4-end]
 
   // initial set
@@ -38,8 +38,8 @@ int main()
   c[0] = -M_PI/2.;
   c[1] = 0.;
   // take some box around c
-  c[0] += capd::interval(-1,1)*1e-2;
-  c[1] += capd::interval(-1,1)*1e-2;
+  c[0] += capd::Interval(-1,1)*1e-2;
+  c[1] += capd::Interval(-1,1)*1e-2;
 
   // define a doubleton representation of the interval vector c
   capd::C0HORect2Set s(c);
@@ -52,7 +52,7 @@ int main()
 
   // we integrate the set s over the time T
   // [codac-capd-6-beg]
-  capd::interval T(1);
+  capd::Interval T(1);
   capd::IVector result = timeMap(T,s);
   // [codac-capd-6-end]
 

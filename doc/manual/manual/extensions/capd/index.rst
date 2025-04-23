@@ -112,7 +112,7 @@ To solve this ODE, an IOdeSolver object is necessary.
       :start-after: [codac-capd-3-beg]
       :end-before: [codac-capd-3-end]
 
-CAPD then uses an ``ITimeMap`` to make the link between a time step and the solution of the ODE at the time. The "I" here stands for Interval 
+CAPD then uses an ``ITimeMap`` to make the link between a time step and the solution of the ODE at this time. The "I" here stands for Interval 
 as the solution is an Interval guaranteed to enclose the solution. Here we will integrate the ODE between :math:`t_0=0s` and :math:`t_f=20s`.
 
 .. tabs::
