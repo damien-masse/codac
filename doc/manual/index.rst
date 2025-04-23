@@ -207,7 +207,7 @@ User manual
    * :ref:`sec-tools-registration`
 
 * Codac extensions
-   * CAPD (rigorous numerics in dynamical systems)
+   * :ref:`sec-extensions-capd`
    * Interface with the IBEX library
    * Sympy (symbolic computation)
 

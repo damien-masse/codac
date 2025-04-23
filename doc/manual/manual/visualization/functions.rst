@@ -46,27 +46,8 @@ for more information.
     fig.draw_box({{2.2,2.5},{2.2,2.5}},{Color.red()}); // Red edge
     fig.draw_box({{2.2,2.5},{2.2,2.5}},{Color.red(),Color.blue()}); // Red edge and blue fill
 
-In addition, a line style and/or a layer can be added to the StyleProperties object. The line style is defined by a string, and the layer is defined by its name (string).
+A line style and a layer can be added to the StyleProperties object, see :ref:`the dedicated page <sec-graphics-colors>` for more information.
 
-Available line styles are:
-  - "\-" (solid)
-  - "\-\-" (dashed)
-  - "\.\." (dotted)
-  - "\-\." (dash-dotted)
-  - "\-\.\." (dash-dot-dotted)
-
-**These two arguments are optional, only one can be added and they can be added in any order.**
-
-.. tabs::
-
-  .. code-tab:: py
-    
-    fig.draw_box([[2.2,2.5],[2.2,2.5]], StyleProperties(Color.red(), "..", "layer1")) # Red edge, dotted line and layer1
-
-  .. code-tab:: c++
-
-    fig.draw_box({{2.2,2.5},{2.2,2.5}}, StyleProperties(Color.red(), "..", "layer1")); // Red edge, dotted line and layer1
-    // fig.draw_box({{2.2,2.5},{2.2,2.5}}, {Color.red(), "..", "layer1"}); //equivalent
 
 Overview of the functions
 -------------------------
@@ -129,6 +110,9 @@ Geometric shapes
   :project: codac
 
 .. doxygenfunction:: codac2::Figure2D::draw_polygon(const std::vector<Vector>&, const StyleProperties&)
+  :project: codac
+
+.. doxygenfunction:: codac2::Figure2D::draw_polygon(const Polygon&, const StyleProperties&)
   :project: codac
 
 .. doxygenfunction:: codac2::Figure2D::draw_parallelepiped(const Vector&, const Matrix&, const StyleProperties&)
