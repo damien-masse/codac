@@ -51,6 +51,28 @@ It can also be deduced from one or two Color objects.
     fig.draw_box({{2.2,2.5},{2.2,2.5}},Color::red()); // red edge, no fill
     fig.draw_box({{2.2,2.5},{2.2,2.5}},{Color::blue(),Color::green()}); // blue edge, green fill
 
+In addition, a line style and/or a layer can be added to the StyleProperties object. The line style is defined by a string, and the layer is defined by its name (string).
+
+Available line styles are:
+  - "\-" (solid)
+  - "\-\-" (dashed)
+  - "\.\." (dotted)
+  - "\-\." (dash-dotted)
+  - "\-\.\." (dash-dot-dotted)
+
+**These two arguments are optional, only one can be added and they can be added in any order.**
+
+.. tabs::
+
+  .. code-tab:: py
+    
+    fig.draw_box([[2.2,2.5],[2.2,2.5]], StyleProperties(Color.red(), "..", "layer1")) # Red edge, dotted line and layer1
+
+  .. code-tab:: c++
+
+    fig.draw_box({{2.2,2.5},{2.2,2.5}}, StyleProperties(Color.red(), "..", "layer1")); // Red edge, dotted line and layer1
+    // fig.draw_box({{2.2,2.5},{2.2,2.5}}, {Color.red(), "..", "layer1"}); //equivalent
+
 Colors
 ------
 
