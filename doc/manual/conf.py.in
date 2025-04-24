@@ -62,6 +62,25 @@ html_theme_options = {
         "header-height": "2rem",
     },
 
+    "dark_css_variables": {
+        "color-brand-primary": "white",
+        "color-brand-content": "#1F506B",
+
+        "color-sidebar-background": "#004B74",
+        "color-sidebar-caption-text": "white",
+        "color-sidebar-item-background--current": "var(--color-brand-content)",
+        "color-sidebar-item-background--hover": "#3B9ACC",
+        "color-sidebar-item-expander-background--hover": "#3B9ACC",
+        "color-sidebar-link-text": "white",
+        "sidebar-caption-font-size": "120%",
+
+        "color-link": "#B2E3FF",
+        "color-link--visited": "var(--color-link)",
+        "color-link--hover": "#77C8F6",
+
+        "header-height": "2rem",
+    },
+
     "announcement": "You are currently reading the new Codac documentation, which is currently in preparation. <a href=\"http://codac.io\">See the v1 website</a>.",
 }
 

@@ -3,6 +3,8 @@
 CAPD (rigorous numerics in dynamical systems)
 =============================================
 
+  Main author: `Maël Godard <https://godardma.github.io>`_
+
 This page describes how to use the CAPD library with CODAC. CAPD is a C++ library for rigorous numerics in dynamical systems.
 
 To use CAPD with CODAC, you first need to install the CAPD library. You can find the installation instructions on the `CAPD website <http://capd.ii.uj.edu.pl/html/capd_compilation.html>`_.
@@ -149,7 +151,7 @@ If the desired result is the solution of the ODE at a given time (here say :math
       :start-after: [codac-capd-6-beg]
       :end-before: [codac-capd-6-end]
 
-**Be careful, this methods modifies the initial set s in place**
+**Be careful, this method modifies the initial set s in place**.
 
 If the desired result is the solution curve (or tube) of the ODE on the time domain :math:`[t_0,t_f]`, we can do as follows:
 
@@ -174,3 +176,10 @@ A full display can be done with the following code:
       :language: c++
       :start-after: [codac-capd-8-beg]
       :end-before: [codac-capd-8-end]
+
+The result is the following figure, with in green the initial set (:math:`t=0s`) and in red the final set (:math:`t=20s`).
+
+.. image:: img/pendulum_result.png
+   :alt: Integration of the pendulum
+   :align: center
+   :width: 500px
