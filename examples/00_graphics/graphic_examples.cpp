@@ -14,7 +14,7 @@ int main(){
   DefaultFigure::draw_tank({2,1,3.14/2},1.,{{Color::black(),Color::yellow()},"vehicles","-."});
   DefaultFigure::draw_pie({2,2},{1.5,2.5},{(3*3.14/4)-0.5,(3*3.14/4)+0.5},{Color::blue(),Color::cyan()});
   DefaultFigure::draw_polyline({{2,-0.5},{4,0.5},{3,1.5},{4,2.5},{3,3}}, Color::red());
-  DefaultFigure::draw_polygone({{2,4.5},{4,4.5},{4.2,3.5},{3.5,3}}, {Color::none(),Color::green(0.5)});
+  DefaultFigure::draw_polygon({{2,4.5},{4,4.5},{4.2,3.5},{3.5,3}}, {Color::none(),Color::green(0.5)});
   DefaultFigure::draw_polyline({{-0.8,0},{0,1.5}}, 0.2, {Color::red(),Color::black(0.3)});
 
   // Last argument corresponds to "StyleProperties" with one or two colors: edge color + (optional) fill color
@@ -48,7 +48,7 @@ int main(){
   fig2->draw_tank({2,1,3.14/2},1.,{{Color::black(),Color::yellow()},"vehicles"});
   fig2->draw_pie({2,2},{1.5,2.5},{(3*3.14/4)-0.5,(3*3.14/4)+0.5},{Color::blue(),Color::cyan()});
   fig2->draw_polyline({{2,-0.5},{4,0.5},{3,1.5},{4,2.5},{3,3}}, {Color::red(),".."});
-  fig2->draw_polygone({{2,4.5},{4,4.5},{4.2,3.5},{3.5,3}}, {Color::none(),Color::green(0.5)});
+  fig2->draw_polygon({{2,4.5},{4,4.5},{4.2,3.5},{3.5,3}}, {Color::none(),Color::green(0.5)});
   fig2->draw_polyline({{-0.8,0},{0,1.5}}, 0.2, {Color::red(),Color::black(0.3)});
   fig2->draw_ellipse({1,1},{0.5,2}, 0.2, {Color::blue(),Color::blue(0.3)});
   fig2->draw_line({1,1},{3,3}, Color::blue());
