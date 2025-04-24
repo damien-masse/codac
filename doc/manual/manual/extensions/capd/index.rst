@@ -176,3 +176,10 @@ A full display can be done with the following code:
       :language: c++
       :start-after: [codac-capd-8-beg]
       :end-before: [codac-capd-8-end]
+
+The result is the following figure, with in green the initial set (:math:`t=0s`) and in red the final set (:math:`t=20s`).
+
+.. image:: img/pendulum_result.png
+   :alt: Integration of the pendulum
+   :align: center
+   :width: 500px
