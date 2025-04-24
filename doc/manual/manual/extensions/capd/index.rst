@@ -3,6 +3,8 @@
 CAPD (rigorous numerics in dynamical systems)
 =============================================
 
+  Main author: `Maël Godard <https://godardma.github.io>`_
+
 This page describes how to use the CAPD library with CODAC. CAPD is a C++ library for rigorous numerics in dynamical systems.
 
 To use CAPD with CODAC, you first need to install the CAPD library. You can find the installation instructions on the `CAPD website <http://capd.ii.uj.edu.pl/html/capd_compilation.html>`_.
