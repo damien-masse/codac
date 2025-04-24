@@ -149,7 +149,7 @@ If the desired result is the solution of the ODE at a given time (here say :math
       :start-after: [codac-capd-6-beg]
       :end-before: [codac-capd-6-end]
 
-**Be careful, this methods modifies the initial set s in place**
+**Be careful, this method modifies the initial set s in place**.
 
 If the desired result is the solution curve (or tube) of the ODE on the time domain :math:`[t_0,t_f]`, we can do as follows:
 
