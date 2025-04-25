@@ -338,5 +338,11 @@ class TestInterval_bwd(unittest.TestCase):
     self.assertTrue(
       CrossProdOp.fwd(Vector([1,2,3]),Vector([2,4,6])) == Vector([0,0,0]))
 
+  def tests_mat_operator(self):
+
+    x1,x2,x3 = IntervalVector([2,3]), IntervalVector([4,5]), IntervalVector([6,7]) 
+    self.assertTrue(MatrixOp.fwd(x1,x2,x3) == IntervalMatrix([[2,4,6],[3,5,7]]))
+    self.assertTrue(MatrixOp.fwd(x1) == IntervalMatrix([[2],[3]]))
+  
 if __name__ ==  '__main__':
   unittest.main()
