@@ -162,6 +162,9 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_Matrix.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_Row.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_Vector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntFullPivLU.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntFullPivLU.cpp
+
 
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_pave.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_pave.h
