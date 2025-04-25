@@ -5,18 +5,18 @@ CAPD (rigorous numerics in dynamical systems)
 
   Main author: `Maël Godard <https://godardma.github.io>`_
 
-This page describes how to use the CAPD library with CODAC. CAPD is a C++ library for rigorous numerics in dynamical systems.
+This page describes how to use the CAPD library with Codac. CAPD is a C++ library for rigorous numerics in dynamical systems.
 
-To use CAPD with CODAC, you first need to install the CAPD library. You can find the installation instructions on the `CAPD website <http://capd.ii.uj.edu.pl/html/capd_compilation.html>`_.
+To use CAPD with Codac, you first need to install the CAPD library. You can find the installation instructions on the `CAPD website <http://capd.ii.uj.edu.pl/html/capd_compilation.html>`_.
 
 Note that as CAPD is a C++ only library, the content present in this page is **only available in C++**.
 
-Installing the codac-capd extension
------------------------------------
+Installing the ``codac-capd`` extension
+---------------------------------------
 
-To install the codac-capd extension, you need to install the CODAC library from its source. To do so you can refer to :ref:`this page <sec-install-cpp>`.
+To install the ``codac-capd`` extension, you need to install the Codac library from its source. To do so you can refer to :ref:`this page <sec-install-cpp>`.
 
-To install the codac-capd, you need to add the option ``-DWITH_CAPD=ON`` to the CMake command. For example:
+To install the ``codac-capd``, you need to add the option ``-DWITH_CAPD=ON`` to the CMake command. For example:
 
 
 .. code-block:: bash
@@ -32,32 +32,32 @@ We highly recommend to test the installation of the library with the provided te
 Content
 -------
 
-The codac-capd extension provides functions to convert CAPD objects to CODAC objects and vice versa.
+The ``codac-capd`` extension provides functions to convert CAPD objects to Codac objects and vice versa.
 
 The functions are ``to_capd`` and ``to_codac``. They can be used to convert the following objects:
 
-- capd::Interval <-> codac2::Interval
-- capd::IVector <-> codac2::IntervalVector
-- capd::IMatrix <-> codac2::IntervalMatrix
+- ``capd::Interval`` <-> ``codac2::Interval``
+- ``capd::IVector`` <-> ``codac2::IntervalVector``
+- ``capd::IMatrix`` <-> ``codac2::IntervalMatrix``
 
 How to use
 ----------
 
-The header of the codac-capd extension is not included by default. You need to include it manually in your code:
+The header of the ``codac-capd`` extension is not included by default. You need to include it manually in your code:
 
 .. code-block:: c++
 
   #include <codac-capd.h>
 
-You can use the functions ``to_capd`` and ``to_codac`` to convert between CAPD and CODAC objects as follows:
+You can use the functions ``to_capd`` and ``to_codac`` to convert between CAPD and Codac objects as follows:
 
 .. tabs::
 
   .. code-tab:: c++
 
-    codac2::Interval codac_interval(0., 2.);  // CODAC interval [0, 2]
+    codac2::Interval codac_interval(0., 2.);  // Codac interval [0, 2]
     capd::Interval capd_interval=to_capd(codac_interval); // convert to CAPD interval
-    codac2::Interval codac_interval2=to_codac(capd_interval); // convert back to CODAC interval
+    codac2::Interval codac_interval2=to_codac(capd_interval); // convert back to Codac interval
 
 Note that in order to use the CAPD library itself, its header must be included. The following line should then be added at the beginning of your code:
 
@@ -103,7 +103,7 @@ This equation can be passed to the CAPD library as follows:
       :start-after: [codac-capd-2-beg]
       :end-before: [codac-capd-2-end]
 
-To solve this ODE, an IOdeSolver object is necessary.
+To solve this ODE, an ``IOdeSolver`` object is necessary.
 
 .. tabs::
 

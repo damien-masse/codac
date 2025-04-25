@@ -79,7 +79,7 @@ namespace codac2
      /** \brief overapproximation of the kernel space as 
       *  a matrix of column vectors.
       *  any vector V which is not a linear combination of the column
-      *  vectors is guaranteed to be outside the kernel ( MV \neq 0 )
+      *  vectors is guaranteed to be outside the kernel ( \f$MV \neq 0\f$ )
       *
       *  \return a matrix of column vectors, may be empty
       */

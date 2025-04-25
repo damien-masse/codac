@@ -5,6 +5,79 @@ Welcome to the Codac website.
 **This manual is currently under construction.** We are actively working on it and appreciate your patience as we build a comprehensive guide.
 
 
+Short example
+^^^^^^^^^^^^^
+
+One of Codac's applications is to solve systems of equations.
+The following example computes a reliable outer approximation of the solution set of the equation system:
+
+.. math::
+  :label: eq:malti
+
+  \left( \begin{array}{c}
+    -x_3^2+2 x_3 \sin(x_3 x_1)+\cos(x_3 x_2)\\
+    2 x_3 \cos(x_3 x_1)-\sin(x_3 x_2)
+  \end{array}\right)=\mathbf{0}.
+
+The solution set is approximated from an initial box :math:`[\mathbf{x}_0]=[0,2]\times[2,4]\times[0,10]`. The bisection involved in the paving algorithm is configured to provide boxes with a precision :math:`\epsilon=4\times 10^{-3}`.
+
+.. tabs::
+  
+  .. code-tab:: py
+
+    from codac import *
+
+    x = VectorVar(3)
+    f = AnalyticFunction([x], [
+      -(x[2]^2)+2*x[2]*sin(x[2]*x[0])+cos(x[2]*x[1]),
+      2*x[2]*cos(x[2]*x[0])-sin(x[2]*x[1])
+    ])
+
+    ctc = CtcInverse(f, [0,0])
+    draw_while_paving([[0,2],[2,4],[0,10]], ctc, 0.004)
+
+  .. code-tab:: c++
+
+    #include <codac>
+
+    using namespace std;
+    using namespace codac2;
+
+    int main()
+    {
+      VectorVar x(3);
+      AnalyticFunction f { {x},
+        {
+          -(x[2]^2)+2*x[2]*sin(x[2]*x[0])+cos(x[2]*x[1]),
+          2*x[2]*cos(x[2]*x[0])-sin(x[2]*x[1])
+        }
+      };
+
+      CtcInverse ctc(f, {0,0});
+      draw_while_paving({{0,2},{2,4},{0,10}}, ctc, 0.004);
+    }
+
+  .. code-tab:: matlab
+
+    import py.codac4matlab.*
+
+    x = VectorVar(3);
+    f = AnalyticFunction({x}, vec( ...
+      -sqr(x(3))+2*x(3)*sin(x(3)*x(1))+cos(x(3)*x(2)), ...
+      2*x(3)*cos(x(3)*x(1))-sin(x(3)*x(2)) ...
+    ));
+
+    ctc = CtcInverse(f, {0,0});
+    draw_while_paving(IntervalVector({{0,2},{2,4},{0,10}}), ctc, 0.004);
+
+
+The result is a set of non-overlapping boxes containing the set of feasible solutions of :eq:`eq:malti`. The following figure shows a projection of the computed set.
+
+.. figure:: manual/malti_example.png
+  :width: 400px
+
+  Solution set computed with ``CtcInverse``. Computation time: 0.609s. 3624 boxes.
+
 
 Contributors
 ^^^^^^^^^^^^
@@ -37,6 +110,7 @@ This list is in alphabetical order by surname.
   * `Raphael Voges <https://raphael-voges.de>`_
 
 We appreciate all contributions, whether they are code, documentation, bug reports, or suggestions. If you believe you should be listed here and are not, please contact us to update the list.
+
 
 
 Provisional Plan
