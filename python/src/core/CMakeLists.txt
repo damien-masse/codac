@@ -65,6 +65,7 @@
     matrices/codac2_py_arithmetic_div.cpp
     matrices/codac2_py_hull.cpp
     matrices/codac2_py_inversion.cpp
+    matrices/codac2_py_IntFullPivLU.cpp
     matrices/codac2_py_Matrix.cpp
     matrices/codac2_py_MatrixBase.h
     matrices/codac2_py_MatrixBlock.h
