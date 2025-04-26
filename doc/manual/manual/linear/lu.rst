@@ -1,12 +1,12 @@
 .. _sec-linear-lu:
 
-LU decomposition of an interval matrix
-======================================
+Interval LU decomposition
+=========================
 
   Main author: `Damien Massé <https://lab-sticc.univ-brest.fr/~dmasse>`_
 
-LU decomposition of an interval matrix with complete pivoting, and related features.
+This page relates to the LU decomposition of an interval matrix with complete pivoting, and related features.
 
-.. doxygenclass:: codac2::IntFullPivLU
+.. doxygenclass:: codac2::IntvFullPivLU
   :project: codac
   :members:

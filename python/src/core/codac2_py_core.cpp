@@ -98,8 +98,8 @@ py::class_<Row> export_Row(py::module& m);
 py::class_<Vector> export_Vector(py::module& m);
 py::class_<Matrix> export_Matrix(py::module& m);
 void export_hull(py::module& m);
-void export_Inversion(py::module& m);
-void export_IntFullPivLU(py::module& m);
+void export_inversion(py::module& m);
+void export_IntvFullPivLU(py::module& m);
 
 // operators
 void export_operators(py::module& m);
@@ -179,8 +179,8 @@ PYBIND11_MODULE(_core, m)
   export_EigenBlock<Row>(m, "RowBlock");
   export_EigenBlock<Vector>(m, "VectorBlock");
   export_hull(m);
-  export_Inversion(m);
-  export_IntFullPivLU(m);
+  export_inversion(m);
+  export_IntvFullPivLU(m);
 
   // domains
   export_BoolInterval(m);

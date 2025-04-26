@@ -24,7 +24,7 @@ using namespace codac2;
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-void export_Inversion(py::module& m)
+void export_inversion(py::module& m)
 {
   m
 
