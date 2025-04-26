@@ -18,31 +18,6 @@ namespace codac2
   enum LeftOrRightInv { LEFT_INV, RIGHT_INV };
 
   /**
-   * \brief Enclosure of the inverse of a (non-singular) matrix expression,
-   * possibly an interval matrix.
-   *
-   * \pre \f$\mathbf{A}\f$ is a square matrix.
-   *
-   * \param A A matrix expression, possibly interval.
-   * \return The enclosure of the inverse. Can have \f$(-\infty,\infty)\f$ coefficients if
-   * \f$\mathbf{A}\f$ is singular or almost singular, if the inversion "failed".
-   */
-  template<typename OtherDerived>
-  inline IntervalMatrix inverse_enclosure(const Eigen::MatrixBase<OtherDerived>& A)
-  {
-    assert_release(A.is_squared());
-    Index N = A.rows();
-
-    if constexpr(std::is_same_v<typename OtherDerived::Scalar,Interval>)
-      return inverse_correction<LEFT_INV>(A, 
-        (A.mid()).fullPivLu().solve(Matrix::Identity(N,N)));
-
-    else
-      return inverse_correction<LEFT_INV>(A, 
-        A.fullPivLu().solve(Matrix::Identity(N,N)));
-  }
-
-  /**
    * \brief Correct the approximation of the inverse \f$\mathbf{B}\approx\mathbf{A}^{-1}\f$ of
    * a square matrix \f$\mathbf{A}\f$ by providing a reliable enclosure \f$[\mathbf{A}^{-1}]\f$.
    *
@@ -96,6 +71,31 @@ namespace codac2
        }
     }
     return  res;
+  }
+
+  /**
+   * \brief Enclosure of the inverse of a (non-singular) matrix expression,
+   * possibly an interval matrix.
+   *
+   * \pre \f$\mathbf{A}\f$ is a square matrix.
+   *
+   * \param A A matrix expression, possibly interval.
+   * \return The enclosure of the inverse. Can have \f$(-\infty,\infty)\f$ coefficients if
+   * \f$\mathbf{A}\f$ is singular or almost singular, if the inversion "failed".
+   */
+  template<typename OtherDerived>
+  inline IntervalMatrix inverse_enclosure(const Eigen::MatrixBase<OtherDerived>& A)
+  {
+    assert_release(A.is_squared());
+    Index N = A.rows();
+
+    if constexpr(std::is_same_v<typename OtherDerived::Scalar,Interval>)
+      return inverse_correction<LEFT_INV>(A, 
+        (A.mid()).fullPivLu().solve(Matrix::Identity(N,N)));
+
+    else
+      return inverse_correction<LEFT_INV>(A, 
+        A.fullPivLu().solve(Matrix::Identity(N,N)));
   }
 
   /**
