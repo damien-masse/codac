@@ -99,7 +99,7 @@ This list is in alphabetical order by surname.
   * `Luc Jaulin <https://www.ensta-bretagne.fr/jaulin>`_
   * `Fabrice Le Bars <https://www.ensta-bretagne.fr/lebars>`_
   * `Morgan Louédec <https://morgan-louedec.fr>`_
-  * Damien Massé
+  * `Damien Massé <https://lab-sticc.univ-brest.fr/~dmasse>`_
   * `Bertrand Neveu <http://imagine.enpc.fr/~neveub>`_
   * Verlein Radwan
   * `Andreas Rauh <https://www.interval-methods.de>`_
@@ -146,7 +146,8 @@ User manual
    * Vector, Matrix
    * IntervalVector, IntervalMatrix
    * Matrix operations and basic linear solving
-   * Reliable inversions of matrices
+   * :ref:`sec-linear-inversion`
+   * :ref:`sec-linear-lu`
    * C++: efficient matrix operations using Eigen
 
 * :ref:`sec-functions`
@@ -343,6 +344,7 @@ Development
 
    manual/installation/index.rst
    manual/intervals/index.rst
+   manual/linear/index.rst
    manual/functions/index.rst
    manual/contractors/index.rst
    manual/geometry/index.rst

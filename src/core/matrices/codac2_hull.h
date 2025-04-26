@@ -16,12 +16,6 @@
 
 namespace codac2
 {
-  /*template<typename OtherDerived>
-  inline auto hull(const Eigen::MatrixBase<OtherDerived>& x1)
-  {
-    return x1.template cast<Interval>();
-  }*/
-
   template<typename X1,typename... X>
   inline Wrapper<X1>::Domain hull(const X1& x1, const X&... x)
   {
