@@ -48,9 +48,9 @@ namespace codac2
         return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,VectorType>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<AnalyticExpr<VectorType>>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<AnalyticExpr<VectorType>>::replace_arg(old_arg_id, new_expr);
       }
 
       ScalarType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
@@ -97,9 +97,9 @@ namespace codac2
         return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,MatrixType>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<AnalyticExpr<MatrixType>>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<AnalyticExpr<MatrixType>>::replace_arg(old_arg_id, new_expr);
       }
 
       ScalarType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
