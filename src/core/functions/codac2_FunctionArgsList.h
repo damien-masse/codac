@@ -44,15 +44,28 @@ namespace codac2
       }
 
       /**
-       * \brief Constructor to initialize a ``FunctionArgsList`` from an initializer list.
+       * \brief Constructor to initialize a ``FunctionArgsList`` from an initializer list
+       * of references to ``VarBase`` objects.
        * 
-       * This constructor creates a ``FunctionArgsList`` from an initializer list of references 
-       * to ``VarBase`` objects. Each argument is deep-copied by calling its ``arg_copy()`` on the referenced 
-       * objects.
+       * Each argument is deep-copied by calling its ``arg_copy()`` on the referenced objects.
        * 
        * \param args An initializer list of references to ``VarBase`` objects.
        */
       FunctionArgsList(std::initializer_list<std::reference_wrapper<VarBase>> args)
+      {
+        for(const auto& arg : args)
+          push_back(arg.get().arg_copy());
+      }
+
+      /**
+       * \brief Constructor to initialize a ``FunctionArgsList`` from a vector of
+       * of references to ``VarBase`` objects.
+       * 
+       * Each argument is deep-copied by calling its ``arg_copy()`` on the referenced objects.
+       * 
+       * \param args An initializer list of references to ``VarBase`` objects.
+       */
+      FunctionArgsList(const std::vector<std::reference_wrapper<VarBase>>& args)
       {
         for(const auto& arg : args)
           push_back(arg.get().arg_copy());
