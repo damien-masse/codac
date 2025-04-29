@@ -25,7 +25,7 @@ namespace codac2
    * A polygon can be constructed from a list of vertices (either ``Vector`` or ``IntervalVector``)
    * or from a list of edges (``Segment``s). Internally, it stores a list of edges enclosed in ``Segment``s.
    */
-  class Polygon
+  class Polygon : public std::vector<Segment>
   {
     public:
 
@@ -136,11 +136,6 @@ namespace codac2
        * \brief Default protected constructor used internally.
        */
       Polygon();
-
-      /**
-       * \brief Internal representation of the polygon as a list of edges.
-       */
-      const std::vector<Segment> _edges;
   };
 
   /**

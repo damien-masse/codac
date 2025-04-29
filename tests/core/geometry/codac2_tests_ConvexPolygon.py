@@ -193,5 +193,15 @@ class TestConvexPolygon(unittest.TestCase):
     self.assertTrue(q == Polygon.empty())
     self.assertTrue(q.is_empty())
 
+    # Other test with inflated points
+    p1 = ConvexPolygon(IntervalVector([[-4,4],[-3,3]]))
+    a1,a2 = IntervalVector([-4,-6]), IntervalVector([-4,6])
+    a1.inflate(1e-10); a2.inflate(1e-10)
+    p2 = ConvexPolygon([Segment(a1,a2)])
+    q = p1 & p2
+    self.assertTrue(len(q.edges()) == 1)
+    self.assertTrue(Approx(q.edges()[0][0],1e-5) == IntervalVector([-4,-3]))
+    self.assertTrue(Approx(q.edges()[0][1],1e-5) == IntervalVector([-4,3]))
+
 if __name__ ==  '__main__':
   unittest.main()

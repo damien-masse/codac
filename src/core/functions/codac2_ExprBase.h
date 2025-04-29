@@ -22,8 +22,8 @@ namespace codac2
   class VarBase;
 
   /**
-   * \@class ExprID
-   * \@brief A class representing a unique identifier for expressions.
+   * \class ExprID
+   * \brief A class representing a unique identifier for expressions.
    * 
    * The ``ExprID`` class is used to assign and manage a unique identifier (``Index`` type) for
    * expressions. This identifier helps in distinguishing one expression from another, independently
