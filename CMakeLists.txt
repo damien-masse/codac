@@ -148,6 +148,18 @@
     find_package(CAPD REQUIRED)
   endif()
 
+################################################################################
+# Looking for CLP (if needed)
+################################################################################
+
+  option(WITH_POLYTOPE "Build with polytopes using CLP" OFF)
+
+  if(WITH_POLYTOPE)
+    include(./src/extensions/polytope/FindClp.cmake)
+    message(STATUS "Found CLP version ${CLP_VERSION}")
+    message(STATUS "Found CLP inclusion ${CLP_INCLUDE_DIRS}")
+  endif()
+
 
 ################################################################################
 # Compile sources

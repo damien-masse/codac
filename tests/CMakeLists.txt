@@ -71,6 +71,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/matrices/codac2_tests_Vector
   core/matrices/codac2_tests_inversion
   core/matrices/codac2_tests_IntFullPivLU
+#  core/matrices/codac2_tests_IntLDLT
 
   core/operators/codac2_tests_operators
 
@@ -98,6 +99,14 @@ if (WITH_CAPD)
     extensions/capd/codac2_tests_capd
   )
   set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-capd capd::capd)
+endif()
+
+# POLYTOPE test
+if (WITH_POLYTOPE)
+  list(APPEND SRC_TESTS
+    extensions/polytope/codac2_tests_clp
+  )
+  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-polytope ${CLP_LIBRARIES})
 endif()
 
 # IBEX test
