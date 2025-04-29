@@ -173,7 +173,7 @@ namespace codac2
     return {
       fwd(x1.m),
       fwd(x1.a),
-      IntervalMatrix(0,0), // not supported yet for matrices
+      -x1.da, 
       x1.def_domain
     };
   }
@@ -277,7 +277,7 @@ namespace codac2
     return {
       fwd(x1.m, x2.m),
       fwd(x1.a, x2.a),
-      IntervalMatrix(0,0), // not supported yet for matrices
+      x1.da - x2.da, 
       x1.def_domain && x2.def_domain
     };
   }

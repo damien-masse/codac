@@ -232,11 +232,18 @@ namespace codac2
   {
     if(centered_form_not_available_for_args(x1,x2))
       return fwd_natural(x1,x2);
+
+    assert(x2.da.cols() == x1.da.cols());
+    IntervalMatrix d(x2.da.rows(),x2.da.cols());
+    for (Index j=0; j<d.cols(); j++) 
+      for (Index i=0; i<d.rows(); i++) {
+        d(i,j) = x1.da(0,j)*x2.a.reshaped<ColMajor>()[i]+x1.a*x2.da(i,j);
+    }
     
     return {
-      fwd(x1.a, /* <<----- x1.m */ x2.m),
+      fwd(x1.m, x2.m),
       fwd(x1.a, x2.a),
-      IntervalMatrix::zero(0,0), // todo
+      d, 
       x1.def_domain && x2.def_domain
     };
   }
@@ -265,10 +272,19 @@ namespace codac2
     if(centered_form_not_available_for_args(x1,x2))
       return fwd_natural(x1,x2);
     
+    assert(x2.da.cols() == x1.da.cols());
+    IntervalMatrix d = IntervalMatrix::zero(x1.a.rows(),x1.da.cols());
+    for (Index j=0; j<d.cols(); j++) 
+      for (Index i=0; i<d.rows(); i++) {
+        for (Index k=0; k<x2.a.size(); k++) {
+          d(i,j) += x1.da(i+k*x1.a.rows(),j)*x2.a[k]+x1.a(i,k)*x2.da(k,j);
+        }
+    }
+    
     return {
-      fwd(x1.a, /* <<----- x1.m */ x2.m),
+      fwd(x1.m, x2.m),
       fwd(x1.a, x2.a),
-      IntervalMatrix::zero(0,0), // todo
+      d, 
       x1.def_domain && x2.def_domain
     };
   }
@@ -292,10 +308,23 @@ namespace codac2
     if(centered_form_not_available_for_args(x1,x2))
       return fwd_natural(x1,x2);
     
+    assert(x2.da.cols() == x1.da.cols());
+    IntervalMatrix d = 
+		IntervalMatrix::zero(x1.a.rows()*x2.a.cols(),x1.da.cols());
+    for (Index j=0; j<d.cols(); j++) 
+      for (Index i=0; i<d.rows(); i++) {
+        int row_i = i%x1.a.rows();
+        int col_i = i/x1.a.rows();
+        for (Index k=0; k<x2.a.size(); k++) {
+          d(i,j) += x1.da(row_i+k*x1.a.rows(),j)*x2.a(k,col_i)
+		   +x1.a(row_i,k)*x2.da(k+col_i*x2.a.rows(),j);
+        }
+    }
+    
     return {
-      fwd(x1.a, /* <<----- x1.m */ x2.m),
+      fwd(x1.m, x2.m),
       fwd(x1.a, x2.a),
-      IntervalMatrix::zero(0,0), // todo
+      d,
       x1.def_domain && x2.def_domain
     };
   }
