@@ -37,6 +37,17 @@ namespace codac2
       // Geometric shapes
       void draw_box(const IntervalVector& x, const StyleProperties& s = { Color::dark_gray(0.5) });
       void draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s = { Color::dark_gray(0.5) });
+      void draw_boat_hull(const Vector &center, const Matrix &rotMatrix,
+			double size,
+			const StyleProperties& s1 = { Color::yellow(0.8) },
+			const StyleProperties& s2 = { Color::dark_green(0.8) });
+      void draw_uncertain_boat_hull(const Vector &center, 
+			const IntervalMatrix &rotMatrix,
+			const IntervalMatrix &uncert,
+			double size,
+			const StyleProperties& s1 = { Color::yellow(0.8) },
+			const StyleProperties& s2 = { Color::dark_green(0.8) },
+			const StyleProperties& s3 = { Color::yellow(0.3) });
 
       // Pavings
       void draw_paving(const PavingOut& p,

@@ -99,6 +99,65 @@ void Figure3D::draw_parallelepiped(const Vector& z, const Matrix& A, const Style
 
 }
 
+void Figure3D::draw_boat_hull(const Vector& center, const Matrix& rotMatrix,
+	double size, const StyleProperties& s1, 
+		 const StyleProperties& s2)
+{
+  assert_release(center.size() == 3);
+  assert_release(rotMatrix.rows() == 3 && rotMatrix.cols() == 3);
+
+  Color c = s1.stroke_color.rgb();
+
+  _file << "newmtl " << c.hex_str().substr(1,6) << "\n";
+  _file << "Kd " << c.rgb()[0]/255. << " " << c.rgb()[1]/255. << " " << c.rgb()[2]/255. << "\n";
+  _file << "d "<<c.rgb()[3]/255.<<"\n";
+  _file << "usemtl " << c.hex_str().substr(1,6) << "\n";
+
+  Vector v0 = center - 0.5*size*rotMatrix.col(0) - 0.3*size*rotMatrix.col(1);
+  Vector v1 = center - 0.5*size*rotMatrix.col(0) + 0.3*size*rotMatrix.col(1);
+  Vector v2 = center + size*rotMatrix.col(0);
+  Vector v3 = center - 0.3*size*rotMatrix.col(2);
+
+  _file << "v " << v0[0] << " " << v0[1] << " " << v0[2] << "\n";
+  _file << "v " << v1[0] << " " << v1[1] << " " << v1[2] << "\n";
+  _file << "v " << v2[0] << " " << v2[1] << " " << v2[2] << "\n";
+  _file << "v " << v3[0] << " " << v3[1] << " " << v3[2] << "\n";
+ 
+   c = s2.stroke_color.rgb();
+
+  size_t v = vertex_count + 1;
+  _file << "f " << v + 0 << " " << v + 1 << " " << v + 2 << "\n";
+
+  _file << "newmtl " << c.hex_str().substr(1,6) << "\n";
+  _file << "Kd " << c.rgb()[0]/255. << " " << c.rgb()[1]/255. << " " << c.rgb()[2]/255. << "\n";
+  _file << "d "<<c.rgb()[3]/255.<<"\n";
+  _file << "usemtl " << c.hex_str().substr(1,6) << "\n";
+
+  _file << "f " << v + 0 << " " << v + 1 << " " << v + 3 << "\n";
+  _file << "f " << v + 2 << " " << v + 1 << " " << v + 3 << "\n";
+  _file << "f " << v + 0 << " " << v + 2 << " " << v + 3 << "\n";
+
+  vertex_count += 4;
+}
+
+void Figure3D::draw_uncertain_boat_hull(const Vector& center,
+	const IntervalMatrix& rotMatrix,
+	const IntervalMatrix &uncert,
+	double size, 
+        const StyleProperties& s1,
+        const StyleProperties& s2,
+        const StyleProperties& s3)
+{
+  this->draw_boat_hull(center,rotMatrix.mid(),size,s1,s2);
+  assert_release(uncert.rows() == 3 && uncert.cols() == 3);
+
+  IntervalVector box = center + size*uncert*rotMatrix.col(0);
+  this->draw_box(box,s3);
+  box = center - 0.3*size*uncert*rotMatrix.col(2);
+  this->draw_box(box,s3);
+}
+
+
 void Figure3D::draw_paving(const PavingOut& p,
   const StyleProperties& boundary_style)
 {
