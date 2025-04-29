@@ -388,5 +388,10 @@ class TestAnalyticFunction(unittest.TestCase):
     self.assertTrue(Approx(f.eval(0.)) == 0.)
     self.assertTrue(Approx(f.eval(1e-10),1e-3) == 0.)
 
+    x1,x2,x3 = VectorVar(2),VectorVar(2),VectorVar(2)
+    f = AnalyticFunction([x1,x2,x3], mat(+x1,-x2,2*x3))
+    self.assertTrue(f.eval(EvalMode.NATURAL, Vector([1,2]),Vector([-1,8]),IntervalVector([[-1,1],[2,oo]]))
+      == IntervalMatrix([[1,1,[-2,2]],[2,-8,[4,oo]]]))
+  
 if __name__ ==  '__main__':
   unittest.main()

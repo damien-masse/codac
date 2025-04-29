@@ -18,16 +18,21 @@ namespace codac2
 {
   struct MatrixOp
   {
-    static void fwd_i(IntervalMatrix& m, const IntervalVector& x, Index i);
-
-    template<typename... X>
-      requires (std::is_base_of_v<Domain,X> && ...)
-    static inline IntervalMatrix fwd(const X&... x)
+    static inline void set_col_i(IntervalMatrix& m, const IntervalVector& x, Index i)
     {
-      throw std::runtime_error("MatrixOp not fully implemented yet");
-      IntervalMatrix m(1, sizeof...(X));
+      assert(i >= 0 && i < m.cols());
+      assert_release(x.size() == m.rows());
+      m.col(i) = x;
+    }
+
+    template<typename X1,typename... X>
+      requires ((X1::ColsAtCompileTime == 1) && ((X::ColsAtCompileTime == 1) && ...))
+    static inline IntervalMatrix fwd(const X1& x1, const X&... x)
+    {
+      IntervalMatrix m(x1.size(), 1+sizeof...(X));
       Index i = 0;
-      (MatrixOp::fwd_i(m, x, i++), ...);
+      MatrixOp::set_col_i(m, x1, i++); // first column x1
+      (MatrixOp::set_col_i(m, x, i++), ...); // other columns
       return m;
     }
 
@@ -35,10 +40,9 @@ namespace codac2
       requires (std::is_base_of_v<VectorType,X> && ...)
     static inline MatrixType fwd_natural(const X&... x)
     {
-      throw std::runtime_error("MatrixOp not fully implemented yet");
       return {
-        IntervalMatrix({x.a...}),
-        true // todo with variadic
+        MatrixOp::fwd(x.a...),
+        ((true && x.def_domain), ...)
       };
     }
 
@@ -48,10 +52,10 @@ namespace codac2
     {
       throw std::runtime_error("MatrixOp not fully implemented yet");
       return {
-        IntervalMatrix({x.m...}),
-        IntervalMatrix({x.a...}),
+        MatrixOp::fwd(x.m...),
+        MatrixOp::fwd(x.a...),
         IntervalMatrix(0,0), // not supported yet for matrices
-        true // todo with variadic
+        ((true && x.def_domain), ...)
       };
     }
 
@@ -76,14 +80,5 @@ namespace codac2
   {
     return { std::make_shared<AnalyticOperationExpr<MatrixOp,MatrixType,X...>>(
       AnalyticOperationExpr<MatrixOp,MatrixType,X...>(x...)) };
-  }
-
-  // Inline functions
-
-  inline void MatrixOp::fwd_i(IntervalMatrix& m, const IntervalVector& x, Index i)
-  {
-    assert(i >= 0 && i < m.cols());
-    m.resize(x.size(),m.cols());
-    m.col(i) = x;
   }
 }

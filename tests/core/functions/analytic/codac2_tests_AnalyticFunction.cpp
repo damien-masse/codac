@@ -445,4 +445,11 @@ TEST_CASE("AnalyticFunction")
     CHECK(Approx(f.eval(0.)) == 0.);
     CHECK(Approx(f.eval(1e-10),1e-3) == 0.);
   }
+
+  {
+    VectorVar x1(2),x2(2),x3(2);
+    AnalyticFunction f({x1,x2,x3}, mat(+x1,-x2,2*x3));
+    CHECK(f.eval(EvalMode::NATURAL, Vector({1,2}),Vector({-1,8}),IntervalVector({{-1,1},{2,oo}}))
+      == IntervalMatrix({{1,1,{-2,2}},{2,-8,{4,oo}}}));
+  }
 }
