@@ -1,16 +1,16 @@
 from codac import *
 
-# Graphics can be directly called without a Figure2D instanciation, using "DefaultView":
+# Graphics can be directly called without a Figure2D instanciation, using "DefaultFigure":
 
-DefaultView.set_window_properties([600,600],[300,300])
-DefaultView.draw_box([[2.2,2.5],[2.2,2.5]],[Color.black(),Color.yellow(0.5)])
-DefaultView.draw_AUV([1,1,3.14/2],1.,[Color.black(),Color.yellow()])
-DefaultView.draw_motor_boat([0,0,0], 1., [Color.black(),Color.yellow()])
-DefaultView.draw_tank([2,1,3.14/2],1.,[Color.black(),Color.yellow()])
-DefaultView.draw_pie([2,2],[1.5,2.5],[(3*3.14/4)-0.5,(3*3.14/4)+0.5],[Color.blue(),Color.cyan()])
-DefaultView.draw_polyline([[2,-0.5],[4,0.5],[3,1.5],[4,2.5],[3,3]], Color.red())
-DefaultView.draw_polygone([[2,4.5],[4,4.5],[4.2,3.5],[3.5,3]], [Color.none(),Color.green(0.5)])
-DefaultView.draw_polyline([[-0.8,0],[0,1.5]], 0.2, [Color.red(),Color.black(0.3)])
+DefaultFigure.set_window_properties([600,600],[300,300])
+DefaultFigure.draw_box([[2.2,2.5],[2.2,2.5]],[Color.black(),Color.yellow(0.5)])
+DefaultFigure.draw_AUV([1,1,3.14/2],1.,StyleProperties([Color.black(),Color.yellow()],"-.."))
+DefaultFigure.draw_motor_boat([0,0,0], 1., [Color.black(),Color.yellow()])
+DefaultFigure.draw_tank([2,1,3.14/2],1.,StyleProperties([Color.black(),Color.yellow()],"vehicles","-."))
+DefaultFigure.draw_pie([2,2],[1.5,2.5],[(3*3.14/4)-0.5,(3*3.14/4)+0.5],[Color.blue(),Color.cyan()])
+DefaultFigure.draw_polyline([[2,-0.5],[4,0.5],[3,1.5],[4,2.5],[3,3]], Color.red())
+DefaultFigure.draw_polygon([[2,4.5],[4,4.5],[4.2,3.5],[3.5,3]], [Color.none(),Color.green(0.5)])
+DefaultFigure.draw_polyline([[-0.8,0],[0,1.5]], 0.2, [Color.red(),Color.black(0.3)])
 
 # Last argument corresponds to "StyleProperties" with one or two colors: edge color + (optional) fill color
 # Predefined Color objects can be configured with a float parameter for opacity (1=opaque, 0=transparent)
@@ -31,18 +31,18 @@ fig2 = Figure2D("My figure 2", GraphicOutput.VIBES | GraphicOutput.IPE)
 fig2.set_axes(axis(0,[-1,5]), axis(1,[-1,5]))
 fig2.set_window_properties([250,250],[500,500])
 
-# The previously declared figure "fig2" can now be used as a DefaultView
-DefaultView.set(fig2)
-DefaultView.draw_box([[2.2,2.5],[2.2,2.5]],[Color.black(),Color.green(0.8)])
+# The previously declared figure "fig2" can now be used as a DefaultFigure
+DefaultFigure.set(fig2)
+DefaultFigure.draw_box([[2.2,2.5],[2.2,2.5]],[Color.black(),Color.green(0.8)])
 
-DefaultView.set(fig1)
-DefaultView.draw_box([[2.2,2.5],[2.2,2.5]],[Color.blue(),Color.cyan(0.8)])
+DefaultFigure.set(fig1)
+DefaultFigure.draw_box([[2.2,2.5],[2.2,2.5]],[Color.blue(),Color.cyan(0.8)])
 
-fig2.draw_AUV([1,1,3.14/2],2.,[Color.black(),Color.yellow()])
-fig2.draw_tank([2,1,3.14/2],1.,[Color.black(),Color.yellow()])
+fig2.draw_AUV([1,1,3.14/2],2.,StyleProperties([Color.black(),Color.yellow()],"-..", "vehicles"))
+fig2.draw_tank([2,1,3.14/2],1.,StyleProperties([Color.black(),Color.yellow()],"vehicles"))
 fig2.draw_pie([2,2],[1.5,2.5],[(3*3.14/4)-0.5,(3*3.14/4)+0.5],[Color.blue(),Color.cyan()])
-fig2.draw_polyline([[2,-0.5],[4,0.5],[3,1.5],[4,2.5],[3,3]], Color.red())
-fig2.draw_polygone([[2,4.5],[4,4.5],[4.2,3.5],[3.5,3]], [Color.none(),Color.green(0.5)])
+fig2.draw_polyline([[2,-0.5],[4,0.5],[3,1.5],[4,2.5],[3,3]], StyleProperties(Color.red(),".."))
+fig2.draw_polygon([[2,4.5],[4,4.5],[4.2,3.5],[3.5,3]], [Color.none(),Color.green(0.5)])
 fig2.draw_polyline([[-0.8,0],[0,1.5]], 0.2, [Color.red(),Color.black(0.3)])
 fig2.draw_ellipse([1,1],[0.5,2], 0.2, [Color.blue(),Color.blue(0.3)])
 fig2.draw_line([1,1],[3,3], Color.blue())
@@ -74,7 +74,7 @@ custom_map[0.5] = Color([0,255,0])
 custom_map[1] = Color([0,0,255])
 
 subdivisions=40
-fig3.set_axes(axis(0,[-1,subdivisions+1]), axis(1,[-1.25,0]))
+fig3.set_axes(axis(0,[-1,subdivisions+1]), axis(1,[-1.25,0.05]))
 
 for i in range (subdivisions):
     ratio=i/subdivisions

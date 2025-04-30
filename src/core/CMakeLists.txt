@@ -11,6 +11,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCartProd.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCross.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCross.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.cpp
@@ -31,6 +33,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcLazy.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcNot.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcUnion.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPointCloud.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPointCloud.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolar.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolygon.cpp
@@ -83,22 +87,14 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_SetFunction.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_constants.h
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Edge.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Edge.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_ConvexPolygon.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_ConvexPolygon.h
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_geometry.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_geometry.h
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Polygon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Polygon.h
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_Base.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_include.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_IntervalMatrix.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_IntervalMatrixBase.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_IntervalVector.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_Matrix.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_MatrixBase.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_Vector.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_VectorBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Segment.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/geometry/codac2_Segment.h
     
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_abs.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_acos.h
@@ -111,9 +107,11 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_atan2.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_ceil.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_chi.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_component.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cos.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cosh.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cross_prod.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_det.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_exp.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_floor.h
@@ -134,6 +132,16 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_tanh.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_vec.h
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_Base.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_include.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_IntervalMatrix.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_IntervalMatrixBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_IntervalVector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_Matrix.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_MatrixBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_Vector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_VectorBase.h
+
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/MatrixBase_addons/codac2_MatrixBase_addons_Base.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/MatrixBase_addons/codac2_MatrixBase_addons_include.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/MatrixBase_addons/codac2_MatrixBase_addons_IntervalMatrix.h
@@ -147,12 +155,16 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_cart_prod.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_GaussJordan.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_GaussJordan.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_hull.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_inversion.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_inversion.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_matrices.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_Matrix.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_Row.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_Vector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntvFullPivLU.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntvFullPivLU.cpp
+
 
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_pave.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_pave.h
@@ -167,6 +179,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartProd.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepChi.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepChi.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCross.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcBoundary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcBoundary.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCtcPair.cpp

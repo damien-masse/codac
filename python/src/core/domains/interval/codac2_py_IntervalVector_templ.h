@@ -91,8 +91,4 @@ void export_IntervalVector_(py::module& m, py::class_<IV>& pyclass)
 
   py::implicitly_convertible<py::list,IV>();
   py::implicitly_convertible<V,IV>();
-
-  m.def("hull", [](const std::list<IV>& l) { return hull(l); },
-    AUTO_HULL_CONST_LIST_EIGEN_MATRIX_SCALARROWSATCOMPILETIMECOLSATCOMPILETIME_REF,
-    "l"_a);
 }

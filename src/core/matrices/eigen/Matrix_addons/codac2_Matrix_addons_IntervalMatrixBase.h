@@ -18,6 +18,14 @@
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
+// does not work: template<typename OtherDerived1,typename OtherDerived2,
+// does not work:          typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
+// does not work:   requires (IsIntervalDomain<U>
+// does not work:     && !IsIntervalDomain<typename OtherDerived1::Scalar> && !IsIntervalDomain<typename OtherDerived2::Scalar>)
+// does not work: Matrix(const MatrixBase<OtherDerived1>& lb, const MatrixBase<OtherDerived2>& ub)
+// does not work:   : Matrix<U,R,C>(lb.eval(), ub.eval())
+// does not work: { }
+
 template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
   requires IsIntervalDomain<U>
 Matrix(const Matrix<double,R,C>& lb, const Matrix<double,R,C>& ub)

@@ -3,6 +3,8 @@
 Analytic inclusion functions
 ============================
 
+  Main author: `Simon Rohou <https://www.simon-rohou.fr/research/>`_
+
 The ``AnalyticFunction`` class allows to build analytic inclusion functions and evaluate them using interval analysis.
 
 Considering a :math:`n`-dimensional box :math:`[\mathbf{x}]` as input, a function :math:`\mathbf{f}:\mathbb{R}^n\to\mathbb{R}^m` will output a set which is not necessarily a box.

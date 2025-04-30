@@ -81,4 +81,13 @@ namespace codac2
   {
     return x->size();
   }
+
+  template<int R,int C>
+  inline auto vectorVector_to_vectorIntervalVector(const std::vector<Mat<double,R,C>>& x)
+  {
+    std::vector<Mat<Interval,R,C>> v(x.size());
+    for(size_t i = 0 ; i < x.size() ; i++)
+      v[i] = x[i].template cast<Interval>();
+    return v;
+  }
 }

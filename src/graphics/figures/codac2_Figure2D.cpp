@@ -19,8 +19,8 @@
 using namespace std;
 using namespace codac2;
 
-shared_ptr<Figure2D> DefaultView::_default_fig = nullptr;
-shared_ptr<Figure2D> DefaultView::_selected_fig = DefaultView::_default_fig;
+shared_ptr<Figure2D> DefaultFigure::_default_fig = nullptr;
+shared_ptr<Figure2D> DefaultFigure::_selected_fig = DefaultFigure::_default_fig;
 
 Figure2D::Figure2D(const std::string& name, GraphicOutput o, bool set_as_default_)
   : _name(name)
@@ -112,12 +112,12 @@ void Figure2D::auto_scale()
 
 bool Figure2D::is_default() const
 {
-  return DefaultView::_selected_fig == this->weak_from_this().lock();
+  return DefaultFigure::_selected_fig == this->weak_from_this().lock();
 }
 
 void Figure2D::set_as_default()
 {
-  DefaultView::set(this->shared_from_this());
+  DefaultFigure::set(this->shared_from_this());
 }
 
 void Figure2D::set_tdomain(const Interval& tdomain)
@@ -191,8 +191,6 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
   assert_release(tip_length >= 0.); // 0 = disabled tip
   for([[maybe_unused]] const auto& xi : x)
   {
-    if(!(this->size() <= xi.size()))
-      cout << this->size() << "  -  " << xi.size() << endl;
     assert_release(this->size() <= xi.size());
   }
 
@@ -200,7 +198,7 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
     output_fig->draw_polyline(x,tip_length,s);
 }
 
-void Figure2D::draw_polygone(const vector<Vector>& x, const StyleProperties& s)
+void Figure2D::draw_polygon(const vector<Vector>& x, const StyleProperties& s)
 {
   assert_release(x.size() > 1);
   for([[maybe_unused]] const auto& xi : x)
@@ -209,7 +207,20 @@ void Figure2D::draw_polygone(const vector<Vector>& x, const StyleProperties& s)
   }
 
   for(const auto& output_fig : _output_figures)
-    output_fig->draw_polygone(x,s);
+    output_fig->draw_polygon(x,s);
+}
+
+void Figure2D::draw_polygon(const Polygon& x, const StyleProperties& s)
+{
+  vector<Vector> w;
+  for(const auto& vi : x.sorted_vertices())
+  {
+    if(!vi.is_degenerated())
+      draw_point(vi.mid(),s); // revealing thick points
+    w.push_back(vi.mid());
+  }
+
+  return draw_polygon(w, s);
 }
 
 void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s)
@@ -219,7 +230,7 @@ void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const Style
 
   auto a1 = A.col(0), a2 = A.col(1);
 
-  draw_polygone(vector<Vector>({
+  draw_polygon(vector<Vector>({
       Vector(z+a1+a2), Vector(z-a1+a2),
       Vector(z-a1-a2), Vector(z+a1-a2)
     }), s);
