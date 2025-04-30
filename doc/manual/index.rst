@@ -5,8 +5,8 @@ Welcome to the Codac website.
 **This manual is currently under construction.** We are actively working on it and appreciate your patience as we build a comprehensive guide.
 
 
-Short example
-^^^^^^^^^^^^^
+Short example: solving an equation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 One of Codac's applications is to solve systems of equations.
 The following example computes a reliable outer approximation of the solution set of the equation system:

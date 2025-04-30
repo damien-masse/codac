@@ -16,7 +16,7 @@ namespace codac2
 {
   BoxPair SepChi::separate(const IntervalVector& x) const
   {
-    assert_release(x.size() == _seps.front().size());
+    assert_release(x.size() == _seps.front()->size());
 
     std::vector<BoxPair> pairs;
     for (const auto& sep : _seps)

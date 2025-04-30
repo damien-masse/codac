@@ -40,7 +40,7 @@ namespace codac2
       void bwd_eval([[maybe_unused]] ValuesMap& v) const
       { }
 
-      void replace_expr([[maybe_unused]] const ExprID& old_expr_id, [[maybe_unused]] const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg([[maybe_unused]] const ExprID& old_arg_id, [[maybe_unused]] const std::shared_ptr<ExprBase>& new_expr)
       { }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const

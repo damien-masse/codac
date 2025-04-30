@@ -121,9 +121,13 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_RING_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "s"_a=StyleProperties())
 
-    .def("draw_line", &Figure2D::draw_line,
+    .def("draw_line", (void(Figure2D::*)(const Vector&,const Vector&,const StyleProperties&))&Figure2D::draw_line,
       VOID_FIGURE2D_DRAW_LINE_CONST_VECTOR_REF_CONST_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "p1"_a, "p2"_a, "s"_a=StyleProperties())
+
+    .def("draw_line", (void(Figure2D::*)(const Segment&,const StyleProperties&))&Figure2D::draw_line,
+      VOID_FIGURE2D_DRAW_LINE_CONST_SEGMENT_REF_CONST_STYLEPROPERTIES_REF,
+      "e"_a, "s"_a=StyleProperties())
 
     .def("draw_arrow", &Figure2D::draw_arrow,
       VOID_FIGURE2D_DRAW_ARROW_CONST_VECTOR_REF_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,
@@ -263,9 +267,13 @@ void export_Figure2D(py::module& m)
       STATIC_VOID_DEFAULTFIGURE_DRAW_RING_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "s"_a=StyleProperties())
 
-    .def_static("draw_line", &DefaultFigure::draw_line,
+    .def_static("draw_line", (void(*)(const Vector&,const Vector&,const StyleProperties&))&DefaultFigure::draw_line,
       STATIC_VOID_DEFAULTFIGURE_DRAW_LINE_CONST_VECTOR_REF_CONST_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "p1"_a, "p2"_a, "s"_a=StyleProperties())
+
+    .def_static("draw_line", (void(*)(const Segment&,const StyleProperties&))&DefaultFigure::draw_line,
+      STATIC_VOID_DEFAULTFIGURE_DRAW_LINE_CONST_SEGMENT_REF_CONST_STYLEPROPERTIES_REF,
+      "e"_a, "s"_a=StyleProperties())
 
     .def_static("draw_arrow", &DefaultFigure::draw_arrow,
       STATIC_VOID_DEFAULTFIGURE_DRAW_ARROW_CONST_VECTOR_REF_CONST_VECTOR_REF_FLOAT_CONST_STYLEPROPERTIES_REF,

@@ -80,3 +80,10 @@ Convex hull
   :width: 400px
 
   Convex hull of a set of points.
+
+
+Geometric operations on objects
+-------------------------------
+
+.. doxygenfunction:: rotate(const T &x, const Interval &a, const IntervalVector &o)
+  :project: codac

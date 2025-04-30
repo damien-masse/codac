@@ -11,6 +11,7 @@
 #include "codac2_Polygon.h"
 #include "codac2_geometry.h"
 #include "codac2_hull.h"
+#include "codac2_ConvexPolygon.h"
 
 using namespace std;
 using namespace codac2;
@@ -105,6 +106,15 @@ namespace codac2
     return e1.box() & e2.box() & proj_intersection(e1,e2);
   }
   
+  Segment operator&(const Segment& e1, const ConvexPolygon& p2)
+  {
+    auto p = p2 & ConvexPolygon({e1});
+    assert(p.edges().size() <= 1);
+    if(p.edges().empty())
+      return Segment(IntervalVector::empty(2),IntervalVector::empty(2));
+    return p.edges()[0];
+  }
+
   IntervalVector proj_intersection(const Segment& e1, const Segment& e2)
   {
     const auto& x1 = e1[0][0], &y1 = e1[0][1];

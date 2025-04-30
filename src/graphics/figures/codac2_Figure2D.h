@@ -236,6 +236,14 @@ namespace codac2
       void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s = StyleProperties());
 
       /**
+       * \brief Draws a line on the figure
+       * 
+       * \param e segment to be drawn
+       * \param s Style of the line (edge color)
+       */
+      void draw_line(const Segment& e, const StyleProperties& s = StyleProperties());
+
+      /**
        * \brief Draws an arrow on the figure
        * 
        * \param p1 First point of the arrow
@@ -555,6 +563,18 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_line(p1,p2,s);
+      }
+
+      /**
+       * \brief Draws a line on the figure
+       * 
+       * \param e segment to be drawn
+       * \param s Style of the line (edge color)
+       */
+      static void draw_line(const Segment& e, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_line(e,s);
       }
 
       /**

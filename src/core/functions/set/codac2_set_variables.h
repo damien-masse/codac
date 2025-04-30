@@ -43,7 +43,7 @@ namespace codac2
         return _n;
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       { }
       
       operator std::shared_ptr<SetExpr>() const
