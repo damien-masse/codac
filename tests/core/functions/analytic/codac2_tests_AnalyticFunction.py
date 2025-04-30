@@ -3,7 +3,7 @@
 #  Codac tests
 # ----------------------------------------------------------------------------
 #  \date       2024
-#  \author     Simon Rohou
+#  \author     Simon Rohou, Damien Massé
 #  \copyright  Copyright 2024 Codac Team
 #  \license    GNU Lesser General Public License (LGPL)
 

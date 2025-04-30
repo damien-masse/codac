@@ -2,7 +2,7 @@
  *  \file codac2_matrix.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -71,7 +71,7 @@ namespace codac2
       return {
         MatrixOp::fwd(x1.m,x.m...),
         MatrixOp::fwd(x1.a,x.a...),
-        d, // not supported yet for matrices
+        d,
         (x1.def_domain && (x.def_domain && ...))
       };
     }

@@ -77,6 +77,20 @@ TEST_CASE("AnalyticFunction - manual")
   }
 
   {
+    // [4b-beg]
+    ScalarVar a;
+    VectorVar v(2);
+
+    AnalyticFunction Rot({a}, mat(vec(cos(a),sin(a)),vec(-sin(a),cos(a))));
+    AnalyticFunction f({v}, Rot(PI/4)*v);
+
+    IntervalVector y = f.eval(Vector({1,1})); // y == [ [-2.22045e-16, 4.4409e-16] ; [1.41421, 1.41422] ]
+    // [4b-end]
+
+    CHECK(Approx(y,1e-5) == Vector({0,1.41421}));
+  }
+
+  {
     // [5-beg]
     ScalarVar x1; // scalar argument
     AnalyticFunction f1({x1}, x1*cos(x1));

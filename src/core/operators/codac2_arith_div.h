@@ -2,7 +2,7 @@
  *  \file codac2_arith_div.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -171,7 +171,7 @@ namespace codac2
     for(Index j = 0 ; j < d.cols() ; j++)
       for(Index i = 0 ; i < d.rows() ; i++)
         d(i,j) = x1.da(i,j)/x2.a - 
-		x1.a.reshaped<Eigen::ColMajor>()[i]*x2.da(0,j)/sqr(x2.a);
+		              x1.a.reshaped<Eigen::ColMajor>()[i]*x2.da(0,j)/sqr(x2.a);
 
     return {
       fwd(x1.m, x2.m),

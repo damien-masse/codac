@@ -2,7 +2,7 @@
  *  \file codac2_cross_prod.h
  * ----------------------------------------------------------------------------
  *  \date       2025
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2025 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */

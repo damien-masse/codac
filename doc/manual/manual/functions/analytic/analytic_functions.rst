@@ -44,7 +44,7 @@ Expressions
 An ``AnalyticFunction`` object is built from:
 
 * a list of arguments (``ScalarVar``, ``VectorVar`` or ``MatrixVar`` objects), that can be empty;
-* a scalar or vectorial expression involving the arguments, constants, and possibly other functions.
+* a scalar or vectorial or matricial expression involving the arguments, constants, and possibly other functions.
 
 .. tabs::
 
@@ -126,6 +126,26 @@ Function composition
       :language: c++
       :start-after: [4-beg]
       :end-before: [4-end]
+      :dedent: 4
+
+Below is an example of a function composition involving matrix calculation for the rotation of a vector:
+
+.. tabs::
+
+  .. group-tab:: Python
+
+    .. literalinclude:: src.py
+      :language: py
+      :start-after: [4b-beg]
+      :end-before: [4b-end]
+      :dedent: 4
+
+  .. group-tab:: C++
+
+    .. literalinclude:: src.cpp
+      :language: c++
+      :start-after: [4b-beg]
+      :end-before: [4b-end]
       :dedent: 4
 
 

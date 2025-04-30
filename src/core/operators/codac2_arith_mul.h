@@ -2,7 +2,7 @@
  *  \file codac2_arith_mul.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -309,15 +309,15 @@ namespace codac2
       return fwd_natural(x1,x2);
     
     assert(x2.da.cols() == x1.da.cols());
-    IntervalMatrix d = 
-		IntervalMatrix::zero(x1.a.rows()*x2.a.cols(),x1.da.cols());
+    IntervalMatrix d = IntervalMatrix::zero(x1.a.rows()*x2.a.cols(),x1.da.cols());
     for (Index j=0; j<d.cols(); j++) 
-      for (Index i=0; i<d.rows(); i++) {
-        int row_i = i%x1.a.rows();
-        int col_i = i/x1.a.rows();
+      for (Index i=0; i<d.rows(); i++)
+      {
+        Index row_i = i%x1.a.rows();
+        Index col_i = i/x1.a.rows();
         for (Index k=0; k<x2.a.rows(); k++) {
           d(i,j) += x1.da(row_i+k*x1.a.rows(),j)*x2.a(k,col_i)
-		   +x1.a(row_i,k)*x2.da(k+col_i*x2.a.rows(),j);
+                    +x1.a(row_i,k)*x2.da(k+col_i*x2.a.rows(),j);
         }
     }
     

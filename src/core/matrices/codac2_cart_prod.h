@@ -2,7 +2,7 @@
  *  \file codac2_cart_prod.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2023 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -35,8 +35,7 @@ namespace codac2
     requires (!Eigen::IsVectorOrRow<R,C>)
   inline IntervalVector to_IntervalVector(const Eigen::Matrix<T,R,C>& x)
   {
-//    return Eigen::Map<const Eigen::Matrix<T,R,1>>(x.data(), x.size());
-      return x.reshaped();
+    return x.reshaped();
   }
 
   inline IntervalVector cart_prod()
