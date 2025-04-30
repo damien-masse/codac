@@ -2,7 +2,7 @@
  *  Codac tests
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -451,5 +451,31 @@ TEST_CASE("AnalyticFunction")
     AnalyticFunction f({x1,x2,x3}, mat(+x1,-x2,2*x3));
     CHECK(f.eval(EvalMode::NATURAL, Vector({1,2}),Vector({-1,8}),IntervalVector({{-1,1},{2,oo}}))
       == IntervalMatrix({{1,1,{-2,2}},{2,-8,{4,oo}}}));
+  }
+
+  {
+    VectorVar x1(2);
+    AnalyticFunction f({x1}, det(mat(+x1,2.0*x1)));
+    CHECK(Approx(f.eval(EvalMode::NATURAL,IntervalVector({{0.9,1.1},{0.4,0.5}})),1e-9) == Interval(-0.38,0.38));
+    CHECK(Approx(f.eval(EvalMode::CENTERED,IntervalVector({{0.9,1.1},{0.4,0.5}})),1e-9) == Interval(-0.04,0.04));
+  }
+
+  {
+    MatrixVar m1(2,3);
+    MatrixVar m2(3,2);
+    AnalyticFunction f({m1,m2}, m1*m2-m1*m2);
+    CHECK(Approx(f.eval(EvalMode::NATURAL,
+		 Matrix({{1.0,0.0,1.0},{0.0,1.0,0.0}}),
+		  IntervalMatrix({{{-0.2,0.2},{-0.1,0.1}},
+				  {{0.2,0.4},{-0.4,-0.1}},
+				  {{1.0,2.0},{-0.2,-0.1}}}) ),1e-9)
+		== IntervalMatrix({{{-1.4,1.4},{-0.3,0.3}},
+				   {{-0.2,0.2},{-0.3,0.3}}}));
+    CHECK(Approx(f.eval(EvalMode::CENTERED,
+		 Matrix({{1.0,0.0,1.0},{0.0,1.0,0.0}}),
+		  IntervalMatrix({{{-0.2,0.2},{-0.1,0.1}},
+				  {{0.2,0.4},{-0.4,-0.1}},
+				  {{1.0,2.0},{-0.2,-0.1}}}) ),1e-9)
+		== Matrix({{0,0}, {0,0}}));
   }
 }

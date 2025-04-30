@@ -68,6 +68,19 @@ class TestAnalyticFunctionManual(unittest.TestCase):
     test.assertTrue(Approx(h.eval(PI)) == 2*PI)
 
 
+    # [4b-beg]
+    a = ScalarVar()
+    v = VectorVar(2)
+
+    Rot = AnalyticFunction([a], mat(vec(cos(a),sin(a)),vec(-sin(a),cos(a))))
+    f = AnalyticFunction([v], Rot(PI/4)*v)
+    
+    y = f.eval([1,1]) # y == [ [-2.22045e-16, 4.4409e-16] ; [1.41421, 1.41422] ]
+    # [4b-end]
+    
+    test.assertTrue(Approx(y,1e-5) == Vector([0,1.41421]))
+
+
     # [5-beg]
     x1 = ScalarVar() # scalar argument
     f1 = AnalyticFunction([x1], x1*cos(x1))

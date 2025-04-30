@@ -2,7 +2,7 @@
  *  \file codac2_component.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -196,7 +196,7 @@ namespace codac2
       return {
         fwd(x1.m,i,j),
         fwd(x1.a,i,j),
-        IntervalMatrix(0,0), // centered form not yet available
+        x1.da.row(x1.a.rows()*i+j), // centered form, ColMajor
         x1.def_domain
       };
     }

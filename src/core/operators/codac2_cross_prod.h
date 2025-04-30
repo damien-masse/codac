@@ -2,7 +2,7 @@
  *  \file codac2_cross_prod.h
  * ----------------------------------------------------------------------------
  *  \date       2025
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2025 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -54,10 +54,24 @@ namespace codac2
 
   inline VectorType CrossProdOp::fwd_centered(const VectorType& x1, const VectorType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+
+    assert(x1.da.cols() == x2.da.cols());
+    IntervalMatrix d(3,x1.da.cols());
+    for (Index i=0;i<x1.da.cols();i++) {
+        d(0,i) = x1.da(1,i)*x2.a[2] + x1.a[1]*x2.da(2,i) 
+               - x1.da(2,i)*x2.a[1] - x1.a[2]*x2.da(1,i); 
+        d(1,i) = x1.da(2,i)*x2.a[0] + x1.a[2]*x2.da(0,i) 
+               - x1.da(0,i)*x2.a[2] - x1.a[0]*x2.da(2,i); 
+        d(2,i) = x1.da(0,i)*x2.a[1] + x1.a[0]*x2.da(1,i) 
+               - x1.da(1,i)*x2.a[0] - x1.a[1]*x2.da(0,i); 
+    }
+
     return {
       fwd(x1.m,x2.m),
       fwd(x1.a,x2.a),
-      IntervalMatrix(0,0), // not supported yet for auto diff
+      d,
       x1.def_domain && x2.def_domain
     };
   }

@@ -2,7 +2,7 @@
  *  \file codac2_arith_add.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -171,7 +171,7 @@ namespace codac2
     return {
       fwd(x1.m),
       fwd(x1.a),
-      IntervalMatrix(0,0), // not supported yet for matrices
+      x1.da, // unary plus
       x1.def_domain
     };
   }
@@ -254,7 +254,7 @@ namespace codac2
 
   inline IntervalMatrix AddOp::fwd(const IntervalMatrix& x1, const IntervalMatrix& x2)
   {
-    assert(x1.size() == x2.size());
+    assert(x1.cols() == x2.cols() && x1.rows() == x2.rows());
     return x1 + x2;
   }
 
@@ -268,17 +268,21 @@ namespace codac2
 
   inline MatrixType AddOp::fwd_centered(const MatrixType& x1, const MatrixType& x2)
   {
+    if(centered_form_not_available_for_args(x1,x2))
+      return fwd_natural(x1,x2);
+
     return {
       fwd(x1.m, x2.m),
       fwd(x1.a, x2.a),
-      IntervalMatrix(0,0), // not supported yet for matrices
+      x1.da + x2.da,
       x1.def_domain && x2.def_domain
     };
   }
 
   inline void AddOp::bwd(const IntervalMatrix& y, IntervalMatrix& x1, IntervalMatrix& x2)
   {
-    assert(y.size() == x1.size() && y.size() == x2.size());
+    assert(y.cols() == x1.cols() && y.rows() == x1.rows()
+	   && y.cols() == x2.cols() && y.rows() == x2.rows());
     for(Index i = 0 ; i < y.size() ; i++)
       AddOp::bwd(*(y.data()+i), *(x1.data()+i), *(x2.data()+i));
   }
