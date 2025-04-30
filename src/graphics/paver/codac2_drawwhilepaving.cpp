@@ -38,7 +38,7 @@ namespace codac2
     assert_release(c.size() >= 2 && "cannot reveal 1d contractors");
     
     if(!fig)
-      fig = DefaultView::selected_fig();
+      fig = DefaultFigure::selected_fig();
     init_fig(fig, x0);
 
     clock_t t_start = clock();
@@ -90,7 +90,7 @@ namespace codac2
     assert_release(s.size() >= 2 && "cannot reveal 1d separators");
 
     if(!fig)
-      fig = DefaultView::selected_fig();
+      fig = DefaultFigure::selected_fig();
     init_fig(fig, x0);
     
     clock_t t_start = clock();

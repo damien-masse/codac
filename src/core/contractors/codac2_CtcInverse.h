@@ -165,6 +165,9 @@ namespace codac2
 
   // ScalarType
 
+    CtcInverse(const AnalyticFunction<ScalarType>&, std::initializer_list<double>, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<Interval,IntervalVector>;
+
     template<typename Y>
     CtcInverse(const AnalyticFunction<ScalarType>&, std::initializer_list<Y>, bool with_centered_form = true, bool is_not_in = false) -> 
       CtcInverse<Interval,IntervalVector>;

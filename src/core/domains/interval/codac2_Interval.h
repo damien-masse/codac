@@ -647,10 +647,12 @@ namespace codac2
       _dec_friend_interval2_binary_op(pow)
 
       friend Interval root(const Interval&, int);
+      friend Interval chi(const Interval&, const Interval&, const Interval&);
 
       friend struct AbsOp;
       friend struct AcosOp;
       friend struct AddOp;
+      friend struct ChiOp;
       friend struct DivOp;
       friend struct MulOp;
       friend struct SubOp;

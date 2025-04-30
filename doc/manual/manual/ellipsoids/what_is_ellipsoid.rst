@@ -3,7 +3,7 @@
 Ellipsoid in n-dimensional space (matrix definition)
 ====================================================
 
-*Main author:* `Morgan Louédec <https://morgan-louedec.fr/>`_
+  Main author: `Morgan Louédec <https://morgan-louedec.fr>`_
 
 Link to the :ref:`Codac_ellipsoid_implementation<sec-ellipsoids-class>`
 
