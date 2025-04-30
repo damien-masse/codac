@@ -196,7 +196,7 @@ namespace codac2
       return {
         fwd(x1.m,i,j),
         fwd(x1.a,i,j),
-        da.row(x.a.rows()*i+j), // centered form, ColMajor
+        x1.da.row(x1.a.rows()*i+j), // centered form, ColMajor
         x1.def_domain
       };
     }

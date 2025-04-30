@@ -388,6 +388,15 @@ void export_operators(py::module& m)
       "y"_a, "x1"_a, "x2"_a, "x3"_a)
   ;
 
+  m.def("det", [](const MatrixExpr& e1) { return det(e1); },
+    SCALAREXPR_DET_CONST_MATRIXEXPR_REF,
+    "x1"_a);
+
+  m.def("det", [](const VectorExpr &x1, const VectorExpr &x2) 
+		{ return det(x1,x2); },
+    SCALAREXPR_DET_CONST_VECTOREXPR_REF_CONST_VECTOREXPR_REF,
+    "x1"_a, "x2"_a);
+
   py::class_<ExpOp>(m, "ExpOp")
 
     .def_static("fwd", (Interval(*)(const Interval&)) &ExpOp::fwd,

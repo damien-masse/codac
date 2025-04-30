@@ -42,20 +42,37 @@ namespace codac2
     {
       return {
         MatrixOp::fwd(x.a...),
-        ((true && x.def_domain), ...)
+        (x.def_domain && ...)
       };
     }
 
-    template<typename... X>
-      requires (std::is_base_of_v<VectorType,X> && ...)
-    static inline MatrixType fwd_centered(const X&... x)
+    static inline void fill_diff_matrix(IntervalMatrix &d, 
+	const IntervalMatrix &dax, Index &l) {
+       d.middleRows(l,dax.rows())=dax;
+       l += dax.rows();
+    }
+
+
+    template<typename X1, typename... X>
+      requires (std::is_base_of_v<VectorType,X1> 
+		&& (std::is_base_of_v<VectorType,X> && ...))
+    static inline MatrixType fwd_centered(const X1& x1, const X&... x)
     {
-      throw std::runtime_error("MatrixOp not fully implemented yet");
+      if (centered_form_not_available_for_args(x1,x...))
+        return fwd_natural(x1,x...);
+
+      IntervalMatrix d(x1.a.size()*(1+sizeof...(X)),x1.da.cols());
+      Index l=0;
+      d.topRows(x1.da.rows()) = x1.da;
+      l += x1.da.rows();
+      ( MatrixOp::fill_diff_matrix(d,x.da,l) , ...);
+      assert (l==d.rows());
+      
       return {
-        MatrixOp::fwd(x.m...),
-        MatrixOp::fwd(x.a...),
-        IntervalMatrix(0,0), // not supported yet for matrices
-        ((true && x.def_domain), ...)
+        MatrixOp::fwd(x1.m,x.m...),
+        MatrixOp::fwd(x1.a,x.a...),
+        d, // not supported yet for matrices
+        (x1.def_domain && (x.def_domain && ...))
       };
     }
 

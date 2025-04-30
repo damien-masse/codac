@@ -282,7 +282,7 @@ namespace codac2
   inline void AddOp::bwd(const IntervalMatrix& y, IntervalMatrix& x1, IntervalMatrix& x2)
   {
     assert(y.cols() == x1.cols() && y.rows() == x1.rows()
-	   && y.cols == x2.cols() && y.rows() == x2.rows());
+	   && y.cols() == x2.cols() && y.rows() == x2.rows());
     for(Index i = 0 ; i < y.size() ; i++)
       AddOp::bwd(*(y.data()+i), *(x1.data()+i), *(x2.data()+i));
   }

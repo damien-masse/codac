@@ -237,7 +237,7 @@ namespace codac2
     IntervalMatrix d(x2.da.rows(),x2.da.cols());
     for (Index j=0; j<d.cols(); j++) 
       for (Index i=0; i<d.rows(); i++) {
-        d(i,j) = x1.da(0,j)*x2.a.reshaped<ColMajor>()[i]+x1.a*x2.da(i,j);
+        d(i,j) = x1.da(0,j)*x2.a.reshaped<Eigen::ColMajor>()[i]+x1.a*x2.da(i,j);
     }
     
     return {
@@ -315,7 +315,7 @@ namespace codac2
       for (Index i=0; i<d.rows(); i++) {
         int row_i = i%x1.a.rows();
         int col_i = i/x1.a.rows();
-        for (Index k=0; k<x2.a.size(); k++) {
+        for (Index k=0; k<x2.a.rows(); k++) {
           d(i,j) += x1.da(row_i+k*x1.a.rows(),j)*x2.a(k,col_i)
 		   +x1.a(row_i,k)*x2.da(k+col_i*x2.a.rows(),j);
         }

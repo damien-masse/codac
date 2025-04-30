@@ -91,7 +91,7 @@ namespace codac2
     if(centered_form_not_available_for_args(x)) 
       return fwd_natural(x);
 
-    if(x.rows()==1) {
+    if(x.a.rows()==1) {
       return {
         fwd(x.m),
         fwd(x.a),
@@ -101,7 +101,7 @@ namespace codac2
     }
     
     IntervalMatrix d(1, x.da.cols());
-    if (x.rows()==2) { /* otherwise, will fail afterwards */
+    if (x.a.rows()==2) { /* otherwise, will fail afterwards */
        for (Index i=0; i < d.cols() ; i++) {
           d(0,i) = x.da(0,i)*x.a(1,1) + x.da(3,i)*x.a(0,0)
 		 - x.da(1,i)*x.a(0,1) - x.da(2,i)*x.a(1,0);
@@ -169,7 +169,7 @@ namespace codac2
     a.col(0) = x1.a; a.col(1) = x2.a;
 
     assert(x1.da.cols() == x2.da.cols());
-    IntervalMatrix d(1, x.da.cols());
+    IntervalMatrix d(1, x1.da.cols());
     for (Index i=0; i < d.cols() ; i++) {
           d(0,i) = x1.da(0,i)*x2.a[1] + x1.a[0]*x2.da(1,i)
 		 - x1.da(1,i)*x2.a[0] - x1.a[1]*x2.da(0,i);

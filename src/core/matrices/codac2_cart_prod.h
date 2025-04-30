@@ -35,7 +35,8 @@ namespace codac2
     requires (!Eigen::IsVectorOrRow<R,C>)
   inline IntervalVector to_IntervalVector(const Eigen::Matrix<T,R,C>& x)
   {
-    return Eigen::Map<const Eigen::Matrix<T,R,1>>(x.data(), x.size());
+//    return Eigen::Map<const Eigen::Matrix<T,R,1>>(x.data(), x.size());
+      return x.reshaped();
   }
 
   inline IntervalVector cart_prod()
