@@ -41,14 +41,14 @@ namespace codac2
       SepInter& operator&=(const S& s)
       {
         assert_release(s.size() == this->size());
-        _seps.add_shared_ptr(std::make_shared<S>(s));
+        _seps.push_object_back(s);
         return *this;
       }
 
       SepInter& operator&=(const std::shared_ptr<SepBase>& s)
       {
         assert_release(s->size() == this->size());
-        _seps.add_shared_ptr(s);
+        _seps.push_back(s);
         return *this;
       }
 

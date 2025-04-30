@@ -20,7 +20,7 @@ BoxPair SepCtcBoundary::separate(const IntervalVector& x) const
   Index attempt_nb = 5;
   IntervalVector x_boundary(x);
   IntervalVector larger_x(x);
-  _ctc_boundary.front().contract(x_boundary);
+  _ctc_boundary.front()->contract(x_boundary);
 
   IntervalVector x_in(x_boundary), x_out(x_boundary);
 

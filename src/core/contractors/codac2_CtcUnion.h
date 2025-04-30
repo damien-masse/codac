@@ -64,14 +64,14 @@ namespace codac2
       CtcUnion<X>& operator|=(const C& c)
       {
         assert_release(c.size() == this->size());
-        _ctcs.add_shared_ptr(std::make_shared<C>(c));
+        _ctcs.push_object_back(c);
         return *this;
       }
 
       CtcUnion<X>& operator|=(const std::shared_ptr<CtcBase<X>>& c)
       {
         assert_release(c->size() == this->size());
-        _ctcs.add_shared_ptr(c);
+        _ctcs.push_back(c);
         return *this;
       }
 

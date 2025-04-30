@@ -19,7 +19,7 @@ void CtcCtcBoundary::contract(IntervalVector& x) const
   srand(time(NULL));
   Index attempt_nb = 5;
   IntervalVector prev_x(x), larger_x(x);
-  _ctc_boundary.front().contract(x);
+  _ctc_boundary.front()->contract(x);
 
   // We restrict the "neighbourhood" of x in which we will take
   // random vectors to be tested (_inside_test). Otherwise, if x
