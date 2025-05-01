@@ -2,11 +2,6 @@
 #  Codac - cmake configuration file
 # ==================================================================
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mathjax_stmaryrd.js DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mathjax_stmaryrd.js
-        DESTINATION share/doc/${CMAKE_PROJECT_NAME}
-        OPTIONAL)
-
 # Technical API documentation (Doxygen)
 
   if(WITH_PYTHON)
@@ -93,7 +88,10 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mathjax_stmaryrd.js
                       COMMENT "Generating the manual website using Sphinx")
 
     install(DIRECTORY ${SPHINX_BUILD}/
-            DESTINATION share/manual/${CMAKE_PROJECT_NAME}
+            DESTINATION share/codac_website
             OPTIONAL)
+    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/api
+            DESTINATION share/codac_website
+        OPTIONAL)
 
   endif()

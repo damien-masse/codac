@@ -173,6 +173,15 @@ void Figure2D::draw_line(const Vector& p1, const Vector& p2, const StyleProperti
   draw_polyline({p1,p2}, s);
 }
 
+void Figure2D::draw_line(const Segment& e, const StyleProperties& s)
+{
+  draw_polyline({e[0].mid(),e[1].mid()}, s);
+  if(!e[0].is_degenerated())
+    draw_point(e[0].mid(),s); // revealing thick points
+  if(!e[1].is_degenerated())
+    draw_point(e[1].mid(),s); // revealing thick points
+}
+
 void Figure2D::draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s)
 {
   assert_release(p1.size() == p2.size());

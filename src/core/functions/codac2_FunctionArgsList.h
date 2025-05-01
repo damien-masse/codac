@@ -14,13 +14,27 @@
 
 namespace codac2
 {
+  /**
+   * \class FunctionArgsList
+   * \brief A container class to manage a collection of function arguments.
+   */
   class FunctionArgsList : public std::vector<std::shared_ptr<VarBase>>
   {
     public:
 
+      /**
+       * \brief Default constructor. It creates an empty list of arguments.
+       */
       FunctionArgsList()
       { }
 
+      /**
+       * \brief Copy constructor.
+       * 
+       * Each argument is deep-copied using its ``arg_copy()`` method.
+       * 
+       * \param args The ``FunctionArgsList`` to copy from.
+       */
       FunctionArgsList(const FunctionArgsList& args)
         : std::vector<std::shared_ptr<VarBase>>(args.size())
       {
@@ -29,18 +43,40 @@ namespace codac2
           (*this)[i++] = arg->arg_copy();
       }
 
-      FunctionArgsList(const std::vector<std::reference_wrapper<VarBase>>& args)
-      {
-        for(const auto& arg : args)
-          push_back(arg.get().arg_copy());
-      }
-
+      /**
+       * \brief Constructor to initialize a ``FunctionArgsList`` from an initializer list
+       * of references to ``VarBase`` objects.
+       * 
+       * Each argument is deep-copied by calling its ``arg_copy()`` on the referenced objects.
+       * 
+       * \param args An initializer list of references to ``VarBase`` objects.
+       */
       FunctionArgsList(std::initializer_list<std::reference_wrapper<VarBase>> args)
       {
         for(const auto& arg : args)
           push_back(arg.get().arg_copy());
       }
 
+      /**
+       * \brief Constructor to initialize a ``FunctionArgsList`` from a vector of
+       * of references to ``VarBase`` objects.
+       * 
+       * Each argument is deep-copied by calling its ``arg_copy()`` on the referenced objects.
+       * 
+       * \param args An initializer list of references to ``VarBase`` objects.
+       */
+      FunctionArgsList(const std::vector<std::reference_wrapper<VarBase>>& args)
+      {
+        for(const auto& arg : args)
+          push_back(arg.get().arg_copy());
+      }
+
+      /**
+       * \brief Calculates the total size of the function arguments,
+       * as the sum of the sizes of each argument.
+       * 
+       * \return The sum of the sizes of all arguments.
+       */
       Index total_size() const
       {
         Index n = 0;

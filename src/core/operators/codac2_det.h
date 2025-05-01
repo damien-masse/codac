@@ -2,7 +2,7 @@
  *  \file codac2_det.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -88,10 +88,31 @@ namespace codac2
 
   inline ScalarType DetOp::fwd_centered(const MatrixType& x)
   {
+    if(centered_form_not_available_for_args(x)) 
+      return fwd_natural(x);
+
+    if(x.a.rows()==1) {
+      return {
+        fwd(x.m),
+        fwd(x.a),
+        x.da, // keep matrix type for diff 
+        x.def_domain
+      };
+    }
+    
+    IntervalMatrix d(1, x.da.cols());
+    if (x.a.rows()==2) { /* otherwise, will fail afterwards */
+       for (Index i=0; i < d.cols() ; i++) {
+          d(0,i) = x.da(0,i)*x.a(1,1) + x.da(3,i)*x.a(0,0)
+		 - x.da(1,i)*x.a(0,1) - x.da(2,i)*x.a(1,0);
+		/* note:  ColMajor is assumed here */
+       }      
+    }
+ 
     return {
       fwd(x.m),
       fwd(x.a),
-      IntervalMatrix(0,0), // not supported yet for auto diff
+      d, 
       x.def_domain
     };
   }
@@ -147,10 +168,17 @@ namespace codac2
     IntervalMatrix a(2,2);
     a.col(0) = x1.a; a.col(1) = x2.a;
 
+    assert(x1.da.cols() == x2.da.cols());
+    IntervalMatrix d(1, x1.da.cols());
+    for (Index i=0; i < d.cols() ; i++) {
+          d(0,i) = x1.da(0,i)*x2.a[1] + x1.a[0]*x2.da(1,i)
+		 - x1.da(1,i)*x2.a[0] - x1.a[1]*x2.da(0,i);
+    }
+ 
     return {
       fwd(m),
       fwd(a),
-      IntervalMatrix(0,0), // not supported yet for auto diff
+      d, 
       x1.def_domain && x2.def_domain
     };
   }

@@ -46,7 +46,7 @@ namespace codac2
       template<typename... X>
       void contract(X&... x) const
       {
-        return contract_(_ctc_y.front(), x...);
+        return contract_(*_ctc_y.front(), x...);
       }
 
       template<typename... X>

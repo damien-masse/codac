@@ -100,6 +100,9 @@ Geometric shapes
 .. doxygenfunction:: codac2::Figure2D::draw_line(const Vector&, const Vector&, const StyleProperties&)
   :project: codac
 
+.. doxygenfunction:: codac2::Figure2D::draw_line(const Segment&, const StyleProperties&)
+  :project: codac
+
 .. doxygenfunction:: codac2::Figure2D::draw_arrow(const Vector&, const Vector&, float, const StyleProperties&)
   :project: codac
 

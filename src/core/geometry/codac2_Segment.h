@@ -17,6 +17,7 @@
 
 namespace codac2
 {
+  class ConvexPolygon;
   /**
    * \class Segment
    * \brief Represents a geometric segment defined by two points enclosed in ``IntervalVector``s.
@@ -88,6 +89,8 @@ namespace codac2
    * \return An ``IntervalVector`` enclosing the intersection point.
    */
   IntervalVector operator&(const Segment& e1, const Segment& e2);
+
+  Segment operator&(const Segment& e1, const ConvexPolygon& p2);
 
   /**
    * \brief Computes the projected intersection of two segments.

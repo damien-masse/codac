@@ -266,4 +266,15 @@ TEST_CASE("ConvexPolygon - intersection")
     CHECK(q == Polygon::empty());
     CHECK(q.is_empty());
   }
+
+  { // Other test with inflated points
+    ConvexPolygon p1(IntervalVector({{-4,4},{-3,3}}));
+    IntervalVector a1({-4,-6}), a2({-4,6});
+    a1.inflate(1e-10); a2.inflate(1e-10);
+    ConvexPolygon p2({Segment(a1,a2)});
+    auto q = p1 & p2;
+    CHECK(q.edges().size() == 1);
+    CHECK(Approx(q.edges()[0][0],1e-5) == IntervalVector({-4,-3}));
+    CHECK(Approx(q.edges()[0][1],1e-5) == IntervalVector({-4,3}));
+  }
 }

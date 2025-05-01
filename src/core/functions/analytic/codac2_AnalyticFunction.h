@@ -96,8 +96,16 @@ namespace codac2
             
             if constexpr(std::is_same_v<T,ScalarType>)
               return x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0];
-            else
+
+            else if constexpr(std::is_same_v<T,VectorType>)
               return x_.m + (x_.da*(flatten_x-flatten_x.mid())).col(0);
+
+            else
+            {
+              static_assert(std::is_same_v<T,MatrixType>);
+              return x_.m + (x_.da*(flatten_x-flatten_x.mid()))
+                .reshaped(x_.m.rows(), x_.m.cols());
+            }
           }
 
           case EvalMode::DEFAULT:
@@ -113,12 +121,22 @@ namespace codac2
             else
             {
               auto flatten_x = IntervalVector(cart_prod(x...));
+
               if constexpr(std::is_same_v<T,ScalarType>)
                 return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0]);
-              else
+
+              else if constexpr(std::is_same_v<T,VectorType>)
               {
                 assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
                 return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid())).col(0));
+              }
+
+              else
+              {
+                static_assert(std::is_same_v<T,MatrixType>);
+                assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
+                return x_.a & (x_.m +(x_.da*(flatten_x-flatten_x.mid()))
+                  .reshaped(x_.m.rows(),x_.m.cols()));
               }
             }
           }
@@ -170,6 +188,8 @@ namespace codac2
           os << "scalar function";
         else if constexpr(std::is_same_v<T,VectorType>) 
           os << "vector function";
+        else 
+          os << "matrix function";
         return os;
       }
 
@@ -186,19 +206,14 @@ namespace codac2
 
         using D_TYPE = typename ValueType<D>::Type;
 
-        IntervalMatrix d(0,0); // derivatives disabled for matrix inputs
+        IntervalMatrix d = IntervalMatrix::zero(size_of(x), this->args().total_size());
+        
+        Index p = 0;
+        for(Index j = 0 ; j < i ; j++)
+          p += this->args()[j]->size();
 
-        if constexpr(!std::is_same_v<D_TYPE,MatrixType>)
-        {
-          d = IntervalMatrix::zero(size_of(x), this->args().total_size());
-          
-          Index p = 0;
-          for(Index j = 0 ; j < i ; j++)
-            p += this->args()[j]->size();
-
-          for(Index k = p ; k < p+size_of(x) ; k++)
-            d(k-p,k) = 1.;
-        }
+        for(Index k = p ; k < p+size_of(x) ; k++)
+          d(k-p,k) = 1.;
 
         v[this->args()[i]->unique_id()] = 
           std::make_shared<D_TYPE>(typename D_TYPE::Domain(x).mid(), x, d, true);

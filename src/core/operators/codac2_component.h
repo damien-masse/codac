@@ -2,7 +2,7 @@
  *  \file codac2_component.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -48,9 +48,9 @@ namespace codac2
         return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,VectorType>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<AnalyticExpr<VectorType>>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<AnalyticExpr<VectorType>>::replace_arg(old_arg_id, new_expr);
       }
 
       ScalarType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
@@ -97,9 +97,9 @@ namespace codac2
         return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,MatrixType>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<AnalyticExpr<MatrixType>>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<AnalyticExpr<MatrixType>>::replace_arg(old_arg_id, new_expr);
       }
 
       ScalarType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
@@ -196,7 +196,7 @@ namespace codac2
       return {
         fwd(x1.m,i,j),
         fwd(x1.a,i,j),
-        IntervalMatrix(0,0), // centered form not yet available
+        x1.da.row(x1.a.rows()*i+j), // centered form, ColMajor
         x1.def_domain
       };
     }
