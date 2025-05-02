@@ -1,6 +1,7 @@
 # The generated .obj files can be visualized on https://3dviewer.net
 
 from codac import *
+import math
 
 x = VectorVar(3)
 f = AnalyticFunction([x], [
@@ -19,3 +20,30 @@ p_sep = pave([[-1.5,1.5],[-1.5,1.5],[-1.5,1.5]], sep_ellipsoid1&sep_ellipsoid2, 
 fig_sep = Figure3D("Paving separator")
 fig_sep.draw_axes(0.4)
 fig_sep.draw_paving(p_sep)
+
+fig_examples = Figure3D("3D examples")
+fig_examples.draw_axes(1.0)
+fig_examples.draw_triangle([1,0,0],[0,1,0],[0,0,1],Color.dark_green(0.5))
+fig_examples.draw_triangle([2,0,0],
+                        Matrix([[2,0,0],[-1,0,0],[0,1,1]]),
+                            [1,0,0],[0,1,0],[0,0,1],Color.purple(0.5))
+fig_examples.draw_sphere([0,0,2],Matrix([[-1,0,0],[0,1,1],[0,0,-1]]),
+                            Color.yellow(0.6))
+fig_examples.draw_arrow([0,2,0],Matrix([[-1,0,0],[0,1,1],[0,0,-1]]),Color.red(1.0))
+fig_examples.draw_car([-1,0,0],0.3*Matrix.eye(3,3),
+                        Color.green(0.8))
+fig_examples.draw_plane([3,0,0],0.5*Matrix.eye(3,3),True,Color.dark_gray(0.8))
+
+def f(phi,psi):
+    return Vector([(1-math.cos(phi))*math.sin(phi),
+                   (1-math.cos(2*phi))*math.cos(phi)*math.cos(psi),
+                   (1-math.cos(phi))*math.cos(phi)*math.sin(psi)])
+
+fig_examples.draw_surface([0,-2,0], 0.5*Matrix.eye(3,3),
+                    [0,2*PI],0.05*PI,[0,2*PI],0.05*PI,
+                    f,Color.red(0.6))
+
+# to flush the files
+del fig_ctc
+del fig_sep
+del fig_examples
