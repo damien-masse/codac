@@ -9,7 +9,7 @@ Short example: solving an equation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 One of Codac's applications is to solve systems of equations.
-The following example computes a reliable outer approximation of the solution set of the equation system:
+The following example [`1 <https://cyber.bibl.u-szeged.hu/index.php/actcybern/article/view/4438>`_] computes a reliable outer approximation of the solution set of the equation system:
 
 .. math::
   :label: eq:malti
@@ -73,10 +73,51 @@ The solution set is approximated from an initial box :math:`[\mathbf{x}_0]=[0,2]
 
 The result is a set of non-overlapping boxes containing the set of feasible solutions of :eq:`eq:malti`. The following figure shows a projection of the computed set.
 
-.. figure:: manual/malti_example.png
+.. figure:: manual/example_malti.png
   :width: 400px
 
-  Solution set computed with ``CtcInverse``. Computation time: 0.609s. 3624 boxes.
+  Outer approximation of the solution set, computed with ``CtcInverse``. Blue parts are guaranteed to be solution-free. Computation time: 0.609s. 3624 boxes.
+
+
+Short example: solving an inequality
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The previous example showed a way of solving systems of the form :math:`\mathbf{f}(\mathbf{x})=\mathbf{0}`. The library also provides tools for solving generic systems expressed as :math:`\mathbf{f}(\mathbf{x})\in[\mathbf{y}]` where :math:`[\mathbf{y}]` is an interval or a box.
+
+The following code allows to compute the set of vectors :math:`\mathbf{x}\in\mathbb{R}^2` satisfying the inequality:
+
+.. math::
+  :label: eq:ineq
+
+  x_1\cos(x_1-x_2)+x_2 \leqslant 0
+
+.. tabs::
+  
+  .. code-tab:: py
+
+    x = VectorVar(2)
+    f = AnalyticFunction([x], x[0]*cos(x[0]-x[1])+x[1])
+    sep = SepInverse(f, [-oo,0])
+    draw_while_paving([[-10,10],[-10,10]], sep, 0.004)
+
+  .. code-tab:: c++
+
+    VectorVar x(2);
+    AnalyticFunction f({x}, x[0]*cos(x[0]-x[1])+x[1]);
+    SepInverse sep(f, {-oo,0});
+    draw_while_paving({{-10,10},{-10,10}}, sep, 0.1);
+
+  .. code-tab:: matlab
+
+    x = VectorVar(2);
+    f = AnalyticFunction({x}, x(0)*cos(x(0)-x(1))+x(1));
+    sep = SepInverse(f, {-oo,0});
+    draw_while_paving(IntervalVector({{-10,10},{-10,10}}), sep, 0.1);
+
+.. figure:: manual/example_ineq.png
+  :width: 400px
+
+  Approximation of an enclosure of the solution set computed with ``SepInverse``. Blue parts are guaranteed to be solution-free. Computation time: 0.0809s.
 
 
 Contributors
@@ -110,7 +151,6 @@ This list is in alphabetical order by surname.
   * `Raphael Voges <https://raphael-voges.de>`_
 
 We appreciate all contributions, whether they are code, documentation, bug reports, or suggestions. If you believe you should be listed here and are not, please contact us to update the list.
-
 
 
 Provisional Plan
@@ -395,3 +435,26 @@ Development
 .. 
 ..    Changelog
 ..    C++ API
+
+
+
+How to cite Codac
+^^^^^^^^^^^^^^^^^
+
+The main reference to the Codac library is `the following paper <https://www.simon-rohou.fr/research/codac/codac_paper.pdf>`_:
+
+.. code-block:: none
+
+  @article{codac_lib,
+    title={The {C}odac Library},
+    url={https://cyber.bibl.u-szeged.hu/index.php/actcybern/article/view/4388},
+    DOI={10.14232/actacyb.302772},
+    journal={Acta Cybernetica},
+    volume={26},
+    number={4},
+    series = {Special Issue of {SWIM} 2022},
+    author={Rohou, Simon and Desrochers, Benoit and {Le Bars}, Fabrice},
+    year={2024},
+    month={Mar.},
+    pages={871-887}
+  }
