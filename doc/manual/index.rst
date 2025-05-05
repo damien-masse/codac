@@ -1,9 +1,17 @@
-Codac manual
-============
+The Codac manual
+================
 
 Welcome to the Codac website.
 **This manual is currently under construction.** We are actively working on it and appreciate your patience as we build a comprehensive guide.
 
+Codac (Catalog Of Domains And Contractors) is a C++/Python/Matlab library providing tools for constraint programming over reals, trajectories and sets.
+It has many applications in parameter estimation, guaranteed integration, robot localization, and provides reliable outputs.
+
+The toolbox allows to approximate feasible solutions of non-linear and/or differential systems. Since the solution of these complex systems cannot generally be calculated exactly, Codac uses numerical analysis to compute the bounds of sets of feasible solutions. The assets are **guarantee** (computations are guaranteed to never lose solutions, due to the rigorous interval arithmetic) and thus **exhaustiveness** (if multiple values are possible, all of them are characterized).
+
+Codac can thus be used to establish numerical proofs, or to approximate solutions of complex systems mixing variables of different natures such as reals, vectors, trajectories, uncertain sets, graphs, *etc.* Most developers of the library are motivated by mobile robotics problems for which Codac offers new perspectives.
+
+Recent advances in interval methods have been done by the community, and the Codac library gathers a part of related state-of-the-art implementations with the objective to make them easy to combine.
 
 Short example: solving an equation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -117,7 +125,7 @@ The following code allows to compute the set of vectors :math:`\mathbf{x}\in\mat
 .. figure:: manual/example_ineq.png
   :width: 400px
 
-  Approximation of an enclosure of the solution set computed with ``SepInverse``. Blue parts are guaranteed to be solution-free. Computation time: 0.0809s.
+  Approximation of an enclosure of the solution set computed with ``SepInverse``. The blue parts are guaranteed to have no solution, while any vector in the green boxes is a solution to the inequality. Computation time: 0.0809s.
 
 
 Contributors
