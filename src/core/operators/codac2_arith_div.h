@@ -20,6 +20,12 @@ namespace codac2
 {
   struct DivOp
   {
+    template<typename X1,typename X2>
+    static std::string str(const X1& x1, const X2& x2)
+    {
+      return x1->str() + x2->str();
+    }
+
     static Interval fwd(const Interval& x1, const Interval& x2);
     static ScalarType fwd_natural(const ScalarType& x1, const ScalarType& x2);
     static ScalarType fwd_centered(const ScalarType& x1, const ScalarType& x2);

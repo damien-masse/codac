@@ -184,12 +184,7 @@ namespace codac2
 
       friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const AnalyticFunction<T>& f)
       {
-        if constexpr(std::is_same_v<T,ScalarType>) 
-          os << "scalar function";
-        else if constexpr(std::is_same_v<T,VectorType>) 
-          os << "vector function";
-        else 
-          os << "matrix function";
+        os << f.expr()->str();
         return os;
       }
 

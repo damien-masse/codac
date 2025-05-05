@@ -50,6 +50,11 @@ namespace codac2
             return true;
         return false;
       }
+
+      virtual std::string str() const
+      {
+        return "x";
+      }
   };
 
   class ScalarVar : public AnalyticVarExpr<ScalarType>

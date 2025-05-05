@@ -52,6 +52,7 @@ namespace codac2
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const = 0;
+      virtual std::string str() const = 0;
   };
 
   template<typename C,typename Y,typename... X>
@@ -104,6 +105,16 @@ namespace codac2
         {
           (x->bwd_eval(v), ...);
         }, this->_x);
+      }
+
+      virtual std::string str() const
+      {
+        std::string s;
+        std::apply([&s](auto &&... x)
+        {
+          s = C::str(x...);
+        }, this->_x);
+        return s;
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const

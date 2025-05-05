@@ -19,6 +19,12 @@ namespace codac2
 {
   struct SubvectorOp
   {
+    template<typename X1>
+    static std::string str(const X1& x1, Index i, Index j)
+    {
+      return x1->str() + std::to_string(i) + std::to_string(j);
+    }
+
     static IntervalVector fwd(const IntervalVector& x1, Index i, Index j);
     static VectorType fwd_natural(const VectorType& x1, Index i, Index j);
     static VectorType fwd_centered(const VectorType& x1, Index i, Index j);
@@ -69,6 +75,12 @@ namespace codac2
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
       {
         return std::get<0>(this->_x)->belongs_to_args_list(args);
+      }
+
+      std::string str() const
+      {
+        // todo: improve the following:
+        return ComponentOp::str(std::get<0>(this->_x), _i, _j);
       }
 
     protected:

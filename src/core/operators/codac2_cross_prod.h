@@ -17,6 +17,12 @@ namespace codac2
 {
   struct CrossProdOp
   {
+    template<typename X1,typename X2>
+    static std::string str(const X1& x1, const X2& x2)
+    {
+      return x1->str() + x2->str();
+    }
+
     static IntervalVector fwd(const IntervalVector& x1, const IntervalVector& x2);
     static VectorType fwd_natural(const VectorType& x1, const VectorType& x2);
     static VectorType fwd_centered(const VectorType& x1, const VectorType& x2);

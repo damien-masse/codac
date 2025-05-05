@@ -63,6 +63,11 @@ namespace codac2
         return true;
       }
 
+      virtual std::string str() const
+      {
+        return "";
+      }
+
     protected:
 
       const typename T::Domain _x;

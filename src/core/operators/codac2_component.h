@@ -17,6 +17,18 @@ namespace codac2
 {
   struct ComponentOp
   {
+    template<typename X1>
+    static std::string str(const X1& x1, Index i)
+    {
+      return x1->str() + std::to_string(i);
+    }
+
+    template<typename X1>
+    static std::string str(const X1& x1, Index i, Index j)
+    {
+      return x1->str() + std::to_string(i) + std::to_string(j);
+    }
+
     static Interval fwd(const IntervalVector& x1, Index i);
     static ScalarType fwd_natural(const VectorType& x1, Index i);
     static ScalarType fwd_centered(const VectorType& x1, Index i);
@@ -74,6 +86,11 @@ namespace codac2
         return std::get<0>(this->_x)->belongs_to_args_list(args);
       }
 
+      std::string str() const
+      {
+        return ComponentOp::str(std::get<0>(this->_x), _i);
+      }
+
     protected:
 
       const Index _i;
@@ -121,6 +138,11 @@ namespace codac2
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
       {
         return std::get<0>(this->_x)->belongs_to_args_list(args);
+      }
+
+      std::string str() const
+      {
+        return ComponentOp::str(std::get<0>(this->_x), _i, _j);
       }
 
     protected:

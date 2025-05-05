@@ -19,6 +19,12 @@ namespace codac2
   struct VectorOp
   {
     template<typename... X>
+    static inline std::string str(const X&... x)
+    {
+      return (x->str()+...);
+    }
+
+    template<typename... X>
       requires (std::is_base_of_v<Interval,X> && ...)
     static inline IntervalVector fwd(const X&... x)
     {
