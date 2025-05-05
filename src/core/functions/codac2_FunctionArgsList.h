@@ -12,6 +12,7 @@
 #include <list>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 #include "codac2_VarBase.h"
 
 namespace codac2
