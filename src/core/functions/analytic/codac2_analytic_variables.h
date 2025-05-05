@@ -24,7 +24,8 @@ namespace codac2
   {
     public:
 
-      AnalyticVarExpr()
+      AnalyticVarExpr(const std::string& name)
+        : VarBase(name)
       { }
 
       virtual const ExprID& unique_id() const
@@ -51,9 +52,14 @@ namespace codac2
         return false;
       }
 
-      virtual std::string str() const
+      virtual std::string str(bool in_parentheses = false) const
       {
-        return "x";
+        return in_parentheses ? "(" + _name + ")" : _name;
+      }
+
+      virtual bool is_str_leaf() const
+      {
+        return true;
       }
   };
 
@@ -61,7 +67,7 @@ namespace codac2
   {
     public:
 
-      ScalarVar();
+      ScalarVar(const std::string& name = "?");
 
       std::shared_ptr<VarBase> arg_copy() const;
       std::shared_ptr<ExprBase> copy() const;
@@ -74,7 +80,7 @@ namespace codac2
   {
     public:
 
-      explicit VectorVar(Index n);
+      explicit VectorVar(Index n, const std::string& name = "?");
 
       std::shared_ptr<VarBase> arg_copy() const;
       std::shared_ptr<ExprBase> copy() const;
@@ -92,7 +98,7 @@ namespace codac2
   {
     public:
 
-      explicit MatrixVar(Index r, Index c);
+      explicit MatrixVar(Index r, Index c, const std::string& name = "?");
 
       std::shared_ptr<VarBase> arg_copy() const;
       std::shared_ptr<ExprBase> copy() const;

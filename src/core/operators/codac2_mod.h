@@ -21,7 +21,7 @@ namespace codac2
     template<typename X1,typename X2,typename P>
     static std::string str(const X1& x1, const X2& x2, const P& p)
     {
-      return x1->str() + x2->str() + p->str();
+      return "mod(" + x1->str() + "," + x2->str() + "," + p->str() + ")";
     }
 
     static void bwd(Interval& x1, Interval& x2, double p);

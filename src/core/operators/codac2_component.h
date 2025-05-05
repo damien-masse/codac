@@ -20,13 +20,13 @@ namespace codac2
     template<typename X1>
     static std::string str(const X1& x1, Index i)
     {
-      return x1->str() + std::to_string(i);
+      return x1->str(!x1->is_str_leaf()) + "[" + std::to_string(i) + "]";
     }
 
     template<typename X1>
     static std::string str(const X1& x1, Index i, Index j)
     {
-      return x1->str() + std::to_string(i) + std::to_string(j);
+      return x1->str(!x1->is_str_leaf()) + "(" + std::to_string(i) + "," + std::to_string(j) + ")";
     }
 
     static Interval fwd(const IntervalVector& x1, Index i);
@@ -86,9 +86,15 @@ namespace codac2
         return std::get<0>(this->_x)->belongs_to_args_list(args);
       }
 
-      std::string str() const
+      std::string str(bool in_parentheses = false) const
       {
-        return ComponentOp::str(std::get<0>(this->_x), _i);
+        std::string s = ComponentOp::str(std::get<0>(this->_x), _i);
+        return in_parentheses ? "(" + s + ")" : s;
+      }
+
+      virtual bool is_str_leaf() const
+      {
+        return true;
       }
 
     protected:
@@ -140,9 +146,15 @@ namespace codac2
         return std::get<0>(this->_x)->belongs_to_args_list(args);
       }
 
-      std::string str() const
+      std::string str(bool in_parentheses = false) const
       {
-        return ComponentOp::str(std::get<0>(this->_x), _i, _j);
+        std::string s = ComponentOp::str(std::get<0>(this->_x), _i, _j);
+        return in_parentheses ? "(" + s + ")" : s;
+      }
+
+      virtual bool is_str_leaf() const
+      {
+        return true;
       }
 
     protected:

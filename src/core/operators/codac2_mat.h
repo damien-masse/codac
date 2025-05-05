@@ -18,10 +18,12 @@ namespace codac2
 {
   struct MatrixOp
   {
-    template<typename X1>
-    static std::string str(const X1& x1, Index i, Index j)
+    template<typename... X>
+    static std::string str(const X&... x)
     {
-      return x1->str() + std::to_string(i) + std::to_string(j);
+      std::string s = (("\t" + x->str() + ",\n") + ...);
+      s.pop_back(); s.pop_back(); // removes last separation
+      return "[\n" + s + "\n]";
     }
 
     static inline void set_col_i(IntervalMatrix& m, const IntervalVector& x, Index i)

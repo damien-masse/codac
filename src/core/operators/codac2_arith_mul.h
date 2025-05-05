@@ -27,7 +27,7 @@ namespace codac2
     template<typename X1,typename X2>
     static std::string str(const X1& x1, const X2& x2)
     {
-      return x1->str() + x2->str();
+      return x1->str(!x1->is_str_leaf()) + "*" + x2->str(!x2->is_str_leaf());
     }
     
     static Interval fwd(const Interval& x1, const Interval& x2);

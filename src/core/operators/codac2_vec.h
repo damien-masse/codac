@@ -21,7 +21,9 @@ namespace codac2
     template<typename... X>
     static inline std::string str(const X&... x)
     {
-      return (x->str()+...);
+      std::string s = (("\t" + x->str() + ",\n") + ...);
+      s.pop_back(); s.pop_back(); // removes last separation
+      return "[\n" + s + "\n]";
     }
 
     template<typename... X>

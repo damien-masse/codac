@@ -24,19 +24,19 @@ namespace codac2
     template<typename X1>
     static std::string str(const X1& x1)
     {
-      return x1->str();
+      return "det(" + x1->str() + ")";
     }
 
     template<typename X1,typename X2>
     static std::string str(const X1& x1, const X2& x2)
     {
-      return x1->str() + x2->str();
+      return "det(" + x1->str() + "," + x2->str() + ")";
     }
 
     template<typename X1,typename X2,typename X3>
     static std::string str(const X1& x1, const X2& x2, const X3& x3)
     {
-      return x1->str() + x2->str() + x3->str();
+      return "det(" + x1->str() + "," + x2->str() + "," + x3->str() + ")";
     }
 
     // For matrices

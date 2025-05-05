@@ -20,7 +20,7 @@ namespace codac2
     template<typename X1>
     static std::string str(const X1& x1)
     {
-      return x1->str();
+      return "sign(" + x1->str() + ")";
     }
 
     static Interval fwd(const Interval& x1);
