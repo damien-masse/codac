@@ -58,7 +58,7 @@ namespace codac2
         update_var_names();
       }
 
-      AnalyticFunction(const FunctionArgsList& args, const AnalyticVarExpr<T>& y)
+      explicit AnalyticFunction(const FunctionArgsList& args, const AnalyticVarExpr<T>& y)
         : AnalyticFunction(args, { std::dynamic_pointer_cast<AnalyticExpr<T>>(y.copy()) })
       { }
 
