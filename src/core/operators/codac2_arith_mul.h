@@ -24,6 +24,27 @@ namespace codac2
 {
   struct MulOp
   {
+    template<typename X1,typename X2>
+    static std::string str(const X1& x1, const X2& x2)
+    {
+      return x1->str(!x1->is_str_leaf()) + "*" + x2->str(!x2->is_str_leaf());
+    }
+    
+    template<typename X1, typename X2>
+    static std::pair<Index,Index> output_shape(const X1& s1, const X2& s2)
+    {
+      auto shape1=s1->output_shape();
+      auto shape2=s2->output_shape();
+      if (shape1.first==1 && shape1.second==1) {
+        return shape2;
+      } else if (shape2.first==1 && shape2.second==1) {
+        return shape1;
+      } else {
+        assert_release(shape1.second==shape2.first);
+        return std::pair(shape1.first, shape2.second);
+      }
+    }
+
     static Interval fwd(const Interval& x1, const Interval& x2);
     static ScalarType fwd_natural(const ScalarType& x1, const ScalarType& x2);
     static ScalarType fwd_centered(const ScalarType& x1, const ScalarType& x2);

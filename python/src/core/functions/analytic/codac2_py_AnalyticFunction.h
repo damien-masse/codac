@@ -140,6 +140,7 @@ inline FunctionArgsList create_FunctionArgsList(const std::vector<py::object>& l
       throw std::invalid_argument("Argument " + std::to_string(i) + " is invalid. Only variables are accepted.");
   }
 
+  args.compute_unique_arg_names();
   return args;
 }
 
