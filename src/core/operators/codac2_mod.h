@@ -18,6 +18,11 @@ namespace codac2
 {
   struct ModOp
   {
+    template<typename X1, typename X2>
+    static std::pair<Index,Index> output_shape([[maybe_unused]] const X1& s1, [[maybe_unused]] const X2& s2) {
+       return std::pair(1,1);
+    }  
+
     static void bwd(Interval& x1, Interval& x2, double p);
     static void bwd(Interval& x1, Interval& x2, Interval& p);
   };

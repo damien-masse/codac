@@ -17,6 +17,10 @@ namespace codac2
 {
   struct ExpOp
   {
+    template<typename X1>
+    static std::pair<Index,Index> output_shape([[maybe_unused]] const X1& s1) {
+       return std::pair(1,1);
+    }
     static Interval fwd(const Interval& x1);
     static ScalarType fwd_natural(const ScalarType& x1);
     static ScalarType fwd_centered(const ScalarType& x1);

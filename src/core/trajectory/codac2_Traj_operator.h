@@ -79,6 +79,10 @@ namespace codac2
         std::get<0>(this->_x)->bwd_eval(v);
       }
 
+      std::pair<Index,Index> output_shape() const {
+        return _x1.shape();
+      }
+
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
       {
         return std::get<0>(this->_x)->belongs_to_args_list(args);

@@ -30,6 +30,7 @@ namespace codac2
 
       virtual T fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const = 0;
       virtual void bwd_eval(ValuesMap& v) const = 0;
+      virtual std::pair<Index,Index> output_shape() const = 0;
 
       T init_value(ValuesMap& v, const T& x) const
       {
@@ -104,6 +105,16 @@ namespace codac2
         {
           (x->bwd_eval(v), ...);
         }, this->_x);
+      }
+
+      std::pair<Index,Index> output_shape() const
+      {
+        std::pair<Index,Index> s;
+        std::apply([&s](auto &&... x)
+        {
+          s= C::output_shape(x...);
+        }, this->_x);
+        return s;
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const

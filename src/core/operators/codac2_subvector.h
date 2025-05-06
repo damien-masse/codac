@@ -19,6 +19,12 @@ namespace codac2
 {
   struct SubvectorOp
   {
+    template<typename X1>
+    static std::pair<Index,Index> output_shape(const X1& s1, Index i, Index j) {
+       auto shape1=s1->output_shape();
+       assert_release(shape1.second==1 && i<=j && j<shape1.first);
+       return std::pair(1,j-i+1);
+    }  
     static IntervalVector fwd(const IntervalVector& x1, Index i, Index j);
     static VectorType fwd_natural(const VectorType& x1, Index i, Index j);
     static VectorType fwd_centered(const VectorType& x1, Index i, Index j);
@@ -64,6 +70,10 @@ namespace codac2
       {
         SubvectorOp::bwd(AnalyticExpr<VectorType>::value(v).a, std::get<0>(this->_x)->value(v).a, _i, _j);
         std::get<0>(this->_x)->bwd_eval(v);
+      }
+
+      std::pair<Index,Index> output_shape() const {
+         return SubvectorOp::output_shape(std::get<0>(this->_x),_i,_j);
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const

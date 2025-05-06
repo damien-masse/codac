@@ -17,6 +17,10 @@ namespace codac2
 {
   struct PowOp
   {
+    template<typename X1, typename X2>
+    static std::pair<Index,Index> output_shape([[maybe_unused]] const X1& s1, [[maybe_unused]] const X2& s2) {
+       return std::pair(1,1);
+    }  
     static Interval fwd(const Interval& x1, const Interval& x2);
     static ScalarType fwd_natural(const ScalarType& x1, const ScalarType& x2);
     static ScalarType fwd_centered(const ScalarType& x1, const ScalarType& x2);

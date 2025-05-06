@@ -17,6 +17,20 @@ namespace codac2
 {
   struct ComponentOp
   {
+    template<typename X1>
+    static std::pair<Index,Index> output_shape(const X1& s1, Index i) {
+       auto shape1 = s1->output_shape();
+       assert(shape1.second==1 && i<shape1.first);
+       return std::pair(1,1);
+    }
+
+    template<typename X1>
+    static std::pair<Index,Index> output_shape(const X1& s1, Index i, Index j) {
+       auto shape1 = s1->output_shape();
+       assert(j<shape1.second && i<shape1.first);
+       return std::pair(1,1);
+    }
+
     static Interval fwd(const IntervalVector& x1, Index i);
     static ScalarType fwd_natural(const VectorType& x1, Index i);
     static ScalarType fwd_centered(const VectorType& x1, Index i);
@@ -69,6 +83,10 @@ namespace codac2
         std::get<0>(this->_x)->bwd_eval(v);
       }
 
+      std::pair<Index,Index> output_shape() const {
+         return ComponentOp::output_shape(std::get<0>(this->_x),_i);
+      }
+
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
       {
         return std::get<0>(this->_x)->belongs_to_args_list(args);
@@ -116,6 +134,10 @@ namespace codac2
       {
         ComponentOp::bwd(AnalyticExpr<ScalarType>::value(v).a, std::get<0>(this->_x)->value(v).a, _i, _j);
         std::get<0>(this->_x)->bwd_eval(v);
+      }
+
+      std::pair<Index,Index> output_shape() const {
+         return ComponentOp::output_shape(std::get<0>(this->_x),_i,_j);
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const

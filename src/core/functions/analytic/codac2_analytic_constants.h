@@ -55,6 +55,20 @@ namespace codac2
         AnalyticExpr<T>::value(v).a &= _x;
       }
 
+      std::pair<Index,Index> output_shape() const {
+         if constexpr(std::is_same_v<T,ScalarType>)
+           return std::pair(1,1);
+         else 
+         if constexpr(std::is_same_v<T,VectorType>)
+           return std::pair(_x.size(),1);
+         else
+         if constexpr(std::is_same_v<T,MatrixType>)
+           return std::pair(_x.rows(),_x.cols());
+         else {
+           assert_release(false && "unknow output shape for constant");
+         }
+      }
+
       void replace_arg([[maybe_unused]] const ExprID& old_arg_id, [[maybe_unused]] const std::shared_ptr<ExprBase>& new_expr)
       { }
 

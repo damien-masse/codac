@@ -161,25 +161,17 @@ namespace codac2
         if constexpr(std::is_same_v<T,ScalarType>)
           return 1;
 
-        else if constexpr(std::is_same_v<T,VectorType>)
-        {
-          assert_release(this->args().size() == 1 && "unable (yet) to compute output size for multi-arg functions");
-
-          // A dump evaluation is performed to estimate the dimension
-          // of the image of this function. A natural evaluation is assumed
-          // to be faster.
-
-          if(dynamic_cast<ScalarVar*>(this->args()[0].get())) // if the argument is scalar
-            return eval(EvalMode::NATURAL, Interval()).size();
-          else
-            return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
+        else {
+          std::pair<Index,Index> oshape = output_shape();
+          return oshape.first * oshape.second;
         }
+      }
 
-        else
-        {
-          assert_release(false && "unable to estimate output size");
-          return 0;
-        }
+      std::pair<Index,Index> output_shape() const 
+      {
+         if constexpr(std::is_same_v<T,ScalarType>)
+           return std::pair<Index,Index>(1,1);
+         else return this->expr()->output_shape();
       }
 
       friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const AnalyticFunction<T>& f)

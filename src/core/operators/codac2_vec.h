@@ -19,6 +19,11 @@ namespace codac2
   struct VectorOp
   {
     template<typename... X>
+    static std::pair<Index,Index> output_shape([[maybe_unused]] const X&... x) {
+       return std::pair(sizeof...(X),1);
+    }  
+
+    template<typename... X>
       requires (std::is_base_of_v<Interval,X> && ...)
     static inline IntervalVector fwd(const X&... x)
     {

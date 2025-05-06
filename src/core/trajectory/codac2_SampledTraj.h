@@ -56,6 +56,19 @@ namespace codac2
         }
       }
 
+      virtual std::pair<Index,Index> shape() const
+      {
+        if constexpr(std::is_same_v<typename ValueType<T>::Type,ScalarType>)
+          return std::pair(1,1);
+        else
+        {
+          if(this->empty())
+            return std::pair(0,0);
+          else
+            return std::pair(this->begin()->second.rows(),this->begin()->second.cols());
+        }
+      }
+
       size_t nb_samples() const
       {
         return std::map<double,T>::size();
