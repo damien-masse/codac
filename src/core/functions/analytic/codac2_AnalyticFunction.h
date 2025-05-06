@@ -58,10 +58,6 @@ namespace codac2
         update_var_names();
       }
 
-      explicit AnalyticFunction(const FunctionArgsList& args, const AnalyticVarExpr<T>& y)
-        : AnalyticFunction(args, { std::dynamic_pointer_cast<AnalyticExpr<T>>(y.copy()) })
-      { }
-
       AnalyticFunction(const AnalyticFunction<T>& f)
         : FunctionBase<AnalyticExpr<T>>(f)
       { }
@@ -273,25 +269,7 @@ namespace codac2
       }
   };
 
-  AnalyticFunction(const FunctionArgsList&, double) -> 
-    AnalyticFunction<ScalarType>;
-
-  AnalyticFunction(const FunctionArgsList&, const Interval&) -> 
-    AnalyticFunction<ScalarType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<int>) -> 
-    AnalyticFunction<VectorType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<double>) -> 
-    AnalyticFunction<VectorType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<Interval>) -> 
-    AnalyticFunction<VectorType>;
-
   AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarExpr>) -> 
-    AnalyticFunction<VectorType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarVar>) -> 
     AnalyticFunction<VectorType>;
 
   template<typename T>
