@@ -18,7 +18,8 @@ using namespace codac2;
 
 // ScalarVar class
 
-  ScalarVar::ScalarVar()
+  ScalarVar::ScalarVar(const std::string& name)
+     :AnalyticVarExpr<ScalarType>(name)
   { }
 
   std::shared_ptr<VarBase> ScalarVar::arg_copy() const
@@ -45,8 +46,8 @@ using namespace codac2;
 
 // VectorVar class
 
-  VectorVar::VectorVar(Index n)
-    : _n(n)
+  VectorVar::VectorVar(Index n, const std::string& name)
+    : AnalyticVarExpr<VectorType>(name), _n(n)
   {
     assert_release(n > 0);
   }
@@ -84,8 +85,8 @@ using namespace codac2;
 // MatrixVar class
 
 
-  MatrixVar::MatrixVar(Index r, Index c)
-    : _r(r), _c(c)
+  MatrixVar::MatrixVar(Index r, Index c, const std::string& name)
+    : AnalyticVarExpr<MatrixType>(name), _r(r), _c(c)
   { }
 
   std::shared_ptr<VarBase> MatrixVar::arg_copy() const

@@ -19,8 +19,8 @@ namespace codac2
   {
     public:
 
-      explicit SetVar(Index n)
-        : _n(n)
+      explicit SetVar(Index n, const std::string& name = "?")
+        : VarBase(name), _n(n)
       { }
 
       virtual const ExprID& unique_id() const

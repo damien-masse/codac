@@ -47,6 +47,7 @@ namespace codac2
       {
         assert_release(y->belongs_to_args_list(this->args()) && 
           "Invalid argument: variable not present in input arguments");
+        update_var_names();
       }
 
       AnalyticFunction(const FunctionArgsList& args, const AnalyticExprWrapper<T>& y)
@@ -54,11 +55,8 @@ namespace codac2
       {
         assert_release(y->belongs_to_args_list(this->args()) && 
           "Invalid argument: variable not present in input arguments");
+        update_var_names();
       }
-
-      AnalyticFunction(const FunctionArgsList& args, const AnalyticVarExpr<T>& y)
-        : AnalyticFunction(args, { std::dynamic_pointer_cast<AnalyticExpr<T>>(y.copy()) })
-      { }
 
       AnalyticFunction(const AnalyticFunction<T>& f)
         : FunctionBase<AnalyticExpr<T>>(f)
@@ -184,12 +182,10 @@ namespace codac2
 
       friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const AnalyticFunction<T>& f)
       {
-        if constexpr(std::is_same_v<T,ScalarType>) 
-          os << "scalar function";
-        else if constexpr(std::is_same_v<T,VectorType>) 
-          os << "vector function";
-        else 
-          os << "matrix function";
+        os << "(";
+        for(size_t i = 0 ; i < f.args().size() ; i++)
+          os << (i!=0 ? "," : "") << f.args()[i]->name();
+        os << ") ↦ " << f.expr()->str();
         return os;
       }
 
@@ -264,27 +260,16 @@ namespace codac2
         assert_release(this->_args.total_size() == n && 
           "Invalid arguments: wrong number of input arguments");
       }
+      
+      inline void update_var_names()
+      {
+        for(const auto& v : this->_args) // variable names are automatically computed in FunctionArgsList,
+          // so we propagate them to the expression
+          this->_y->replace_arg(v->unique_id(), std::dynamic_pointer_cast<ExprBase>(v));
+      }
   };
 
-  AnalyticFunction(const FunctionArgsList&, double) -> 
-    AnalyticFunction<ScalarType>;
-
-  AnalyticFunction(const FunctionArgsList&, const Interval&) -> 
-    AnalyticFunction<ScalarType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<int>) -> 
-    AnalyticFunction<VectorType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<double>) -> 
-    AnalyticFunction<VectorType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<Interval>) -> 
-    AnalyticFunction<VectorType>;
-
   AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarExpr>) -> 
-    AnalyticFunction<VectorType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarVar>) -> 
     AnalyticFunction<VectorType>;
 
   template<typename T>

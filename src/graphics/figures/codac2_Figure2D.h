@@ -65,7 +65,7 @@ namespace codac2
    * \class Figure2D
    * \brief Figure2D class, used for 2D display
    * 
-   * This class is used to display 2D figures. It inherits from the Figure2DInterface class
+   * This class is used to display 2D figures.
    * 
    * Currently, it can interact with VIBes and IPE.
    * 
@@ -73,7 +73,7 @@ namespace codac2
    * 
    * For IPE, an xml file is generated and can be opened with the IPE editor.
    */
-  class Figure2D : public Figure2DInterface, public std::enable_shared_from_this<Figure2D>
+  class Figure2D : public std::enable_shared_from_this<Figure2D>
   {
     public:
 
@@ -269,14 +269,6 @@ namespace codac2
        * \param s Style of the polyline (edge color and fill color)
        */
       void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& s = StyleProperties());
-
-      /**
-       * \brief Draws a polygone on the figure
-       * 
-       * \param x Vector of the points of the polygone
-       * \param s Style of the polygone (edge color and fill color)
-       */
-      void draw_polygon(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a ``Polygon`` object on the figure
@@ -614,18 +606,6 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_polyline(x,tip_length,s);
-      }
-
-      /**
-       * \brief Draws a polygone on the figure
-       * 
-       * \param x Vector of the points of the polygone
-       * \param s Style of the polygone (edge color and fill color)
-       */
-      static void draw_polygon(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties())
-      {
-        auto_init();
-        selected_fig()->draw_polygon(x,s);
       }
 
       /**

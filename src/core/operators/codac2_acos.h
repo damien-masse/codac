@@ -17,6 +17,12 @@ namespace codac2
 {
   struct AcosOp
   {
+    template<typename X1>
+    static std::string str(const X1& x1)
+    {
+      return "acos(" + x1->str() + ")";
+    }
+
     static Interval fwd(const Interval& x1);
     static ScalarType fwd_natural(const ScalarType& x1);
     static ScalarType fwd_centered(const ScalarType& x1);

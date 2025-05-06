@@ -63,6 +63,19 @@ namespace codac2
         return true;
       }
 
+      virtual std::string str(bool in_parentheses = false) const
+      {
+        std::ostringstream s;
+        if(_x.is_degenerated()) s << _x.mid();
+        else s << _x;
+        return in_parentheses ? "(" + s.str() + ")" : s.str();
+      }
+
+      virtual bool is_str_leaf() const
+      {
+        return true;
+      }
+
     protected:
 
       const typename T::Domain _x;

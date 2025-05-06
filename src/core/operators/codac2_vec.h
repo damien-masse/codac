@@ -19,6 +19,14 @@ namespace codac2
   struct VectorOp
   {
     template<typename... X>
+    static inline std::string str(const X&... x)
+    {
+      std::string s = (("\t" + x->str() + ",\n") + ...);
+      s.pop_back(); s.pop_back(); // removes last separation
+      return "[\n" + s + "\n]";
+    }
+
+    template<typename... X>
       requires (std::is_base_of_v<Interval,X> && ...)
     static inline IntervalVector fwd(const X&... x)
     {

@@ -125,3 +125,7 @@ dl.cpp:not(dl.cpp dl.cpp) { /* for displaying a border on doxygen blocks */
   border-left: 5px solid var(--color-background-border);
   padding-left: 5px;
 }
+
+#how-to-cite-codac pre {
+  font-size: 60%;
+}

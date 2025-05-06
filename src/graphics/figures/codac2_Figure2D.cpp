@@ -207,29 +207,21 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
     output_fig->draw_polyline(x,tip_length,s);
 }
 
-void Figure2D::draw_polygon(const vector<Vector>& x, const StyleProperties& s)
+void Figure2D::draw_polygon(const Polygon& x, const StyleProperties& s)
 {
   assert_release(x.size() > 1);
-  for([[maybe_unused]] const auto& xi : x)
+
+  vector<Vector> w;
+  for(const auto& xi : x.sorted_vertices())
   {
     assert_release(this->size() <= xi.size());
+    if(!xi.is_degenerated())
+      draw_point(xi.mid(),s); // revealing thick points
+    w.push_back(xi.mid());
   }
 
   for(const auto& output_fig : _output_figures)
-    output_fig->draw_polygon(x,s);
-}
-
-void Figure2D::draw_polygon(const Polygon& x, const StyleProperties& s)
-{
-  vector<Vector> w;
-  for(const auto& vi : x.sorted_vertices())
-  {
-    if(!vi.is_degenerated())
-      draw_point(vi.mid(),s); // revealing thick points
-    w.push_back(vi.mid());
-  }
-
-  return draw_polygon(w, s);
+    output_fig->draw_polygon(w,s);
 }
 
 void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s)

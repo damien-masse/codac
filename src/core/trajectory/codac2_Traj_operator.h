@@ -84,6 +84,17 @@ namespace codac2
         return std::get<0>(this->_x)->belongs_to_args_list(args);
       }
 
+      std::string str(bool in_parentheses = false) const
+      {
+        std::string s = "T"; // user cannot (yet) specify a name for the trajectory
+        return in_parentheses ? "(" + s + ")" : s;
+      }
+
+      virtual bool is_str_leaf() const
+      {
+        return true;
+      }
+
     protected:
 
       const TrajBase<T>& _x1;

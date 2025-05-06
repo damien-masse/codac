@@ -19,6 +19,18 @@ namespace codac2
 {
   struct AddOp
   {
+    template<typename X1>
+    static std::string str(const X1& x1)
+    {
+      return x1->str();
+    }
+
+    template<typename X1,typename X2>
+    static std::string str(const X1& x1, const X2& x2)
+    {
+      return x1->str() + "+" + x2->str();
+    }
+
     // Unary operations
     static Interval fwd(const Interval& x1);
     static ScalarType fwd_natural(const ScalarType& x1);
