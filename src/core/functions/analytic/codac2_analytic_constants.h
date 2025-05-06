@@ -2,7 +2,7 @@
  *  \file codac2_analytic_constants.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -53,6 +53,20 @@ namespace codac2
       void bwd_eval(ValuesMap& v) const
       {
         AnalyticExpr<T>::value(v).a &= _x;
+      }
+
+      std::pair<Index,Index> output_shape() const
+      {
+        if constexpr(std::is_same_v<T,ScalarType>)
+          return {1,1};
+
+        if constexpr(std::is_same_v<T,VectorType>)
+          return {_x.size(),1};
+
+        if constexpr(std::is_same_v<T,MatrixType>)
+          return {_x.rows(),_x.cols()};
+
+        assert_release(false && "unknow output shape for constant");
       }
 
       void replace_arg([[maybe_unused]] const ExprID& old_arg_id, [[maybe_unused]] const std::shared_ptr<ExprBase>& new_expr)

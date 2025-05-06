@@ -2,7 +2,7 @@
  *  \file codac2_pow.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -23,6 +23,12 @@ namespace codac2
       return x1->str(!x1->is_str_leaf()) + "^" + x2->str(!x2->is_str_leaf());
     }
 
+    template<typename X1, typename X2>
+    static std::pair<Index,Index> output_shape([[maybe_unused]] const X1& s1, [[maybe_unused]] const X2& s2)
+    {
+      return {1,1};
+    }
+    
     static Interval fwd(const Interval& x1, const Interval& x2);
     static ScalarType fwd_natural(const ScalarType& x1, const ScalarType& x2);
     static ScalarType fwd_centered(const ScalarType& x1, const ScalarType& x2);

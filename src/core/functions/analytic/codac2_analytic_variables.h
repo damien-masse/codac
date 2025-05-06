@@ -2,7 +2,7 @@
  *  \file codac2_analytic_variables.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -72,6 +72,7 @@ namespace codac2
       std::shared_ptr<VarBase> arg_copy() const;
       std::shared_ptr<ExprBase> copy() const;
       Index size() const;
+      std::pair<Index,Index> output_shape() const;
 
       AnalyticExprWrapper<ScalarType> operator-() const;
   };
@@ -85,6 +86,7 @@ namespace codac2
       std::shared_ptr<VarBase> arg_copy() const;
       std::shared_ptr<ExprBase> copy() const;
       Index size() const;
+      std::pair<Index,Index> output_shape() const;
 
       AnalyticExprWrapper<ScalarType> operator[](Index i) const;
       AnalyticExprWrapper<VectorType> subvector(Index i, Index j) const;
@@ -105,6 +107,7 @@ namespace codac2
       Index size() const;
       Index rows() const;
       Index cols() const;
+      std::pair<Index,Index> output_shape() const;
 
       AnalyticExprWrapper<ScalarType> operator()(Index i, Index j) const;
       //AnalyticExprWrapper<VectorType> col(Index i) const;

@@ -2,7 +2,7 @@
  *  \file codac2_AnalyticExpr.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -30,6 +30,7 @@ namespace codac2
 
       virtual T fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const = 0;
       virtual void bwd_eval(ValuesMap& v) const = 0;
+      virtual std::pair<Index,Index> output_shape() const = 0;
 
       T init_value(ValuesMap& v, const T& x) const
       {
@@ -121,6 +122,16 @@ namespace codac2
       virtual bool is_str_leaf() const
       {
         return false;
+      }
+
+      std::pair<Index,Index> output_shape() const
+      {
+        std::pair<Index,Index> s;
+        std::apply([&s](auto &&... x)
+        {
+          s = C::output_shape(x...);
+        }, this->_x);
+        return s;
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const

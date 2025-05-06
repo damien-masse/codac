@@ -3,7 +3,7 @@
 Analytic inclusion functions
 ============================
 
-  Main author: `Simon Rohou <https://www.simon-rohou.fr/research/>`_
+  Main authors: `Simon Rohou <https://www.simon-rohou.fr/research/>`_, `Damien Massé <https://lab-sticc.univ-brest.fr/~dmasse/>`_
 
 The ``AnalyticFunction`` class allows to build analytic inclusion functions and evaluate them using interval analysis.
 

@@ -2,7 +2,7 @@
  *  \file codac2_vector.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -24,6 +24,12 @@ namespace codac2
       std::string s = (("\t" + x->str() + ",\n") + ...);
       s.pop_back(); s.pop_back(); // removes last separation
       return "[\n" + s + "\n]";
+    }
+
+    template<typename... X>
+    static std::pair<Index,Index> output_shape([[maybe_unused]] const X&... x)
+    {
+      return { sizeof...(X), 1 };
     }
 
     template<typename... X>

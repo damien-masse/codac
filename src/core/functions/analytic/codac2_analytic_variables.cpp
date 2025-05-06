@@ -37,6 +37,12 @@ using namespace codac2;
     return 1;
   }
 
+  std::pair<Index,Index> ScalarVar::output_shape() const
+  {
+    return {1,1};
+  }
+
+
   AnalyticExprWrapper<ScalarType> ScalarVar::operator-() const
   {
     return { std::make_shared<AnalyticOperationExpr<SubOp,ScalarType,ScalarType>>(
@@ -65,6 +71,11 @@ using namespace codac2;
   Index VectorVar::size() const
   {
     return _n;
+  }
+
+  std::pair<Index,Index> VectorVar::output_shape() const
+  {
+    return {_n,1};
   }
 
   AnalyticExprWrapper<ScalarType> VectorVar::operator[](Index i) const
@@ -112,6 +123,11 @@ using namespace codac2;
   Index MatrixVar::cols() const
   {
     return _c;
+  }
+
+  std::pair<Index,Index> MatrixVar::output_shape() const
+  {
+    return {_r,_c};
   }
 
   AnalyticExprWrapper<ScalarType> MatrixVar::operator()(Index i, Index j) const
