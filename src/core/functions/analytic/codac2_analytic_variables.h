@@ -24,7 +24,7 @@ namespace codac2
   {
     public:
 
-      AnalyticVarExpr(const std::string& name)
+      explicit AnalyticVarExpr(const std::string& name)
         : VarBase(name)
       { }
 
@@ -67,7 +67,7 @@ namespace codac2
   {
     public:
 
-      ScalarVar(const std::string& name = "?");
+      explicit ScalarVar(const std::string& name = "?");
 
       std::shared_ptr<VarBase> arg_copy() const;
       std::shared_ptr<ExprBase> copy() const;
