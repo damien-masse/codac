@@ -47,7 +47,11 @@ namespace codac2
       void contract(X& x) const
       {
         for(const auto& ci : _ctcs)
+        {
           ci->contract(x);
+          if(x.is_empty())
+            return;
+        }
       }
 
       template<typename C>

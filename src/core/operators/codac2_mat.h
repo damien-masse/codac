@@ -18,6 +18,22 @@ namespace codac2
 {
   struct MatrixOp
   {
+    template<typename... X>
+    static std::string str(const X&... x)
+    {
+      std::string s = (("\t" + x->str() + ",\n") + ...);
+      s.pop_back(); s.pop_back(); // removes last separation
+      return "[\n" + s + "\n]";
+    }
+
+    template<typename X1, typename... X>
+    static std::pair<Index,Index> output_shape(const X1& s1, [[maybe_unused]] const X&... s)
+    {
+      auto shape1=s1->output_shape();
+      assert_release(shape1.second==1);
+      return { shape1.first, 1+sizeof...(X) };
+    }
+
     static inline void set_col_i(IntervalMatrix& m, const IntervalVector& x, Index i)
     {
       assert(i >= 0 && i < m.cols());

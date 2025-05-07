@@ -20,12 +20,16 @@ namespace codac2
     return { x };
   }
 
-  inline IntervalVector to_IntervalVector(const IntervalVector& x)
+  template<typename OtherDerived>
+    requires (std::is_same_v<typename OtherDerived::Scalar,Interval> && OtherDerived::ColsAtCompileTime==1)
+  inline IntervalVector to_IntervalVector(const Eigen::MatrixBase<OtherDerived>& x)
   {
     return x;
   }
 
-  inline IntervalVector to_IntervalVector(const Vector& x)
+  template<typename OtherDerived>
+    requires (std::is_same_v<typename OtherDerived::Scalar,double> && OtherDerived::ColsAtCompileTime==1)
+  inline IntervalVector to_IntervalVector(const Eigen::MatrixBase<OtherDerived>& x)
   {
     return x.template cast<Interval>();
   }

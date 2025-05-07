@@ -2,7 +2,7 @@
  *  \file codac2_chi.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou, Gilles Chabert
+ *  \author     Simon Rohou, Gilles Chabert, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -18,6 +18,21 @@ namespace codac2
   // chi([x1],[x2],[x3]) = [x2] if (x1^+)<=0, [x3] if (x1^-)>0, hull([x2],[x3]) else
   struct ChiOp
   {
+    template<typename X1,typename X2,typename X3>
+    static std::string str(const X1& x1, const X2& x2, const X3& x3)
+    {
+      return "χ(" + x1->str() + "," + x2->str() + "," + x3->str() + ")";
+    }
+
+    template<typename X1, typename X2, typename X3>
+    static std::pair<Index,Index> output_shape([[maybe_unused]] const X1& s1, const X2& s2, const X3& s3)
+    {
+      auto shape2 = s2->output_shape();
+      auto shape3 = s3->output_shape();
+      assert(shape2 == shape3);
+      return shape2;
+    }
+
     static Interval fwd(const Interval& x1, const Interval& x2, const Interval& x3);
     static ScalarType fwd_natural(const ScalarType& x1, const ScalarType& x2, const ScalarType& x3);
     static ScalarType fwd_centered(const ScalarType& x1, const ScalarType& x2, const ScalarType& x3);

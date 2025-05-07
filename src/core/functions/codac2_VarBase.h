@@ -24,6 +24,15 @@ namespace codac2
   {
     public:
 
+      VarBase(const std::string& name)
+        : _name(name)
+      { }
+
+      const std::string& name() const
+      {
+        return _name;
+      }
+
       /**
        * \brief Virtual destructor for the ``VarBase`` class.
        * 
@@ -61,5 +70,11 @@ namespace codac2
        * \return The size of the variable, typically the number of components.
        */
       virtual Index size() const = 0;
+
+    protected:
+
+      friend class FunctionArgsList;
+
+      std::string _name;
   };
 }
