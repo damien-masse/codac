@@ -2,7 +2,7 @@
  *  \file codac2_Figure3D.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Maël Godard
+ *  \author     Maël Godard, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -53,13 +53,6 @@ namespace codac2
       const std::string& name() const;
 
 
-      /**
-       * \brief Sets the current color
-       * 
-       * \param c color
-       */
-      void set_color(const Color &c);
-      
       // Geometric shapes
 
       /**
@@ -90,8 +83,8 @@ namespace codac2
 		const StyleProperties& s = { Color::dark_gray(0.5) });
 
       /**
-       * \brief Draws a ``centered'' polygon  as a sequence of adjacent
-       * triangles using the first point and each pair of consecutive points
+       * \brief Draws a ``star-shaped'' polygon  as a sequence of adjacent
+       * triangles (l[0],l[k],l[k+1]) with k>=1.
        *
        * \param c translation
        * \param A scaling
@@ -221,8 +214,8 @@ namespace codac2
        * \param in_s Style of the inside of the paving
        */
       void draw_paving(const PavingInOut& p,
-        const StyleProperties& bound_s = { Color::yellow(0.3) },
-        const StyleProperties& in_s = { Color::green(0.5) });
+        const StyleProperties& bound_s = { Color::yellow(0.3), "paving_bound" },
+        const StyleProperties& in_s = { Color::green(0.5) , "paving_in" });
         
       /**
        * \brief Draws a subpaving on the figure
@@ -248,11 +241,27 @@ namespace codac2
        **/ 
        size_t move_write_v(const Vector &c, const Matrix &A, const Vector &p);
 
+      /**
+       * \brief Sets the current color.
+       * 
+       * \param c color
+       */
+      void set_color_internal(const Color &c);
+      
+      /**
+       * \brief Sets the style (layer+color), if lock_style is false.
+       * Otherwise, do nothing. If the layer is empty of "alpha", use the
+       * name of the figure.
+       * 
+       * \param s layer. If empty or "alpha", use the name of the figure.
+       */
+      void set_style_internal(const StyleProperties& s);
+
     protected:
 
       const std::string _name;
       std::ofstream _file;
       size_t vertex_count = 0;
-      bool lock_color=false;
+      bool lock_style=false;
   };
 }

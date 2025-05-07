@@ -93,7 +93,7 @@ void export_Figure3D(py::module& m)
 
     .def("draw_paving", (void(Figure3D::*)(const PavingInOut&,const StyleProperties&, const StyleProperties&))&Figure3D::draw_paving,
       VOID_FIGURE3D_DRAW_PAVING_CONST_PAVINGINOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
-      "p"_a, "boundary_style"_a=StyleProperties(Color::yellow(0.15)), "inside_style"_a=StyleProperties(Color::green(0.5)))
+      "p"_a, "boundary_style"_a=StyleProperties(Color::yellow(0.15), "boundary"), "inside_style"_a=StyleProperties(Color::green(0.5), "inside"))
 
   ;
 }
