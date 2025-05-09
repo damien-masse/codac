@@ -155,8 +155,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_Vector.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntFullPivLU.h
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntFullPivLU.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntLDLT.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntLDLT.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntvLDLT.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/matrices/codac2_IntvLDLT.cpp
 
 
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_pave.cpp
