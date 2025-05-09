@@ -19,8 +19,8 @@
 using namespace std;
 using namespace codac2;
 
-shared_ptr<Figure2D> DefaultView::_default_fig = nullptr;
-shared_ptr<Figure2D> DefaultView::_selected_fig = DefaultView::_default_fig;
+shared_ptr<Figure2D> DefaultFigure::_default_fig = nullptr;
+shared_ptr<Figure2D> DefaultFigure::_selected_fig = DefaultFigure::_default_fig;
 
 Figure2D::Figure2D(const std::string& name, GraphicOutput o, bool set_as_default_)
   : _name(name)
@@ -112,12 +112,12 @@ void Figure2D::auto_scale()
 
 bool Figure2D::is_default() const
 {
-  return DefaultView::_selected_fig == this->weak_from_this().lock();
+  return DefaultFigure::_selected_fig == this->weak_from_this().lock();
 }
 
 void Figure2D::set_as_default()
 {
-  DefaultView::set(this->shared_from_this());
+  DefaultFigure::set(this->shared_from_this());
 }
 
 void Figure2D::set_tdomain(const Interval& tdomain)
@@ -173,6 +173,15 @@ void Figure2D::draw_line(const Vector& p1, const Vector& p2, const StyleProperti
   draw_polyline({p1,p2}, s);
 }
 
+void Figure2D::draw_line(const Segment& e, const StyleProperties& s)
+{
+  draw_polyline({e[0].mid(),e[1].mid()}, s);
+  if(!e[0].is_degenerated())
+    draw_point(e[0].mid(),s); // revealing thick points
+  if(!e[1].is_degenerated())
+    draw_point(e[1].mid(),s); // revealing thick points
+}
+
 void Figure2D::draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s)
 {
   assert_release(p1.size() == p2.size());
@@ -191,8 +200,6 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
   assert_release(tip_length >= 0.); // 0 = disabled tip
   for([[maybe_unused]] const auto& xi : x)
   {
-    if(!(this->size() <= xi.size()))
-      cout << this->size() << "  -  " << xi.size() << endl;
     assert_release(this->size() <= xi.size());
   }
 
@@ -200,16 +207,21 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
     output_fig->draw_polyline(x,tip_length,s);
 }
 
-void Figure2D::draw_polygone(const vector<Vector>& x, const StyleProperties& s)
+void Figure2D::draw_polygon(const Polygon& x, const StyleProperties& s)
 {
   assert_release(x.size() > 1);
-  for([[maybe_unused]] const auto& xi : x)
+
+  vector<Vector> w;
+  for(const auto& xi : x.sorted_vertices())
   {
     assert_release(this->size() <= xi.size());
+    if(!xi.is_degenerated())
+      draw_point(xi.mid(),s); // revealing thick points
+    w.push_back(xi.mid());
   }
 
   for(const auto& output_fig : _output_figures)
-    output_fig->draw_polygone(x,s);
+    output_fig->draw_polygon(w,s);
 }
 
 void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s)
@@ -219,7 +231,7 @@ void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const Style
 
   auto a1 = A.col(0), a2 = A.col(1);
 
-  draw_polygone(vector<Vector>({
+  draw_polygon(vector<Vector>({
       Vector(z+a1+a2), Vector(z-a1+a2),
       Vector(z-a1-a2), Vector(z+a1-a2)
     }), s);

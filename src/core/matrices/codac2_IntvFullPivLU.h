@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_IntFullPivLU.h
+ *  \file codac2_IntvFullPivLU.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Damien Massé
@@ -21,36 +21,36 @@ namespace codac2
    *  M = P{-1} [L][U] Q{-1} where P and Q are permutation matrices, and
    *  [L] and [U] are lower and upper interval matrices ([L] diagonal is 1).
    */
-  class IntFullPivLU
+  class IntvFullPivLU
   {
      public:
      /** \brief constructor from Matrix of double 
       *  \param M the matrix for which the decomposition is computed
       */
-     explicit IntFullPivLU(const Matrix &M);
+     explicit IntvFullPivLU(const Matrix &M);
 
      /** \brief constructor from Matrix of intervals. Eigen 
       *  decomposition is done on M.mid().
       *
       *  \param M the matrix of intervals.
       */
-     explicit IntFullPivLU(const IntervalMatrix &M);
+     explicit IntvFullPivLU(const IntervalMatrix &M);
 
      /** \brief check if the matrix is injective,
       *  i.e. its rank is equal to its number of rows.
       *  \return TRUE, FALSE or UNKNOWN 
       */
-     BoolInterval isInjective() const;
+     BoolInterval is_injective() const;
      /** \brief check if the initial matrix is invertible 
       *  i.e. it is square and full rank
       * 
       *  \return TRUE, FALSE or UNKNOWN */
-     BoolInterval isInvertible() const;
+     BoolInterval is_invertible() const;
      /** \brief check if the matrix is surjective
       *  i.e. its rank is equal to its number of cols.
       *  \return TRUE, FALSE or UNKNOWN 
       */
-     BoolInterval isSurjective() const;
+     BoolInterval is_surjective() const;
      /** \brief return an interval enclosing the determinant
       *  
       *  \pre the matrix is square
@@ -75,11 +75,11 @@ namespace codac2
       * 
       *  \return an interval enclosing the possible dimensions.
       */
-     Interval dimensionOfKernel() const;
+     Interval dimension_of_kernel() const;
      /** \brief overapproximation of the kernel space as 
       *  a matrix of column vectors.
       *  any vector V which is not a linear combination of the column
-      *  vectors is guaranteed to be outside the kernel ( MV \neq 0 )
+      *  vectors is guaranteed to be outside the kernel ( \f$MV \neq 0\f$ )
       *
       *  \return a matrix of column vectors, may be empty
       */
@@ -123,37 +123,37 @@ namespace codac2
       *
       *  \return the reconstructed matrix
       */
-     IntervalMatrix ReconstructedMatrix() const;
+     IntervalMatrix reconstructed_matrix() const;
      /** \brief maximum magnitude of the diagonal elements of [U]
       *
       *  \return the maximum
       */
-     double maxPivot() const;
+     double max_pivot() const;
      
      /** \brief the permutation P in the decomposition P{-1}LUQ{-1}
       *
       * \return the permutation P, as defined by Eigen
       */
      const Eigen::FullPivLU<Matrix>::PermutationPType 
-			&permutationP () const;
+			&permutation_P () const;
      /** \brief the permutation Q in the decomposition P{-1}LUQ{-1}
       *
       * \return the permutation Q, as defined by Eigen
       */
      const Eigen::FullPivLU<Matrix>::PermutationQType 
-			&permutationQ () const;
+			&permutation_Q () const;
      /** \brief the Eigen decomposition of M.mid()
       *
       * \return the Eigen decomposition
       */
-     const Eigen::FullPivLU<Matrix> &eigenLU() const;
+     const Eigen::FullPivLU<Matrix> &eigen_LU() const;
 
      /** \brief returns the matrix storing [L] and [U]
       *  ([L] for strictly lower part, [U] for upper part)
       *
       * \return the interval matrix
       */
-     const IntervalMatrix &matrixLU() const;
+     const IntervalMatrix &matrix_LU() const;
 
 
      private:
@@ -161,27 +161,27 @@ namespace codac2
 
         IntervalMatrix matrixLU_;   /* LU matrix */
      
-        void computeMatrixLU(const IntervalMatrix &M, double nonzero);
-        static IntervalMatrix buildLUbounds(const IntervalMatrix &E);
+        void compute_matrix_LU(const IntervalMatrix &M, double nonzero);
+        static IntervalMatrix build_LU_bounds(const IntervalMatrix &E);
   };
 
-inline const IntervalMatrix &IntFullPivLU::matrixLU() const {
+inline const IntervalMatrix &IntvFullPivLU::matrix_LU() const {
      return this->matrixLU_;
 }
 inline const Eigen::FullPivLU<Matrix>::PermutationPType 
-			&IntFullPivLU::permutationP() const {
+			&IntvFullPivLU::permutation_P() const {
     return this->_LU.permutationP();
 }
 inline const Eigen::FullPivLU<Matrix>::PermutationQType 
-			&IntFullPivLU::permutationQ() const {
+			&IntvFullPivLU::permutation_Q() const {
     return this->_LU.permutationQ();
 }
-inline const Eigen::FullPivLU<Matrix> &IntFullPivLU::eigenLU() const {
+inline const Eigen::FullPivLU<Matrix> &IntvFullPivLU::eigen_LU() const {
     return this->_LU;
 }
 
 template<typename Derived>
-inline  Derived IntFullPivLU::image
+inline  Derived IntvFullPivLU::image
 	(const Eigen::MatrixBase<Derived> &M) const
 {
    int rk = this->rank().lb();

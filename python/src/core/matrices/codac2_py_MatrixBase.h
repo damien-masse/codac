@@ -83,12 +83,6 @@ void export_MatrixBase(py::module& m, py::class_<S>& pyclass)
         },
       MATRIXBASE_ADDONS_BASE_AUTO_SQUARED_NORM_CONST)
 
-    .def("is_nan", [](const S& x)
-        {
-          return x.is_nan();
-        },
-      MATRIXBASE_ADDONS_BASE_BOOL_IS_NAN_CONST)
-
   ;
 
   if constexpr(!VECTOR_INHERITANCE)
@@ -101,7 +95,13 @@ void export_MatrixBase(py::module& m, py::class_<S>& pyclass)
         },
       MATRIXBASE_ADDONS_BASE_BOOL_IS_SQUARED_CONST)
 
-    .def("__getitem__", [](const S& x, const py::tuple& ij) -> const T&
+    .def(
+        #if FOR_MATLAB
+          "__call__"
+        #else
+          "__getitem__"
+        #endif
+        , [](const S& x, const py::tuple& ij) -> const T&
         {
           if constexpr(FOR_MATLAB)
             assert_release(py::isinstance<py::int_>(ij[0]) && py::isinstance<py::int_>(ij[1]));
@@ -113,7 +113,13 @@ void export_MatrixBase(py::module& m, py::class_<S>& pyclass)
         }, py::return_value_policy::reference_internal,
       MATRIX_ADDONS_BASE_CONST_SCALAR_REF_OPERATORCALL_INDEX_INDEX_CONST)
 
-    .def("__setitem__", [](S& x, const py::tuple& ij, const T& a)
+    .def(
+        #if FOR_MATLAB
+          "setitem"
+        #else
+          "__setitem__"
+        #endif
+        , [](S& x, const py::tuple& ij, const T& a)
         {
           if constexpr(FOR_MATLAB)
             assert_release(py::isinstance<py::int_>(ij[0]) && py::isinstance<py::int_>(ij[1]));
@@ -318,7 +324,24 @@ void export_MatrixBase(py::module& m, py::class_<S>& pyclass)
     ;
   }
   
-  //S abs(const MatrixBase<S,T>& x)
   m.def("abs", [](const S& x) { return abs(x); },
     AUTO_ABS_CONST_EIGEN_MATRIXBASE_OTHERDERIVED_REF);
+  
+  if constexpr(std::is_same_v<T,double>)
+  {
+    m.def("floor", [](const S& x) -> S { return floor(x); },
+      AUTO_FLOOR_CONST_EIGEN_MATRIXBASE_OTHERDERIVED_REF);
+    
+    m.def("ceil", [](const S& x) -> S { return ceil(x); },
+      AUTO_CEIL_CONST_EIGEN_MATRIXBASE_OTHERDERIVED_REF);
+    
+    m.def("round", [](const S& x) -> S { return round(x); },
+      AUTO_ROUND_CONST_EIGEN_MATRIXBASE_OTHERDERIVED_REF);
+
+    pyclass.def("is_nan", [](const S& x)
+        {
+          return x.is_nan();
+        },
+      MATRIXBASE_ADDONS_BASE_BOOL_IS_NAN_CONST);
+  }
 }

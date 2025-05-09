@@ -13,7 +13,7 @@ Build configuration modes
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - **Debug Mode**:  
-   In Debug mode, CMake includes debugging symbols and disables optimizations. This makes the code slower compared to Release mode but allows for better debugging and tracing capabilities. This mode is particularly useful during development when detailed information about the program's behavior is needed to diagnose problems.
+   In ``Debug`` mode, CMake includes debugging symbols and disables optimizations. This makes the code slower compared to Release mode but allows for better debugging and tracing capabilities. This mode is particularly useful during development when detailed information about the program's behavior is needed to diagnose problems.
    In practice, both C++ functions ``assert(..)`` and ``assert_release(..)`` are kept in this mode, providing comprehensive information on debugging.
 
    To configure your build in Debug mode, use:
@@ -23,7 +23,7 @@ Build configuration modes
       cmake -DCMAKE_BUILD_TYPE=Debug ..
 
 - **Release Mode**:  
-   In **Release** mode, CMake enables optimizations designed to improve the performance of the library. This configuration disables debugging symbols and allows the compiler to apply optimizations, such as inlining and loop unrolling, which result in faster execution. It also keeps error messages related to misuse of the library. **It is the default and recommended configuration for using Codac.**
+   In ``Release`` mode, CMake enables optimizations designed to improve the performance of the library. This configuration disables debugging symbols and allows the compiler to apply optimizations, such as inlining and loop unrolling, which result in faster execution. It also keeps error messages related to misuse of the library. **It is the default and recommended configuration for using Codac.**
    In practice, C++ functions ``assert(..)`` are removed in this mode but ``assert_release(..)`` functions are kept in order to communicate essential error messages to the user.
 
    To configure your build in Release mode, use the following command:
@@ -33,7 +33,7 @@ Build configuration modes
       cmake -DCMAKE_BUILD_TYPE=Release ..
 
 - **FastRelease Mode**:  
-   The FastRelease mode is designed to provide slightly better performances than the standard Release mode. This mode is ideal for users who need maximum runtime performance and do not need the basic error messages. In practice, both C++ functions ``assert(..)`` and ``assert_release(..)`` are removed in this mode.
+   The ``FastRelease`` mode is designed to provide slightly better performances than the standard Release mode. This mode is ideal for users who need maximum runtime performance and do not need the basic error messages. In practice, both C++ functions ``assert(..)`` and ``assert_release(..)`` are removed in this mode.
 
    To configure your build in FastRelease mode, use:
 

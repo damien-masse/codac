@@ -60,7 +60,7 @@ namespace codac2
       {
         auto expr_copy = expr()->copy();
         Index i = 0;
-        (expr_copy->replace_expr(_args[i++]->unique_id(), this->__get_copy(x)), ...);
+        (expr_copy->replace_arg(_args[i++]->unique_id(), this->__get_copy(x)), ...);
         assert_release(i == this->args().size() && 
           "Invalid arguments: wrong number of input arguments");
         return std::dynamic_pointer_cast<SetExpr>(expr_copy);

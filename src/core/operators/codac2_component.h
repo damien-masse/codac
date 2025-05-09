@@ -2,7 +2,7 @@
  *  \file codac2_component.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -17,6 +17,34 @@ namespace codac2
 {
   struct ComponentOp
   {
+    template<typename X1>
+    static std::string str(const X1& x1, Index i)
+    {
+      return x1->str(!x1->is_str_leaf()) + "[" + std::to_string(i) + "]";
+    }
+
+    template<typename X1>
+    static std::string str(const X1& x1, Index i, Index j)
+    {
+      return x1->str(!x1->is_str_leaf()) + "(" + std::to_string(i) + "," + std::to_string(j) + ")";
+    }
+
+    template<typename X1>
+    static std::pair<Index,Index> output_shape(const X1& s1, Index i)
+    {
+      auto shape1 = s1->output_shape();
+      assert(shape1.second==1 && i<shape1.first);
+      return {1,1};
+    }
+
+    template<typename X1>
+    static std::pair<Index,Index> output_shape(const X1& s1, Index i, Index j)
+    {
+      auto shape1 = s1->output_shape();
+      assert(j<shape1.second && i<shape1.first);
+      return {1,1};
+    }
+
     static Interval fwd(const IntervalVector& x1, Index i);
     static ScalarType fwd_natural(const VectorType& x1, Index i);
     static ScalarType fwd_centered(const VectorType& x1, Index i);
@@ -48,9 +76,9 @@ namespace codac2
         return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,VectorType>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<AnalyticExpr<VectorType>>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<AnalyticExpr<VectorType>>::replace_arg(old_arg_id, new_expr);
       }
 
       ScalarType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
@@ -69,9 +97,25 @@ namespace codac2
         std::get<0>(this->_x)->bwd_eval(v);
       }
 
+      std::pair<Index,Index> output_shape() const
+      {
+        return ComponentOp::output_shape(std::get<0>(this->_x),_i);
+      }
+
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
       {
         return std::get<0>(this->_x)->belongs_to_args_list(args);
+      }
+
+      std::string str(bool in_parentheses = false) const
+      {
+        std::string s = ComponentOp::str(std::get<0>(this->_x), _i);
+        return in_parentheses ? "(" + s + ")" : s;
+      }
+
+      virtual bool is_str_leaf() const
+      {
+        return true;
       }
 
     protected:
@@ -97,9 +141,9 @@ namespace codac2
         return std::make_shared<AnalyticOperationExpr<ComponentOp,ScalarType,MatrixType>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<AnalyticExpr<MatrixType>>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<AnalyticExpr<MatrixType>>::replace_arg(old_arg_id, new_expr);
       }
 
       ScalarType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
@@ -118,9 +162,25 @@ namespace codac2
         std::get<0>(this->_x)->bwd_eval(v);
       }
 
+      std::pair<Index,Index> output_shape() const
+      {
+        return ComponentOp::output_shape(std::get<0>(this->_x),_i,_j);
+      }
+
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
       {
         return std::get<0>(this->_x)->belongs_to_args_list(args);
+      }
+
+      std::string str(bool in_parentheses = false) const
+      {
+        std::string s = ComponentOp::str(std::get<0>(this->_x), _i, _j);
+        return in_parentheses ? "(" + s + ")" : s;
+      }
+
+      virtual bool is_str_leaf() const
+      {
+        return true;
       }
 
     protected:
@@ -196,7 +256,7 @@ namespace codac2
       return {
         fwd(x1.m,i,j),
         fwd(x1.a,i,j),
-        IntervalMatrix(0,0), // centered form not yet available
+        x1.da.row(x1.a.rows()*i+j), // centered form, ColMajor
         x1.def_domain
       };
     }
