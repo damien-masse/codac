@@ -52,7 +52,7 @@ py::class_<Matrix> export_Matrix(py::module& m)
         [](Index_type r, Index_type c)
         {
           matlab::test_integer(r,c);
-          return std::make_unique<Matrix>(r,c);
+          return std::make_unique<Matrix>((Index)r,(Index)c);
         }),
       DOC_TO_BE_DEFINED,
       "r"_a, "c"_a)
@@ -64,6 +64,20 @@ py::class_<Matrix> export_Matrix(py::module& m)
     .def(py::init<const Vector&>(),
       DOC_TO_BE_DEFINED,
       "x"_a)
+
+    .def(py::init(
+        [](const std::vector<std::vector<double>>& v)
+        {
+          auto m = std::make_unique<Matrix>(v.size(),v[0].size());
+          for(size_t i = 0 ; i < v.size() ; i++)
+          {
+            assert_release((Index)v[i].size() == m->cols() && "Vector objects of different size");
+            m->row(i) = Vector(v[i]);
+          }
+          return m;
+        }),
+      DOC_TO_BE_DEFINED,
+      "v"_a)
 
     .def(py::init( // this constructor must be the last one to be declared
         [](const std::vector<Vector>& v)

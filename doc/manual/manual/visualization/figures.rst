@@ -3,6 +3,8 @@
 The 2D Figure classes
 =====================
 
+  Main author: `Maël Godard <https://godardma.github.io>`_
+
 This page describes the classes used in Codac for 2D visualization.
 
 .. _subsec-graphics-2d-figures-graphical-outputs:
@@ -36,7 +38,7 @@ Figure2D
 
 The basic class for 2D visualization is Figure2D. It is used to create a figure that can be displayed in VIBes or saved in an xml file for IPE.
 The constructor takes two arguments: the name of the figure and the graphical output. A boolean can be added to specify if the figure is to be used
-DefaultView (see :ref:`subsec-graphics-2d-figures-defaultview`).
+DefaultFigure (see :ref:`subsec-graphics-2d-figures-defaultfigure`).
 
 .. tabs::
 
@@ -48,13 +50,13 @@ DefaultView (see :ref:`subsec-graphics-2d-figures-defaultview`).
 
     Figure2D fig ("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
 
-.. _subsec-graphics-2d-figures-defaultview:
+.. _subsec-graphics-2d-figures-defaultfigure:
 
-DefaultView
------------
+DefaultFigure
+-------------
 
-A DefaultView using only VIBes as graphical output is available. This figure is the one used by the function `draw_while_paving` by default. 
-Any Figure2D object can be used as DefaultView with the set method:
+A DefaultFigure using only VIBes as graphical output is available. This figure is the one used by the function `draw_while_paving` by default. 
+Any Figure2D object can be used as DefaultFigure with the set method:
 
 .. tabs::
 
@@ -62,19 +64,19 @@ Any Figure2D object can be used as DefaultView with the set method:
 
     fig = Figure2D("My figure", GraphicOutput.VIBES | GraphicOutput.IPE)
     fig.is_default() # is False
-    DefaultView.set(fig)
+    DefaultFigure.set(fig)
     fig.is_default() # is True
 
   .. code-tab:: c++
 
     std::shared_ptr<codac2::Figure2D> fig = std::make_shared<Figure2D>("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
     fig->is_default() // is false
-    DefaultView::set(fig);
+    DefaultFigure::set(fig);
     fig->is_default() // is true
 
 Note that in C++ the figure must be a shared pointer in order to be passed to the `set` method.
 
-Equivalently, a Figure2D can be used as DefaultView by setting the flag `set_as_default` to true in the constructor:
+Equivalently, a Figure2D can be used as DefaultFigure by setting the flag `set_as_default` to true in the constructor:
 
 .. tabs::
 
@@ -106,19 +108,19 @@ Once created, the properties of a Figure2D object can be modified using the foll
     fig.set_window_properties({50,50},{500,500}); // set the window position and size
     fig.set_axes(axis(0,{-10,10}), axis(1,{-10,10})); // set the x-axis index to 0 and its range to [-10,10], same for y with index 1 
 
-The same methods can be applied on the DefaultView object.
+The same methods can be applied on the DefaultFigure object.
 
 .. tabs::
 
   .. code-tab:: py
 
-    DefaultView.set_window_properties([50,50],[500,500]) # set the window position and size
-    DefaultView.set_axes(axis(0,[-10,10]), axis(1,[-10,10])) # set the x-axis index to 0 and its range to [-10,10], same for y with index 1 
+    DefaultFigure.set_window_properties([50,50],[500,500]) # set the window position and size
+    DefaultFigure.set_axes(axis(0,[-10,10]), axis(1,[-10,10])) # set the x-axis index to 0 and its range to [-10,10], same for y with index 1 
 
   .. code-tab:: c++
 
-    DefaultView::set_window_properties({50,50},{500,500}); // set the window position and size
-    DefaultView::set_axes(axis(0,{-10,10}), axis(1,{-10,10})); // set the x-axis index to 0 and its range to [-10,10], same for y with index 1 
+    DefaultFigure::set_window_properties({50,50},{500,500}); // set the window position and size
+    DefaultFigure::set_axes(axis(0,{-10,10}), axis(1,{-10,10})); // set the x-axis index to 0 and its range to [-10,10], same for y with index 1 
 
 Many properties have an associated getter :
 

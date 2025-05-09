@@ -46,7 +46,7 @@ namespace codac2
       template<typename... X>
       void contract(X&... x) const
       {
-        return contract_(_ctc_y.front(), x...);
+        return contract_(*_ctc_y.front(), x...);
       }
 
       template<typename... X>
@@ -164,6 +164,9 @@ namespace codac2
   // Template deduction guides
 
   // ScalarType
+
+    CtcInverse(const AnalyticFunction<ScalarType>&, std::initializer_list<double>, bool with_centered_form = true, bool is_not_in = false) -> 
+      CtcInverse<Interval,IntervalVector>;
 
     template<typename Y>
     CtcInverse(const AnalyticFunction<ScalarType>&, std::initializer_list<Y>, bool with_centered_form = true, bool is_not_in = false) -> 

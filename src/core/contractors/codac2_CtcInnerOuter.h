@@ -29,7 +29,7 @@ namespace codac2
 
       void contract(IntervalVector& x) const
       {
-        auto x_sep = _seps.front().separate(x);
+        auto x_sep = _seps.front()->separate(x);
         x &= x_sep.inner;
       }
 
@@ -50,7 +50,7 @@ namespace codac2
 
       void contract(IntervalVector& x) const
       {
-        auto x_sep = _seps.front().separate(x);
+        auto x_sep = _seps.front()->separate(x);
         x &= x_sep.outer;
       }
 

@@ -28,6 +28,7 @@ namespace codac2
       { }
 
       virtual Index size() const = 0;
+      virtual std::pair<Index,Index> shape() const = 0;
       virtual bool is_empty() const = 0;
       virtual Interval tdomain() const = 0;
       virtual void truncate_tdomain(const Interval& new_tdomain) = 0;

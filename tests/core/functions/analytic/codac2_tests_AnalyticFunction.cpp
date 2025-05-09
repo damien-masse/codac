@@ -2,7 +2,7 @@
  *  Codac tests
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -50,10 +50,12 @@ TEST_CASE("AnalyticFunction")
 
       {
         AnalyticFunction f({x}, x);
+	CHECK(f.output_shape()==std::pair<Index,Index>(1,1));
         CHECK(Approx(f.eval(m, Interval(0))) == 0);
       }
       {
         AnalyticFunction f({x}, x+Interval(2));
+	CHECK(f.output_shape()==std::pair<Index,Index>(1,1));
         CHECK(Approx(f.eval(m, Interval(3))) == 5);
       }
       {
@@ -81,13 +83,15 @@ TEST_CASE("AnalyticFunction")
         CHECK(Approx(f.eval(m, Interval(0))) == 1);
       }
 
-      AnalyticFunction f({x}, vec(x,x));
-
-      AnalyticFunction fvec({x}, vec(x,x));
-      CHECK(Approx(f.eval(m, 1)) == IntervalVector({1,1}));
+      {
+        AnalyticFunction f({x}, vec(x,x));
+	CHECK(f.output_shape()==std::pair<Index,Index>(2,1));
+        CHECK(Approx(f.eval(m, 1)) == IntervalVector({1,1}));
+      }
     }
 
     {
+      CHECK(AnalyticFunction({}, +Interval(4,5)).output_shape()==std::pair<Index,Index>(1,1));
       CHECK(AnalyticFunction({}, +Interval(4,5)).eval(m) == Interval(4,5));
       CHECK(AnalyticFunction({}, +4).eval(m) == 4);
       CHECK(AnalyticFunction({}, +4.).eval(m) == 4.);
@@ -293,6 +297,7 @@ TEST_CASE("AnalyticFunction")
     // Vectorial outputs
     {
       AnalyticFunction f1({}, { (int)3 });
+      CHECK(f1.output_shape()==std::pair<Index,Index>(1,1));
       CHECK(f1.eval() == IntervalVector({3}));
 
       AnalyticFunction f2({}, { (double)3. });
@@ -307,6 +312,7 @@ TEST_CASE("AnalyticFunction")
 
       AnalyticFunction f_2args({x}, { x*x,x*x });
       CHECK(f_2args.eval(1.) == IntervalVector::constant(2,{1}));
+      CHECK(f_2args.output_shape()==std::pair<Index,Index>(2,1));
       AnalyticFunction f_3args({x}, { x,x*x,1 });
       CHECK(f_3args.eval(1.) == IntervalVector::constant(3,{1}));
       AnalyticFunction f_4args({x}, { x,x*x,1,x });
@@ -314,6 +320,7 @@ TEST_CASE("AnalyticFunction")
       AnalyticFunction f_5args({x}, { x,x*x,1,x,x });
       CHECK(f_5args.eval(1.) == IntervalVector::constant(5,{1}));
       AnalyticFunction f_6args({x}, { x,x*x,1,x,x,1*x });
+      CHECK(f_6args.output_shape()==std::pair<Index,Index>(6,1));
       CHECK(f_6args.eval(1.) == IntervalVector::constant(6,{1}));
       AnalyticFunction f_7args({x}, { x,x*x,1,x,x,1*x,x*x });
       CHECK(f_7args.eval(1.) == IntervalVector::constant(7,{1}));
@@ -322,6 +329,7 @@ TEST_CASE("AnalyticFunction")
       AnalyticFunction f_9args({x}, { x,x*x,1,x,x,1*x,x*x,1,x });
       CHECK(f_9args.eval(1.) == IntervalVector::constant(9,{1}));
       AnalyticFunction f_10args({x}, { x,x*x,1,x,x,1*x,x*x,1,x,1*x });
+      CHECK(f_10args.output_shape()==std::pair<Index,Index>(10,1));
       CHECK(f_10args.eval(1.) == IntervalVector::constant(10,{1}));
     }
   }
@@ -332,6 +340,7 @@ TEST_CASE("AnalyticFunction")
     VectorVar x(4);
     AnalyticFunction f({p}, p[0]*p[1]);
     AnalyticFunction g({x}, f(x.subvector(0,1)) + f(x.subvector(2,3)));
+    CHECK(g.output_shape()==std::pair<Index,Index>(1,1));
 
     IntervalVector a(4);
 
@@ -400,6 +409,7 @@ TEST_CASE("AnalyticFunction")
     Matrix I({{0,2},{-1,0}});
     VectorVar x(2);
     AnalyticFunction f({x}, I*x);
+    CHECK(f.output_shape()==std::pair<Index,Index>(2,1));
     CHECK(f.eval(IntervalVector({{0,1},{2,3}})) == IntervalVector({{4,6},{-1,0}}));
   }
 
@@ -414,7 +424,9 @@ TEST_CASE("AnalyticFunction")
     MatrixVar A(2,2);
     VectorVar x(2);
     AnalyticFunction h({A}, A*A);
+    CHECK(h.output_shape()==std::pair<Index,Index>(2,2));
     AnalyticFunction f({x,A}, h(A)*x);
+    CHECK(f.output_shape()==std::pair<Index,Index>(2,1));
     AnalyticFunction g({x}, f(x,Matrix({{0,2},{-1,0}})));
     CHECK(g.eval(IntervalVector({{-1,1},{2,3}})) == IntervalVector({{-2,2},{-6,-4}}));
   }
@@ -444,5 +456,40 @@ TEST_CASE("AnalyticFunction")
     CHECK(Approx(f.eval(EvalMode::CENTERED, 1e-10),1e-3) == 0.);
     CHECK(Approx(f.eval(0.)) == 0.);
     CHECK(Approx(f.eval(1e-10),1e-3) == 0.);
+  }
+
+  {
+    VectorVar x1(2),x2(2),x3(2);
+    AnalyticFunction f({x1,x2,x3}, mat(+x1,-x2,2*x3));
+    CHECK(f.output_shape()==std::pair<Index,Index>(2,3));
+    CHECK(f.eval(EvalMode::NATURAL, Vector({1,2}),Vector({-1,8}),IntervalVector({{-1,1},{2,oo}}))
+      == IntervalMatrix({{1,1,{-2,2}},{2,-8,{4,oo}}}));
+  }
+
+  {
+    VectorVar x1(2);
+    AnalyticFunction f({x1}, det(mat(+x1,2.0*x1)));
+    CHECK(Approx(f.eval(EvalMode::NATURAL,IntervalVector({{0.9,1.1},{0.4,0.5}})),1e-9) == Interval(-0.38,0.38));
+    CHECK(Approx(f.eval(EvalMode::CENTERED,IntervalVector({{0.9,1.1},{0.4,0.5}})),1e-9) == Interval(-0.04,0.04));
+  }
+
+  {
+    MatrixVar m1(2,3);
+    MatrixVar m2(3,2);
+    AnalyticFunction f({m1,m2}, m1*m2-m1*m2);
+    CHECK(f.output_shape()==std::pair<Index,Index>(2,2));
+    CHECK(Approx(f.eval(EvalMode::NATURAL,
+		 Matrix({{1.0,0.0,1.0},{0.0,1.0,0.0}}),
+		  IntervalMatrix({{{-0.2,0.2},{-0.1,0.1}},
+				  {{0.2,0.4},{-0.4,-0.1}},
+				  {{1.0,2.0},{-0.2,-0.1}}}) ),1e-9)
+		== IntervalMatrix({{{-1.4,1.4},{-0.3,0.3}},
+				   {{-0.2,0.2},{-0.3,0.3}}}));
+    CHECK(Approx(f.eval(EvalMode::CENTERED,
+		 Matrix({{1.0,0.0,1.0},{0.0,1.0,0.0}}),
+		  IntervalMatrix({{{-0.2,0.2},{-0.1,0.1}},
+				  {{0.2,0.4},{-0.4,-0.1}},
+				  {{1.0,2.0},{-0.2,-0.1}}}) ),1e-9)
+		== Matrix({{0,0}, {0,0}}));
   }
 }
