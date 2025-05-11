@@ -2,7 +2,7 @@
  *  \file codac2_flatten.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou, Damien Massé
+ *  \author     Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
