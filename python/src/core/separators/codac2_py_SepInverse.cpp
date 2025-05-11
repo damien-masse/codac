@@ -11,6 +11,7 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <codac2_SepInverse.h>
+#include <codac2_AnalyticFunction.h>
 #include "codac2_Sep.h"
 #include "codac2_py_Sep.h"
 #include "codac2_py_SepInverse_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
@@ -23,45 +24,54 @@ using namespace codac2;
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-template<typename T>
-void export_SepInverse_type(py::class_<SepInverse>& exported)
+void export_SepInverse(py::module& m, py::class_<SepBase,pySep>& pysep)
 {
+  py::class_<SepInverse> exported(m, "SepInverse", pysep, SEPINVERSE_MAIN);
   exported
-    .def(py::init(
-        [](const py::object& f, const typename T::Domain& y, bool with_centered_form)
-        {
-          return std::make_unique<SepInverse>(
-            cast<AnalyticFunction<T>>(f),
-            y, with_centered_form);
-        }
-      ),
-      SEPINVERSE_SEPINVERSE_CONST_ANALYTICFUNCTION_T_REF_CONST_TYPENAME_T_DOMAIN_REF_BOOL,
-      "f"_a, "y"_a, "with_centered_form"_a = true);
 
-  if constexpr(std::is_same_v<T,VectorType>) // separators only associated with interval vectors
-  {
-    exported
     .def(py::init(
         [](const py::object& f, const SepBase& s, bool with_centered_form)
         {
           return std::make_unique<SepInverse>(
-            cast<AnalyticFunction<T>>(f),
+            cast<AnalyticFunction<VectorType>>(f),
             s.copy(), with_centered_form);
         }
       ),
       SEPINVERSE_SEPINVERSE_CONST_ANALYTICFUNCTION_T_REF_CONST_S_REF_BOOL,
-      "f"_a, "s"_a, "with_centered_form"_a = true);
-  }
-}
+      "f"_a, "s"_a, "with_centered_form"_a = true)
 
-void export_SepInverse(py::module& m, py::class_<SepBase,pySep>& pysep)
-{
-  py::class_<SepInverse> exported(m, "SepInverse", pysep, SEPINVERSE_MAIN);
+    .def(py::init(
+        [](const py::object& f, const py::object& y, bool with_centered_form)
+        {
+          if(is_instance<AnalyticFunction<ScalarType>>(f))
+          {
+            return std::make_unique<SepInverse>(
+              cast<AnalyticFunction<ScalarType>>(f),
+              cast<Interval>(y), with_centered_form);
+          }
 
-  export_SepInverse_type<ScalarType>(exported);
-  export_SepInverse_type<VectorType>(exported);
+          else if(is_instance<AnalyticFunction<VectorType>>(f))
+          {
+            return std::make_unique<SepInverse>(
+              cast<AnalyticFunction<VectorType>>(f),
+              cast<IntervalVector>(y), with_centered_form);
+          }
 
-  exported
+          // not yet available else if(is_instance<AnalyticFunction<MatrixType>>(f))
+          // not yet available {
+          // not yet available   return std::make_unique<SepInverse>(
+          // not yet available     cast<AnalyticFunction<MatrixType>>(f),
+          // not yet available     cast<IntervalMatrix>(y), with_centered_form);
+          // not yet available }
+
+          else
+          {
+            assert_release(false && "case error - SepInverse: cannot deal with f")
+          }
+        }
+      ),
+      SEPINVERSE_SEPINVERSE_CONST_ANALYTICFUNCTION_T_REF_CONST_TYPENAME_T_DOMAIN_REF_BOOL,
+      "f"_a, "y"_a, "with_centered_form"_a = true)
 
     .def("separate", &SepInverse::separate,
       BOXPAIR_SEPCTCPAIR_SEPARATE_CONST_INTERVALVECTOR_REF_CONST,
