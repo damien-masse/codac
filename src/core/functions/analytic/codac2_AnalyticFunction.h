@@ -39,7 +39,7 @@ namespace codac2
   {
     // Mainly used to take advantage of initializer lists in AnalyticFunction constructors.
     template<typename... S>
-      requires (std::is_same_v<typename ValueType<S>::Type,ScalarType> && ...)
+      requires (std::is_same_v<typename ExprType<S>::Type,ScalarType> && ...)
     ScalarExprList(const S&... y)
       : AnalyticExprWrapper<VectorType>(vec(y...))
     { }
@@ -202,7 +202,7 @@ namespace codac2
         assert(i >= 0 && i < (Index)this->args().size());
         assert_release(size_of(x) == this->args()[i]->size() && "provided arguments do not match function inputs");
 
-        using D_TYPE = typename ValueType<D>::Type;
+        using D_TYPE = typename ExprType<D>::Type;
 
         IntervalMatrix d = IntervalMatrix::zero(size_of(x), this->args().total_size());
         
@@ -228,7 +228,7 @@ namespace codac2
       void intersect_value_from_arg_map(const ValuesMap& v, D& x, Index i) const
       {
         assert(v.find(this->args()[i]->unique_id()) != v.end() && "argument cannot be found");
-        x &= std::dynamic_pointer_cast<typename ValueType<D>::Type>(v.at(this->args()[i]->unique_id()))->a;
+        x &= std::dynamic_pointer_cast<typename ExprType<D>::Type>(v.at(this->args()[i]->unique_id()))->a;
       }
 
       template<typename... Args>
@@ -276,6 +276,6 @@ namespace codac2
 
   template<typename T>
   AnalyticFunction(const FunctionArgsList&, const T&) -> 
-    AnalyticFunction<typename ValueType<T>::Type>;
+    AnalyticFunction<typename ExprType<T>::Type>;
 
 }
