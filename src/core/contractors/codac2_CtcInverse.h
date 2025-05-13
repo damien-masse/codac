@@ -118,7 +118,7 @@ namespace codac2
           }
           
         // [4/4] Backward evaluation
-        _f.expr()->bwd_eval(v);
+        _f.expr()->bwd_eval(v); // recursive backward from the root to the leaves
         _f.intersect_from_args(v, x...); // updating input values
       }
 
