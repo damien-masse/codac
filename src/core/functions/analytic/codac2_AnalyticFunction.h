@@ -194,6 +194,7 @@ namespace codac2
     protected:
 
       template<typename Y,typename... X>
+        requires (sizeof...(X) > 0)
       friend class CtcInverse;
 
       template<typename D>
