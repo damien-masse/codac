@@ -231,7 +231,7 @@ void Figure2D::draw_zonotope(const Vector& z, const std::vector<Vector>& A, cons
        if (u==Vector::zero(2)) continue;
        double theta = std::atan2(u[1],u[0]);
        Vector v(u);
-       if (theta<=0.0) { theta=theta+M_PI; v=-v; } 
+       if (theta<=0.0) { theta=theta+PI; v=-v; } 
 		/* theta in ]0,PI] , v[1]>=0 and if v[1]=0, v[0]<0 */
        auto try_insert=sides.insert({theta,v});
        if (try_insert.second==false) {
