@@ -120,12 +120,22 @@ namespace codac2
       void draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s = { Color::dark_gray(0.5) });
 
       /**
+       * \brief Draws a zonotope z+A*[-1,1]^2 on the figure
+       * 
+       * \param z Coordinates of the center of the zonotope
+       * \param A list of vectors (more consistant than matrix)
+       * \param s Style of the zonotope (edge color)
+       */
+      void draw_zonotope(const Vector& z, const std::vector<Vector>& A, const StyleProperties& s = { Color::dark_gray(0.5) });
+
+      /**
        * \brief Draws a box on the figure
        * 
        * \param x Box to draw
        * \param s Style of the box (edge color)
        */      
       void draw_box(const IntervalVector& x, const StyleProperties& s = { Color::dark_gray(0.5) });
+
 
       /**
        * \brief Draws an arrow (box c + A * ([0,1],[-0.01,0.01],[-0.01,0.01]) and a

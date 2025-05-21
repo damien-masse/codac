@@ -163,6 +163,10 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF_CONST_STYLEPROPERTIES_REF,
       "z"_a, "A"_a, "s"_a=StyleProperties())
 
+    .def("draw_zonotope", &Figure2D::draw_zonotope,
+	VOID_FIGURE2D_DRAW_ZONOTOPE_CONST_VECTOR_REF_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
+      "z"_a, "A"_a, "s"_a=StyleProperties())
+
     .def("draw_pie", &Figure2D::draw_pie,
       VOID_FIGURE2D_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "r"_a, "theta"_a, "s"_a=StyleProperties())

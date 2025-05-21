@@ -224,6 +224,41 @@ void Figure2D::draw_polygon(const Polygon& x, const StyleProperties& s)
     output_fig->draw_polygon(w,s);
 }
 
+void Figure2D::draw_zonotope(const Vector& z, const std::vector<Vector>& A, const StyleProperties& s) {
+   std::map<double,Vector> sides;
+   for (auto &u : A) {
+       assert_release(u.size()==2);
+       if (u==Vector::zero(2)) continue;
+       double theta = std::atan2(u[1],u[0]);
+       Vector v(u);
+       if (theta<=0.0) { theta=theta+M_PI; v=-v; } 
+		/* theta in ]0,PI] , v[1]>=0 and if v[1]=0, v[0]<0 */
+       auto try_insert=sides.insert({theta,v});
+       if (try_insert.second==false) {
+           (try_insert.first)->second += v;
+       }
+   }
+   std::vector<Vector> vertices;
+   Vector point=z;
+   /* start from v[1] maximum (and v[0] min for horizontal side) */
+   for (const auto &a : sides) {
+       point+=a.second;
+   }
+   /* turn anticlockwise : first half */
+   for (const auto &a : sides) {
+       vertices.push_back(point);
+       point-=2*a.second;
+   }
+   /* turn anticlockwise : second half */
+   for (const auto &a : sides) {
+       vertices.push_back(point);
+       point+=2*a.second;
+   }
+   for(const auto& output_fig : _output_figures)
+      output_fig->draw_polygon(vertices,s);
+}
+
+
 void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s)
 {
   assert_release(A.is_squared() && A.rows() == z.size());
