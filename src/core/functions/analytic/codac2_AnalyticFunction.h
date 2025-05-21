@@ -16,9 +16,9 @@
 #include "codac2_FunctionBase.h"
 #include "codac2_template_tools.h"
 #include "codac2_AnalyticExprWrapper.h"
-#include "codac2_ScalarExprList.h"
 #include "codac2_operators.h"
 #include "codac2_cart_prod.h"
+#include "codac2_vec.h"
 
 namespace codac2
 {
@@ -34,6 +34,16 @@ namespace codac2
 
   inline EvalMode operator|(EvalMode a, EvalMode b)
   { return static_cast<EvalMode>(static_cast<int>(a) | static_cast<int>(b)); }
+
+  struct ScalarExprList : public AnalyticExprWrapper<VectorType>
+  {
+    // Mainly used to take advantage of initializer lists in AnalyticFunction constructors.
+    template<typename... S>
+      requires (std::is_same_v<typename ExprType<S>::Type,ScalarType> && ...)
+    ScalarExprList(const S&... y)
+      : AnalyticExprWrapper<VectorType>(vec(y...))
+    { }
+  };
 
   template<typename T>
     requires std::is_base_of_v<AnalyticTypeBase,T>
@@ -181,10 +191,29 @@ namespace codac2
         return os;
       }
 
-    protected:
+      // not working with Clang: template<typename Y, typename... X>
+      // not working with Clang:   requires (sizeof...(X) > 0)
+      // not working with Clang: friend class CtcInverse;
 
-      template<typename Y>
-      friend class CtcInverse_;
+      // So, the following methods are temporarily public
+
+      // protected:
+
+      template<typename... Args>
+      void fill_from_args(ValuesMap& v, const Args&... x) const
+      {
+        Index i = 0;
+        (add_value_to_arg_map(v, x, i++), ...);
+      }
+
+      template<typename... Args>
+      void intersect_from_args(const ValuesMap& v, Args&... x) const
+      {
+        Index i = 0;
+        (intersect_value_from_arg_map(v, x, i++), ...);
+      }
+
+    protected:
 
       template<typename D>
       void add_value_to_arg_map(ValuesMap& v, const D& x, Index i) const
@@ -192,7 +221,7 @@ namespace codac2
         assert(i >= 0 && i < (Index)this->args().size());
         assert_release(size_of(x) == this->args()[i]->size() && "provided arguments do not match function inputs");
 
-        using D_TYPE = typename ValueType<D>::Type;
+        using D_TYPE = typename ExprType<D>::Type;
 
         IntervalMatrix d = IntervalMatrix::zero(size_of(x), this->args().total_size());
         
@@ -207,25 +236,11 @@ namespace codac2
           std::make_shared<D_TYPE>(typename D_TYPE::Domain(x).mid(), x, d, true);
       }
 
-      template<typename... Args>
-      void fill_from_args(ValuesMap& v, const Args&... x) const
-      {
-        Index i = 0;
-        (add_value_to_arg_map(v, x, i++), ...);
-      }
-
       template<typename D>
       void intersect_value_from_arg_map(const ValuesMap& v, D& x, Index i) const
       {
         assert(v.find(this->args()[i]->unique_id()) != v.end() && "argument cannot be found");
-        x &= std::dynamic_pointer_cast<typename ValueType<D>::Type>(v.at(this->args()[i]->unique_id()))->a;
-      }
-
-      template<typename... Args>
-      void intersect_from_args(const ValuesMap& v, Args&... x) const
-      {
-        Index i = 0;
-        (intersect_value_from_arg_map(v, x, i++), ...);
+        x &= std::dynamic_pointer_cast<typename ExprType<D>::Type>(v.at(this->args()[i]->unique_id()))->a;
       }
 
       template<bool NATURAL_EVAL,typename... Args>
@@ -266,6 +281,6 @@ namespace codac2
 
   template<typename T>
   AnalyticFunction(const FunctionArgsList&, const T&) -> 
-    AnalyticFunction<typename ValueType<T>::Type>;
+    AnalyticFunction<typename ExprType<T>::Type>;
 
 }
