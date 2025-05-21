@@ -511,4 +511,21 @@ TEST_CASE("AnalyticFunction")
     CHECK(Approx(g.eval(EvalMode::CENTERED,a),1e-9) ==
 		IntervalVector({ v3,v4,v4,v3 }));
   }
+
+  {
+    ScalarVar x;
+    AnalyticFunction f({x}, extend(x*(1-sqrt(x)),x));
+    CHECK(f.eval(Interval(1.0,4.0)) == Interval(-4.0,0.0));
+    CHECK(f.eval(Interval(-4.0,-1.0)) == Interval(-4.0,-1.0));
+    CHECK(f.eval(Interval(0.0,4.0)) == Interval(-4.0,4.0));
+    CHECK(f.eval(Interval(0.0)) == Interval(0.0));
+  }
+
+  // Issue #235
+  {
+    // (Compilation test only)
+    ScalarVar x;
+    AnalyticFunction f1 { {x}, vec(x+x, 1.) };
+    AnalyticFunction f2 { {x}, { x+x, 1. } };
+  }
 }
