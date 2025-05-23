@@ -18,7 +18,7 @@
 #include "codac2_Vector.h"
 #include "codac2_Matrix.h"
 #include "codac2_IntervalMatrix.h"
-
+#include "codac2_Ellipsoid.h"
 
 namespace codac2
 {
@@ -120,10 +120,10 @@ namespace codac2
       void draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& s = { Color::dark_gray(0.5) });
 
       /**
-       * \brief Draws a zonotope z+A*[-1,1]^2 on the figure
+       * \brief Draws a zonotope z+sum_i [-1,1] A_i on the figure
        * 
        * \param z Coordinates of the center of the zonotope
-       * \param A list of vectors (more consistant than matrix)
+       * \param A list of vectors 
        * \param s Style of the zonotope (edge color)
        */
       void draw_zonotope(const Vector& z, const std::vector<Vector>& A, const StyleProperties& s = { Color::dark_gray(0.5) });
@@ -181,6 +181,15 @@ namespace codac2
        * \param s Style (color)
        */
       void draw_sphere(const Vector &c, const Matrix &A,
+		const StyleProperties& s = { Color::dark_gray(0.5) });
+
+      /**
+       * \brief Draws an ellipsoid (from the Ellipsoid class)
+       *
+       * \param e Ellipsoid to draw
+       * \param s Style (color)
+       */
+      void draw_ellipsoid(const Ellipsoid &e,
 		const StyleProperties& s = { Color::dark_gray(0.5) });
 
       /** 

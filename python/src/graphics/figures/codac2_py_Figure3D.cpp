@@ -80,6 +80,10 @@ void export_Figure3D(py::module& m)
       VOID_FIGURE3D_DRAW_SPHERE_CONST_VECTOR_REF_CONST_MATRIX_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "A"_a, "s"_a=StyleProperties(Color::blue(0.5)))
     
+    .def("draw_ellipsoid", &Figure3D::draw_ellipsoid,
+       VOID_FIGURE3D_DRAW_ELLIPSOID_CONST_ELLIPSOID_REF_CONST_STYLEPROPERTIES_REF,
+      "e"_a, "s"_a=StyleProperties(Color::blue(0.5)))
+
     .def("draw_car", &Figure3D::draw_car,
       VOID_FIGURE3D_DRAW_CAR_CONST_VECTOR_REF_CONST_MATRIX_REF_CONST_STYLEPROPERTIES_REF,
       "c"_a, "A"_a, "s"_a=StyleProperties(Color::yellow(0.5)))

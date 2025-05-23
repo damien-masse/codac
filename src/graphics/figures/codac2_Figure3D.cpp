@@ -262,6 +262,10 @@ void Figure3D::draw_sphere(const Vector &c, const Matrix &A, const StyleProperti
   );
 }
 
+void Figure3D::draw_ellipsoid(const Ellipsoid &e, const StyleProperties& s) {
+  this->draw_sphere(e.mu, e.G,s);
+}
+
 void Figure3D::draw_car(const Vector &c, const Matrix &A,
                 const StyleProperties& s) {
   this->set_style_internal(s);
