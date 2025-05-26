@@ -140,7 +140,7 @@ TEST_CASE("AnalyticFunction - manual")
     ScalarVar x2;
     AnalyticFunction f2({x1,x2}, x1^x2); // example of multivariate function
     IntervalMatrix J2 = f2.diff(2.,Interval(2,3));
-    // J2 = intv. matrix 1x2: [[ [4,12], [2.77258, 5.54518] ]]
+    // J2 = intv. matrix 1x2: [[ [4,12], [2.77258,5.54518] ]]
 
     VectorVar v(3);
     AnalyticFunction f3({v}, { // vectorial function

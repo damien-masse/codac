@@ -17,6 +17,7 @@
 namespace codac2
 {
   // chi([x1],[x2],[x3]) = [x2] if (x1^+)<=0, [x3] if (x1^-)>0, hull([x2],[x3]) else
+
   struct ChiOp
   {
     template<typename X1,typename X2,typename X3>
@@ -35,28 +36,31 @@ namespace codac2
     }
 
     template<typename T>
-    static inline T fwd(const Interval& x1, const T& x2, const T& x3) {
-      /* copy of chi from codac2_Interval_operations_impl.h */
+    static inline T fwd(const Interval& x1, const T& x2, const T& x3)
+    {
+      // Copy of chi from codac2_Interval_operations_impl.h
       if(x1.ub() <= 0)
-          return x2;
+        return x2;
       else if(x1.lb() > 0)
-          return x3;
+        return x3;
       else
-          return x2 | x3; 
+        return x2 | x3; 
     }
 
     template<typename T>
-    static inline T fwd_natural(const ScalarType& x1, const T& x2, const T& x3) {
+    static inline T fwd_natural(const ScalarType& x1, const T& x2, const T& x3)
+    {
       return {
         fwd(x1.a,x2.a,x3.a),
-        x1.def_domain && 
-	  (x1.a.lb()>0.0 ? x2.def_domain : true)
-       && (x1.a.ub()<=0.0 ? x3.def_domain : true)
+        x1.def_domain
+          && ((x1.a.lb()>0.0)  ? x2.def_domain : true)
+          && ((x1.a.ub()<=0.0) ? x3.def_domain : true)
       };
     }
 
     template<typename T>
-    static inline T fwd_centered(const ScalarType& x1, const T& x2, const T& x3){
+    static inline T fwd_centered(const ScalarType& x1, const T& x2, const T& x3)
+    {
       if(centered_form_not_available_for_args(x1,x2,x3))
         return fwd_natural(x1,x2,x3);
       
@@ -65,19 +69,20 @@ namespace codac2
       return {
         fwd(x1.m,x2.m,x3.m),
         fwd(x1.a,x2.a,x3.a),
-        (x1.a.lb()>0 ? x3.da : (x1.a.ub()<=0 ? x2.da :
-              (x2.da | x3.da))),
-        x1.def_domain && 
-  	  (x1.a.lb()>0.0 ? x2.def_domain : true)
-        && (x1.a.ub()<=0.0 ? x3.def_domain : true)
+        (x1.a.lb()>0 ? x3.da : ((x1.a.ub()<=0) ? x2.da : (x2.da | x3.da))),
+        x1.def_domain
+          && ((x1.a.lb()>0.0)  ? x2.def_domain : true)
+          && ((x1.a.ub()<=0.0) ? x3.def_domain : true)
       };
     }
 
     template<typename T>
-    static inline void bwd(const T& y, Interval& x1, T& x2, T& x3) {
-    // The content of this function comes from the IBEX library.
-    // See ibex::Interval (IBEX lib, main author: Gilles Chabert)
-    //   https://ibex-lib.readthedocs.io
+    static inline void bwd(const T& y, Interval& x1, T& x2, T& x3)
+    {
+      // The content of this function comes from the IBEX library.
+      // See ibex::Interval (IBEX lib, main author: Gilles Chabert)
+      //   https://ibex-lib.readthedocs.io
+      // Some updates have been proposed by Damien Massé.
 
       if(x1.ub() <= 0)
       {
@@ -127,8 +132,6 @@ namespace codac2
         }
       }
     }
-
-
   };
 
   // Analytic operator
@@ -138,7 +141,8 @@ namespace codac2
   inline AnalyticExprWrapper<T>
   chi(const ScalarExpr& x1, const T2& x2, const T3& x3)
   {
-    return { std::make_shared<AnalyticOperationExpr<ChiOp,T,ScalarType,T,T>>(x1,(AnalyticExprWrapper<T>)x2,(AnalyticExprWrapper<T>)x3) };
+    return { std::make_shared<AnalyticOperationExpr<ChiOp,T,ScalarType,T,T>>(
+      x1,(AnalyticExprWrapper<T>)x2,(AnalyticExprWrapper<T>)x3) };
   }
   
 }

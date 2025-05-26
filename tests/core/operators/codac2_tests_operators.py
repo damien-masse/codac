@@ -333,8 +333,11 @@ class TestInterval_bwd(unittest.TestCase):
      self.assertTrue(
         ChiOp.fwd(Interval(-0.2,0.2),IntervalVector([[-2.0,-1.0],[-1.0,0.0]]),IntervalVector([0.0,1.0])) == IntervalVector([[-2.0,0.0],[-1.0,1.0]]))
      self.assertTrue(
-        ChiOp.fwd(Interval(-0.2,0.0),IntervalMatrix([[[-2.0,-1.0],[-1.0,0.0]],[[-2.0,-1.0],[-1.0,0.0]]]),IntervalMatrix([[[2.0,3.0],[0.0,3.0]],[[2.0,3.0],[1.0,2.0]]])) == IntervalMatrix([[[-2.0,-1.0],[-1.0,0.0]],[[-2.0,-1.0],[-1.0,0.0]]]))
-
+        ChiOp.fwd(
+          Interval(-0.2,0.0),
+          IntervalMatrix([[[-2.0,-1.0],[-1.0,0.0]],[[-2.0,-1.0],[-1.0,0.0]]]),
+          IntervalMatrix([[[2.0,3.0],[0.0,3.0]],[[2.0,3.0],[1.0,2.0]]]))
+         == IntervalMatrix([[[-2.0,-1.0],[-1.0,0.0]],[[-2.0,-1.0],[-1.0,0.0]]]))
 
   def tests_cross_prod(self):
 
