@@ -64,7 +64,7 @@ Geometric shapes
 .. doxygenfunction:: codac2::Figure3D::draw_triangle(const Vector&, const Matrix&, const Vector&, const Vector&, const Vector&, const StyleProperties&)
   :project: codac
 
-.. doxygenfunction:: codac2::Figure3D::draw_triangle(const Vector&, const Matrix&, const Vector&, const Vector&, const Vector&, const StyleProperties&)
+.. doxygenfunction:: codac2::Figure3D::draw_triangle(const Vector&, const Vector&, const Vector&, const StyleProperties&)
   :project: codac
 
 The ``draw_polygon`` can be used to draw a `star-shaped polygon <https://en.wikipedia.org/wiki/Star-shaped_polygon>`_ when the vectors are coplanar, and more
@@ -88,10 +88,10 @@ generally a sequence of adjacent triangles sharing a same vertex.
 .. doxygenfunction:: codac2::Figure3D::draw_arrow(const Vector&, const Matrix& A, const StyleProperties&)
   :project: codac
 
-.. doxygenfunction:: codac2::Figure3D::draw_surface(const Vector&, const Matrix& , const Interval&, double, const Interval&, double, std::function<Vector(double,double)>, const StyleProperties&)
+.. doxygenfunction:: codac2::Figure3D::draw_surface(const Vector&, const Matrix&, const Interval&, double, const Interval&, double, std::function<Vector(double,double)>, const StyleProperties&)
   :project: codac
 
-.. doxygenfunction:: codac2::Figure3D::draw_sphere(const Vector&, const Matrix& , const StyleProperties&)
+.. doxygenfunction:: codac2::Figure3D::draw_sphere(const Vector&, const Matrix&, const StyleProperties&)
   :project: codac
 
 Paving

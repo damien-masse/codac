@@ -192,8 +192,6 @@ void Figure3D::draw_zonotope(const Vector& z, const std::vector<Vector>& A, cons
     lock_style=false;
 }
 
-
-
 void Figure3D::draw_arrow(const Vector& c, const Matrix &A,
 	const StyleProperties& s)
 {
