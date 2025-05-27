@@ -44,6 +44,11 @@ namespace codac2
       void update_axes();
 
       /**
+       * \brief Updates the drawing properties : line style and layer
+       */
+      void update_drawing_properties(const StyleProperties& s);
+
+      /**
        * \brief Updates the window properties of the figure
        */
       void update_window_properties();
