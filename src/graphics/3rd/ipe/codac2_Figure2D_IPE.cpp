@@ -18,7 +18,9 @@ using namespace codac2;
 
 Figure2D_IPE::Figure2D_IPE(const Figure2D& fig)
   : OutputFigure2D(fig), _f(fig.name() + ".xml"),
-    _f_temp_content(fig.name() + "_tmp.xml")
+    _f_temp_content(fig.name() + "_tmp.xml"),
+    _x_offset(0.03*_fig.axes()[0].limits.diam()),
+    _y_offset(0.03*_fig.axes()[1].limits.diam())
 {
   list<Color> codac_colors {
     Color::none(),
@@ -40,6 +42,7 @@ Figure2D_IPE::Figure2D_IPE(const Figure2D& fig)
 
   _layers.push_back("alpha");
   _layers.push_back("axes");
+  _layers.push_back("axes_labels");
 }
 
 Figure2D_IPE::~Figure2D_IPE()
@@ -61,12 +64,106 @@ Figure2D_IPE::~Figure2D_IPE()
   _f.close();
 }
 
+std::vector<double> generate_axis_ticks(double min_val, double max_val) {
+    std::vector<double> ticks;
+
+    double range = max_val - min_val;
+    double raw_step = range / 5;
+
+    double magnitude = std::pow(10, std::floor(std::log10(raw_step)));
+    double normalized_step = raw_step / magnitude;
+
+    double step;
+    if (normalized_step < 1.5) 
+      step = 1.0;
+    else if (normalized_step < 3) 
+      step = 2.0;
+    else if (normalized_step < 7) 
+      step = 5.0;
+    else 
+      step = 10.0;
+
+    step *= magnitude;
+
+    double first_tick = std::ceil(min_val / step) * step;
+
+    for (double tick = first_tick; tick <= max_val +step/10.; tick += step)
+        ticks.push_back(tick);
+
+    return ticks;
+}
+
+std::string format_number(double num, double step) 
+{
+    string result;
+    string sign = "";
+    if (num < 0)
+    {
+      sign = "-";
+      num = -num;
+    }
+    
+    int precision = std::floor(std::log10(step)); // precision required for the axis label
+
+    int int_part = num / 1; // integer part of the number
+
+    result = sign;  // sign of the number
+    result += to_string(int_part);
+    
+    if (precision >= 0) // the number is an integer
+    {
+      return result;
+    }
+
+    else
+    {
+      result += ".";
+      double remainder = num - ((double) int_part);  // remainder to add
+      int remainder_to_int = std::round(remainder * std::pow(10, -precision));
+      int length_of_remainder =  std::floor(std::log10(remainder_to_int)) + 1; // for example 12 has a length of 2
+
+      // this part is need for the specific case where a number like 1. is represented as 0.999... (int part gives 0 instead of 1)
+      if (length_of_remainder > -precision)
+        {
+          if (to_string(remainder_to_int) == "10")
+          {
+            int_part++;
+            result = sign;
+            result += to_string(int_part);
+          }
+        }
+
+      else{
+        if (length_of_remainder>0) // this assertion is useful to avoid issues with the approximation of 0
+        {
+          // we add the necessary zeros after the comma
+          for (int i =0; i < (-precision-length_of_remainder); i++)
+            result += "0";
+          // and we add the remainder
+          result += to_string(remainder_to_int);
+        }
+      }
+    }
+    return result;
+}
+
 void Figure2D_IPE::update_axes()
 {
   _ratio = {
     _ipe_grid_size/_fig.axes()[0].limits.diam(),
     _ipe_grid_size/_fig.axes()[1].limits.diam()
   };
+  _x_offset = 0.03*_fig.axes()[0].limits.diam();
+  _y_offset = 0.03*_fig.axes()[1].limits.diam();
+
+  auto y_ticks = generate_axis_ticks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
+
+  for (const auto& y_tick : y_ticks) 
+  {
+    auto formatted_y_tick = format_number(y_tick,(y_ticks[1] - y_ticks[0]));
+    auto left_bound = _fig.axes()[0].limits.lb()-(0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam();
+    _x_offset = std::max(_x_offset, (0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam());
+  }
 }
 
 void Figure2D_IPE::update_window_properties()
@@ -155,90 +252,6 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
 }
 
 
-
-std::vector<double> generate_axis_ticks(double min_val, double max_val) {
-    std::vector<double> ticks;
-
-    double range = max_val - min_val;
-    double raw_step = range / 5;
-
-    double magnitude = std::pow(10, std::floor(std::log10(raw_step)));
-    double normalized_step = raw_step / magnitude;
-
-    double step;
-    if (normalized_step < 1.5) 
-      step = 1.0;
-    else if (normalized_step < 3) 
-      step = 2.0;
-    else if (normalized_step < 7) 
-      step = 5.0;
-    else 
-      step = 10.0;
-
-    step *= magnitude;
-
-    double first_tick = std::ceil(min_val / step) * step;
-
-    for (double tick = first_tick; tick <= max_val +step/10.; tick += step)
-        ticks.push_back(tick);
-
-    return ticks;
-}
-
-std::string format_number(double num, double step) 
-{
-    string result;
-    string sign = "";
-    if (num < 0)
-    {
-      sign = "-";
-      num = -num;
-    }
-    
-    int precision = std::floor(std::log10(step)); // precision required for the axis label
-
-    int int_part = num / 1; // integer part of the number
-
-    result = sign;  // sign of the number
-    result += to_string(int_part);
-    
-    if (precision >= 0) // the number is an integer
-    {
-      return result;
-    }
-
-    else
-    {
-      result += ".";
-      double remainder = num - ((double) int_part);  // remainder to add
-      int remainder_to_int = std::round(remainder * std::pow(10, -precision));
-      int length_of_remainder =  std::floor(std::log10(remainder_to_int)) + 1; // for example 12 has a length of 2
-
-      // this part is need for the specific case where a number like 1. is represented as 0.999... (int part gives 0 instead of 1)
-      if (length_of_remainder > -precision)
-        {
-          if (to_string(remainder_to_int) == "10")
-          {
-            int_part++;
-            result = sign;
-            result += to_string(int_part);
-          }
-        }
-
-      else{
-        if (length_of_remainder>0) // this assertion is useful to avoid issues with the approximation of 0
-        {
-          // we add the necessary zeros after the comma
-          for (int i =0; i < (-precision-length_of_remainder); i++)
-            result += "0";
-          // and we add the remainder
-          result += to_string(remainder_to_int);
-        }
-      }
-    }
-    return result;
-}
-
 void Figure2D_IPE::draw_text(const Vector& c, const Vector& r, const std::string& text, const StyleProperties& s)
 {
   assert(_fig.size() <= c.size());
@@ -246,7 +259,8 @@ void Figure2D_IPE::draw_text(const Vector& c, const Vector& r, const std::string
   _colors.emplace(ipe_str(s.fill_color), s.fill_color);
 
   _f_temp_content << "\n \
-    <text transformations=\"translations\" \n \
+    <text layer=\"" << s.layer << "\" \n \
+    transformations=\"translations\" \n \
     pos=\"" << scale_x(c[i()]) << " " << scale_y(c[j()]) << "\" \n \
     stroke=\"codac_color_" << ipe_str(s.stroke_color) << "\" \n \
     fill=\"codac_color_" << ipe_str(s.fill_color) << "\" \n \
@@ -264,6 +278,13 @@ void Figure2D_IPE::draw_axes()
   auto x_ticks = generate_axis_ticks(_fig.axes()[0].limits.lb(), _fig.axes()[0].limits.ub());
   auto y_ticks = generate_axis_ticks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
 
+  // for (const auto& y_tick : y_ticks) 
+  // {
+  //   auto formatted_y_tick = format_number(y_tick,(y_ticks[1] - y_ticks[0]));
+  //   auto left_bound = _fig.axes()[0].limits.lb()-(0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam();
+  //   _x_offset = std::max(_x_offset, (0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam());
+  // }
+
   draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},
                  {_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
 
@@ -273,13 +294,15 @@ void Figure2D_IPE::draw_axes()
   for (const auto& x_tick : x_ticks) 
   {
     draw_polyline({{x_tick,_fig.axes()[1].limits.lb()-0.02*_fig.axes()[1].limits.diam()},{x_tick,_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
-    draw_text({x_tick+0.01*_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.lb()-0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(x_tick,(x_ticks[1] - x_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
+    draw_text({x_tick+0.005*_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.lb()-0.02*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(x_tick,(x_ticks[1] - x_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes_labels"));
   }
 
   for (const auto& y_tick : y_ticks) 
   {
+    auto formatted_y_tick = format_number(y_tick,(y_ticks[1] - y_ticks[0]));
+    auto left_bound = _fig.axes()[0].limits.lb()-(0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam();
     draw_polyline({{_fig.axes()[0].limits.lb()-0.02*_fig.axes()[0].limits.diam(),y_tick},{_fig.axes()[0].limits.lb(),y_tick}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
-    draw_text({_fig.axes()[0].limits.lb()-0.01*_fig.axes()[0].limits.diam(),y_tick+0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(y_tick, (y_ticks[1] - y_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
+    draw_text({left_bound,y_tick+0.005*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, formatted_y_tick, StyleProperties({Color::black(),Color::black()}, "axes_labels"));
   }
 }
 
@@ -480,12 +503,12 @@ void Figure2D_IPE::draw_motor_boat(const Vector& x, float size, const StylePrope
 
 double Figure2D_IPE::scale_x(double x) const
 {
-  return (x-_fig.axes()[0].limits.lb())*_ratio[0];
+  return (x-_fig.axes()[0].limits.lb()+_x_offset)*_ratio[0];
 }
 
 double Figure2D_IPE::scale_y(double y) const
 {
-  return (y-_fig.axes()[1].limits.lb())*_ratio[1];
+  return (y-_fig.axes()[1].limits.lb()+_y_offset)*_ratio[1];
 }
 
 double Figure2D_IPE::scale_length(double x) const
