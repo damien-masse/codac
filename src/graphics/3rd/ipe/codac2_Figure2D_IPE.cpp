@@ -272,14 +272,14 @@ void Figure2D_IPE::draw_axes()
 
   for (const auto& x_tick : x_ticks) 
   {
-    draw_polyline({{x_tick,_fig.axes()[1].limits.lb()},{x_tick,_fig.axes()[1].limits.lb()+0.02*_fig.axes()[1].limits.diam()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
-    draw_text({x_tick+0.01*_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.lb()+0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(x_tick,(x_ticks[1] - x_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
+    draw_polyline({{x_tick,_fig.axes()[1].limits.lb()-0.02*_fig.axes()[1].limits.diam()},{x_tick,_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
+    draw_text({x_tick+0.01*_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.lb()-0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(x_tick,(x_ticks[1] - x_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
   }
 
   for (const auto& y_tick : y_ticks) 
   {
-    draw_polyline({{_fig.axes()[0].limits.lb(),y_tick},{_fig.axes()[0].limits.lb()+0.02*_fig.axes()[0].limits.diam(),y_tick}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
-    draw_text({_fig.axes()[0].limits.lb()+0.01*_fig.axes()[0].limits.diam(),y_tick+0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(y_tick, (y_ticks[1] - y_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
+    draw_polyline({{_fig.axes()[0].limits.lb()-0.02*_fig.axes()[0].limits.diam(),y_tick},{_fig.axes()[0].limits.lb(),y_tick}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
+    draw_text({_fig.axes()[0].limits.lb()-0.01*_fig.axes()[0].limits.diam(),y_tick+0.01*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(y_tick, (y_ticks[1] - y_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes"));
   }
 }
 
@@ -340,7 +340,6 @@ void Figure2D_IPE::draw_polyline(const std::vector<Vector>& x, float tip_length,
   assert(tip_length >= 0.);
 
   begin_path(s, tip_length>2e-3*_fig.scaled_unit());
-
   for(size_t k = 0 ; k < x.size() ; k++)
   {
     assert(_fig.size() <= x[k].size());

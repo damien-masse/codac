@@ -136,7 +136,6 @@ void Figure2D::draw_point(const Vector& c, const StyleProperties& s)
 void Figure2D::draw_box(const IntervalVector& x, const StyleProperties& s)
 {
   assert_release(this->size() <= x.size());
-
   if(!x.is_empty())
     for(const auto& output_fig : _output_figures)
     {
@@ -475,7 +474,8 @@ void Figure2D::draw_paving(const PavingInOut& p, const StyleProperties& boundary
           output_fig->draw_box(bi, outside_style);
 
         if(n->is_leaf())
-          output_fig->draw_box(inner & outer, boundary_style);
+          if (!(inner & outer).is_empty())
+            output_fig->draw_box(inner & outer, boundary_style);
 
         return true;
       });
