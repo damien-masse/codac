@@ -42,7 +42,6 @@ Figure2D_IPE::Figure2D_IPE(const Figure2D& fig)
 
   _layers.push_back("alpha");
   _layers.push_back("axes");
-  _layers.push_back("axes_labels");
 }
 
 Figure2D_IPE::~Figure2D_IPE()
@@ -64,7 +63,7 @@ Figure2D_IPE::~Figure2D_IPE()
   _f.close();
 }
 
-std::vector<double> generate_axis_ticks(double min_val, double max_val) {
+const std::vector<double> generate_axis_ticks(double min_val, double max_val) {
     std::vector<double> ticks;
 
     double range = max_val - min_val;
@@ -93,7 +92,7 @@ std::vector<double> generate_axis_ticks(double min_val, double max_val) {
     return ticks;
 }
 
-std::string format_number(double num, double step) 
+const std::string format_number(double num, double step) 
 {
     string result;
     string sign = "";
@@ -149,21 +148,26 @@ std::string format_number(double num, double step)
 
 void Figure2D_IPE::update_axes()
 {
-  _ratio = {
-    _ipe_grid_size/_fig.axes()[0].limits.diam(),
-    _ipe_grid_size/_fig.axes()[1].limits.diam()
-  };
+  // The offsets are set to 3% of the axis diameters minimum
   _x_offset = 0.03*_fig.axes()[0].limits.diam();
   _y_offset = 0.03*_fig.axes()[1].limits.diam();
 
-  auto y_ticks = generate_axis_ticks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
+  // Generate ticks for the axes
+  _x_ticks = generate_axis_ticks(_fig.axes()[0].limits.lb(), _fig.axes()[0].limits.ub());
+  _y_ticks = generate_axis_ticks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
 
-  for (const auto& y_tick : y_ticks) 
+  // Adjust the x_offset to get all the vertical labels to fit the page
+  for (const auto& y_tick : _y_ticks) 
   {
-    auto formatted_y_tick = format_number(y_tick,(y_ticks[1] - y_ticks[0]));
-    auto left_bound = _fig.axes()[0].limits.lb()-(0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam();
-    _x_offset = std::max(_x_offset, (0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam());
+    auto formatted_y_tick = format_number(y_tick,(_y_ticks[1] - _y_ticks[0]));
+    auto left_bound = _fig.axes()[0].limits.lb()-(0.02+0.0095*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam();
+    _x_offset = std::max(_x_offset, (0.02+0.0095*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam()); // the 0.0095 is empirical, it is used to displace the vertical label according to its length
   }
+
+  _ratio = {
+    _ipe_grid_size/(_fig.axes()[0].limits.diam()+_x_offset),
+    _ipe_grid_size/(_fig.axes()[1].limits.diam()+_y_offset)
+  };
 }
 
 void Figure2D_IPE::update_window_properties()
@@ -275,34 +279,24 @@ void Figure2D_IPE::draw_text(const Vector& c, const Vector& r, const std::string
 
 void Figure2D_IPE::draw_axes()
 {
-  auto x_ticks = generate_axis_ticks(_fig.axes()[0].limits.lb(), _fig.axes()[0].limits.ub());
-  auto y_ticks = generate_axis_ticks(_fig.axes()[1].limits.lb(), _fig.axes()[1].limits.ub());
-
-  // for (const auto& y_tick : y_ticks) 
-  // {
-  //   auto formatted_y_tick = format_number(y_tick,(y_ticks[1] - y_ticks[0]));
-  //   auto left_bound = _fig.axes()[0].limits.lb()-(0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam();
-  //   _x_offset = std::max(_x_offset, (0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam());
-  // }
-
   draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},
                  {_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
 
   draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},
                  {_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
 
-  for (const auto& x_tick : x_ticks) 
+  for (const auto& x_tick : _x_ticks) 
   {
+    auto formatted_x_tick = format_number(x_tick,(_x_ticks[1] - _x_ticks[0]));
     draw_polyline({{x_tick,_fig.axes()[1].limits.lb()-0.02*_fig.axes()[1].limits.diam()},{x_tick,_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
-    draw_text({x_tick+0.005*_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.lb()-0.02*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, format_number(x_tick,(x_ticks[1] - x_ticks[0])), StyleProperties({Color::black(),Color::black()}, "axes_labels"));
+    draw_text({x_tick+0.005*_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.lb()-0.02*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, formatted_x_tick, StyleProperties({Color::black(),Color::black()}, "axes"));
   }
 
-  for (const auto& y_tick : y_ticks) 
+  for (const auto& y_tick : _y_ticks) 
   {
-    auto formatted_y_tick = format_number(y_tick,(y_ticks[1] - y_ticks[0]));
-    auto left_bound = _fig.axes()[0].limits.lb()-(0.02+0.009*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam();
+    auto formatted_y_tick = format_number(y_tick,(_y_ticks[1] - _y_ticks[0]));
     draw_polyline({{_fig.axes()[0].limits.lb()-0.02*_fig.axes()[0].limits.diam(),y_tick},{_fig.axes()[0].limits.lb(),y_tick}}, 0., StyleProperties({Color::black(),Color::black()}, "axes"));
-    draw_text({left_bound,y_tick+0.005*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, formatted_y_tick, StyleProperties({Color::black(),Color::black()}, "axes_labels"));
+    draw_text({_fig.axes()[0].limits.lb()-(0.02+0.0095*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam(),y_tick+0.005*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, formatted_y_tick, StyleProperties({Color::black(),Color::black()}, "axes"));
   }
 }
 

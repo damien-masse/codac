@@ -427,15 +427,13 @@ void Figure2D::draw_motor_boat(const Vector& x, float size, const StylePropertie
 void Figure2D::draw_paving(const PavingOut& p,
   const StyleProperties& boundary_style,const StyleProperties& outside_style)
 {
-  for(const auto& output_fig : _output_figures)
-  {
     p.tree()->left()->visit([&]
       (std::shared_ptr<const PavingOut_Node> n)
       {
         const IntervalVector& outer = get<0>(n->boxes());
 
         if(n->top() == p.tree())
-          output_fig->draw_box(get<0>(n->top()->boxes()), outside_style);
+          draw_box(get<0>(n->top()->boxes()), outside_style);
 
         else
         {
@@ -443,41 +441,36 @@ void Figure2D::draw_paving(const PavingOut& p,
           IntervalVector hull = n->top()->left() == n ? p.first : p.second;
 
           for(const auto& bi : hull.diff(outer))
-            output_fig->draw_box(bi, outside_style);
+            draw_box(bi, outside_style);
         }
 
         if(n->is_leaf())
-          output_fig->draw_box(outer, boundary_style);
+          draw_box(outer, boundary_style);
 
         return true;
       });
-  }
 }
 
 void Figure2D::draw_paving(const PavingInOut& p, const StyleProperties& boundary_style,
   const StyleProperties& outside_style, const StyleProperties& inside_style)
 {
-  for(const auto& output_fig : _output_figures)
-  {
-    p.tree()->visit([&]
-      (std::shared_ptr<const PavingInOut_Node> n)
-      {
-        const IntervalVector& outer = get<0>(n->boxes());
-        const IntervalVector& inner = get<1>(n->boxes());
+  p.tree()->visit([&]
+    (std::shared_ptr<const PavingInOut_Node> n)
+    {
+      const IntervalVector& outer = get<0>(n->boxes());
+      const IntervalVector& inner = get<1>(n->boxes());
 
-        IntervalVector hull = inner | outer;
+      IntervalVector hull = inner | outer;
 
-        for(const auto& bi : hull.diff(inner))
-          output_fig->draw_box(bi, inside_style);
+      for(const auto& bi : hull.diff(inner))
+        draw_box(bi, inside_style);
 
-        for(const auto& bi : hull.diff(outer))
-          output_fig->draw_box(bi, outside_style);
+      for(const auto& bi : hull.diff(outer))
+        draw_box(bi, outside_style);
 
-        if(n->is_leaf())
-          if (!(inner & outer).is_empty())
-            output_fig->draw_box(inner & outer, boundary_style);
+      if(n->is_leaf())
+          draw_box(inner & outer, boundary_style);
 
-        return true;
-      });
-  }
+      return true;
+    });
 }
