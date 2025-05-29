@@ -63,6 +63,11 @@ namespace codac2
       { }
 
       /**
+       * \brief Virtual destructor to ensure proper cleanup in derived classes.
+       */
+      virtual ~CtcGaussElim() = default;
+
+      /**
        * \brief Creates the domains according to the linear system:
        * \f$\mathbf{A}\cdot\mathbf{x}=\mathbf{b}\f$
        *
@@ -113,6 +118,11 @@ namespace codac2
        */
       CtcGaussSeidel()
       { }
+
+      /**
+       * \brief Virtual destructor to ensure proper cleanup in derived classes.
+       */
+      virtual ~CtcGaussSeidel() = default;
 
       /**
        * \brief Creates the domains according to the linear system:
@@ -168,6 +178,11 @@ namespace codac2
       CtcLinearPrecond(const C& ctc_no_precond)
         : _ctc_no_precond(ctc_no_precond)
       { }
+
+      /**
+       * \brief Virtual destructor to ensure proper cleanup in derived classes.
+       */
+      virtual ~CtcLinearPrecond() = default;
 
       /**
        * \brief Creates the domains according to the linear system:

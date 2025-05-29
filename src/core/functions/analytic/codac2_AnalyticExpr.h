@@ -26,8 +26,6 @@ namespace codac2
   {
     public:
 
-      AnalyticExpr<T>& operator=(const AnalyticExpr<T>& x) = delete;
-
       virtual T fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const = 0;
       virtual void bwd_eval(ValuesMap& v) const = 0;
       virtual std::pair<Index,Index> output_shape() const = 0;
