@@ -160,7 +160,6 @@ void Figure2D_IPE::update_axes()
   for (const auto& y_tick : _y_ticks) 
   {
     auto formatted_y_tick = format_number(y_tick,(_y_ticks[1] - _y_ticks[0]));
-    auto left_bound = _fig.axes()[0].limits.lb()-(0.02+0.0095*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam();
     _x_offset = std::max(_x_offset, (0.02+0.0095*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam()); // the 0.0095 is empirical, it is used to displace the vertical label according to its length
   }
 
