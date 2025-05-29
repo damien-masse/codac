@@ -109,10 +109,8 @@ namespace codac2
 
       virtual std::string str(bool in_parentheses = false) const
       {
-        std::string s;
-        std::apply([&s](auto &&... x)
-        {
-          s = C::str(x...);
+        std::string s = std::apply([](auto &&... x) {
+          return C::str(x...);
         }, this->_x);
         return in_parentheses ? "(" + s + ")" : s;
       }

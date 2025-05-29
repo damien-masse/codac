@@ -56,6 +56,8 @@ namespace codac2
         assert(n > 0);
       }
 
+      virtual ~SepBase() = default;
+
       Index size() const
       {
         return _n;
