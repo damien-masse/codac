@@ -23,17 +23,17 @@ Figure2D_IPE::Figure2D_IPE(const Figure2D& fig)
     _y_offset(0.03*_fig.axes()[1].limits.diam())
 {
   list<Color> codac_colors {
-    Color::none(),
-    Color::black(),
-    Color::white(),
-    Color::green(),
-    Color::blue(),
-    Color::cyan(),
-    Color::yellow(),
-    Color::red(),
-    Color::dark_gray(),
-    Color::purple(),
-    Color::dark_green()
+    Color::none(), Color::black(), Color::white(),
+    Color::light_gray(), Color::gray(), Color::dark_gray(),
+    Color::light_green(), Color::green(), Color::dark_green(),
+    Color::light_blue(), Color::blue(), Color::dark_blue(),
+    Color::light_cyan(), Color::cyan(), Color::dark_cyan(),
+    Color::light_yellow(), Color::yellow(), Color::dark_yellow(),
+    Color::light_orange(), Color::orange(), Color::dark_orange(),
+    Color::light_red(), Color::red(), Color::dark_red(),
+    Color::light_brown(), Color::brown(), Color::dark_brown(),
+    Color::light_purple(), Color::purple(), Color::dark_purple(),
+    Color::light_pink(), Color::pink(), Color::dark_pink()
   };
 
   for(const auto& ci : codac_colors)
