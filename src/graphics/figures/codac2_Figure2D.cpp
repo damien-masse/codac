@@ -437,8 +437,8 @@ void Figure2D::draw_paving(const PavingOut& p,
 
         else
         {
-          auto p = get<0>(n->top()->boxes()).bisect_largest();
-          IntervalVector hull = n->top()->left() == n ? p.first : p.second;
+          auto b = get<0>(n->top()->boxes()).bisect_largest();
+          IntervalVector hull = n->top()->left() == n ? b.first : b.second;
 
           for(const auto& bi : hull.diff(outer))
             draw_box(bi, outside_style);

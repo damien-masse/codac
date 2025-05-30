@@ -36,7 +36,7 @@ namespace codac2
       /**
        * \brief Destructor for the Figure2D_VIBes object
        */
-      ~Figure2D_VIBes();
+      virtual ~Figure2D_VIBes();
 
       /**
        * \brief Updates the axes of the figure

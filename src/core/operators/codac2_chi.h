@@ -27,11 +27,10 @@ namespace codac2
     }
 
     template<typename X1, typename X2, typename X3>
-    static std::pair<Index,Index> output_shape([[maybe_unused]] const X1& s1, const X2& s2, const X3& s3)
+    static std::pair<Index,Index> output_shape([[maybe_unused]] const X1& s1, const X2& s2, [[maybe_unused]] const X3& s3)
     {
       auto shape2 = s2->output_shape();
-      auto shape3 = s3->output_shape();
-      assert(shape2 == shape3);
+      assert(shape2 == s3->output_shape());
       return shape2;
     }
 
