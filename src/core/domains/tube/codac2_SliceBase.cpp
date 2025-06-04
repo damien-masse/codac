@@ -16,8 +16,8 @@ using namespace std;
 
 namespace codac2
 {
-  SliceBase::SliceBase(const SlicedTubeBase& tubevector, const list<TSlice>::iterator& it_tslice) :
-    _tubevector(tubevector), _it_tslice(it_tslice)
+  SliceBase::SliceBase(const SlicedTubeBase& tube, const list<TSlice>::iterator& it_tslice) :
+    _tube(tube), _it_tslice(it_tslice)
   { }
 
   const Interval& SliceBase::t0_tf() const
@@ -32,15 +32,15 @@ namespace codac2
 
   std::shared_ptr<const SliceBase> SliceBase::prev_slice() const
   {
-    if(&(*_tubevector.first_slice()) == this)
+    if(&(*_tube.first_slice()) == this)
       return nullptr;
-    return prev(_it_tslice)->slices().at(&_tubevector);
+    return prev(_it_tslice)->slices().at(&_tube);
   }
 
   std::shared_ptr<const SliceBase> SliceBase::next_slice() const
   {
-     if(&(*_tubevector.last_slice()) == this)
+     if(&(*_tube.last_slice()) == this)
        return nullptr;
-     return next(_it_tslice)->slices().at(&_tubevector);
+     return next(_it_tslice)->slices().at(&_tube);
   }
 }

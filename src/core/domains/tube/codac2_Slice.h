@@ -14,6 +14,9 @@
 namespace codac2
 {
   template<class T>
+  class SlicedTube;
+
+  template<class T>
   class Slice : public SliceBase,
     protected T
     // T class inheritance is protected, because modifying a
@@ -21,12 +24,12 @@ namespace codac2
   {
     public:
 
-      explicit Slice(const SlicedTubeBase& tube_vector, const std::list<TSlice>::iterator& it_tslice, const T& codomain)
-        : SliceBase(tube_vector,it_tslice), T(codomain)
+      explicit Slice(const SlicedTubeBase& tube, const std::list<TSlice>::iterator& it_tslice, const T& codomain)
+        : SliceBase(tube, it_tslice), T(codomain)
       { }
 
-      Slice(const Slice& s, const SlicedTubeBase& tubevector)
-        : SliceBase(tubevector, s._it_tslice), T(s.codomain())
+      Slice(const Slice& s, const SlicedTubeBase& tube)
+        : SliceBase(tube, s._it_tslice), T(s.codomain())
       { }
 
       // Slice objects cannot be copyable or movable,
@@ -36,14 +39,14 @@ namespace codac2
       Slice(Slice&&) = delete;
       Slice& operator=(Slice&&) = delete;
 
-      inline const SlicedTubeBase& tube_vector() const
+      inline const SlicedTube<T>& tube() const
       {
-        return _tubevector;
+        return static_cast<const SlicedTube<T>&>(_tube);
       }
 
       inline virtual std::shared_ptr<SliceBase> copy() const
       {
-        return std::make_shared<Slice>(*this, this->_tubevector);
+        return std::make_shared<Slice>(*this, this->_tube);
       }
 
       inline Index size() const

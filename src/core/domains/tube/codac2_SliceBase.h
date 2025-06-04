@@ -21,7 +21,7 @@ namespace codac2
   {
     public:
 
-      SliceBase(const SlicedTubeBase& tubevector, const std::list<TSlice>::iterator& it_tslice);
+      SliceBase(const SlicedTubeBase& tube, const std::list<TSlice>::iterator& it_tslice);
 
       virtual std::shared_ptr<SliceBase> copy() const = 0;
       virtual void init() = 0;
@@ -36,7 +36,7 @@ namespace codac2
 
     protected:
         
-      const SlicedTubeBase& _tubevector;
+      const SlicedTubeBase& _tube;
       std::list<TSlice>::iterator _it_tslice;
 
       friend class TDomain;
