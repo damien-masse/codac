@@ -7,6 +7,7 @@
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
+#include "codac2_Interval.h"
 #include "codac2_SliceBase.h"
 #include "codac2_TSlice.h"
 #include "codac2_SlicedTubeBase.h"

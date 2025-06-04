@@ -11,7 +11,6 @@
 
 #include "codac2_TDomain.h"
 #include "codac2_Slice.h"
-#include "codac2_Interval.h"
 
 namespace codac2
 {

@@ -11,7 +11,6 @@
 
 #include <list>
 #include <memory>
-#include "codac2_Interval.h"
 
 namespace codac2
 {

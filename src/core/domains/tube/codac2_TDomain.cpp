@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <iostream>
+#include "codac2_Interval.h"
 #include "codac2_TDomain.h"
 #include "codac2_SliceBase.h"
 

@@ -9,10 +9,10 @@
 
 #include <limits>
 #include <catch2/catch_test_macros.hpp>
-#include <codac2_SlicedTube.h>
-#include <codac2_Approx.h>
 #include <codac2_Interval.h>
 #include <codac2_IntervalVector.h>
+#include <codac2_SlicedTube.h>
+#include <codac2_Approx.h>
 
 using namespace std;
 using namespace codac2;

@@ -12,10 +12,9 @@
 #include <map>
 #include <memory>
 
-#include "codac2_Interval.h"
-
 namespace codac2
 {
+  class Interval;
   class SliceBase;
   class SlicedTubeBase;
 
