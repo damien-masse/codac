@@ -27,6 +27,7 @@ namespace codac2
       bool is_gate() const;
       const std::map<const SlicedTubeBase*,std::shared_ptr<SliceBase>>& slices() const;
       bool operator==(const TSlice& x) const;
+      bool operator==(const Interval& x) const;
 
     protected:
 

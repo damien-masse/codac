@@ -40,4 +40,9 @@ namespace codac2
   {
     return Interval::operator==(x);
   }
+
+  bool TSlice::operator==(const Interval& x) const
+  {
+    return Interval::operator==(x);
+  }
 }
