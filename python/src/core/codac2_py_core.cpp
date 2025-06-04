@@ -21,6 +21,7 @@
 #include "codac2_py_CtcInverse.h"
 #include "codac2_py_CtcInverseNotIn.h"
 #include "codac2_py_MatrixBlock.h"
+#include "codac2_py_Slice.h"
 
 using namespace codac2;
 namespace py = pybind11;
@@ -65,6 +66,8 @@ py::class_<IntervalMatrix> export_IntervalMatrix(py::module& m);
 void export_Paving(py::module& m);
 void export_PavingNode(py::module& m);
 void export_Subpaving(py::module& m);
+void export_TDomain(py::module& m);
+void export_TSlice(py::module& m);
 
 // functions
 void export_ScalarVar(py::module& m);
@@ -196,6 +199,9 @@ PYBIND11_MODULE(_core, m)
   auto py_IB = export_EigenBlock<IntervalMatrix>(m, "IntervalMatrixBlock");
   export_EigenBlock<IntervalRow>(m, "IntervalRowBlock");
   export_EigenBlock<IntervalVector>(m, "IntervalVectorBlock");
+  export_Slice<Interval>(m, "SliceInterval");
+  export_TDomain(m);
+  export_TSlice(m);
 
   export_arithmetic_add(py_V, py_IV, py_M, py_IM, py_B, py_IB);
   export_arithmetic_sub(py_V, py_IV, py_M, py_IM, py_B, py_IB);

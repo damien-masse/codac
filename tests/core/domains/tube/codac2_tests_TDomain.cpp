@@ -32,7 +32,7 @@ TEST_CASE("TDomain")
       make_move_iterator(tdomain->end()) };
 
     CHECK(vector_tslices.size() == 4);
-    CHECK(vector_tslices[0] == codac2::Interval(-oo,0));
+    CHECK(vector_tslices[0] == Interval(-oo,0));
     CHECK(vector_tslices[1] == Interval(0,0.5));
     CHECK(vector_tslices[2] == Interval(0.5,1));
     CHECK(vector_tslices[3] == Interval(1,oo));
