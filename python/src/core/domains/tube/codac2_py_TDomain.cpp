@@ -37,6 +37,15 @@ void export_TDomain(py::module& m)
     .def("all_gates_defined", &TDomain::all_gates_defined,
       BOOL_TDOMAIN_ALL_GATES_DEFINED_CONST)
 
+    .def("tslices_vector", &TDomain::tslices_vector,
+      VECTOR_TSLICE_TDOMAIN_TSLICES_VECTOR_CONST)
+
+    .def("tslice", [](TDomain& tdomain, double t) {
+        return *tdomain.tslice(t);
+      },
+      LIST_TSLICE_ITERATOR_TDOMAIN_TSLICE_DOUBLE
+      "t"_a)
+
     .def("sample", (std::list<TSlice>::iterator (TDomain::*)(double,bool)) &TDomain::sample,
       LIST_TSLICE_ITERATOR_TDOMAIN_SAMPLE_DOUBLE_BOOL,
       "t"_a, "with_gate"_a=false)

@@ -161,7 +161,7 @@ namespace codac2
         if(!tdomain()->t0_tf().contains(t))
           return all_reals_codomain();
 
-        auto it_t = _tdomain->iterator_tslice(t);
+        auto it_t = _tdomain->tslice(t);
         assert(it_t != _tdomain->end());
         T x = (*this)(it_t)->codomain();
         if(!it_t->is_gate() && t==it_t->lb() && it_t!=_tdomain->begin())
@@ -179,10 +179,10 @@ namespace codac2
 
         auto t_ = t & _tdomain->t0_tf();
         
-        auto it = _tdomain->iterator_tslice(t_.lb());
+        auto it = _tdomain->tslice(t_.lb());
         T codomain = (*this)(it)->codomain();
 
-        while(it != std::next(_tdomain->iterator_tslice(t_.ub())))
+        while(it != std::next(_tdomain->tslice(t_.ub())))
         {
           if(it->lb() == t_.ub()) break;
           codomain |= (*this)(it)->codomain();

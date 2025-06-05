@@ -27,9 +27,7 @@ TEST_CASE("TDomain")
     CHECK(tdomain->nb_tslices() == 4);
     CHECK(tdomain->t0_tf() == Interval(-oo,oo));
     
-    vector<TSlice> vector_tslices{
-      make_move_iterator(tdomain->begin()),
-      make_move_iterator(tdomain->end()) };
+    vector<TSlice> vector_tslices = tdomain->tslices_vector();
 
     CHECK(vector_tslices.size() == 4);
     CHECK(vector_tslices[0] == Interval(-oo,0));
@@ -37,10 +35,10 @@ TEST_CASE("TDomain")
     CHECK(vector_tslices[2] == Interval(0.5,1));
     CHECK(vector_tslices[3] == Interval(1,oo));
 
-    CHECK(*tdomain->iterator_tslice(-10.) == Interval(-oo,0));
-    CHECK(*tdomain->iterator_tslice(-120.) == Interval(-oo,0));
-    CHECK(*tdomain->iterator_tslice(0.2) == Interval(0,0.5));
-    CHECK(*tdomain->iterator_tslice(5540.2) == Interval(1,oo));
+    CHECK(*tdomain->tslice(-10.) == Interval(-oo,0));
+    CHECK(*tdomain->tslice(-120.) == Interval(-oo,0));
+    CHECK(*tdomain->tslice(0.2) == Interval(0,0.5));
+    CHECK(*tdomain->tslice(5540.2) == Interval(1,oo));
 
     CHECK(tdomain->nb_tubes() == 0);
     SlicedTube x(tdomain, IntervalVector(2));
@@ -61,9 +59,7 @@ TEST_CASE("TDomain")
     CHECK(tdomain->t0_tf() == Interval(1));
     CHECK(tdomain->nb_tubes() == 0);
     
-    vector<TSlice> vector_tslices{
-      make_move_iterator(tdomain->begin()),
-      make_move_iterator(tdomain->end()) };
+    vector<TSlice> vector_tslices = tdomain->tslices_vector();
       
     CHECK(vector_tslices.size() == 1);
     CHECK(vector_tslices[0] == Interval(1));
@@ -76,9 +72,7 @@ TEST_CASE("TDomain")
     CHECK(tdomain->t0_tf() == Interval(0,1));
     CHECK(tdomain->nb_tubes() == 0);
     
-    vector<TSlice> vector_tslices{
-      make_move_iterator(tdomain->begin()),
-      make_move_iterator(tdomain->end()) };
+    vector<TSlice> vector_tslices = tdomain->tslices_vector();
 
     CHECK(vector_tslices.size() == 5);
     CHECK(vector_tslices[0] == Interval(0));
@@ -87,11 +81,11 @@ TEST_CASE("TDomain")
     CHECK(vector_tslices[3] == Interval(0.5,1));
     CHECK(vector_tslices[4] == Interval(1,1));
 
-    CHECK(*tdomain->iterator_tslice(0.) == Interval(0));
-    CHECK(*tdomain->iterator_tslice(0.1) == Interval(0,0.5));
-    CHECK(*tdomain->iterator_tslice(0.5) == Interval(0.5));
-    CHECK(*tdomain->iterator_tslice(0.6) == Interval(0.5,1));
-    CHECK(*tdomain->iterator_tslice(1.) == Interval(1));
+    CHECK(*tdomain->tslice(0.) == Interval(0));
+    CHECK(*tdomain->tslice(0.1) == Interval(0,0.5));
+    CHECK(*tdomain->tslice(0.5) == Interval(0.5));
+    CHECK(*tdomain->tslice(0.6) == Interval(0.5,1));
+    CHECK(*tdomain->tslice(1.) == Interval(1));
   }
 
   SECTION("Test TDomain with sampling")
@@ -106,9 +100,7 @@ TEST_CASE("TDomain")
     tdomain->sample(10.,true); // no more action
     CHECK(tdomain->nb_tslices() == 4);
     
-    vector<TSlice> vector_tslices{
-      make_move_iterator(tdomain->begin()),
-      make_move_iterator(tdomain->end()) };
+    vector<TSlice> vector_tslices = tdomain->tslices_vector();
 
     CHECK(vector_tslices.size() == 4);
     CHECK(vector_tslices[0] == Interval(-oo,1));
@@ -122,9 +114,9 @@ TEST_CASE("TDomain")
     auto tdomain = create_tdomain();
     CHECK(tdomain->nb_tslices() == 1);
     CHECK(tdomain->t0_tf() == Interval(-oo,oo));
-    vector<TSlice> vector_tslices{
-      make_move_iterator(tdomain->begin()),
-      make_move_iterator(tdomain->end()) };
+    
+    vector<TSlice> vector_tslices = tdomain->tslices_vector();
+
     CHECK(vector_tslices.size() == 1);
     CHECK(vector_tslices[0] == Interval(-oo,oo));
   }

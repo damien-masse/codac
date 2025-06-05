@@ -21,22 +21,20 @@ class TestTDomain(unittest.TestCase):
     self.assertTrue(tdomain.nb_tslices() == 4)
     self.assertTrue(tdomain.t0_tf() == Interval(-oo,oo))
     
-    #vector<TSlice> vector_tslices{
-    #  make_move_iterator(tdomain.begin()),
-    #  make_move_iterator(tdomain.end()) }
-    #  
-    #self.assertTrue(vector_tslices.size() == 4)
-    #self.assertTrue(vector_tslices[0] == Interval(-oo,0))
-    #self.assertTrue(vector_tslices[1] == Interval(0,0.5))
-    #self.assertTrue(vector_tslices[2] == Interval(0.5,1))
-    #self.assertTrue(vector_tslices[3] == Interval(1,oo))
+    vector_tslices = tdomain.tslices_vector()
 
-    #self.assertTrue(*tdomain.iterator_tslice(-10.) == Interval(-oo,0))
-    #self.assertTrue(*tdomain.iterator_tslice(-120.) == Interval(-oo,0))
-    #self.assertTrue(*tdomain.iterator_tslice(0.2) == Interval(0,0.5))
-    #self.assertTrue(*tdomain.iterator_tslice(5540.2) == Interval(1,oo))
+    self.assertTrue(len(vector_tslices) == 4)
+    self.assertTrue(vector_tslices[0] == Interval(-oo,0))
+    self.assertTrue(vector_tslices[1] == Interval(0,0.5))
+    self.assertTrue(vector_tslices[2] == Interval(0.5,1))
+    self.assertTrue(vector_tslices[3] == Interval(1,oo))
 
-    #self.assertTrue(tdomain.nb_tubes() == 0)
+    self.assertTrue(tdomain.tslice(-10.) == Interval(-oo,0))
+    self.assertTrue(tdomain.tslice(-120.) == Interval(-oo,0))
+    self.assertTrue(tdomain.tslice(0.2) == Interval(0,0.5))
+    self.assertTrue(tdomain.tslice(5540.2) == Interval(1,oo))
+
+    self.assertTrue(tdomain.nb_tubes() == 0)
     #x = SlicedTube(tdomain, IntervalVector(2))
     #self.assertTrue(tdomain.nb_tubes() == 1)
 
@@ -55,11 +53,9 @@ class TestTDomain(unittest.TestCase):
   #   self.assertTrue(tdomain.t0_tf() == Interval(1))
   #   self.assertTrue(tdomain.nb_tubes() == 0)
     
-  #   vector<TSlice> vector_tslices{
-  #     make_move_iterator(tdomain.begin()),
-  #     make_move_iterator(tdomain.end()) }
+  #  vector_tslices = tdomain.tslices_vector()
       
-  #   self.assertTrue(vector_tslices.size() == 1)
+  #   self.assertTrue(len(vector_tslices) == 1)
   #   self.assertTrue(vector_tslices[0] == Interval(1))
   # }
 
@@ -70,22 +66,20 @@ class TestTDomain(unittest.TestCase):
   #   self.assertTrue(tdomain.t0_tf() == Interval(0,1))
   #   self.assertTrue(tdomain.nb_tubes() == 0)
     
-  #   vector<TSlice> vector_tslices{
-  #     make_move_iterator(tdomain.begin()),
-  #     make_move_iterator(tdomain.end()) }
+  #  vector_tslices = tdomain.tslices_vector()
 
-  #   self.assertTrue(vector_tslices.size() == 5)
+  #   self.assertTrue(len(vector_tslices) == 5)
   #   self.assertTrue(vector_tslices[0] == Interval(0))
   #   self.assertTrue(vector_tslices[1] == Interval(0,0.5))
   #   self.assertTrue(vector_tslices[2] == Interval(0.5))
   #   self.assertTrue(vector_tslices[3] == Interval(0.5,1))
   #   self.assertTrue(vector_tslices[4] == Interval(1,1))
 
-  #   self.assertTrue(*tdomain.iterator_tslice(0.) == Interval(0))
-  #   self.assertTrue(*tdomain.iterator_tslice(0.1) == Interval(0,0.5))
-  #   self.assertTrue(*tdomain.iterator_tslice(0.5) == Interval(0.5))
-  #   self.assertTrue(*tdomain.iterator_tslice(0.6) == Interval(0.5,1))
-  #   self.assertTrue(*tdomain.iterator_tslice(1.) == Interval(1))
+  #   self.assertTrue(*tdomain.tslice(0.) == Interval(0))
+  #   self.assertTrue(*tdomain.tslice(0.1) == Interval(0,0.5))
+  #   self.assertTrue(*tdomain.tslice(0.5) == Interval(0.5))
+  #   self.assertTrue(*tdomain.tslice(0.6) == Interval(0.5,1))
+  #   self.assertTrue(*tdomain.tslice(1.) == Interval(1))
   # }
 
   # SECTION("Test TDomain with sampling")
@@ -100,11 +94,9 @@ class TestTDomain(unittest.TestCase):
   #   tdomain.sample(10.,true) # no more action
   #   self.assertTrue(tdomain.nb_tslices() == 4)
     
-  #   vector<TSlice> vector_tslices{
-  #     make_move_iterator(tdomain.begin()),
-  #     make_move_iterator(tdomain.end()) }
+  #  vector_tslices = tdomain.tslices_vector()
 
-  #   self.assertTrue(vector_tslices.size() == 4)
+  #   self.assertTrue(len(vector_tslices) == 4)
   #   self.assertTrue(vector_tslices[0] == Interval(-oo,1))
   #   self.assertTrue(vector_tslices[1] == Interval(1,10))
   #   self.assertTrue(vector_tslices[2] == Interval(10))
@@ -116,10 +108,10 @@ class TestTDomain(unittest.TestCase):
   #   tdomain = create_tdomain()
   #   self.assertTrue(tdomain.nb_tslices() == 1)
   #   self.assertTrue(tdomain.t0_tf() == Interval(-oo,oo))
-  #   vector<TSlice> vector_tslices{
-  #     make_move_iterator(tdomain.begin()),
-  #     make_move_iterator(tdomain.end()) }
-  #   self.assertTrue(vector_tslices.size() == 1)
+
+  #  vector_tslices = tdomain.tslices_vector()
+
+  #   self.assertTrue(len(vector_tslices) == 1)
   #   self.assertTrue(vector_tslices[0] == Interval(-oo,oo))
   # }
       

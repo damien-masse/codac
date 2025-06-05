@@ -51,14 +51,14 @@ TEST_CASE("SlicedTube")
     CHECK(v[4]->t0_tf() == Interval(3,oo));
     CHECK(v[4]->codomain() == IntervalVector({{-oo,oo}}));
 
-    CHECK(*tdomain->iterator_tslice(-1.) == Interval(-oo,0));
-    CHECK(*tdomain->iterator_tslice(0.) == Interval(0,1));
-    CHECK(*tdomain->iterator_tslice(0.01) == Interval(0,1));
-    CHECK(*tdomain->iterator_tslice(1) == Interval(1,2));
-    CHECK(*tdomain->iterator_tslice(2) == Interval(2,3));
-    CHECK(*tdomain->iterator_tslice(previous_float(3.)) == Interval(2,3));
-    CHECK(*tdomain->iterator_tslice(3) == Interval(3,oo));
-    CHECK(*tdomain->iterator_tslice(next_float(3.)) == Interval(3,oo));
+    CHECK(*tdomain->tslice(-1.) == Interval(-oo,0));
+    CHECK(*tdomain->tslice(0.) == Interval(0,1));
+    CHECK(*tdomain->tslice(0.01) == Interval(0,1));
+    CHECK(*tdomain->tslice(1) == Interval(1,2));
+    CHECK(*tdomain->tslice(2) == Interval(2,3));
+    CHECK(*tdomain->tslice(previous_float(3.)) == Interval(2,3));
+    CHECK(*tdomain->tslice(3) == Interval(3,oo));
+    CHECK(*tdomain->tslice(next_float(3.)) == Interval(3,oo));
 
     CHECK(tdomain->nb_tslices() == 5); // with [-oo,0] and [3,oo]
     CHECK(x(Interval(0,3)) == IntervalVector({{1,9}}));
@@ -243,10 +243,10 @@ TEST_CASE("SlicedTube")
     auto tdomain = create_tdomain(Interval(0,1), 0.1);
     SlicedTube x(tdomain, IntervalVector(2));
     CHECK(x.nb_slices() == 10);
-    CHECK(tdomain->iterator_tslice(-oo) == tdomain->end());
-    CHECK(tdomain->iterator_tslice(oo) == tdomain->end());
-    CHECK(x.first_slice() == tdomain->iterator_tslice(0.)->slices().at(&x));
-    CHECK(x.last_slice() == tdomain->iterator_tslice(1.)->slices().at(&x));
+    CHECK(tdomain->tslice(-oo) == tdomain->end());
+    CHECK(tdomain->tslice(oo) == tdomain->end());
+    CHECK(x.first_slice() == tdomain->tslice(0.)->slices().at(&x));
+    CHECK(x.last_slice() == tdomain->tslice(1.)->slices().at(&x));
 
     for(auto& s : x)
       s.set(IntervalVector::constant(2,s.t0_tf()));
@@ -389,7 +389,7 @@ TEST_CASE("SlicedTube")
     ScalarVar t;
     AnalyticFunction f({t}, 10*cos(t)+t);
     SlicedTube a(tdomain, f);
-    CHECK(Approx((Interval)*tdomain->iterator_tslice(2.)) == Interval(1.900000000000001, 2.000000000000002));
+    CHECK(Approx((Interval)*tdomain->tslice(2.)) == Interval(1.900000000000001, 2.000000000000002));
     CHECK(Approx(a(Interval(1,2)),1e-4) == Interval(-2.17496, 7.13757));
   }
 }

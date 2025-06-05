@@ -28,8 +28,9 @@ namespace codac2
       size_t nb_tslices() const;
       size_t nb_tubes() const;
       bool all_gates_defined() const;
+      std::vector<TSlice> tslices_vector() const;
 
-      std::list<TSlice>::iterator iterator_tslice(double t); // returns it on last slice if t==t_f, not end
+      std::list<TSlice>::iterator tslice(double t); // returns it on last slice if t==t_f, not end
       std::list<TSlice>::iterator sample(double t, bool with_gate = false);
       void sample(const Interval& t0_tf, double dt, bool with_gates = false);
       void delete_gates();

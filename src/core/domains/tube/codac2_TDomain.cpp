@@ -85,8 +85,16 @@ namespace codac2
       return true;
     }
   }
+  
+  std::vector<TSlice> TDomain::tslices_vector() const
+  {
+    return {
+      make_move_iterator(this->cbegin()),
+      make_move_iterator(this->cend())
+    };
+  }
 
-  list<TSlice>::iterator TDomain::iterator_tslice(double t)
+  list<TSlice>::iterator TDomain::tslice(double t)
   {
     if(!t0_tf().contains(t))
       return this->end();
@@ -153,7 +161,7 @@ namespace codac2
 
     else // inside [t0,tf]
     {
-      it = iterator_tslice(t);
+      it = tslice(t);
       assert(it != this->end());
       assert(it->contains(t));
 
