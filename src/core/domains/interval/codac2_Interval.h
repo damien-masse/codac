@@ -113,6 +113,15 @@ namespace codac2
       Interval(std::initializer_list<double> l);
 
       /**
+       * \brief Sets the value of this interval to [-oo,oo]
+       * 
+       * \note This function is used for template purposes.
+       * 
+       * \return a reference to this
+       */
+      Interval& init();
+
+      /**
        * \brief Sets the value of this interval to x
        * 
        * \note This function is used for template purposes.
