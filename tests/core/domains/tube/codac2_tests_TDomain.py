@@ -35,16 +35,16 @@ class TestTDomain(unittest.TestCase):
     self.assertTrue(tdomain.tslice(5540.2) == Interval(1,oo))
 
     self.assertTrue(tdomain.nb_tubes() == 0)
-    #x = SlicedTube(tdomain, IntervalVector(2))
-    #self.assertTrue(tdomain.nb_tubes() == 1)
+    x = SlicedTube(tdomain, IntervalVector(2))
+    self.assertTrue(tdomain.nb_tubes() == 1)
 
-    #{ # new scope
-    #  SlicedTube v(tdomain, IntervalVector(3))
-    #  self.assertTrue(tdomain.nb_tubes() == 2)
-    #} # end of scope, removing the tube
-    
-    #self.assertTrue(tdomain.nb_tubes() == 1)
-  # }
+    def outside_scope(): # new scope
+      v = SlicedTube(tdomain, IntervalVector(3))
+      self.assertTrue(tdomain.nb_tubes() == 2)
+      # end of scope, removing the tube
+
+    outside_scope()
+    self.assertTrue(tdomain.nb_tubes() == 1)
 
   def test_degenerated_tdomain(self):
 

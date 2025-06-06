@@ -48,8 +48,10 @@
     domains/paving/codac2_py_PavingNode.cpp
     domains/paving/codac2_py_Subpaving.cpp
     domains/tube/codac2_py_Slice.h
+    domains/tube/codac2_py_SlicedTube.h
     domains/tube/codac2_py_TDomain.cpp
     domains/tube/codac2_py_TSlice.cpp
+    domains/tube/codac2_py_TubeBase.cpp
     domains/codac2_py_BoolInterval.cpp
 
     functions/analytic/codac2_py_analytic_variables.cpp
