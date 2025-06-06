@@ -46,74 +46,70 @@ class TestTDomain(unittest.TestCase):
     #self.assertTrue(tdomain.nb_tubes() == 1)
   # }
 
-  # SECTION("Test degenerated TDomain")
-  # {
-  #   tdomain = create_tdomain(Interval(1))
-  #   self.assertTrue(tdomain.nb_tslices() == 1)
-  #   self.assertTrue(tdomain.t0_tf() == Interval(1))
-  #   self.assertTrue(tdomain.nb_tubes() == 0)
+  def test_degenerated_tdomain(self):
+
+    tdomain = create_tdomain(Interval(1))
+    self.assertTrue(tdomain.nb_tslices() == 1)
+    self.assertTrue(tdomain.t0_tf() == Interval(1))
+    self.assertTrue(tdomain.nb_tubes() == 0)
     
-  #  vector_tslices = tdomain.tslices_vector()
+    vector_tslices = tdomain.tslices_vector()
       
-  #   self.assertTrue(len(vector_tslices) == 1)
-  #   self.assertTrue(vector_tslices[0] == Interval(1))
-  # }
+    self.assertTrue(len(vector_tslices) == 1)
+    self.assertTrue(vector_tslices[0] == Interval(1))
 
-  # SECTION("Test TDomain with gates")
-  # {
-  #   tdomain = create_tdomain(Interval(0,1), 0.5, true)
-  #   self.assertTrue(tdomain.nb_tslices() == 5)
-  #   self.assertTrue(tdomain.t0_tf() == Interval(0,1))
-  #   self.assertTrue(tdomain.nb_tubes() == 0)
+  def test_tdomain_with_gates(self):
+
+    tdomain = create_tdomain(Interval(0,1), 0.5, True)
+    self.assertTrue(tdomain.nb_tslices() == 5)
+    self.assertTrue(tdomain.t0_tf() == Interval(0,1))
+    self.assertTrue(tdomain.nb_tubes() == 0)
+
+    vector_tslices = tdomain.tslices_vector()
+
+    self.assertTrue(len(vector_tslices) == 5)
+    self.assertTrue(vector_tslices[0] == Interval(0))
+    self.assertTrue(vector_tslices[1] == Interval(0,0.5))
+    self.assertTrue(vector_tslices[2] == Interval(0.5))
+    self.assertTrue(vector_tslices[3] == Interval(0.5,1))
+    self.assertTrue(vector_tslices[4] == Interval(1,1))
+
+    self.assertTrue(tdomain.tslice(0.) == Interval(0))
+    self.assertTrue(tdomain.tslice(0.1) == Interval(0,0.5))
+    self.assertTrue(tdomain.tslice(0.5) == Interval(0.5))
+    self.assertTrue(tdomain.tslice(0.6) == Interval(0.5,1))
+    self.assertTrue(tdomain.tslice(1.) == Interval(1))
     
-  #  vector_tslices = tdomain.tslices_vector()
+  def test_tdomain_with_sampling(self):
 
-  #   self.assertTrue(len(vector_tslices) == 5)
-  #   self.assertTrue(vector_tslices[0] == Interval(0))
-  #   self.assertTrue(vector_tslices[1] == Interval(0,0.5))
-  #   self.assertTrue(vector_tslices[2] == Interval(0.5))
-  #   self.assertTrue(vector_tslices[3] == Interval(0.5,1))
-  #   self.assertTrue(vector_tslices[4] == Interval(1,1))
+    tdomain = create_tdomain()
+    tdomain.sample(1.)
+    self.assertTrue(tdomain.nb_tslices() == 2)
+    tdomain.sample(10.,False) # no gate
+    self.assertTrue(tdomain.nb_tslices() == 3)
+    tdomain.sample(10.,True) # second sampling with gate
+    self.assertTrue(tdomain.nb_tslices() == 4)
+    tdomain.sample(10.,True) # no more action
+    self.assertTrue(tdomain.nb_tslices() == 4)
 
-  #   self.assertTrue(*tdomain.tslice(0.) == Interval(0))
-  #   self.assertTrue(*tdomain.tslice(0.1) == Interval(0,0.5))
-  #   self.assertTrue(*tdomain.tslice(0.5) == Interval(0.5))
-  #   self.assertTrue(*tdomain.tslice(0.6) == Interval(0.5,1))
-  #   self.assertTrue(*tdomain.tslice(1.) == Interval(1))
-  # }
+    vector_tslices = tdomain.tslices_vector()
 
-  # SECTION("Test TDomain with sampling")
-  # {
-  #   tdomain = create_tdomain()
-  #   tdomain.sample(1.)
-  #   self.assertTrue(tdomain.nb_tslices() == 2)
-  #   tdomain.sample(10.,false) # no gate
-  #   self.assertTrue(tdomain.nb_tslices() == 3)
-  #   tdomain.sample(10.,true) # second sampling with gate
-  #   self.assertTrue(tdomain.nb_tslices() == 4)
-  #   tdomain.sample(10.,true) # no more action
-  #   self.assertTrue(tdomain.nb_tslices() == 4)
-    
-  #  vector_tslices = tdomain.tslices_vector()
+    self.assertTrue(len(vector_tslices) == 4)
+    self.assertTrue(vector_tslices[0] == Interval(-oo,1))
+    self.assertTrue(vector_tslices[1] == Interval(1,10))
+    self.assertTrue(vector_tslices[2] == Interval(10))
+    self.assertTrue(vector_tslices[3] == Interval(10,oo))
 
-  #   self.assertTrue(len(vector_tslices) == 4)
-  #   self.assertTrue(vector_tslices[0] == Interval(-oo,1))
-  #   self.assertTrue(vector_tslices[1] == Interval(1,10))
-  #   self.assertTrue(vector_tslices[2] == Interval(10))
-  #   self.assertTrue(vector_tslices[3] == Interval(10,oo))
-  # }
+  def test_unbounded_tdomain(self):
 
-  # SECTION("Test unbounded TDomain")
-  # {
-  #   tdomain = create_tdomain()
-  #   self.assertTrue(tdomain.nb_tslices() == 1)
-  #   self.assertTrue(tdomain.t0_tf() == Interval(-oo,oo))
+    tdomain = create_tdomain()
+    self.assertTrue(tdomain.nb_tslices() == 1)
+    self.assertTrue(tdomain.t0_tf() == Interval(-oo,oo))
 
-  #  vector_tslices = tdomain.tslices_vector()
+    vector_tslices = tdomain.tslices_vector()
 
-  #   self.assertTrue(len(vector_tslices) == 1)
-  #   self.assertTrue(vector_tslices[0] == Interval(-oo,oo))
-  # }
-      
+    self.assertTrue(len(vector_tslices) == 1)
+    self.assertTrue(vector_tslices[0] == Interval(-oo,oo))
+
 if __name__ ==  '__main__':
   unittest.main()
