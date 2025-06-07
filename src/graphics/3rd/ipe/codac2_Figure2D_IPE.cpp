@@ -208,7 +208,7 @@ std::string to_ipe_linestyle(const std::string& ls)
 
 std::string to_ipe_linewidth(const double line_width)
 {
-  return std::to_string((14.0*line_width)+0.4);
+  return std::to_string((80.0*line_width)+0.4); // values found empirically
 }
 
 void Figure2D_IPE::begin_path(const StyleProperties& s, bool tip)
@@ -242,7 +242,7 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
 
   if ((std::find(_layers.begin(), _layers.end(), s.layer) == _layers.end()) && s.layer != "")
       _layers.push_back(s.layer); 
-
+  
   _f_temp_content << "\n \
     <path layer=\"" << s.layer << "\" \n \
     stroke=\"codac_color_" << ipe_str(s.stroke_color) << "\" \n \
