@@ -51,6 +51,7 @@ void Figure2D_VIBes::update_drawing_properties(const StyleProperties& s)
     }
 
   _params["LineStyle"] = s.line_style;
+  _params["LineWidth"] = std::to_string(s.line_width);
   _params["group"] = s.layer;
 }
 

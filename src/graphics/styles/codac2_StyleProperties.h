@@ -61,19 +61,8 @@ namespace codac2
      * \brief Parse a parameter and update the style properties accordingly
      * 
      * \param param Parameter to parse, can be a line style, line width or layer name
-     * \return true if the parameter was successfully parsed, false otherwise
      */
-    bool parse_parameter(const std::string& param);
-
-    /**
-     * \brief Update the style properties from three parameters
-     * 
-     * \param param1 First parameter, can be a line style, line width or layer name
-     * \param param2 Second parameter, can be a line style, line width or layer name
-     * \param param3 Third parameter, can be a line style, line width or layer name
-     * \return true if the parameters were successfully parsed, false otherwise
-     */
-    bool update_properties(const std::string& param1, const std::string& param2, const std::string& param3);
+    void parse_parameter(const std::string& param);
 
     /**
      * \brief Predefined "inside" style, dark gray edge and green fill
