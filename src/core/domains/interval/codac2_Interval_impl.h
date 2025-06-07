@@ -51,6 +51,12 @@ namespace codac2
     init_from_list(l);
   }
 
+  inline Interval& Interval::init()
+  {
+    *this = Interval(-oo,oo);
+    return *this;
+  }
+
   inline Interval& Interval::init(const Interval& x)
   {
     *this = x;

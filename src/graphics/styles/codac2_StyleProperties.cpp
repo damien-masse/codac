@@ -89,7 +89,7 @@ StyleProperties StyleProperties::outside()
 {
   StyleProperties s;
   s.stroke_color = Color::dark_gray();
-  s.fill_color = Color::cyan();
+  s.fill_color = Color::light_blue();
   s.layer = "outside";
   return s;
 }

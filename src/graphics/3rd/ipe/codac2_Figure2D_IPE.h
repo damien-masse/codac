@@ -31,7 +31,7 @@ namespace codac2
     public:
 
       Figure2D_IPE(const Figure2D& fig);
-      ~Figure2D_IPE();
+      virtual ~Figure2D_IPE();
       void update_axes();
       void update_window_properties();
       void center_viewbox(const Vector& c, const Vector& r);
