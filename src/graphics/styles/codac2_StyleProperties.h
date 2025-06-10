@@ -89,11 +89,11 @@ namespace codac2
     };
 
     /**
-     * \brief Set of available characters for line width
+     * \brief Set of available digits as characters
      */
-    static std::set<char> available_linewdith_chars()
+    static std::set<char> available_digits_chars()
     {
-      std::set<char> available_chars = {'0','1','2','3','4','5','6','7','8','9','.'};
+      std::set<char> available_chars = {'0','1','2','3','4','5','6','7','8','9'};
       return available_chars;
     };
 

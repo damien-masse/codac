@@ -33,14 +33,6 @@ StyleProperties::StyleProperties(std::initializer_list<Color> colors, const std:
   parse_parameter(param1); parse_parameter(param2); parse_parameter(param3);
 }
 
-bool is_valid_number(const string& str) 
-{
-  for (char c : str)
-      if (! StyleProperties::available_linewdith_chars().contains(c)) 
-          return false;
-  return true;
-}
-
 void StyleProperties::parse_parameter(const std::string& param)
 {
   if (param != "")
@@ -48,7 +40,7 @@ void StyleProperties::parse_parameter(const std::string& param)
     if (StyleProperties::available_line_styles().contains(param))
       line_style = param;
 
-    else if (is_valid_number(param))
+    else if (StyleProperties::available_digits_chars().contains(param[0]))
     {
       try
       {
