@@ -40,7 +40,7 @@ void StyleProperties::parse_parameter(const std::string& param)
     if (StyleProperties::available_line_styles().contains(param))
       line_style = param;
 
-    else if (StyleProperties::available_digits_chars().contains(param[0]))
+    else if (param[0]>='0' && param[0]<='9')
     {
       try
       {
@@ -48,7 +48,7 @@ void StyleProperties::parse_parameter(const std::string& param)
       }
       catch (const std::invalid_argument& e)
       {
-        assert_release(false && "Invalid line width value");
+        assert_release_constexpr(false && "Invalid line width value");
       }
     }
 

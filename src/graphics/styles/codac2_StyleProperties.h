@@ -88,14 +88,5 @@ namespace codac2
       return line_styles;
     };
 
-    /**
-     * \brief Set of available digits as characters
-     */
-    static std::set<char> available_digits_chars()
-    {
-      std::set<char> available_chars = {'0','1','2','3','4','5','6','7','8','9'};
-      return available_chars;
-    };
-
   };
 }
