@@ -105,6 +105,10 @@ void export_SlicedTube(py::module& m, const std::string& name)
       VOID_SLICEDTUBE_T_SET_CONST_T_REF_CONST_INTERVAL_REF,
       "codomain"_a, "t"_a)
     
+    .def("set_ith_slice", &SlicedTube<T>::set_ith_slice,
+      VOID_SLICEDTUBE_T_SET_ITH_SLICE_CONST_T_REF_INDEX,
+      "codomain"_a, "i"_a)
+    
     .def("inflate", &SlicedTube<T>::inflate,
       CONST_SLICEDTUBE_T_REF_SLICEDTUBE_T_INFLATE_DOUBLE,
       "rad"_a)
@@ -131,6 +135,28 @@ void export_SlicedTube(py::module& m, const std::string& name)
           return string(stream.str()); 
         },
       OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_SLICEDTUBE_T_REF)
-
   ;
+
+  if constexpr(std::is_same_v<T,Interval>)
+  {
+    exported_slicedtubebase_class
+
+      .def("integral", (Interval (SlicedTube<T>::*)(const Interval&) const) &SlicedTube<T>::integral,
+        INTERVAL_SLICEDTUBE_T_INTEGRAL_CONST_INTERVAL_REF_CONST,
+        "t"_a)
+      
+      .def("integral", (Interval (SlicedTube<T>::*)(const Interval&,const Interval&) const) &SlicedTube<T>::integral,
+        INTERVAL_SLICEDTUBE_T_INTEGRAL_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST,
+        "t1"_a, "t2"_a)
+      
+      .def("partial_integral", (std::pair<Interval,Interval> (SlicedTube<T>::*)(const Interval&) const) &SlicedTube<T>::partial_integral,
+        INTERVAL_SLICEDTUBE_T_INTEGRAL_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST,
+        "t"_a)
+      
+      .def("partial_integral", (std::pair<Interval,Interval> (SlicedTube<T>::*)(const Interval&,const Interval&) const) &SlicedTube<T>::partial_integral,
+        INTERVAL_SLICEDTUBE_T_INTEGRAL_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST,
+        "t1"_a, "t2"_a)
+
+    ;
+  }
 }

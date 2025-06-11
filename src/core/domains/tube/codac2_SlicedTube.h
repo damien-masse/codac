@@ -219,7 +219,9 @@ namespace codac2
         if(!t.is_degenerated())
         {
           it_ub = _tdomain->sample(t.ub(), false);
-          it_ub--; // pointing to the tslice [..,t.ub()]
+
+          if(it_ub->lb() == t.ub())
+            it_ub--; // pointing to the tslice [..,t.ub()]
 
           if(it_lb->ub() == t.lb())
             it_lb++;
@@ -232,6 +234,17 @@ namespace codac2
         {
           (*this)(it_lb)->set(codomain);
         } while(it_lb != it_ub && (++it_lb) != _tdomain->end());
+      }
+
+      inline void set_ith_slice(const T& codomain, Index i)
+      {
+        Index j = 0;
+        for(auto& si : *this)
+          if(j++ == i)
+          {
+            si.set(codomain);
+            break;
+          }
       }
 
       const SlicedTube<T>& inflate(double rad)
@@ -290,6 +303,13 @@ namespace codac2
            << std::flush;
         return os;
       }
+
+      // Integral related methods
+
+      Interval integral(const Interval& t) const;
+      Interval integral(const Interval& t1, const Interval& t2) const;
+      std::pair<Interval,Interval> partial_integral(const Interval& t) const;
+      std::pair<Interval,Interval> partial_integral(const Interval& t1, const Interval& t2) const;
 
 
     public:
@@ -394,3 +414,5 @@ namespace codac2
   SlicedTube(const std::shared_ptr<TDomain>& tdomain, const AnalyticFunction<T>& f) -> 
     SlicedTube<typename Wrapper<T>::Domain>;
 }
+
+#include "codac2_SlicedTube_integral_impl.h"

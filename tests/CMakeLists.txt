@@ -58,6 +58,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/domains/interval/codac2_tests_IntervalVector
   core/domains/tube/codac2_tests_TDomain
   core/domains/tube/codac2_tests_SlicedTube
+  core/domains/tube/codac2_tests_SlicedTube_integral
 
   core/functions/analytic/codac2_tests_AnalyticFunction
   ../doc/manual/manual/functions/analytic/src

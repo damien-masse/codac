@@ -163,6 +163,8 @@ class Approx:
       self.a = Approx_Segment(x,eps)
     elif isinstance(x, (Polygon,ConvexPolygon)):
       self.a = Approx_Polygon(x,eps)
+    elif isinstance(x, tuple) and isinstance(x[0], Interval) and isinstance(x[1], Interval):
+      self.a = Approx_pair_Interval(x,eps)
     else:
       codac_error("Approx: can only build Approx for: \
         double, Interval, [Interval]Vector, Matrix, [Interval]Matrix, Segment, [Convex]Polygon")
@@ -416,6 +418,9 @@ class SlicedTube:
     else:
       return self.tube.set(x,t)
 
+  def set_ith_slice(self,x,i):
+    return self.tube.set_ith_slice(x,i)
+
   def inflate(self,rad):
     return self.tube.inflate(rad)
 
@@ -430,3 +435,15 @@ class SlicedTube:
 
   def __repr__(self):
     return str(self.tube)
+
+  def integral(self,t1,t2=None):
+    if t2 is None:
+      return self.tube.integral(t1)
+    else:
+      return self.tube.integral(t1,t2)
+
+  def partial_integral(self,t1,t2=None):
+    if t2 is None:
+      return self.tube.partial_integral(t1)
+    else:
+      return self.tube.partial_integral(t1,t2)
