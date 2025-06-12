@@ -99,6 +99,15 @@ list(APPEND SRC_TESTS # listing files without extension
   graphics/styles/codac2_tests_Color
 )
 
+file(COPY
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/domains/tube/codac2_tests_predefined_tubes.py
+  # Add here other Python files that are not tests but need to be exported to Python package
+  # ...
+  
+  DESTINATION
+  ${CMAKE_BINARY_DIR}/python/python_package/codac/tests
+)
+
 set(CODAC_LIBRARIES ${PROJECT_NAME}-core)
 
 # CAPD test

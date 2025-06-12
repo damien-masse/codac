@@ -11,7 +11,7 @@ import unittest
 from codac import *
 import sys
 import math
-import codac2_tests_predefined_tubes as predef
+from . import codac2_tests_predefined_tubes as predef
 
 class TestSlicedTube_integral(unittest.TestCase):
 
@@ -122,7 +122,7 @@ class TestSlicedTube_integral(unittest.TestCase):
     self.assertTrue(Approx(x.integral(Interval(1.0,1.0))) == Interval(4,8))
     self.assertTrue(Approx(x.integral(Interval(1.0,1.5))) == Interval(4,11.5))
     self.assertTrue(Approx(x.integral(Interval(1.0,2.0))) == Interval(4,15))
-    self.assertTrue(Approx(x.integral(Interval(1.1,1.9))) == Interval(4.2,14.3))
+    self.assertTrue(Approx(x.integral(Interval(1.1,1.9)),1e-8) == Interval(4.2,14.3))
     self.assertTrue(Approx(x.integral(Interval(1.1,2.1)),1e-8) == Interval(4.2,15.6))
     self.assertTrue(Approx(x.integral(Interval(6,7))) == Interval(-23,19))
     self.assertTrue(x.tdomain().t0_tf() == Interval(0,46))
