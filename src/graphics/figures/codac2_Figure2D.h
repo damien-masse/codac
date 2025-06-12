@@ -114,7 +114,7 @@ namespace codac2
        * \param axis1 First axis (horizontal)
        * \param axis2 Second axis (vertical)
        */
-      void set_axes(const FigureAxis& axis1, const FigureAxis& axis2);
+      Figure2D& set_axes(const FigureAxis& axis1, const FigureAxis& axis2);
 
       /**
        * \brief Getter for the index of the horizontal axis
@@ -500,10 +500,10 @@ namespace codac2
        * \param axis1 First axis (horizontal)
        * \param axis2 Second axis (vertical)
        */
-      static void set_axes(const FigureAxis& axis1, const FigureAxis& axis2)
+      static Figure2D& set_axes(const FigureAxis& axis1, const FigureAxis& axis2)
       {
         auto_init();
-        selected_fig()->set_axes(axis1,axis2);
+        return selected_fig()->set_axes(axis1,axis2);
       }
       
       /**

@@ -48,11 +48,12 @@ const std::vector<FigureAxis>& Figure2D::axes() const
   return _axes;
 }
 
-void Figure2D::set_axes(const FigureAxis& axis1, const FigureAxis& axis2)
+Figure2D& Figure2D::set_axes(const FigureAxis& axis1, const FigureAxis& axis2)
 {
   _axes = { axis1, axis2 };
   for(const auto& output_fig : _output_figures)
     output_fig->update_axes();
+  return *this;
 }
 
 const Index& Figure2D::i() const
