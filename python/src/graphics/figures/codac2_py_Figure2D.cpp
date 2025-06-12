@@ -274,14 +274,15 @@ void export_Figure2D(py::module& m)
 
     .def(py::init<>()) // for using static methods in Matlab
   
-    .def_static("selected_fig", &DefaultFigure::selected_fig,
+    .def_static("selected_fig", &DefaultFigure::selected_fig, py::return_value_policy::reference,
       STATIC_SHARED_PTR_FIGURE2D_DEFAULTFIGURE_SELECTED_FIG)
   
     .def_static("set", &DefaultFigure::set,
       STATIC_VOID_DEFAULTFIGURE_SET_SHARED_PTR_FIGURE2D)
   
-    .def_static("set_axes", &DefaultFigure::set_axes,
-      STATIC_FIGURE2D_REF_DEFAULTFIGURE_SET_AXES_CONST_FIGUREAXIS_REF_CONST_FIGUREAXIS_REF)
+    .def_static("set_axes", &DefaultFigure::set_axes, py::return_value_policy::reference,
+      STATIC_FIGURE2D_REF_DEFAULTFIGURE_SET_AXES_CONST_FIGUREAXIS_REF_CONST_FIGUREAXIS_REF,
+      "axis1"_a, "axis2"_a)
   
     .def_static("set_window_properties", &DefaultFigure::set_window_properties,
       STATIC_VOID_DEFAULTFIGURE_SET_WINDOW_PROPERTIES_CONST_VECTOR_REF_CONST_VECTOR_REF)
