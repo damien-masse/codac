@@ -11,7 +11,10 @@ import unittest
 from codac import *
 import sys
 import math
-from . import codac2_tests_predefined_tubes as predef
+
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
+import codac2_tests_predefined_tubes as predef
 
 class TestSlicedTube_integral(unittest.TestCase):
 
