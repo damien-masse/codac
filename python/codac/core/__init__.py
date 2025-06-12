@@ -412,6 +412,9 @@ class SlicedTube:
   def __call__(self,t):
     return self.tube.__call__(t)
 
+  def enclosed_bounds(self,t):
+    return self.tube.enclosed_bounds(t)
+
   def set(self,x,t=None):
     if t is None:
       return self.tube.set(x)

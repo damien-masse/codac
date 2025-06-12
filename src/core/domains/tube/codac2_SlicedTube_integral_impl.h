@@ -14,22 +14,22 @@
 namespace codac2
 {
   template<typename T>
-  Interval SlicedTube<T>::integral(const Interval& t) const
+  T SlicedTube<T>::integral(const Interval& t) const
   {
     auto partial_integ = partial_integral(t);
 
     if(partial_integ.first.is_empty() || partial_integ.second.is_empty())
-      return Interval::empty();
+      return this->empty_codomain();
 
     else if(partial_integ.first.is_unbounded() || partial_integ.second.is_unbounded())
-      return Interval();
+      return this->all_reals_codomain();
 
     else
-      return Interval(partial_integ.first.lb()) | partial_integ.second.ub();
+      return T(partial_integ.first.lb()) | partial_integ.second.ub();
   }
 
   template<typename T>
-  Interval SlicedTube<T>::integral(const Interval& t1, const Interval& t2) const
+  T SlicedTube<T>::integral(const Interval& t1, const Interval& t2) const
   {
     auto integ_t1 = partial_integral(t1);
     auto integ_t2 = partial_integral(t2);
@@ -37,30 +37,33 @@ namespace codac2
     if(integ_t1.first.is_empty() || integ_t1.second.is_empty() ||
        integ_t2.first.is_empty() || integ_t2.second.is_empty())
     {
-      return Interval::empty();
+      return this->empty_codomain();
     }
 
     else if(integ_t1.first.is_unbounded() || integ_t1.second.is_unbounded() ||
             integ_t2.first.is_unbounded() || integ_t2.second.is_unbounded())
     {
-      return Interval();
+      return this->all_reals_codomain();
     }
 
     else
     {
-      double lb = (integ_t2.first - integ_t1.first).lb();
-      double ub = (integ_t2.second - integ_t1.second).ub();
-      return Interval(lb) | ub;
+      auto lb = (integ_t2.first - integ_t1.first).lb();
+      auto ub = (integ_t2.second - integ_t1.second).ub();
+      return T(lb) | ub;
     }
   }
 
   template<typename T>
-  std::pair<Interval,Interval> SlicedTube<T>::partial_integral(const Interval& t) const
+  std::pair<T,T> SlicedTube<T>::partial_integral(const Interval& t) const
   {
     //if(!t.is_subset(tdomain()->t0_tf()))
     //  return { Interval(), Interval() };
 
-    std::pair<Interval,Interval> p_integ { 0., 0. };
+    auto zero = this->all_reals_codomain();
+    zero.init(Interval(0.));
+
+    std::pair<T,T> p_integ { zero, zero };
     auto p_integ_uncertain = p_integ;
 
     for(const auto& si : *this)
@@ -69,10 +72,16 @@ namespace codac2
         break;
 
       if(si.codomain().is_empty())
-        return { Interval::empty(), Interval::empty() };
+      {
+        auto e = this->empty_codomain();
+        return { e, e };
+      }
 
       if(si.codomain().is_unbounded())
-        return { Interval(), Interval() };
+      {
+        auto u = this->all_reals_codomain();
+        return { u, u };
+      }
 
       // From t0 to tlb
 
@@ -92,7 +101,7 @@ namespace codac2
         intv_t = si.t0_tf() & t;
         if(!intv_t.is_empty())
         {
-          auto  p_integ_temp = p_integ_uncertain;
+          auto p_integ_temp = p_integ_uncertain;
           p_integ_uncertain.first += Interval(0., intv_t.diam()) * si.codomain().lb();
           p_integ_uncertain.second += Interval(0., intv_t.diam()) * si.codomain().ub();
         
@@ -108,7 +117,7 @@ namespace codac2
   }
 
   template<typename T>
-  std::pair<Interval,Interval> SlicedTube<T>::partial_integral(const Interval& t1, const Interval& t2) const
+  std::pair<T,T> SlicedTube<T>::partial_integral(const Interval& t1, const Interval& t2) const
   {
     auto integ_t1 = partial_integral(t1);
     auto integ_t2 = partial_integral(t2);

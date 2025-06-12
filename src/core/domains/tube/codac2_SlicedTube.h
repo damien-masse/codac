@@ -192,6 +192,33 @@ namespace codac2
         return codomain;
       }
 
+      std::pair<T,T> enclosed_bounds(const Interval& t) const
+      {
+        auto x = this->empty_codomain();
+        auto bounds = std::make_pair(x,x);
+
+        if(t.lb() < _tdomain->t0_tf().lb() || t.ub() > _tdomain->t0_tf().ub())
+        {
+          x.init(Interval(-oo,0));
+          bounds.first |= x;
+          x.init(Interval(0,oo));
+          bounds.second |= x;
+        }
+
+        Interval t_inter = t & _tdomain->t0_tf();
+        auto si = (*this)(_tdomain->tslice(t_inter.lb()));
+
+        while(si && si->t0_tf().lb() <= t_inter.ub())
+        {
+          auto slice_bounds = si->enclosed_bounds(t_inter & si->t0_tf());
+          bounds.first |= slice_bounds.first;
+          bounds.second |= slice_bounds.second;
+          si = si->next_slice();
+        }
+
+        return bounds;
+      }
+
       inline void set(const T& codomain)
       {
         assert_release(codomain.size() == this->size());
@@ -306,10 +333,10 @@ namespace codac2
 
       // Integral related methods
 
-      Interval integral(const Interval& t) const;
-      Interval integral(const Interval& t1, const Interval& t2) const;
-      std::pair<Interval,Interval> partial_integral(const Interval& t) const;
-      std::pair<Interval,Interval> partial_integral(const Interval& t1, const Interval& t2) const;
+      T integral(const Interval& t) const;
+      T integral(const Interval& t1, const Interval& t2) const;
+      std::pair<T,T> partial_integral(const Interval& t) const;
+      std::pair<T,T> partial_integral(const Interval& t1, const Interval& t2) const;
 
 
     public:
