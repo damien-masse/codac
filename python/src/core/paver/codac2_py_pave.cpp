@@ -29,6 +29,10 @@ void export_pave(py::module& m)
     PAVINGINOUT_PAVE_CONST_INTERVALVECTOR_REF_CONST_SEPBASE_REF_DOUBLE_BOOL,
     "x"_a, "s"_a, "eps"_a, "verbose"_a=false);
 
+  m.def("pave", &codac2::regular_pave,
+    PAVINGINOUT_REGULAR_PAVE_CONST_INTERVALVECTOR_REF_CONST_FUNCTION_BOOLINTERVAL_CONST_INTERVALVECTOR_REF__REF_DOUBLE_BOOL,
+    "x"_a, "test"_a, "eps"_a, "verbose"_a=false);
+
   m.def("sivia",
       [](const IntervalVector& x, const py::object& f, const py::object& y, double eps, bool verbose)
       {
