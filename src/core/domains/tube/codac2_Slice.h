@@ -121,6 +121,40 @@ namespace codac2
         }
       }
 
+      std::pair<T,T> enclosed_bounds(const Interval& t) const
+      {
+        T x = *this; x.set_empty(); 
+        auto bounds = std::make_pair(x,x);
+
+        if(t.lb() < t0_tf().lb() || t.ub() > t0_tf().ub())
+        {
+          x.init(Interval(-oo,0));
+          bounds.first |= x;
+          x.init(Interval(0,oo));
+          bounds.second |= x;
+        }
+
+        if(t.contains(t0_tf().lb()))
+        {
+          bounds.first |= input_gate().lb();
+          bounds.second |= input_gate().ub();
+        }
+
+        if(t.contains(t0_tf().ub()))
+        {
+          bounds.first |= output_gate().lb();
+          bounds.second |= output_gate().ub();
+        }
+
+        if(t.is_subset(t0_tf()) && t != t0_tf().lb() && t != t0_tf().ub())
+        {
+          bounds.first |= this->lb();
+          bounds.second |= this->ub();
+        }
+
+        return bounds;
+      }
+
       inline void set(const T& x)
       {
         set(x, true);

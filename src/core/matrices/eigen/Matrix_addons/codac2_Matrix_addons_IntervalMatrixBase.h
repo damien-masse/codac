@@ -282,7 +282,7 @@ template<typename OtherDerived>
 inline auto operator|(const MatrixBase<OtherDerived>& x) const
 {
   auto y = *this;
-  return y |= x;
+  return y |= x.template cast<codac2::Interval>();
 }
 
 template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>

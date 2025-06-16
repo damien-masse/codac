@@ -392,4 +392,19 @@ TEST_CASE("SlicedTube")
     CHECK(Approx((Interval)*tdomain->tslice(2.)) == Interval(1.900000000000001, 2.000000000000002));
     CHECK(Approx(a(Interval(1,2)),1e-4) == Interval(-2.17496, 7.13757));
   }
+
+  SECTION("Testing specific detected bug from sampling")
+  {
+    auto tdomain = create_tdomain({0.,46.}, 0.5);
+    SlicedTube x(tdomain, Interval());
+    list<TSlice>::iterator it = tdomain->sample(46, false);
+    CHECK(*it == Interval(45.5,46));
+    x.set({-1,3}, {30,31});
+    CHECK(x({30,31}) == Interval(-1,3));
+    x.set({-1,3}, {45,46});
+    CHECK(x({45,46}) == Interval(-1,3));
+    CHECK(x({45.5,46}) == Interval(-1,3));
+    CHECK(x(45.8) == Interval(-1,3));
+    CHECK(x(45.2) == Interval(-1,3));
+  }
 }

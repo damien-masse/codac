@@ -61,6 +61,10 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
     .def("output_gate", &Slice<T>::output_gate,
       T_SLICE_T_OUTPUT_GATE_CONST)
 
+    .def("enclosed_bounds", &Slice<T>::enclosed_bounds,
+      PAIR_TT_SLICE_T_ENCLOSED_BOUNDS_CONST_INTERVAL_REF_CONST,
+      "t"_a)
+
     .def("set", (void (Slice<T>::*)(const T&)) &Slice<T>::set,
       VOID_SLICE_T_SET_CONST_T_REF,
       "x"_a)

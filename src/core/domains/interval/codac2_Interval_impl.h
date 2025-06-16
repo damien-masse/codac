@@ -364,6 +364,11 @@ namespace codac2
       return gaol::operator&(x,y);
   }
 
+  inline Interval operator|(const Interval& x, double y)
+  {
+    return gaol::operator|(x,Interval(y));
+  }
+
   inline Interval operator|(const Interval& x, const Interval& y)
   {
     return gaol::operator|(x,y);
