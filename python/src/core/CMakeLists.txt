@@ -16,6 +16,7 @@
     contractors/codac2_py_CtcCartProd.cpp
     contractors/codac2_py_CtcCross.cpp
     contractors/codac2_py_CtcCtcBoundary.cpp
+    contractors/codac2_py_CtcDeriv.cpp
     contractors/codac2_py_CtcDist.cpp
     contractors/codac2_py_CtcEmpty.cpp
     contractors/codac2_py_CtcFixpoint.cpp

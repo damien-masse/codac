@@ -38,6 +38,7 @@ void export_CtcAction(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcInt
 void export_CtcCartProd(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCross(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCtcBoundary(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcDeriv(py::module& m);
 void export_CtcDist(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcEmpty(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcFixpoint(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -157,6 +158,7 @@ PYBIND11_MODULE(_core, m)
   export_CtcCartProd(m, py_ctc_iv);
   export_CtcCross(m, py_ctc_iv);
   export_CtcCtcBoundary(m, py_ctc_iv);
+  export_CtcDeriv(m);
   export_CtcDist(m, py_ctc_iv);
   export_CtcEmpty(m, py_ctc_iv);
   export_CtcFixpoint(m, py_ctc_iv);
