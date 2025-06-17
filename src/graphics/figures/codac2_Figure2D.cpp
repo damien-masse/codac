@@ -391,17 +391,17 @@ void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperti
 
 void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s)
 {
-  for(const auto& si : x)
-    draw_box(si.codomain(),s);
+  for(auto it = x.rbegin(); it != x.rend(); ++it)
+    draw_box(it->codomain(),s);
 }
 
 void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap)
 {
   auto tube_t0tf = x.tdomain()->t0_tf();
-  for(const auto& si : x)
+  for(auto it = x.rbegin(); it != x.rend(); ++it)
   {
-    auto c = cmap.color((si.t0_tf().mid()-tube_t0tf.lb())/tube_t0tf.diam());
-    draw_box(si.codomain(), {c,c});
+    auto c = cmap.color((it->t0_tf().mid()-tube_t0tf.lb())/tube_t0tf.diam());
+    draw_box(it->codomain(), {c,c});
   }
 }
 
