@@ -57,6 +57,12 @@ class AnalyticFunction:
   def eval(self,*args):
     return self.f.eval(*args)
 
+  def traj_eval(self,*args):
+    return self.f.traj_eval(*args)
+
+  def tube_eval(self,*args):
+    return self.f.tube_eval(*args)
+
   def diff(self,*args):
     return self.f.diff(*args)
 
