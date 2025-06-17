@@ -456,3 +456,6 @@ class SlicedTube:
       return self.tube.partial_integral(t1)
     else:
       return self.tube.partial_integral(t1,t2)
+
+  def primitive(self):
+    return self.tube.primitive()
