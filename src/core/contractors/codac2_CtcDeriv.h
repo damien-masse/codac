@@ -94,7 +94,7 @@ namespace codac2
       {
         assert_release(x.tdomain()->all_gates_defined() && "not available without gates");
         assert_release(x.tdomain() == v.tdomain());
-        auto xi = x.begin(), vi = v.begin();
+        auto xi = x.begin(); auto vi = v.begin();
 
         while(xi != x.end())
         {
