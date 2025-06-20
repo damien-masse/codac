@@ -46,6 +46,12 @@ namespace codac2
   };
 
   template<typename T>
+  class SampledTraj;
+
+  template<typename T>
+  class SlicedTube;
+
+  template<typename T>
     requires std::is_base_of_v<AnalyticTypeBase,T>
   class AnalyticFunction : public FunctionBase<AnalyticExpr<T>>
   {
@@ -152,16 +158,38 @@ namespace codac2
       }
 
       template<typename... Args>
+      auto diff(const Args&... x) const
+      {
+        check_valid_inputs(x...);
+        return eval_<false>(x...).da;
+      }
+
+      template<typename... Args>
       typename T::Domain eval(const Args&... x) const
       {
         return eval(EvalMode::NATURAL | EvalMode::CENTERED, x...);
       }
 
       template<typename... Args>
-      auto diff(const Args&... x) const
+      auto traj_eval(const SampledTraj<Args>&... x) const
       {
-        check_valid_inputs(x...);
-        return eval_<false>(x...).da;
+        SampledTraj<typename T::Scalar> y;
+        for(const auto& [ti,xi] : std::get<0>(std::tie(x...)))
+          y.set(this->real_eval(x(ti)...),ti);
+        return y;
+      }
+
+      template<typename... Args>
+      auto tube_eval(const SlicedTube<Args>&... x) const
+      {
+        SlicedTube<typename T::Domain> y(
+          std::get<0>(std::tie(x...)).tdomain(),
+          (typename T::Domain)(this->output_size())
+        );
+
+        for(auto& yi : y)
+          yi.set(this->eval(x(yi.t0_tf())...), false);
+        return y;
       }
 
       Index output_size() const

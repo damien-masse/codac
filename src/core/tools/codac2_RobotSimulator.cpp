@@ -53,10 +53,13 @@ namespace codac2
     SampledTraj<Vector> x;
     x.set(xi,t);
 
+    bool away_from_wpt = false;
     while(!wpts.empty())
     {
       const auto& wpt = wpts.front();
       auto u = controller(xi, wpt);
+      if(u[1] < .01)
+        u[1] = a_max;
 
       xi[3] += u[1]*dt;
       xi[3] = std::clamp(xi[3], -v_max, v_max);
@@ -69,8 +72,15 @@ namespace codac2
       x.set(xi,t);
 
       double dist_to_goal = std::sqrt(std::pow(wpt[0]-xi[0],2)+std::pow(wpt[1]-xi[1],2));
-      if(dist_to_goal < dist_threshold)
+      // If the new waypoint is already below the attainment threshold,
+      // we move away from it to return to it
+      away_from_wpt |= dist_to_goal >= dist_threshold;
+
+      if(away_from_wpt && dist_to_goal < dist_threshold)
+      {
+        away_from_wpt = false;
         wpts.pop_front();
+      }
     }
 
     return x;

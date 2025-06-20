@@ -13,6 +13,7 @@
 #include "codac2_Slice.h"
 #include "codac2_SlicedTubeBase.h"
 #include "codac2_AnalyticFunction.h"
+#include "codac2_CtcDeriv.h"
 
 namespace codac2
 {
@@ -43,6 +44,19 @@ namespace codac2
           it->_slices.insert({
             this,
             std::make_shared<Slice<T>>(*this, it, f.eval((Interval)*it))
+          });
+      }
+
+      template<typename V>
+        requires std::is_same_v<typename Wrapper<V>::Domain,T>
+      explicit SlicedTube(const std::shared_ptr<TDomain>& tdomain,
+        const SampledTraj<V>& f)
+        : SlicedTubeBase(tdomain)
+      {
+        for(auto it = _tdomain->begin(); it != _tdomain->end(); ++it)
+          it->_slices.insert({
+            this,
+            std::make_shared<Slice<T>>(*this, it, f((Interval)*it))
           });
       }
 
@@ -338,6 +352,17 @@ namespace codac2
       std::pair<T,T> partial_integral(const Interval& t) const;
       std::pair<T,T> partial_integral(const Interval& t1, const Interval& t2) const;
 
+      inline SlicedTube<T> primitive() const
+      {
+        auto x = all_reals_codomain();
+        auto p = SlicedTube<T>(this->tdomain(), x);
+        x.init(0.);
+        p.set(x, this->tdomain()->t0_tf().lb()); // may create an unwanted gate
+        CtcDeriv c;
+        c.contract(p,*this);
+        return p;
+      }
+
 
     public:
 
@@ -418,6 +443,31 @@ namespace codac2
       const_iterator begin() const { return { *this, _tdomain->cbegin() }; }
       const_iterator end() const   { return { *this, _tdomain->cend() }; }
 
+      struct const_reverse_iterator : public base_container::const_reverse_iterator
+      {
+        public:
+          
+          const_reverse_iterator(const SlicedTube& x, base_container::const_reverse_iterator it)
+            : base_container::const_reverse_iterator(it), _x(x) { }
+
+          std::shared_ptr<const Slice<T>> operator->()
+          {
+            return _x(*this);
+          }
+
+          const Slice<T>& operator*()
+          {
+            return *operator->();
+          }
+
+        protected:
+
+          const SlicedTube& _x;
+      };
+
+      const_reverse_iterator rbegin() const { return { *this, _tdomain->crbegin() }; }
+      const_reverse_iterator rend() const   { return { *this, _tdomain->crend() }; }
+
     protected:
 
       inline T all_reals_codomain() const
@@ -437,8 +487,13 @@ namespace codac2
 
 
   // Template deduction guide:
+
   template<typename T>
   SlicedTube(const std::shared_ptr<TDomain>& tdomain, const AnalyticFunction<T>& f) -> 
+    SlicedTube<typename Wrapper<T>::Domain>;
+  
+  template<typename T>
+  SlicedTube(const std::shared_ptr<TDomain>& tdomain, const SampledTraj<T>& f) -> 
     SlicedTube<typename Wrapper<T>::Domain>;
 }
 

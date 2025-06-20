@@ -371,7 +371,7 @@ namespace codac2
        * \param x SlicedTube to draw
        * \param s Style of the tube
        */
-      void draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s = StyleProperties());
+      void draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s);
 
       /**
        * \brief Draws a tube of `IntervalVector` on the figure with a colormap
@@ -379,7 +379,7 @@ namespace codac2
        * \param x SlicedTube to draw
        * \param cmap Colormap to use
        */
-      void draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap);
+      void draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap = ColorMap::blue_tube());
 
       // Robots
 
