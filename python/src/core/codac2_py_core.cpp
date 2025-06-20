@@ -21,6 +21,8 @@
 #include "codac2_py_CtcInverse.h"
 #include "codac2_py_CtcInverseNotIn.h"
 #include "codac2_py_MatrixBlock.h"
+#include "codac2_py_Slice.h"
+#include "codac2_py_SlicedTube.h"
 
 using namespace codac2;
 namespace py = pybind11;
@@ -65,6 +67,9 @@ py::class_<IntervalMatrix> export_IntervalMatrix(py::module& m);
 void export_Paving(py::module& m);
 void export_PavingNode(py::module& m);
 void export_Subpaving(py::module& m);
+void export_TDomain(py::module& m);
+void export_TSlice(py::module& m);
+void export_TubeBase(py::module& m);
 
 // functions
 void export_ScalarVar(py::module& m);
@@ -128,6 +133,7 @@ void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& sep);
 // tools
 void export_Approx(py::module& m);
 void export_transformations(py::module& m);
+void export_RobotSimulator(py::module& m);
 
 // trajectory
 void export_AnalyticTraj(py::module& m);
@@ -196,6 +202,15 @@ PYBIND11_MODULE(_core, m)
   auto py_IB = export_EigenBlock<IntervalMatrix>(m, "IntervalMatrixBlock");
   export_EigenBlock<IntervalRow>(m, "IntervalRowBlock");
   export_EigenBlock<IntervalVector>(m, "IntervalVectorBlock");
+  export_Slice<Interval>(m, "Slice_Interval");
+  export_Slice<IntervalVector>(m, "Slice_IntervalVector");
+  export_Slice<IntervalMatrix>(m, "Slice_IntervalMatrix");
+  export_TDomain(m);
+  export_TSlice(m);
+  export_TubeBase(m);
+  export_SlicedTube<Interval>(m, "SlicedTube_Interval");
+  export_SlicedTube<IntervalVector>(m, "SlicedTube_IntervalVector");
+  export_SlicedTube<IntervalMatrix>(m, "SlicedTube_IntervalMatrix");
 
   export_arithmetic_add(py_V, py_IV, py_M, py_IM, py_B, py_IB);
   export_arithmetic_sub(py_V, py_IV, py_M, py_IM, py_B, py_IB);
@@ -262,6 +277,7 @@ PYBIND11_MODULE(_core, m)
   // tools
   export_Approx(m);
   export_transformations(m);
+  export_RobotSimulator(m);
 
   // trajectory
   export_AnalyticTraj(m);

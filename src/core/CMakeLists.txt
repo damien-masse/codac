@@ -65,6 +65,17 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_Paving.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_PavingNode.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_Subpaving.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Slice.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SlicedTube.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SlicedTube_integral_impl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SlicedTubeBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TDomain.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TDomain.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TSlice.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TSlice.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TubeBase.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_ExprBase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_ExprBase.h
@@ -212,6 +223,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_math.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_RobotSimulator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_RobotSimulator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_serialize.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_template_tools.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_transformations.cpp
@@ -244,6 +257,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/eigen
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube
     ${CMAKE_CURRENT_SOURCE_DIR}/functions
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set
