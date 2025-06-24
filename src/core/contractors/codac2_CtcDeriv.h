@@ -94,16 +94,26 @@ namespace codac2
       {
         assert_release(x.tdomain()->all_gates_defined() && "not available without gates");
         assert_release(x.tdomain() == v.tdomain());
-        auto xi = x.begin(); auto vi = v.begin();
 
+        auto xi = x.begin(); auto vi = v.begin();
         while(xi != x.end())
         {
           assert(vi != v.end());
-          this->contract(*xi,*vi);
+          if(!xi->is_gate())
+            this->contract(*xi,*vi);
           xi++; vi++;
         }
-
         assert(vi == v.end());
+
+        auto rxi = x.rbegin(); auto rvi = v.rbegin();
+        while(rxi != x.rend())
+        {
+          assert(rvi != v.rend());
+          if(!rxi->is_gate())
+            this->contract(*rxi,*rvi);
+          rxi++; rvi++;
+        }
+        assert(rvi == v.rend());
       }
 
     protected:
@@ -112,7 +122,7 @@ namespace codac2
         const Interval& x, const Interval& input_x, const Interval& output_x,
         const Interval& v) const
       {
-        auto hull = x;
+        Interval hull = x;
         hull &= input_x  + dt*v;
         hull &= output_x - dt*v;
         return hull;
