@@ -218,6 +218,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_Approx.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_assert.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_Collection.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_fixpoint.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_Index.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_math.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.cpp

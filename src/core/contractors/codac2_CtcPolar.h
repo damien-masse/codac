@@ -23,5 +23,6 @@ namespace codac2
       { }
 
       void contract(IntervalVector& x) const;
+      void contract(Interval& x, Interval& y, Interval& rho, Interval& theta) const;
   };
 }

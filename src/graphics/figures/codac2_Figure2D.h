@@ -366,6 +366,14 @@ namespace codac2
       void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties());
 
       /**
+       * \brief Plots a set of trajectories on the figure (x-axis is the time)
+       * 
+       * \param x SampledTraj<Vector> set of trajectories to plot
+       * \param s Style of the trajectory (edge color)
+       */
+      void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties());
+
+      /**
        * \brief Draws a tube of `IntervalVector` on the figure
        * 
        * \param x SlicedTube to draw
@@ -452,7 +460,7 @@ namespace codac2
     protected:
 
       const std::string _name;
-      Vector _pos {50,50}, _window_size {500,500};
+      Vector _pos {50,50}, _window_size {700,700};
       std::vector<FigureAxis> _axes { axis(0,{0,1}), axis(1,{0,1}) };
       std::vector<std::shared_ptr<OutputFigure2D>> _output_figures;
       Interval _tdomain;
@@ -779,6 +787,18 @@ namespace codac2
       {
         auto_init();
         selected_fig()->plot_trajectory(x,s);
+      }
+
+      /**
+       * \brief Plots a set of trajectories on the figure (x-axis is the time)
+       * 
+       * \param x SampledTraj<Vector> set of trajectories to plot
+       * \param s Style of the trajectory (edge color)
+       */
+      static void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->plot_trajectories(x,s);
       }
 
       /**

@@ -389,6 +389,12 @@ void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperti
   }
 }
 
+void Figure2D::plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s)
+{
+  for(const auto& xi : as_scalar_trajs(x))
+    plot_trajectory(xi,s);
+}
+
 void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s)
 {
   for(auto it = x.rbegin(); it != x.rend(); ++it)

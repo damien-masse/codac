@@ -89,7 +89,8 @@ namespace codac2
       {
         double volume = 0.;
         for(const auto& s : *this)
-          volume += s.volume();
+          if(!s.is_gate())
+            volume += s.volume();
         return volume;
       }
 
