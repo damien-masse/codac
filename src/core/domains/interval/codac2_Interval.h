@@ -21,22 +21,10 @@
 #include "codac2_Domain.h"
 #include "codac2_assert.h"
 #include "codac2_TypeInfo.h"
+#include "codac2_math.h"
 
 namespace codac2
 {
-  const double oo = []() {
-
-    // (from IBEX lib, main author: Gilles Chabert)
-    // We use Gaol not in PRESERVE_ROUNDING mode, thus
-    // assuming the rounding mode is always set upward.
-    // Calling this function in the initialization of
-    // the 'oo' constant should be enough as this constant
-    // is initialized before the first Codac function call occurs.
-    gaol::round_upward();
-
-    return std::numeric_limits<double>::infinity();
-  }();
-
   class Interval;
 
   template<>
