@@ -21,7 +21,6 @@
 #include "codac2_Domain.h"
 #include "codac2_assert.h"
 #include "codac2_TypeInfo.h"
-#include "codac2_math.h"
 
 namespace codac2
 {
