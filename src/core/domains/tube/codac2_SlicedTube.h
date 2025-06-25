@@ -75,7 +75,7 @@ namespace codac2
         assert_release(_tdomain == x._tdomain);
 
         for(auto it = _tdomain->begin(); it != _tdomain->end(); ++it)
-          (*this)(it).set(x(it)->codomain(), false);
+          (*this)(it)->set(x(it)->codomain(), false);
 
         return *this;
       }
@@ -302,6 +302,24 @@ namespace codac2
             s.set(T(s.codomain()).inflate(rad), false);
 
         return *this;
+      }
+
+      SlicedTube<Interval> operator[](Index i) const
+      {
+        assert_release(i >= 0 && i < size());
+        SlicedTube<Interval> xi(tdomain(), Interval());
+        for(auto it = tdomain()->begin() ; it != tdomain()->end() ; it++)
+          xi(it)->codomain() = (*this)(it)->codomain()[i];
+        return xi;
+      }
+
+      SlicedTube<IntervalVector> subvector(Index i, Index j) const
+      {
+        assert_release(i >= 0 && i <= j && j < size());
+        SlicedTube<IntervalVector> xij(tdomain(), IntervalVector(j-i+1));
+        for(auto it = tdomain()->begin() ; it != tdomain()->end() ; it++)
+          xij(it)->codomain() = (*this)(it)->codomain().subvector(i,j);
+        return xij;
       }
 
       inline bool operator==(const SlicedTube& x) const

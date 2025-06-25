@@ -71,8 +71,10 @@ void export_Subpaving(py::module& m);
 void export_TDomain(py::module& m);
 void export_TSlice(py::module& m);
 void export_TubeBase(py::module& m);
+void export_tube_cart_prod(py::module& m);
 
 // functions
+void export_VarBase(py::module& m);
 void export_ScalarVar(py::module& m);
 void export_VectorVar(py::module& m);
 void export_MatrixVar(py::module& m);
@@ -213,6 +215,7 @@ PYBIND11_MODULE(_core, m)
   export_SlicedTube<Interval>(m, "SlicedTube_Interval");
   export_SlicedTube<IntervalVector>(m, "SlicedTube_IntervalVector");
   export_SlicedTube<IntervalMatrix>(m, "SlicedTube_IntervalMatrix");
+  export_tube_cart_prod(m);
 
   export_arithmetic_add(py_V, py_IV, py_M, py_IM, py_B, py_IB);
   export_arithmetic_sub(py_V, py_IV, py_M, py_IM, py_B, py_IB);
@@ -243,6 +246,7 @@ PYBIND11_MODULE(_core, m)
   export_AnalyticFunction<ScalarType>(m,"AnalyticFunction_Scalar");
   export_AnalyticFunction<VectorType>(m,"AnalyticFunction_Vector");
   export_AnalyticFunction<MatrixType>(m,"AnalyticFunction_Matrix");
+  export_VarBase(m);
   export_ScalarVar(m);
   export_VectorVar(m);
   export_MatrixVar(m);
@@ -284,4 +288,11 @@ PYBIND11_MODULE(_core, m)
   // trajectory
   export_AnalyticTraj(m);
   export_SampledTraj(m);
+
+
+  m.def("srand", []()
+    {
+      srand(time(NULL));
+    },
+    DOC_TO_BE_DEFINED);
 }

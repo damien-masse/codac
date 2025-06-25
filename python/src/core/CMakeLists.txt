@@ -53,6 +53,7 @@
     domains/tube/codac2_py_TDomain.cpp
     domains/tube/codac2_py_TSlice.cpp
     domains/tube/codac2_py_TubeBase.cpp
+    domains/tube/codac2_py_tube_cart_prod.cpp
     domains/codac2_py_BoolInterval.cpp
 
     functions/analytic/codac2_py_analytic_variables.cpp

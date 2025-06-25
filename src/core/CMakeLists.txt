@@ -77,6 +77,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TSlice.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TSlice.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TubeBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_tube_cart_prod.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_ExprBase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_ExprBase.h
