@@ -14,6 +14,7 @@
     contractors/codac2_py_Ctc.h
     contractors/codac2_py_CtcAction.cpp
     contractors/codac2_py_CtcCartProd.cpp
+    contractors/codac2_py_CtcConstell.cpp
     contractors/codac2_py_CtcCross.cpp
     contractors/codac2_py_CtcCtcBoundary.cpp
     contractors/codac2_py_CtcDeriv.cpp

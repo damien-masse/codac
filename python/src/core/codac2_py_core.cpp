@@ -36,6 +36,7 @@ void export_OctaSym(py::module& m);
 py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector(py::module& m);
 void export_CtcAction(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCartProd(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcConstell(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCross(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCtcBoundary(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcDeriv(py::module& m);
@@ -158,6 +159,7 @@ PYBIND11_MODULE(_core, m)
   auto py_ctc_iv = export_CtcIntervalVector(m);
   export_CtcAction(m, py_ctc_iv);
   export_CtcCartProd(m, py_ctc_iv);
+  export_CtcConstell(m, py_ctc_iv);
   export_CtcCross(m, py_ctc_iv);
   export_CtcCtcBoundary(m, py_ctc_iv);
   export_CtcDeriv(m);

@@ -518,7 +518,7 @@ class SlicedTube:
     return self.tube.primitive()
 
 
-def fixpoint(contract, contraction_ratio, *x):
+def fixpoint(contract, *x):
   vol = -1.0
   prev_vol = None
 
@@ -530,6 +530,10 @@ def fixpoint(contract, contraction_ratio, *x):
     vol = 0.0
     for xi in x:
       w = xi.volume()
+
+      # As infinity is absorbent, this would not
+      # allow us to identify a contraction, so we
+      # exclude these cases:
       if w != oo:
         vol += w
 
