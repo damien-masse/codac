@@ -15,6 +15,7 @@
 #include <codac2_CtcDeriv.h>
 #include "codac2_py_Ctc.h"
 #include "codac2_py_CtcDeriv_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
+#include "codac2_py_cast.h"
 
 using namespace std;
 using namespace codac2;
@@ -35,10 +36,19 @@ void export_CtcDeriv(py::module& m)
     .def("contract", (void (CtcDeriv::*)(Slice<IntervalVector>&,const Slice<IntervalVector>&) const) &CtcDeriv::contract,
       VOID_CTCDERIV_CONTRACT_SLICE_INTERVALVECTOR_REF_CONST_SLICE_INTERVALVECTOR_REF_CONST,
       "x"_a, "v"_a)
-    .def("contract", (void (CtcDeriv::*)(SlicedTube<Interval>&,const SlicedTube<Interval>&) const) &CtcDeriv::contract,
-      VOID_CTCDERIV_CONTRACT_SLICEDTUBE_T_REF_CONST_SLICEDTUBE_T_REF_CONST,
-      "x"_a, "v"_a)
-    .def("contract", (void (CtcDeriv::*)(SlicedTube<IntervalVector>&,const SlicedTube<IntervalVector>&) const) &CtcDeriv::contract,
+
+    .def("contract", [](const CtcDeriv& ctc, py::object& x, const py::object& v) {
+
+          if(is_instance<SlicedTube<Interval>>(x) && is_instance<SlicedTube<Interval>>(v))
+            return ctc.contract(cast<SlicedTube<Interval>>(x), cast<SlicedTube<Interval>>(v));
+
+          else if(is_instance<SlicedTube<IntervalVector>>(x) && is_instance<SlicedTube<IntervalVector>>(v))
+            return ctc.contract(cast<SlicedTube<IntervalVector>>(x), cast<SlicedTube<IntervalVector>>(v));
+
+          else {
+            assert_release("contract: invalid tube types");
+          }
+        },
       VOID_CTCDERIV_CONTRACT_SLICEDTUBE_T_REF_CONST_SLICEDTUBE_T_REF_CONST,
       "x"_a, "v"_a)
 
