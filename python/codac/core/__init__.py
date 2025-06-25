@@ -144,27 +144,38 @@ class CtcInverse(Ctc):
   def contract(self,*x):
 
     if len(x) == 1 and isinstance(x[0], IntervalVector):
-      return self.c.contract(x)
+      return self.c.contract(x[0])
 
     else:
       total = cart_prod(*x)
-      print(total)
-      print(total.size())
-      self.c.contract(total)
-      i,j = 0,0
+      total = self.c.contract(total)
+      i = 0
       for xi in x:
         k = xi.size()
-        j = j+k-1
-        if i==j:
-          xi = total[i]
+        if k==1:
+          xi &= total[i]
         else:
-          xi = total.subvector(i,j)
-        i = j+1
-        j = i
+          xi &= total.subvector(i,i+k-1)
+        i = i+k
       return x
 
-  def contract_tube(self,x):
-    return self.c.contract_tube(x)
+  def contract_tube(self,*x):
+
+    if len(x) == 1 and (isinstance(x[0], SlicedTube_IntervalVector) or isinstance(x[0].tube, SlicedTube_IntervalVector)):
+      return self.c.contract_tube(x[0])
+
+    else:
+      total = tube_cart_prod(x)
+      total = self.c.contract_tube(total)
+      i = 0
+      for xi in x:
+        k = xi.size()
+        if k==1:
+          xi &= total[i]
+        else:
+          xi &= total.subvector(i,i+k-1)
+        i = i+k
+      return x
 
   def copy(self):
     return self.c.copy()
@@ -512,11 +523,14 @@ def fixpoint(contract, contraction_ratio, *x):
   prev_vol = None
 
   while vol != prev_vol:
+
     prev_vol = vol
-    contract()
+    x = contract(*x)
 
     vol = 0.0
     for xi in x:
       w = xi.volume()
       if w != oo:
         vol += w
+
+  return x
