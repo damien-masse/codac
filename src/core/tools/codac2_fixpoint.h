@@ -12,13 +12,13 @@
 namespace codac2
 {
   template<typename F, typename... X>
-  void fixpoint(const F& contract, X&... x)
+  void fixpoint(const F& contract, const X&... x)
   {
     return fixpoint(contract, 1e-2, x...);
   }
 
   template<typename F, typename... X>
-  void fixpoint(const F& contract, double contraction_ratio, X&... x)
+  void fixpoint(const F& contract, double contraction_ratio, const X&... x)
   {
     double vol = -1., prev_vol;
 
