@@ -37,17 +37,19 @@ void export_CtcDeriv(py::module& m)
       VOID_CTCDERIV_CONTRACT_SLICE_INTERVALVECTOR_REF_CONST_SLICE_INTERVALVECTOR_REF_CONST,
       "x"_a, "v"_a)
 
-    .def("contract", [](const CtcDeriv& ctc, py::object& x, const py::object& v) {
+    .def("contract", [](const CtcDeriv& ctc, py::object& x, const py::object& v) -> py::object& {
 
           if(is_instance<SlicedTube<Interval>>(x) && is_instance<SlicedTube<Interval>>(v))
-            return ctc.contract(cast<SlicedTube<Interval>>(x), cast<SlicedTube<Interval>>(v));
+            ctc.contract(cast<SlicedTube<Interval>>(x), cast<SlicedTube<Interval>>(v));
 
           else if(is_instance<SlicedTube<IntervalVector>>(x) && is_instance<SlicedTube<IntervalVector>>(v))
-            return ctc.contract(cast<SlicedTube<IntervalVector>>(x), cast<SlicedTube<IntervalVector>>(v));
+            ctc.contract(cast<SlicedTube<IntervalVector>>(x), cast<SlicedTube<IntervalVector>>(v));
 
           else {
             assert_release("contract: invalid tube types");
           }
+
+          return x;
         },
       VOID_CTCDERIV_CONTRACT_SLICEDTUBE_T_REF_CONST_SLICEDTUBE_T_REF_CONST,
       "x"_a, "v"_a)
