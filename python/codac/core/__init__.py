@@ -143,8 +143,8 @@ class CtcInverse(Ctc):
 
   def contract(self,*x):
 
-    if not isinstance(x,tuple):
-      return self.c.contract(x)
+    if len(x) == 1:
+      return self.c.contract(x[0])
 
     else:
       total = cart_prod(*x)
@@ -161,8 +161,8 @@ class CtcInverse(Ctc):
 
   def contract_tube(self,*x):
 
-    if not isinstance(x,tuple):
-      return self.c.contract_tube(x)
+    if len(x) == 1:
+      return self.c.contract_tube(x[0])
 
     else:
       total = tube_cart_prod(*x)
