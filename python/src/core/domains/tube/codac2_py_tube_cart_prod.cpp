@@ -22,7 +22,7 @@ using namespace pybind11::literals;
 
 void export_tube_cart_prod(py::module& m)
 {
-  m.def("tube_cart_prod", [](const std::list<py::object>& l) -> SlicedTube<IntervalVector>
+  m.def("tube_cart_prod_list", [](const std::list<py::object>& l) -> SlicedTube<IntervalVector>
       {
         Index n = 0;
         for(const auto& li : l)
