@@ -254,6 +254,18 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
     .def("output_size", &AnalyticFunction<T>::output_size,
       INDEX_ANALYTICFUNCTION_T_OUTPUT_SIZE_CONST)
 
+    .def("nb_args", &AnalyticFunction<T>::nb_args,
+      SIZET_FUNCTIONBASE_E_NB_ARGS_CONST)
+
+    .def("args", [](const AnalyticFunction<T>& f)
+      {
+        std::list<std::shared_ptr<VarBase>> l;
+        for(auto& a : f.args())
+          l.push_back(a);
+        return l;        
+      },
+      CONST_FUNCTIONARGSLIST_REF_FUNCTIONBASE_E_ARGS_CONST)
+
     .def("__call__", [](const AnalyticFunction<T>& f, const ScalarExpr& x)
       {
         return AnalyticExprWrapper<T>(
@@ -293,8 +305,13 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
   {
     exported
 
-      .def("tube_eval", [](const AnalyticFunction<T>& f, const SlicedTube<typename T::Domain>& x1) {
-            return f.tube_eval(x1);
+      .def("tube_eval", [](const AnalyticFunction<T>& f, const py::object& x1) {
+
+            if(!is_instance<SlicedTube<typename T::Domain>>(x1)) {
+              assert_release("tube_eval: invalid tube type");
+            }
+
+            return f.tube_eval(cast<SlicedTube<typename T::Domain>>(x1));
           },
         AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
         "x1"_a)

@@ -170,4 +170,35 @@ void export_SlicedTube(py::module& m, const std::string& name)
       
     ;
   }
+
+  if constexpr(std::is_same_v<T,IntervalVector>)
+  {
+    exported_slicedtubebase_class
+
+      .def(
+          #if FOR_MATLAB
+            "__call__"
+          #else
+            "__getitem__"
+          #endif
+          ,
+          [](const SlicedTube<IntervalVector>& x, Index_type i) -> SlicedTube<Interval>
+          {
+            matlab::test_integer(i);
+            return x[matlab::input_index(i)];
+          },
+        SLICEDTUBE_INTERVAL_SLICEDTUBE_T_OPERATORCOMPO_INDEX_CONST,
+        "i"_a)
+
+      .def("subvector",
+          [](const SlicedTube<IntervalVector>& x, Index_type i, Index_type j) -> SlicedTube<IntervalVector>
+          {
+            matlab::test_integer(i);
+            matlab::test_integer(j);
+            return x.subvector(matlab::input_index(i),matlab::input_index(j));
+          },
+        SLICEDTUBE_INTERVALVECTOR_SLICEDTUBE_T_SUBVECTOR_INDEX_INDEX_CONST,
+        "i"_a, "j"_a)
+    ;
+  }
 }
