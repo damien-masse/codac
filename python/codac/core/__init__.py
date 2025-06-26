@@ -314,7 +314,7 @@ def cart_prod(*args):
       else:
         codac_error("cart_prod: invalid input arguments (c/" + str(mode) + ")")
 
-    elif isinstance(arg, (Interval)):
+    elif isinstance(arg, (Interval)) or (isinstance(arg, list) and not isinstance(arg[0], list)):
       if mode == 1:
         lst.append(IntervalVector([arg]))
       elif mode == 2:
@@ -324,7 +324,7 @@ def cart_prod(*args):
       else:
         codac_error("cart_prod: invalid input arguments (d/" + str(mode) + ")")
 
-    elif isinstance(arg, (list,IntervalVector)):
+    elif isinstance(arg, (list,IntervalVector)) or (isinstance(arg, list) and isinstance(arg[0], list)):
       if mode == 1:
         lst.append(IntervalVector(arg))
       elif mode == 2:
@@ -525,7 +525,10 @@ def fixpoint(contract, *x):
   while vol != prev_vol:
 
     prev_vol = vol
-    x = contract(*x)
+    if isinstance(x, tuple):
+      x = contract(*x)
+    else: # prevent from unpacking
+      x = contract(IntervalVector(x))
 
     vol = 0.0
     for xi in x:
