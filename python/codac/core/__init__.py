@@ -143,7 +143,7 @@ class CtcInverse(Ctc):
 
   def contract(self,*x):
 
-    if len(x) == 1 and isinstance(x[0], IntervalVector):
+    if len(x) == 1:
       return self.c.contract(x[0])
 
     else:
@@ -161,11 +161,11 @@ class CtcInverse(Ctc):
 
   def contract_tube(self,*x):
 
-    if len(x) == 1 and (isinstance(x[0], SlicedTube_IntervalVector) or isinstance(x[0].tube, SlicedTube_IntervalVector)):
+    if len(x) == 1:
       return self.c.contract_tube(x[0])
 
     else:
-      total = tube_cart_prod(x)
+      total = tube_cart_prod(*x)
       total = self.c.contract_tube(total)
       i = 0
       for xi in x:
@@ -314,7 +314,7 @@ def cart_prod(*args):
       else:
         codac_error("cart_prod: invalid input arguments (c/" + str(mode) + ")")
 
-    elif isinstance(arg, (Interval)):
+    elif isinstance(arg, (Interval)) or (isinstance(arg, list) and not isinstance(arg[0], list)):
       if mode == 1:
         lst.append(IntervalVector([arg]))
       elif mode == 2:
@@ -324,7 +324,7 @@ def cart_prod(*args):
       else:
         codac_error("cart_prod: invalid input arguments (d/" + str(mode) + ")")
 
-    elif isinstance(arg, (list,IntervalVector)):
+    elif isinstance(arg, (list,IntervalVector)) or (isinstance(arg, list) and isinstance(arg[0], list)):
       if mode == 1:
         lst.append(IntervalVector(arg))
       elif mode == 2:
@@ -357,6 +357,13 @@ def cart_prod(*args):
     return cart_prod_sep(lst)
   else:
     codac_error("cart_prod: invalid input arguments (h/" + str(mode) + ")")
+
+
+def tube_cart_prod(*x):
+  if not isinstance(x,tuple):
+    return tube_cart_prod_list([x])
+  else:
+    return tube_cart_prod_list([*x])
 
 
 class AnalyticTraj:
@@ -525,16 +532,21 @@ def fixpoint(contract, *x):
   while vol != prev_vol:
 
     prev_vol = vol
-    x = contract(*x)
+    if isinstance(x, tuple):
+      x = contract(*x)
+    else: # prevent from unpacking
+      x = contract(x)
 
-    vol = 0.0
-    for xi in x:
-      w = xi.volume()
-
-      # As infinity is absorbent, this would not
-      # allow us to identify a contraction, so we
-      # exclude these cases:
-      if w != oo:
-        vol += w
+    if not isinstance(x,tuple):
+      vol = x[0].volume()
+    else:
+      vol = 0.0
+      for xi in x:
+        w = xi.volume()
+        # As infinity is absorbent, this would not
+        # allow us to identify a contraction, so we
+        # exclude these cases:
+        if w != oo:
+          vol += w
 
   return x
