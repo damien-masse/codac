@@ -20,6 +20,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx_tabs.tabs',
     'breathe',
+    'sphinx_togglebutton',
 ]
 
 templates_path = ['_templates']
@@ -97,3 +98,6 @@ mathjax3_config = {
 breathe_projects = {
   "codac": "../api/xml"
 }
+
+togglebutton_hint = "<strong style=\"color: #009945;\">Reveal the solution.</strong>"
+togglebutton_hint_hide = "Hide the solution"
