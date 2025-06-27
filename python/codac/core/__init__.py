@@ -132,9 +132,9 @@ class CtcInverse(Ctc_IntervalVector):
           codac_error("CtcInverse: inverse argument 'y' should be a scalar type (float,Interval)")
         self.c = CtcInverse_Interval(f.f,Interval(y),with_centered_form)
       elif isinstance(f.f, AnalyticFunction_Vector):
-        if not isinstance(y, (Vector,IntervalVector,list,CtcIntervalVector)):
-          codac_error("CtcInverse: inverse argument 'y' should be a vector type (Vector,IntervalVector,CtcIntervalVector)")
-        if isinstance(y, CtcIntervalVector):
+        if not isinstance(y, (Vector,IntervalVector,list,Ctc_IntervalVector,Ctc_IntervalVector_)):
+          codac_error("CtcInverse: inverse argument 'y' should be a vector type (Vector,IntervalVector,Ctc_IntervalVector,Ctc_IntervalVector_)")
+        if isinstance(y, (Ctc_IntervalVector,Ctc_IntervalVector_)):
           self.c = CtcInverse_IntervalVector(f,y,with_centered_form)
         else:
           self.c = CtcInverse_IntervalVector(f.f,IntervalVector(y),with_centered_form)
@@ -279,7 +279,7 @@ def cart_prod(*args):
       if mode != 2 and mode != 3:
         mode = 1
 
-    elif isinstance(arg, Ctc_IntervalVector):
+    elif isinstance(arg, (Ctc_IntervalVector,Ctc_IntervalVector_)):
       mode = 2
 
     elif isinstance(arg, (Sep,SepBase)):
@@ -334,7 +334,7 @@ def cart_prod(*args):
       else:
         codac_error("cart_prod: invalid input arguments (e/" + str(mode) + ")")
 
-    elif isinstance(arg, Ctc_IntervalVector):
+    elif isinstance(arg, (Ctc_IntervalVector,Ctc_IntervalVector_)):
       if mode != 2:
         codac_error("cart_prod: invalid input arguments (f/" + str(mode) + ")")
       lst.append(arg)
