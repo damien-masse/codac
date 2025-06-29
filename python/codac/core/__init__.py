@@ -89,10 +89,10 @@ class AnalyticFunction:
     return str(self.f)
 
 
-class Ctc(CtcIntervalVector):
+class Ctc_IntervalVector(Ctc_IntervalVector_):
 
   def __init__(self, n):
-    CtcIntervalVector.__init__(self,n)
+    Ctc_IntervalVector_.__init__(self,n)
 
   def copy(self):
     return super().copy()
@@ -104,7 +104,7 @@ class Sep(SepBase):
     return super().copy()
 
 
-class CtcInverse(Ctc):
+class CtcInverse(Ctc_IntervalVector):
 
   def __init__(self, f, y, with_centered_form = True):
 
@@ -125,16 +125,16 @@ class CtcInverse(Ctc):
       CtcInverse.__init__(self, g, y, with_centered_form)
 
     else:
-      Ctc.__init__(self, f.input_size())
+      Ctc_IntervalVector.__init__(self, f.input_size())
       if isinstance(f.f, AnalyticFunction_Scalar):
         if not (isinstance(y, (int,float,Interval))
                 or (isinstance(y, list) and len(y) > 0 and len(y) <= 2 and isinstance(y[0], (int,float)))):
           codac_error("CtcInverse: inverse argument 'y' should be a scalar type (float,Interval)")
         self.c = CtcInverse_Interval(f.f,Interval(y),with_centered_form)
       elif isinstance(f.f, AnalyticFunction_Vector):
-        if not isinstance(y, (Vector,IntervalVector,list,CtcIntervalVector)):
-          codac_error("CtcInverse: inverse argument 'y' should be a vector type (Vector,IntervalVector,CtcIntervalVector)")
-        if isinstance(y, CtcIntervalVector):
+        if not isinstance(y, (Vector,IntervalVector,list,Ctc_IntervalVector,Ctc_IntervalVector_)):
+          codac_error("CtcInverse: inverse argument 'y' should be a vector type (Vector,IntervalVector,Ctc_IntervalVector,Ctc_IntervalVector_)")
+        if isinstance(y, (Ctc_IntervalVector,Ctc_IntervalVector_)):
           self.c = CtcInverse_IntervalVector(f,y,with_centered_form)
         else:
           self.c = CtcInverse_IntervalVector(f.f,IntervalVector(y),with_centered_form)
@@ -184,10 +184,10 @@ class CtcInverse(Ctc):
     return self.c.function()
 
 
-class CtcInverseNotIn(Ctc):
+class CtcInverseNotIn(Ctc_IntervalVector):
 
   def __init__(self, f, y, with_centered_form = True):
-    Ctc.__init__(self, f.input_size())
+    Ctc_IntervalVector.__init__(self, f.input_size())
     if isinstance(f.f, AnalyticFunction_Scalar):
       if not (isinstance(y, (int,float,Interval))
               or (isinstance(y, list) and len(y) > 0 and len(y) <= 2 and isinstance(y[0], (int,float)))):
@@ -279,7 +279,7 @@ def cart_prod(*args):
       if mode != 2 and mode != 3:
         mode = 1
 
-    elif isinstance(arg, Ctc):
+    elif isinstance(arg, (Ctc_IntervalVector,Ctc_IntervalVector_)):
       mode = 2
 
     elif isinstance(arg, (Sep,SepBase)):
@@ -334,7 +334,7 @@ def cart_prod(*args):
       else:
         codac_error("cart_prod: invalid input arguments (e/" + str(mode) + ")")
 
-    elif isinstance(arg, Ctc):
+    elif isinstance(arg, (Ctc_IntervalVector,Ctc_IntervalVector_)):
       if mode != 2:
         codac_error("cart_prod: invalid input arguments (f/" + str(mode) + ")")
       lst.append(arg)
