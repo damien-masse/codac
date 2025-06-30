@@ -192,7 +192,7 @@ This geometrical constraint is expressed by:
   \end{array}\right),
 
 | where :math:`\rho` and :math:`\theta` are respectively the radial and angular coordinates.
-| We could deal with :math:`\mathcal{L}_\textrm{polar}` by decomposition, but we would lose optimality. Therefore, a dedicated contractor exists to deal with it without decomposition: the ``CtcPolar``.
+| We could deal with :math:`\mathcal{L}_\textrm{polar}` by decomposition, but we would lose optimality. Therefore, a dedicated contractor exists to deal with it without decomposition: the ``CtcPolar``. :ref:`See more <sec-ctc-geom-ctcpolar>`.
 
 This constraint appears in the expression of :math:`\mathbf{g}`.
 
@@ -201,7 +201,36 @@ This constraint appears in the expression of :math:`\mathbf{g}`.
 
   **A.1.** On a sheet of paper, write a decomposition of function :math:`\mathbf{g}` that involves :math:`\mathcal{L}_\textrm{polar}`, other constraints and intermediate variables.
   
-  :download:`See the solution <doc/solution_a1.pdf>`
+  .. container:: toggle, toggle-hidden
+
+    Function :math:`\mathbf{g}` is given as:
+
+    .. math::
+
+      \mathbf{g}(\mathbf{x},\mathbf{y},\mathbf{m})=\left(\begin{array}{c}
+      x_{1}+y_{1}\cdot\cos\left(x_{3}+y_{2}\right)-m_1\\
+      x_{2}+y_{1}\cdot\sin\left(x_{3}+y_{2}\right)-m_2
+      \end{array}\right).
+
+    and can be decomposed as:
+
+    - external variables: :math:`\mathbf{x}\in\mathbb{R}^3`, :math:`\mathbf{y}\in\mathbb{R}^2`, :math:`\mathbf{m}\in\mathbb{R}^2`
+
+    - intermediate variables: :math:`a\in\mathbb{R}`, :math:`\mathbf{d}\in\mathbb{R}^2`
+
+    - constraints:
+
+    .. math::
+
+      \left\{ \begin{array}{rl}
+      (i) & \mathcal{L}_\textrm{polar}\big(d_1,d_2,y_1,a\big):~~~\mathbf{d}=y_1\cdot\left(\hspace{-0.1cm}\begin{array}{c}
+      ~\cos(a)~\\
+      ~\sin(a)~
+      \end{array}\hspace{-0.1cm}\right)\\
+      (ii) & d_1 = m_1-x_1 \\
+      (iii) & d_2 = m_2-x_2 \\
+      (iv) & a=x_3+y_2
+      \end{array}\right.
 
 
 Initialization
