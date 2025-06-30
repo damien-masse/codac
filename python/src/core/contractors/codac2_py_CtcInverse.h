@@ -59,7 +59,7 @@ void export_CtcInverse(py::module& m, const std::string& export_name, py::class_
             assert_release("contract_tube: invalid tube type");
           }
 
-          c.contract(cast<SlicedTube<IntervalVector>>(x1));
+          c.contract_tube(cast<SlicedTube<IntervalVector>>(x1));
           return x1;
         },
       VIRTUAL_VOID_CTCBASE_X_CONTRACT_SLICEDTUBE_X_REF_VARIADIC_CONST,
