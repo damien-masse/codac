@@ -64,6 +64,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_IntervalMatrix.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_IntervalRow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/codac2_IntervalVector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/modulo/codac2_IModulo.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/modulo/codac2_IModulo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_Paving.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_Paving.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_PavingNode.h
