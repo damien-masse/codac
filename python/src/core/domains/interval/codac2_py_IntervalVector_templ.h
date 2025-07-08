@@ -79,7 +79,7 @@ void export_IntervalVector_(py::module& m, py::class_<IV>& pyclass)
             (*iv)[i] = v[i];
           return iv;
         }),
-      MATRIX_ADDONS_INTERVALVECTOR_MATRIX_CONST_INITIALIZER_LIST_INTERVAL_REF,
+      MATRIX_ADDONS_INTERVALVECTOR_MATRIX_INITIALIZER_LIST_INTERVAL,
       "v"_a)
 
     .def("complementary", [](const IV& x) { return x.complementary(); },

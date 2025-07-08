@@ -18,9 +18,9 @@
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
-template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
-  requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
-Matrix(const std::initializer_list<double>& l)
+template<typename T,typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
+  requires (std::is_arithmetic_v<T> && IsIntervalDomain<U> && IsVectorOrRow<R,C>)
+Matrix(std::initializer_list<T> l)
   : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : l.size(), C == 1 ? 1 : l.size())
 {
   assert_release(!std::empty(l));
@@ -31,7 +31,7 @@ Matrix(const std::initializer_list<double>& l)
 
 template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
   requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
-Matrix(const std::initializer_list<std::initializer_list<double>>& l)
+Matrix(std::initializer_list<std::initializer_list<double>> l)
   : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : l.size(), C == 1 ? 1 : l.size())
 {
   assert_release(!std::empty(l));
@@ -42,7 +42,7 @@ Matrix(const std::initializer_list<std::initializer_list<double>>& l)
 
 template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
   requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
-Matrix(const std::initializer_list<codac2::Interval>& l)
+Matrix(std::initializer_list<codac2::Interval> l)
   : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : l.size(), C == 1 ? 1 : l.size())
 {
   assert_release(!std::empty(l));
