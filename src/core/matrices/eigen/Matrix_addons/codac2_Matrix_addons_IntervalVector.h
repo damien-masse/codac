@@ -21,10 +21,7 @@
 template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
   requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
 Matrix(const std::initializer_list<double>& l)
-  : Matrix<codac2::Interval,R,C>(
-    [&]() -> int { if(R == 1) return 1; else return l.size(); }(),
-    [&]() -> int { if(C == 1) return 1; else return l.size(); }()
-  )
+  : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : l.size(), C == 1 ? 1 : l.size())
 {
   assert_release(!std::empty(l));
   Index i = 0;
@@ -35,10 +32,7 @@ Matrix(const std::initializer_list<double>& l)
 template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
   requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
 Matrix(const std::initializer_list<std::initializer_list<double>>& l)
-  : Matrix<codac2::Interval,R,C>(
-    [&]() -> int { if(R == 1) return 1; else return l.size(); }(),
-    [&]() -> int { if(C == 1) return 1; else return l.size(); }()
-  )
+  : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : l.size(), C == 1 ? 1 : l.size())
 {
   assert_release(!std::empty(l));
   Index i = 0;
@@ -49,10 +43,7 @@ Matrix(const std::initializer_list<std::initializer_list<double>>& l)
 template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
   requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
 Matrix(const std::initializer_list<codac2::Interval>& l)
-  : Matrix<codac2::Interval,R,C>(
-    [&]() -> int { if(R == 1) return 1; else return l.size(); }(),
-    [&]() -> int { if(C == 1) return 1; else return l.size(); }()
-  )
+  : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : l.size(), C == 1 ? 1 : l.size())
 {
   assert_release(!std::empty(l));
   Index i = 0;
@@ -63,11 +54,7 @@ Matrix(const std::initializer_list<codac2::Interval>& l)
 template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
   requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
 Matrix(int n, const double bounds[][2])
-  : Matrix<codac2::Interval,R,C>(
-    [&]() -> int { if(R == 1) return 1; else return n; }(),
-    [&]() -> int { if(C == 1) return 1; else return n; }(),
-    bounds
-  )
+  : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : n, C == 1 ? 1 : n, bounds)
 {
   assert_release(n > 0);
 }
