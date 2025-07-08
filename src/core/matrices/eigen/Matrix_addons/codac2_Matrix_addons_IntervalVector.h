@@ -18,8 +18,8 @@
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
-template<typename T,typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
-  requires (std::is_arithmetic_v<T> && IsIntervalDomain<U> && IsVectorOrRow<R,C>)
+template<typename T,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
+  requires (std::is_arithmetic_v<T> && IsIntervalDomain<Scalar> && IsVectorOrRow<R,C>)
 Matrix(std::initializer_list<T> l)
   : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : l.size(), C == 1 ? 1 : l.size())
 {
@@ -29,8 +29,8 @@ Matrix(std::initializer_list<T> l)
     (*this)[i++] = codac2::Interval(li);
 }
 
-template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
-  requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
+template<int R=RowsAtCompileTime,int C=ColsAtCompileTime>
+  requires IsIntervalDomain<Scalar> && IsVectorOrRow<R,C>
 Matrix(std::initializer_list<std::initializer_list<double>> l)
   : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : l.size(), C == 1 ? 1 : l.size())
 {
@@ -40,8 +40,8 @@ Matrix(std::initializer_list<std::initializer_list<double>> l)
     (*this)[i++] = codac2::Interval(li);
 }
 
-template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
-  requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
+template<int R=RowsAtCompileTime,int C=ColsAtCompileTime>
+  requires IsIntervalDomain<Scalar> && IsVectorOrRow<R,C>
 Matrix(std::initializer_list<codac2::Interval> l)
   : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : l.size(), C == 1 ? 1 : l.size())
 {
@@ -51,16 +51,16 @@ Matrix(std::initializer_list<codac2::Interval> l)
     (*this)[i++] = li;
 }
 
-template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
-  requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
+template<int R=RowsAtCompileTime,int C=ColsAtCompileTime>
+  requires IsIntervalDomain<Scalar> && IsVectorOrRow<R,C>
 Matrix(int n, const double bounds[][2])
   : Matrix<codac2::Interval,R,C>(R == 1 ? 1 : n, C == 1 ? 1 : n, bounds)
 {
   assert_release(n > 0);
 }
 
-template<typename U=Scalar,int R=RowsAtCompileTime,int C=ColsAtCompileTime>
-  requires IsIntervalDomain<U> && IsVectorOrRow<R,C>
+template<int R=RowsAtCompileTime,int C=ColsAtCompileTime>
+  requires IsIntervalDomain<Scalar> && IsVectorOrRow<R,C>
 inline static auto empty(Index n)
 {
   assert_release(n >= 0);
