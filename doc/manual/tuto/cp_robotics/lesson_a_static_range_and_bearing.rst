@@ -109,7 +109,6 @@ where :math:`a,b,\dots,e` are intermediate variables used for the decomposition.
   .. code-tab:: c++
 
     #include <codac>
-
     using namespace codac2;
 
     // Symbolic variables:
