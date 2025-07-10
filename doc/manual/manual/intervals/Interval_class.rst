@@ -3,6 +3,8 @@
 The Interval class
 ==================
 
+  Main author: `Simon Rohou <https://www.simon-rohou.fr/research/>`_
+
 The ``Interval`` class represents closed and connected subsets of :math:`\mathbb{R}`.
 It is based on the ``gaol::interval`` structure and extends it with many utility methods.
 
@@ -15,23 +17,21 @@ You can also create degenerate intervals, unbounded intervals, or intervals from
 
 .. tabs::
 
-  .. code-tab:: py
+  .. group-tab:: Python
 
-    x = Interval(3, 5)                          # [3.0, 5.0]
-    x = Interval(4.2)                           # [4.2, 4.2]
-    x = Interval()                              # [-∞, ∞]
-    x = Interval(-oo, -10)                      # [-∞, -10]
-    x = Interval([2.0, -3.0])                   # [-3.0, 2.0]
-    x = Interval([3.14])                        # [3.14, 3.14]
+    .. literalinclude:: src.py
+      :language: py
+      :start-after: [interval-class-1-beg]
+      :end-before: [interval-class-1-end]
+      :dedent: 4
 
-  .. code-tab:: c++
+  .. group-tab:: C++
 
-    Interval x(3, 5);                           // [3.0, 5.0]
-    Interval x(4.2);                            // [4.2, 4.2]
-    Interval x;                                 // [-∞, ∞]
-    Interval x(-oo, -10);                       // [-∞, -10]
-    Interval x(std::array<double,2>{2.0, -3.0}); // [-3.0, 2.0]
-    Interval x(std::array<double,1>{3.14});     // [3.14, 3.14]
+    .. literalinclude:: src.cpp
+      :language: c++
+      :start-after: [interval-class-1-beg]
+      :end-before: [interval-class-1-end]
+      :dedent: 4
 
   .. code-tab:: matlab
 
@@ -50,25 +50,21 @@ Some common intervals are predefined:
 
 .. tabs::
 
-  .. code-tab:: py
+  .. group-tab:: Python
 
-    x = Interval()                              # [-∞,∞] (default value)
-    x = Interval.empty()                        # ∅
-    x = Interval.pi()                           # [π]
-    x = Interval.two_pi()                       # [2π]
-    x = Interval.half_pi()                      # [π/2]
-    x = Interval.zero()                         # [0]
-    x = Interval.one()                          # [1]
+    .. literalinclude:: src.py
+      :language: py
+      :start-after: [interval-class-2-beg]
+      :end-before: [interval-class-2-end]
+      :dedent: 4
 
-  .. code-tab:: c++
+  .. group-tab:: C++
 
-    Interval x;                                 // [-∞,∞] (default value)
-    Interval x = Interval::empty();             // ∅
-    Interval x = Interval::pi();                // [π]
-    Interval x = Interval::two_pi();            // [2π]
-    Interval x = Interval::half_pi();           // [π/2]
-    Interval x = Interval::zero();              // [0]
-    Interval x = Interval::one();               // [1]
+    .. literalinclude:: src.cpp
+      :language: c++
+      :start-after: [interval-class-2-beg]
+      :end-before: [interval-class-2-end]
+      :dedent: 4
 
   .. code-tab:: matlab
 
@@ -86,15 +82,21 @@ Some common intervals are predefined:
 
   .. tabs::
     
-    .. code-tab:: py
+    .. group-tab:: Python
 
-      x = Interval.pi()                           # [π]
-      # x = [3.141592653589793, 3.141592653589794]
+      .. literalinclude:: src.py
+        :language: py
+        :start-after: [interval-class-3-beg]
+        :end-before: [interval-class-3-end]
+        :dedent: 4
 
-    .. code-tab:: c++
+    .. group-tab:: C++
 
-      Interval x = Interval::pi();                // [π]
-      // x = [3.141592653589793, 3.141592653589794]
+      .. literalinclude:: src.cpp
+        :language: c++
+        :start-after: [interval-class-3-beg]
+        :end-before: [interval-class-3-end]
+        :dedent: 4
 
     .. code-tab:: matlab
     
@@ -111,27 +113,21 @@ You can access key interval properties:
 
 .. tabs::
 
-  .. code-tab:: py
+  .. group-tab:: Python
 
-    x.lb()      # lower bound
-    x.ub()      # upper bound
-    x.mid()     # midpoint
-    x.rad()     # radius
-    x.diam()    # diameter
-    x.mag()     # magnitude
-    x.mig()     # mignitude
-    x.size()    # dimension (always 1)
+    .. literalinclude:: src.py
+      :language: py
+      :start-after: [interval-class-4-beg]
+      :end-before: [interval-class-4-end]
+      :dedent: 4
 
-  .. code-tab:: c++
+  .. group-tab:: C++
 
-    x.lb();     // lower bound
-    x.ub();     // upper bound
-    x.mid();    // midpoint
-    x.rad();    // radius
-    x.diam();   // diameter
-    x.mag();    // magnitude
-    x.mig();    // mignitude
-    x.size();   // dimension (always 1)
+    .. literalinclude:: src.cpp
+      :language: c++
+      :start-after: [interval-class-4-beg]
+      :end-before: [interval-class-4-end]
+      :dedent: 4
 
   .. code-tab:: matlab
 
@@ -167,23 +163,21 @@ All standard arithmetic operations are supported, both element-wise and with rea
 
 .. tabs::
 
-  .. code-tab:: py
+  .. group-tab:: Python
 
-    x = Interval(2,3)
-    y = Interval(1,2)
-    z = x + y              # [3, 5]
-    z = x - 1              # [1, 2]
-    z = 2 * x              # [4, 6]
-    z = x / y              # [1, 3]
+    .. literalinclude:: src.py
+      :language: py
+      :start-after: [interval-class-5-beg]
+      :end-before: [interval-class-5-end]
+      :dedent: 4
 
-  .. code-tab:: c++
+  .. group-tab:: C++
 
-    Interval x(2,3);
-    Interval y(1,2);
-    Interval z = x + y;    // [3, 5]
-    z = x - 1;             // [1, 2]
-    z = 2 * x;             // [4, 6]
-    z = x / y;             // [1, 3]
+    .. literalinclude:: src.cpp
+      :language: c++
+      :start-after: [interval-class-5-beg]
+      :end-before: [interval-class-5-end]
+      :dedent: 4
 
   .. code-tab:: matlab
 
@@ -227,19 +221,21 @@ Mathematical functions such as :math:`\sin`, :math:`\cos`, :math:`\exp`, :math:`
 
 .. tabs::
 
-  .. code-tab:: py
+  .. group-tab:: Python
 
-    x = Interval.half_pi()
-    x |= 0               # x = [0, π/2]
-    y = sin(x)           # y = [0, 1]
-    z = exp(x)           # z = [1, e^(π/2)]
+    .. literalinclude:: src.py
+      :language: py
+      :start-after: [interval-class-6-beg]
+      :end-before: [interval-class-6-end]
+      :dedent: 4
 
-  .. code-tab:: c++
+  .. group-tab:: C++
 
-    Interval x = Interval::half_pi();
-    x |= 0;                  // x = [0, π/2]
-    Interval y = sin(x);     // y = [0, 1]
-    Interval z = exp(x);     // z = [1, e^(π/2)]
+    .. literalinclude:: src.cpp
+      :language: c++
+      :start-after: [interval-class-6-beg]
+      :end-before: [interval-class-6-end]
+      :dedent: 4
 
   .. code-tab:: matlab
 
@@ -256,9 +252,11 @@ Literals
 
 In C++, a user-defined literal is provided in C++ to construct an interval directly from a floating-point number:
 
-.. code-block:: c++
-
-  Interval x = 2.5_i;  // [2.5, 2.5]
+.. literalinclude:: src.cpp
+  :language: c++
+  :start-after: [interval-class-6b-beg]
+  :end-before: [interval-class-6b-end]
+  :dedent: 4
 
 
 Floating-point adjacency
@@ -272,17 +270,28 @@ These functions are useful in the context of interval arithmetic to tightly cont
 
 .. tabs::
 
-  .. code-tab:: py
+  .. group-tab:: Python
 
-    x = previous_float(1.0)
-    # x = 0.9999999999999999
+    .. literalinclude:: src.py
+      :language: py
+      :start-after: [interval-class-7-beg]
+      :end-before: [interval-class-7-end]
+      :dedent: 4
 
-  .. code-tab:: c++
+  .. group-tab:: C++
 
-    double x = previous_float(1.0);
-    // x = 0.9999999999999999
+    .. literalinclude:: src.cpp
+      :language: c++
+      :start-after: [interval-class-7-beg]
+      :end-before: [interval-class-7-end]
+      :dedent: 4
 
   .. code-tab:: matlab
 
     x = previous_float(1.0);
     % x = 0.9999999999999999
+
+
+.. admonition:: Technical documentation
+
+  See the `C++ API documentation of this class <../../../api/html/classcodac2_1_1_interval.html>`_.
