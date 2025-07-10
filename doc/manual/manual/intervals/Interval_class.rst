@@ -43,6 +43,11 @@ You can also create degenerate intervals, unbounded intervals, or intervals from
     x = Interval([3.14])                        % [3.14, 3.14]
 
 
+.. note::
+
+  Note that in Codac, the value *positive infinity* is represented by the constant ``oo`` (and ``-oo`` for negative infinity). One possible implementation of this constant is ``std::numeric_limits<double>::infinity()`` in C++, or ``math.inf`` in Python. Therefore, the declarations ``Interval()`` and ``Interval(-oo,oo)`` are equivalent.
+
+
 Predefined constants
 --------------------
 
