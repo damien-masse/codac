@@ -44,6 +44,8 @@
 ################################################################################
 # Compilation configuration
 ################################################################################
+  
+  include(FetchContent)
 
   if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
@@ -133,9 +135,19 @@
 # Looking for Eigen3
 ################################################################################
 
-  add_subdirectory(3rd/eigen)
-  message(STATUS "Found Eigen3 version ${Eigen3_VERSION}")
-  add_definitions(${EIGEN3_DEFINITIONS})
+  option(ENABLE_FIND_PACKAGE_EIGEN3 "ENABLE_FIND_PACKAGE_EIGEN3" OFF)
+  if(ENABLE_FIND_PACKAGE_EIGEN3)
+    find_package(Eigen3 3.4.0 QUIET) # Use Eigen3_DIR or CMAKE_PREFIX_PATH to specify a custom Eigen3 installation path...
+  endif()
+  if(Eigen3_FOUND)
+    message(STATUS "Found Eigen3 version ${Eigen3_VERSION} in ${Eigen3_DIR}")
+  else()
+    message(STATUS "Attempt to install custom Eigen3 automatically...")
+    FetchContent_Declare(Eigen3 URL https://github.com/codac-team/eigen/archive/refs/heads/master.zip)
+    #FetchContent_Declare(Eigen3 URL ${CMAKE_CURRENT_SOURCE_DIR}/3rd/eigen-a0dc3994bd5d4e804dab58decb78c56a5af516ba.zip) # If needed to be self-contained...
+    FetchContent_MakeAvailable(Eigen3)
+  endif()
+  # Adds Eigen3::Eigen
 
 
 ################################################################################
