@@ -109,7 +109,7 @@ file(COPY
   ${CMAKE_BINARY_DIR}/python/python_package/codac/tests
 )
 
-set(CODAC_LIBRARIES ${PROJECT_NAME}-core)
+set(CODAC_LIBRARIES ${PROJECT_NAME}-core ${PROJECT_NAME}-graphics)
 
 # CAPD test
 if (WITH_CAPD)
