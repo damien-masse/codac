@@ -754,8 +754,7 @@ inline bool has_integer_bounds() const
 {
   for(Index i = 0 ; i < this->rows() ; i++)
     for(Index j = 0 ; j < this->cols() ; j++)
-      if(trunc((*this)(i,j).lb()) != (*this)(i,j).lb()
-        || trunc((*this)(i,j).ub()) != (*this)(i,j).ub())
+      if(!(*this)(i,j).has_integer_bounds())
         return false;
   return true;
 }
