@@ -80,7 +80,7 @@ jobs:
         fi && \
         mkdir build ; cd build && \
         cmake -E env CXXFLAGS="${{ matrix.cfg.cmake_flags }}" CFLAGS="${{ matrix.cfg.cmake_flags }}" cmake ${{ matrix.cfg.cmake_params }} -D BUILD_TESTS=ON -D CMAKE_INSTALL_PREFIX="../codac" .. && \
-        cmake --build . -j 4 --config Debug --target install && \
+        cmake --build . -j 4 --config Release --target install && \
         cd .. && \
         zip -q -r codac_${{ matrix.cfg.arch }}_${{ matrix.cfg.runtime }}.zip codac && \
         mkdir -p codac_standalone/example ; cd codac_standalone && \
@@ -103,7 +103,7 @@ jobs:
         else \
         sudo cp -Rf codac/* /usr/local/ ; \
         fi && \
-        cd build && ctest -C Debug -V --output-on-failure && \
+        cd build && ctest -C Release -V --output-on-failure && \
         cd .. && \
         rm -Rf codac && \
         cd tests/test_codac && \
