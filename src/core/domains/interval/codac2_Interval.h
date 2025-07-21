@@ -315,6 +315,13 @@ namespace codac2
       bool is_integer() const;
 
       /**
+       * \brief Checks whether the interval has integer lower and upper bounds.
+       *
+       * \return ``true`` if this has integer lower and upper bounds; ``false`` otherwise.
+       */
+      bool has_integer_bounds() const;
+
+      /**
        * \brief Tests if this and x intersect
        * 
        * \param x the other interval
