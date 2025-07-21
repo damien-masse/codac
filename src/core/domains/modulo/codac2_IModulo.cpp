@@ -24,7 +24,7 @@ using namespace codac2;
 
 /* utility function : test of inclusion 
    x + k b \in [A]b with k \in Z and b in [B]
-   (ie [A] - x/[B] contains k with k in Z
+   (ie [A] - x/[B] contains k with k in Z )
    2 cases : k exists, returns true and the value of k (smallest absolute value)
              k does not exist, returns false and k (non-integral) 
 	     with x + kb \in [A]b (that is, x/[B] + k intersects [A])
@@ -62,24 +62,22 @@ bool IModulo::interior_contains_k(double x, double &k) const {
 }
 
 /* utility function :
-   from two intervals A and B, compute
-   A+kB such that (A+kB).mid() in [-B.lb()/2, B.ub()/2] 
+   from A, compute A+k such that (A+k).mid() in ]-0.5,0.5]
    exceptions :
-       A must not be empty, B must satisfy B.lb>0.0
-       if A.diam() >= B.lb() (or (A+kB).diam() >= B.lb()), then
+       A must not be empty
+       if A.diam() >= 1.0 
          A = [-oo,oo]
-         (we may be more precise, but it is computationally costly
-         and most probably useless)
 */      
-static void center_interval(Interval &A, const Interval &B) {
+static void center_interval(Interval &A) {
    if (A.diam()>=1.0) {  A.init();  return; }
    double mid=A.mid();
+   if (mid<=0.5 && mid>-0.5) return;
    double kint;
    double mfrac=std::modf(mid,&kint);
-   if (mfrac<=-0.5) kint+=1.0;
-   else if (mfrac>0.5) kint-=1.0;
+   if (mfrac<=-0.5) kint-=1.0;
+   else if (mfrac>0.5) kint+=1.0;
    A -= kint;
-   if (A.diam()>=0.5) { A.init(); } /* I'm not sure it can happen */
+   if (A.diam()>=1.0) { A.init(); } /* I'm not sure it can happen */
 }
 
 
@@ -87,27 +85,23 @@ static void center_interval(Interval &A, const Interval &B) {
 void IModulo::recenter() {
    if (this->is_empty()) return;
    if (this->is_full()) return;
-   center_interval(this->A,this->B);
+   center_interval(this->A);
 }
 
 IModulo IModulo::join_close(const Interval &A1, const Interval &A2,
     const Interval &B) {
     double mA1 = A1.mid();
     double mA2 = A2.mid();
-    if (mA1-mA2 > 0.5*B.ub()) { /* either A1-B, or A2+B ? */
-       Interval E1 = A1 | (A2+B);
-       if (E1.mid()>0.5*B.ub()) {
-          return IModulo((A1-B) | A2, B);
-       } 
-       return IModulo(E1,B);
-    } else if (mA1-mA2 < -0.5*B.ub()) {
-       Interval E1 = (A1+B) | A2;
-       if (E1.mid()>0.5*B.ub()) {
-          return IModulo(A1 | (A2-B), B);
-       } 
-       return IModulo(E1,B);
+    if (mA1-mA2 > 0.5) { /* either A1-1, or A2+1 */
+       if (A1.lb()<=-A2.ub()) /* A1 | A2+1 */
+          return IModulo::from_ratio(A1 | (A2+1.0),B);
+       return IModulo::from_ratio((A1-1.0) | A2,B);
+    } else if (mA1-mA2 < -0.5) {
+       if (A2.lb()<=-A1.ub()) /* A2 | A1+1 */
+          return IModulo::from_ratio(A2 | (A1+1.0),B);
+       return IModulo::from_ratio((A2-1.0) | A1,B);
     } else {
-       return IModulo(A1|A2, B);
+       return IModulo::from_ratio(A1|A2, B);
     }
 }
 
@@ -130,6 +124,14 @@ IModulo::IModulo(const Interval &a, const Interval &b) : A(a/b), B(b) {
 }
 
 IModulo::IModulo(const IModulo& x) : A(x.A), B(x.B) {
+}
+
+IModulo IModulo::from_ratio(const Interval &A, const Interval &B) {
+    IModulo build;
+    build.A=A;
+    build.B=B;
+    build.recenter();
+    return build;
 }
 
 IModulo& IModulo::init() {
@@ -187,7 +189,7 @@ double IModulo::ub() const { return this->get_range().ub(); }
 double IModulo::mid() const { return this->get_range().mid(); }
 double IModulo::rad() const { return (this->A*this->B.ub()).rad(); }
 double IModulo::diam() const { return (this->A*this->B.ub()).diam(); }
-double IModulo::volume() const { return this.diam(); }
+double IModulo::volume() const { return this->diam(); }
 Index IModulo::size() const { return 1; }
 
 void IModulo::set_empty() { this->A.set_empty(); }
@@ -212,10 +214,12 @@ bool IModulo::is_degenerated() const {
 bool IModulo::intersects(const IModulo& x) const {
   if (this->is_empty() || x.is_empty()) return false;
   if (this->is_full() || x.is_full()) return true;
-  Interval B2 = this->B & x.B;
-  if (B2.is_empty()) return false;
-  double dummy;
-  return contains_k_util(x.A-this->A,B2,0.0,dummy);
+  if (this->B.is_disjoint(x.B)) return false;
+  if (this->A.lb()>x.A.ub()) {
+     return (this->A.intersects(x.A+1.0));
+  } else if (this->A.ub()<x.A.lb()) {
+     return (this->A.intersects(x.A-1.0));
+  } else return true;
 }
 
 bool IModulo::is_disjoint(const IModulo& x) const {
@@ -226,43 +230,39 @@ bool IModulo::overlaps(const IModulo& x) const {
   if (this->is_empty() || x.is_empty()) return false;
   if (this->is_full()) return !x.is_degenerated();
   if (x.is_full()) return !this->is_degenerated();
-  Interval B2 = this->B & x.B;
-  if (B2.is_empty()) return false;
-  if (x.is_degenerated() || this->is_degenerated()) return false;
-  double dummy;
-  return interior_contains_k_util(x.A-this->A,B2,0.0,dummy);
+  if (this->B.is_disjoint(x.B)) return false;
+  if (this->A.lb()>=x.A.ub()) {
+     return (this->A.overlaps(x.A+1.0));
+  } else if (this->A.ub()<=x.A.lb()) {
+     return (this->A.overlaps(x.A-1.0));
+  } else return true;
 }
 
 bool IModulo::is_subset(const IModulo& x) const {
   if (this->is_empty() || x.is_full()) return true;
   if (this->is_full() || x.is_empty()) return false;
   if (!this->B.is_subset(x.B)) return false;
-  double k;
-  if (!contains_k_util(x.A,this->B,this->A.lb(),k)) return false;
-  double y = (x.A-k*this->B).ub();
-  if (y>=this->A.ub()) return true;
-  return ((x.A-(k-1)*this->B).lb()<=y);
-      /* we know that (x.A-(k-1)*this->B).ub() > this->A.ub() because
-              a) (x.A-k*this->B).ub() >= this->A.lb()
-              b) this->A.lb + this->B.lb() > this->A.ub() (this not full)
-              c) (x.A-(k-1)*this->B).ub() >= (x.A-k*this->B).ub()+this->B.lb()
-      */
+  if (this->A.is_subset(x.A)) return true;
+  if (this->A.is_subset(x.A+1.0)) return true;
+  return (this->A.is_subset(x.A-1.0));
 }
 
 bool IModulo::is_strict_subset(const IModulo& x) const {
-  return (this->is_subset(x) && !x.is_subset(*this));
+  if (this->is_empty() || x.is_full()) return true;
+  if (this->is_full() || x.is_empty()) return false;
+  if (!this->B.is_subset(x.B)) return false;
+  if (this->A.is_strict_subset(x.A)) return true;
+  if (this->A.is_subset(x.A+1.0)) return true;
+  return (this->A.is_subset(x.A-1.0));
 }
 
 bool IModulo::is_interior_subset(const IModulo& x) const {
   if (this->is_empty() || x.is_full()) return true;
   if (this->is_full() || x.is_empty()) return false;
   if (!this->B.is_subset(x.B)) return false;
-  double k;
-  if (x.is_degenerated()) return false;
-  if (!interior_contains_k_util(x.A,this->B,this->A.lb(),k)) return false;
-  double y = (x.A-k*this->B).ub();
-  if (y>this->A.ub()) return true;
-  return ((x.A-(k-1)*this->B).lb()<y);
+  if (this->A.is_interior_subset(x.A)) return true;
+  if (this->A.is_interior_subset(x.A+1.0)) return true;
+  return (this->A.is_interior_subset(x.A-1.0));
 }
 
 bool IModulo::is_superset(const IModulo& x) const {
@@ -275,8 +275,8 @@ bool IModulo::is_strict_superset(const IModulo& x) const {
 
 IModulo& IModulo::inflate(const double& rad) {
   if (this->is_empty() || this->is_full()) return (*this);
-  this->A.inflate(rad);
-  if (this->A.diam()>=B.lb()) this->set_full();
+  this->A.inflate((rad/this->B).ub());
+  if (this->A.diam()>=1.0) this->set_full();
   return (*this);
 }
 
@@ -292,26 +292,24 @@ std::pair<IModulo,IModulo> IModulo::bisect(float ratio) const {
 
   std::pair<Interval,Interval> apair;
   if (this->is_full()) {
-     double m = -0.5*B.lb()+ratio*B.mid();
-     apair.first = Interval(-0.5*B.lb(),m);
-     apair.second = Interval(m,0.5*B.ub());
+     apair=Interval(-0.5,0.5).bisect(ratio);
   } else {
      apair=this->A.bisect(ratio);
   }
-  return { IModulo(apair.first,this->B), IModulo(apair.second,this->B) };
+  return { IModulo::from_ratio(apair.first,this->B),
+	   IModulo::from_ratio(apair.second,this->B) };
 }
 
 IModulo IModulo::complementary() const {
   if (this->is_empty()) return IModulo(Interval(),this->B);
   if (this->is_full()) return IModulo::empty(this->B);
   /* using the sign of A.mid */
-  if (this->A.mid()>B.rad()) {
-     Interval A2 ((this->A.ub()-B).lb(),A.lb());
-     return IModulo(A2,this->B); /* new mid :
-				   A.mid()-B.ub()/2 which is > -B.lb()/2 */
+  if (this->A.mid()>0.0) {
+     Interval A2 ((this->A-1.0).ub(),A.lb());
+     return IModulo::from_ratio(A2,this->B); /* new mid : A.mid()-0.5 */
   } else {
-     Interval A2 (A.ub(),(this->A.lb()+B).ub());
-     return IModulo(A2,this->B); /* no centering needed in the exact case */
+     Interval A2 (A.ub(),(this->A+1.0).lb());
+     return IModulo::from_ratio(A2,this->B); /* new mid : A.mid()+0.5 */
   }
 }
 
@@ -321,24 +319,61 @@ std::vector<IModulo> IModulo::diff(const IModulo& y, bool compactness) const {
   if (this->is_full()) return { y.complementary() }; /* we know y.B.lb>0 */
   Interval B2 = this->B & y.B;
   if (B2.is_empty()) return { };
-  double k;
-  if (contains_k_util(y.A,B2,this->A.lb(),k)) {
-      double z = (y.A-k*B2).ub();
-      if (z>=this->A.ub()) return { };
-      double z2 = (y.A-(k-1)*B2).lb();
-      if (z2<=z) return { };
-      if (z2>this->A.ub()) z2=this->A.ub();
-      return { IModulo(Interval(z,z2),B2) };
-  } else {
-      k = std::floor(k);
-      Interval C = y.A-k*B2;
-      std::vector<Interval> res = this->A.diff(C, compactness);
-      std::vector<IModulo> ret;
-      for (const auto &i : res) {
-          ret.push_back(IModulo(i,B2));
-      }
-      return ret;
-  }
+  if (y.A.lb()<=this->A.lb()) {
+     if (y.A.ub()<=this->A.lb()) {
+       Interval yA = y.A+1.0; /* Warning: use "inner" sum */
+       if (yA.lb()<this->A.ub()) {
+          if (yA.lb()<=this->A.lb()) /* A subset yA (Va) */
+             return { };
+          else 
+          if (yA.ub()<this->A.ub()) { /* A superset yA (VIa) */
+             if (compactness) return { IModulo::from_ratio(this->A,B2) };
+             return { IModulo::from_ratio(Interval(this->A.lb(),yA.lb()),B2),
+                      IModulo::from_ratio(Interval(yA.ub(),this->A.ub()),B2) };
+          }
+          else /* yA intersects A ( IVa ) */
+          return { IModulo::from_ratio(Interval(this->A.lb(),yA.lb()),B2) };
+       } else /* disjoint (Ia) */
+          return { IModulo::from_ratio(this->A,B2) };
+     } 
+     else if (y.A.ub()<this->A.ub()) {
+       Interval yA = y.A+1.0; /* Warning: use "inner" sum */
+       if (yA.lb()<=this->A.ub()) /* double intersection (IIIa) */
+           return { IModulo::from_ratio(Interval(y.A.ub(),yA.lb()),B2) };
+       else /* y.A intersects A (IIa) */
+           return { IModulo::from_ratio(Interval(y.A.ub(),this->A.ub()),B2) };
+     } else  /* A subset y.A (Vc) */
+        return { };
+   } else {
+     if (y.A.lb()<this->A.ub()) {
+        if (y.A.ub()<this->A.ub()) { /* A superset y.A (VIc) */
+           if (compactness) return { IModulo::from_ratio(this->A,B2) };
+           return { IModulo::from_ratio(Interval(this->A.lb(),y.A.lb()),B2),
+                    IModulo::from_ratio(Interval(y.A.ub(),this->A.ub()),B2) };
+        } else {
+           Interval yA = y.A-1.0; /* Warning: use "inner" sum */
+           if (yA.ub()<=this->A.lb()) /* y.A intersects A (IVb) */
+              return { IModulo::from_ratio(Interval(this->A.lb(),y.A.lb()),B2) };
+           else { /* double intersection (IIIb) */
+              return { IModulo::from_ratio(Interval(yA.ub(),y.A.lb()),B2) };
+           }
+        }
+     } else {
+        Interval yA = y.A-1.0; /* Warning: use "inner" sum */
+        if (yA.ub()<=this->A.lb()) /* disjoint (Ib) */
+           return { IModulo::from_ratio(this->A,B2) };
+        else if (yA.ub()<this->A.ub()) {
+           if (yA.lb()<=this->A.lb()) { /* yA intersects A (IIb) */
+               return { IModulo::from_ratio(Interval(yA.ub(),this->A.ub()),B2) };
+           } else { /* A superset yA (VIb) */
+              if (compactness) return { IModulo::from_ratio(this->A,B2) };
+              return { IModulo::from_ratio(Interval(this->A.lb(),y.A.lb()),B2),
+                       IModulo::from_ratio(Interval(y.A.ub(),this->A.ub()),B2) };
+           }
+        } else /* A subset yA (Vb) */
+           return { };
+     }   
+   }
 }
 
 std::vector<IModulo> IModulo::meet(const IModulo& y, bool compactness) const {
@@ -347,26 +382,61 @@ std::vector<IModulo> IModulo::meet(const IModulo& y, bool compactness) const {
   if (this->is_full()) return { y };
   Interval B2 = this->B & y.B;
   if (B2.is_empty()) return { };
-  double k;
-  if (contains_k_util(y.A,B2,this->A.lb(),k)) {
-      Interval C1 = (y.A-k*B2) & this->A;
-      Interval C2 = (y.A-(k-1)*B2) & this->A;
-      if (C2.is_empty() || C1.intersects(C2)) {
-         return { IModulo(C1 | C2, B2) };
-      }
-      if (compactness) {
-         return { IModulo::join_close(C1,C2,B2) };
-      } else {
-         return { IModulo(C1,B2), IModulo(C2,B2) };
-      }
-  } else {
-      k = std::floor(k);
-      Interval C = (y.A-k*y.B) & this->A;
-      if (C.is_empty()) return { };
-      else {
-	 return { IModulo(C,this->B) };
-      }
-  }
+
+  if (y.A.lb()<=this->A.lb()) {
+     if (y.A.ub()<this->A.lb()) {
+       Interval yA = y.A+1.0;
+       if (yA.lb()<=this->A.ub()) {
+          if (yA.lb()<=this->A.lb()) /* A subset yA (Va) */
+             return { IModulo::from_ratio(this->A,B2) };
+          else 
+          if (yA.ub()<this->A.ub()) { /* A superset yA (VIa) */
+             return { IModulo::from_ratio(y.A,B2) };
+          }
+          else /* yA intersects A ( IVa ) */
+          return { IModulo::from_ratio(Interval(yA.lb(),this->A.ub()),B2) };
+       } else /* disjoint (Ia) */
+          return { };
+     } 
+     else if (y.A.ub()<=this->A.ub()) {
+       Interval yA = y.A+1.0; 
+       if (yA.lb()<=this->A.ub()) { /* double intersection (IIIa) */
+           if (compactness) return { IModulo::from_ratio(this->A,B2) };
+           return { IModulo::from_ratio(Interval(this->A.lb(),y.A.ub()),B2),
+                    IModulo::from_ratio(Interval(yA.lb(),this->A.ub()),B2) };
+       }
+       else /* y.A intersects A (IIa) */
+           return { IModulo::from_ratio(Interval(this->A.lb(),y.A.ub()),B2) };
+     } else  /* A subset y.A (Vc) */
+        return { IModulo::from_ratio(this->A,B2) };
+   } else {
+     if (y.A.lb()<this->A.ub()) {
+        if (y.A.ub()<this->A.ub()) { /* A superset y.A (VIc) */
+           return { IModulo::from_ratio(y.A,B2) };
+        } else {
+           Interval yA = y.A-1.0; 
+           if (yA.ub()<this->A.lb()) /* y.A intersects A (IVb) */
+              return { IModulo::from_ratio(Interval(y.A.lb(),this->A.ub()),B2) };
+           else { /* double intersection (IIIb) */
+              if (compactness) return { IModulo::from_ratio(this->A,B2) };
+              return { IModulo::from_ratio(Interval(this->A.lb(),yA.ub()),B2),
+                       IModulo::from_ratio(Interval(y.A.lb(),this->A.ub()),B2) };
+           }
+        }
+     } else {
+        Interval yA = y.A-1.0;
+        if (yA.ub()<this->A.lb()) /* disjoint (Ib) */
+           return { };
+        else if (yA.ub()<this->A.ub()) {
+           if (yA.lb()<this->A.lb()) { /* yA intersects A (IIb) */
+               return { IModulo::from_ratio(Interval(this->A.lb(),yA.ub()),B2) };
+           } else { /* A superset yA (VIb) */
+               return { IModulo::from_ratio(y.A,B2) };
+           }
+        } else /* A subset yA (Vb) */
+           return { IModulo::from_ratio(this->A,B2) };
+     }   
+   }
 }
 
 /* meet with compactness=true */
@@ -389,25 +459,60 @@ std::vector<IModulo> IModulo::join(const IModulo& y, bool compactness) const {
   if (this->is_full()) return { (*this) };
   if (y.is_full()) return { y };
   Interval B2 = this->B | y.B;
-  if (this->A.diam()>=B2.lb() || y.A.diam()>=B2.lb()) 
-	return { IModulo(Interval(),B2) };
-  double k;
-  Interval C;
-  if (!contains_k_util(y.A,B2,this->A.lb(),k)) {
-      k = std::floor(k);
-      C = (y.A-k*B2);
-      if (C.lb() > this->A.ub()) {
-        if (compactness) {
-           return { IModulo::join_close(this->A,y.A,B2) };
+
+  if (y.A.lb()<=this->A.lb()) {
+     if (y.A.ub()<this->A.lb()) {
+       Interval yA = y.A+1.0;
+       if (yA.lb()<=this->A.ub()) {
+          if (yA.lb()<=this->A.lb()) /* A subset yA (Va) */
+             return { IModulo::from_ratio((this->A-1.0) | y.A,B2) };
+          else 
+          if (yA.ub()<this->A.ub()) { /* A superset yA (VIa) */
+             return { IModulo::from_ratio(this->A,B2) };
+          }
+          else /* yA intersects A ( IVa ) */
+          return { IModulo::from_ratio(Interval(this->A.lb(),yA.ub()),B2) };
+       } else {/* disjoint (Ia) */
+          if (compactness) return { IModulo::join_close(this->A,y.A,B2) };
+          return { IModulo::from_ratio(this->A,B2),
+                   IModulo::from_ratio(y.A,B2) };
+       }
+     } 
+     else if (y.A.ub()<=this->A.ub()) {
+       Interval yA = y.A+1.0; 
+       if (yA.lb()<=this->A.ub()) /* double intersection (IIIa) */
+           return { IModulo(Interval(),B2) };
+       else /* y.A intersects A (IIa) */
+           return { IModulo::from_ratio(Interval(y.A.lb(),this->A.ub()),B2) };
+     } else  /* A subset y.A (Vc) */
+        return { IModulo::from_ratio(y.A,B2) };
+   } else {
+     if (y.A.lb()<this->A.ub()) {
+        if (y.A.ub()<this->A.ub()) { /* A superset y.A (VIc) */
+           return { IModulo::from_ratio(this->A,B2) };
         } else {
-           return { IModulo(this->A,B2), IModulo(y.A,B2) };
+           Interval yA = y.A-1.0; 
+           if (yA.ub()<this->A.lb()) /* y.A intersects A (IVb) */
+              return { IModulo::from_ratio(Interval(this->A.lb(),y.A.ub()),B2) };
+           else  /* double intersection (IIIb) */
+              return { IModulo(Interval(),B2) };
         }
-      }
-      C |= this->A;
-  } else {
-      C = (y.A-k*y.B) | this->A;
+     } else {
+        Interval yA = y.A-1.0;
+        if (yA.ub()<this->A.lb()) { /* disjoint (Ib) */
+          if (compactness) return { IModulo::join_close(this->A,y.A,B2) };
+          return { IModulo::from_ratio(this->A,B2),
+                   IModulo::from_ratio(y.A,B2) };
+        } else if (yA.ub()<this->A.ub()) {
+           if (yA.lb()<this->A.lb()) { /* yA intersects A (IIb) */
+               return { IModulo::from_ratio(Interval(yA.lb(),this->A.ub()),B2) };
+           } else { /* A superset yA (VIb) */
+               return { IModulo::from_ratio(this->A,B2) };
+           }
+        } else /* A subset yA (Vb) */
+           return { IModulo::from_ratio((this->A+1.0) & y.A,B2) };
+     }   
   }
-  return { IModulo(C, this->B) };
 }
 
 /* join with compactness=true */
@@ -429,7 +534,7 @@ IModulo& IModulo::operator|=(const IModulo& x) {
 IModulo& IModulo::operator+=(const Interval& x) {
   if (this->is_empty() || this->is_full()) return (*this);
   if (x.is_empty()) { this->set_empty(); return (*this); }
-  this->A += x;
+  this->A += x/this->B;
   this->recenter();
   return (*this);
 }
@@ -500,7 +605,7 @@ IModulo& IModulo::operator*=(double x) {
   assert_release(x!=0.0);
   if (this->is_empty() || this->is_full()) return (*this);
   this->B *= std::abs(x);
-  this->A *= x;
+  if (x<0.0) { this->A = -this->A; this->recenter(); }
   return (*this);
 }
 
@@ -508,8 +613,7 @@ IModulo& IModulo::operator*=(const Interval &x) {
   assert_release(!x.contains(0.0) && !x.is_unbounded());
   if (this->is_empty() || this->is_full()) return (*this);
   this->B *= abs(x);
-  this->A *= x;
-  this->recenter();
+  if (x.ub()<0.0) { this->A = -this->A; this->recenter(); }
   return (*this);
 }
 
@@ -534,7 +638,7 @@ IModulo& IModulo::operator/=(double x) {
   assert_release(x!=0.0);
   if (this->is_empty() || this->is_full()) return (*this);
   this->B /= std::abs(x);
-  this->A /= x;
+  if (x<0.0) { this->A = -this->A; this->recenter(); }
   return (*this);
 }
 
@@ -542,8 +646,7 @@ IModulo& IModulo::operator/=(const Interval &x) {
   assert_release(!x.contains(0.0) && !x.is_unbounded());
   if (this->is_empty() || this->is_full()) return (*this);
   this->B /= abs(x);
-  this->A /= x;
-  this->recenter();
+  if (x.ub()<0.0) { this->A = -this->A; this->recenter(); }
   return (*this);
 }
 
@@ -574,7 +677,7 @@ std::ostream& codac2::operator<<(std::ostream& os, const IModulo& x) {
    if (x.is_empty() || x.is_full()) {
      return (os << x.A);
    }
-   return (os << x.A << "+k" << x.B);
+   return (os << (x.A*x.B) << "+k" << x.B);
 }
 
 

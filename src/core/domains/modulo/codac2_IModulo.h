@@ -16,6 +16,7 @@
 #include <list>
 #include <array>
 #include "codac2_Interval.h"
+#include "codac2_Interval_operations.h"
 #include "codac2_Domain.h"
 #include "codac2_assert.h"
 
@@ -75,6 +76,14 @@ namespace codac2
        * \param x the interval to be copied
        */
       IModulo(const IModulo& x);
+
+      /**
+       * \brief Creates an interval using ratio and modulo.
+       *
+       * \param R ratio
+       * \param B modulo
+       */
+      static IModulo from_ratio(const Interval &R, const Interval &B);
 
       /**
        * \brief Sets the value of this interval to 

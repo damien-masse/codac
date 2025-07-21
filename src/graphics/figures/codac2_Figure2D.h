@@ -20,6 +20,8 @@
 #include "codac2_Ellipsoid.h"
 #include "codac2_Polygon.h"
 #include "codac2_SlicedTube.h"
+#include "codac2_math.h"
+#include "codac2_IModulo.h"
 
 #define DEFAULT_FIG_NAME "Codac - default figure"
 
@@ -701,6 +703,26 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_pie(c,r,theta,style);
+      }
+
+      /**
+       * \brief Draws a modulo interval as a pie 
+       * 
+       * \param c Center of the pie
+       * \param M IModulo
+       * \param r Radius (if empty, use M.B)
+       * \param style Style (edge color and fill color)
+       */
+      static void draw_modulo(const Vector& c, const IModulo &M, const Interval& r, const StyleProperties& style = StyleProperties())
+      {
+        auto_init();
+        if (M.is_empty()) return;
+        Interval radius = r.is_empty() ? M.get_modulo() : r;
+        if (M.is_full()) {
+           selected_fig()->draw_ring(c,radius,style);
+        } else {
+           selected_fig()->draw_pie(c,radius,M.get_ratio()*2.0*PI,style);
+        }
       }
 
       /**
