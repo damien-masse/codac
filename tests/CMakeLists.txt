@@ -113,10 +113,14 @@ endif()
 
 # IBEX test
 #if (WITH_IBEX)
+  #find_package(IBEX REQUIRED)
+  #ibex_init_common() # IBEX should have installed this function
+  #message(STATUS "Found IBEX version ${IBEX_VERSION}")
+
   list(APPEND SRC_TESTS
     extensions/ibex/codac2_tests_ibex
   )
-  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-ibex)
+  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-ibex Ibex::ibex)
 #endif()
 
 foreach(SRC_TEST ${SRC_TESTS})

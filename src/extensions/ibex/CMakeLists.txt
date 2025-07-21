@@ -4,8 +4,8 @@
 
 list(APPEND CODAC_IBEX_SRC
     
-  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_ibex.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/codac2_ibex.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_ibex_impl.h
 )
 
 ################################################################################
@@ -18,7 +18,8 @@ list(APPEND CODAC_IBEX_SRC
   #endif()
 
   add_library(${PROJECT_NAME}-ibex ${CODAC_IBEX_SRC})
-  target_link_libraries(${PROJECT_NAME}-ibex PUBLIC ${PROJECT_NAME}-core Ibex::ibex Eigen3::Eigen Ibex::ibex)
+  target_link_libraries(${PROJECT_NAME}-ibex PUBLIC ${PROJECT_NAME}-core Eigen3::Eigen)
+  # previous link order: ${PROJECT_NAME}-core Ibex::ibex Eigen3::Eigen Ibex::ibex
 
 
   ################################################################################
