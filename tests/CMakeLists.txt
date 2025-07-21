@@ -84,6 +84,7 @@ list(APPEND SRC_TESTS # listing files without extension
   
   core/tools/codac2_tests_Approx
   core/tools/codac2_tests_transformations
+  core/tools/ibex/codac2_tests_ibex
   
   core/trajectory/codac2_tests_AnalyticTraj
   core/trajectory/codac2_tests_SampledTraj
@@ -116,11 +117,6 @@ endif()
   #find_package(IBEX REQUIRED)
   #ibex_init_common() # IBEX should have installed this function
   #message(STATUS "Found IBEX version ${IBEX_VERSION}")
-
-  list(APPEND SRC_TESTS
-    extensions/ibex/codac2_tests_ibex
-  )
-  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-ibex Ibex::ibex)
 #endif()
 
 foreach(SRC_TEST ${SRC_TESTS})
