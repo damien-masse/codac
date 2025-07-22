@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_serialize.h
+ *  \file codac2_serialization.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -19,14 +19,14 @@ namespace codac2
 
     template <typename T>
       requires (std::is_trivially_copyable_v<T>)
-    void serialize(std::ofstream& f, const T& x)
+    void serialize(std::ostream& f, const T& x)
     {
       f.write(reinterpret_cast<const char*>(&x), sizeof(T));
     }
 
     template <typename T>
       requires (std::is_trivially_copyable_v<T>)
-    void deserialize(std::ifstream& f, T& x)
+    void deserialize(std::istream& f, T& x)
     {
       f.read(reinterpret_cast<char*>(&x), sizeof(T));
     }
@@ -34,7 +34,7 @@ namespace codac2
   // Vectors and matrices
 
     template<typename T,int R=-1,int C=-1>
-    void serialize(std::ofstream& f, const Eigen::Matrix<T,R,C>& x)
+    void serialize(std::ostream& f, const Eigen::Matrix<T,R,C>& x)
     {
       Index r = x.rows(), c = x.cols();
       f.write(reinterpret_cast<const char*>(&r), sizeof(Index));
@@ -45,7 +45,7 @@ namespace codac2
     }
 
     template<typename T,int R=-1,int C=-1>
-    void deserialize(std::ifstream& f, Eigen::Matrix<T,R,C>& x)
+    void deserialize(std::istream& f, Eigen::Matrix<T,R,C>& x)
     {
       Index r, c;
       f.read(reinterpret_cast<char*>(&r), sizeof(Index));
@@ -66,7 +66,7 @@ namespace codac2
   // SampledTraj<T>
 
     template <typename T>
-    void serialize(std::ofstream& f, const SampledTraj<T>& x)
+    void serialize(std::ostream& f, const SampledTraj<T>& x)
     {
       Index size = x.nb_samples();
       f.write(reinterpret_cast<const char*>(&size), sizeof(size));
@@ -79,7 +79,7 @@ namespace codac2
     }
 
     template <typename T>
-    void deserialize(std::ifstream& f, SampledTraj<T>& x)
+    void deserialize(std::istream& f, SampledTraj<T>& x)
     {
       Index size;
       x.clear();

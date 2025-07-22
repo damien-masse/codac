@@ -228,7 +228,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_RobotSimulator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_RobotSimulator.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_serialize.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_serialization.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_template_tools.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_transformations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_transformations.h
