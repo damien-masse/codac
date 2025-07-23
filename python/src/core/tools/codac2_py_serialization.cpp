@@ -13,7 +13,9 @@
 #include <streambuf>
 #include <istream>
 #include <codac2_serialization.h>
+#include <codac2_SampledTraj.h>
 #include "codac2_py_serialization_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
+#include "codac2_py_cast.h"
 
 using namespace std;
 using namespace codac2;
@@ -55,23 +57,43 @@ class py_istreambuf : public std::streambuf
     }
 };
 
+
+#define _serialization() \
+  std::ostringstream oss(std::ios::binary); \
+  serialize(oss, x); \
+  std::string buffer = oss.str(); \
+  py_file.attr("write")(py::bytes(buffer)); \
+
+#define _deserialization() \
+  py_istreambuf buf(py_file); \
+  std::istream stream(&buf); \
+  deserialize(stream, x); \
+
+
 void export_serialization(py::module& m)
 {
-  m.def("serialize", [](py::object py_file, const Vector& x)
-    {
-      std::ostringstream oss(std::ios::binary);
-      serialize(oss, x);
-      std::string buffer = oss.str();
-      py_file.attr("write")(py::bytes(buffer));
+  m.def("serialize", [](py::object py_file, const Vector& x) {
+      _serialization()
     },
     VOID_SERIALIZE_OSTREAM_REF_CONST_EIGEN_MATRIX_TRC_REF,
     "f"_a, "x"_a);
 
-  m.def("deserialize", [](py::object py_file, Vector& x)
-    {
-      py_istreambuf buf(py_file);
-      std::istream stream(&buf);
-      deserialize(stream, x);
+  m.def("deserialize", [](py::object py_file, Vector& x) {
+      _deserialization()
+    },
+    VOID_DESERIALIZE_ISTREAM_REF_EIGEN_MATRIX_TRC_REF,
+    "f"_a, "x"_a);
+
+  m.def("serialize", [](py::object py_file, const py::object& x_) {
+      const SampledTraj<Vector>& x = cast<const SampledTraj<Vector>&>(x_);
+      _serialization()
+    },
+    VOID_SERIALIZE_OSTREAM_REF_CONST_EIGEN_MATRIX_TRC_REF,
+    "f"_a, "x"_a);
+
+  m.def("deserialize", [](py::object py_file, py::object& x_) {
+      SampledTraj<Vector>& x = cast<SampledTraj<Vector>&>(x_);
+      _deserialization()
     },
     VOID_DESERIALIZE_ISTREAM_REF_EIGEN_MATRIX_TRC_REF,
     "f"_a, "x"_a);

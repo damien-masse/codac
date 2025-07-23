@@ -89,7 +89,7 @@ namespace codac2
       {
         double ti; deserialize(f,ti);
         T xi; deserialize(f,xi);
-        x.set(ti,xi);
+        x.set(xi,ti);
       }
     }
 }
