@@ -71,6 +71,10 @@ void export_OctaSym(py::module& m)
       SEPACTION_OCTASYM_OPERATORCALL_CONST_S_REF_CONST,
       "s"_a)
 
+    .def("__call__", [](const OctaSym& a, const SampledTraj<Vector>& x) { return a(x); },
+      SAMPLEDTRAJ_T_OCTASYM_OPERATORCALL_CONST_SAMPLEDTRAJ_T_REF_CONST,
+      "x"_a)
+
     .def("__repr__", [](const OctaSym& s) {
           std::ostringstream stream;
           stream << s;

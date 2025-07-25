@@ -15,7 +15,7 @@
 #include "codac2_IntervalVector.h"
 #include "codac2_CtcWrapper.h"
 #include "codac2_AnalyticFunction.h"
-
+#include "codac2_SampledTraj.h"
 
 namespace codac2
 {
@@ -73,6 +73,15 @@ namespace codac2
 
       std::shared_ptr<SetExpr> operator()(const std::shared_ptr<SetExpr>& x1) const;
       // -> is defined in set operations file
+
+      template<typename T>
+      SampledTraj<T> operator()(const SampledTraj<T>& x) const
+      {
+        auto y = x;
+        for(auto& [ti,yi] : y)
+          yi = (*this)(yi);
+        return y;
+      }
 
       friend std::ostream& operator<<(std::ostream& str, const OctaSym& s)
       {

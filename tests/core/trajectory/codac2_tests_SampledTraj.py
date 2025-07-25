@@ -111,7 +111,7 @@ class TestSampledTraj(unittest.TestCase):
 
     # SampledTraj (nan case)
 
-    x = SampledTrajVector()
+    x = SampledVectorTraj()
     x.set(Vector([0,0]),0.)
     x.set(Vector([2,2]),2.)
     self.assertTrue(x(1.) == Vector([1,1]))
