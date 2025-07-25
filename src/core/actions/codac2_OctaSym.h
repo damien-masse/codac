@@ -51,11 +51,12 @@ namespace codac2
         return (a > 0) ? 1 : ((a < 0) ? -1 : 0);
       }
 
-      template<typename T>
-      Mat<T,-1,1> operator()(const Mat<T,-1,1>& x) const
+      template<typename Derived>
+        requires (Derived::ColsAtCompileTime == 1)
+      Mat<typename Derived::Scalar,-1,1> operator()(const Eigen::MatrixBase<Derived>& x) const
       {
         assert_release(x.size() == (Index)size());
-        Mat<T,-1,1> x_(size());
+        Mat<typename Derived::Scalar,-1,1> x_(x);
         for(size_t i = 0 ; i < size() ; i++)
           x_[i] = _sign((*this)[i])*x[std::abs((*this)[i])-1];
         return x_;

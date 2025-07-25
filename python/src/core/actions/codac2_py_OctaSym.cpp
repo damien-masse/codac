@@ -60,7 +60,7 @@ void export_OctaSym(py::module& m)
       MATRIX_OCTASYM_PERMUTATION_MATRIX_CONST)
 
     .def("__call__", [](const OctaSym& a, const IntervalVector& x) { return a(x); },
-      MAT_TMINUSONE1_OCTASYM_OPERATORCALL_CONST_MAT_TMINUSONE1_REF_CONST,
+      MAT_TYPENAME_DERIVED_SCALARMINUSONE1_OCTASYM_OPERATORCALL_CONST_EIGEN_MATRIXBASE_DERIVED_REF_CONST,
       "x"_a)
 
     .def("__call__", [](const OctaSym& a, const pyCtcIntervalVector& c) { return CtcAction(c.copy(),a); },
