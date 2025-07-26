@@ -72,29 +72,127 @@ class py_istreambuf : public std::streambuf
 
 void export_serialization(py::module& m)
 {
-  m.def("serialize", [](py::object py_file, const Vector& x) {
-      _serialization()
-    },
-    VOID_SERIALIZE_OSTREAM_REF_CONST_EIGEN_MATRIX_TRC_REF,
-    "f"_a, "x"_a);
+  // Trivial types (int, float, double...)
 
-  m.def("deserialize", [](py::object py_file, Vector& x) {
-      _deserialization()
-    },
-    VOID_DESERIALIZE_ISTREAM_REF_EIGEN_MATRIX_TRC_REF,
-    "f"_a, "x"_a);
+    m.def("serialize", [](py::object py_file, double x) {
+        _serialization()
+      },
+      VOID_SERIALIZE_OSTREAM_REF_CONST_T_REF,
+      "f"_a, "x"_a);
 
-  m.def("serialize", [](py::object py_file, const py::object& x_) {
-      const SampledTraj<Vector>& x = cast<const SampledTraj<Vector>&>(x_);
-      _serialization()
-    },
-    VOID_SERIALIZE_OSTREAM_REF_CONST_EIGEN_MATRIX_TRC_REF,
-    "f"_a, "x"_a);
+    m.def("deserialize", [](py::object py_file, double& x) {
+        _deserialization()
+      },
+      VOID_DESERIALIZE_ISTREAM_REF_T_REF,
+      "f"_a, "x"_a);
 
-  m.def("deserialize", [](py::object py_file, py::object& x_) {
-      SampledTraj<Vector>& x = cast<SampledTraj<Vector>&>(x_);
-      _deserialization()
-    },
-    VOID_DESERIALIZE_ISTREAM_REF_EIGEN_MATRIX_TRC_REF,
-    "f"_a, "x"_a);
+  // Interval
+
+    m.def("serialize", [](py::object py_file, const Interval& x) {
+        _serialization()
+      },
+      VOID_SERIALIZE_OSTREAM_REF_CONST_INTERVAL_REF,
+      "f"_a, "x"_a);
+
+    m.def("deserialize", [](py::object py_file, Interval& x) {
+        _deserialization()
+      },
+      VOID_DESERIALIZE_ISTREAM_REF_INTERVAL_REF,
+      "f"_a, "x"_a);
+
+  // Vectors and matrix structures (real or interval objects)
+
+    m.def("serialize", [](py::object py_file, const Vector& x) {
+        _serialization()
+      },
+      VOID_SERIALIZE_OSTREAM_REF_CONST_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
+
+    m.def("deserialize", [](py::object py_file, Vector& x) {
+        _deserialization()
+      },
+      VOID_DESERIALIZE_ISTREAM_REF_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
+
+    m.def("serialize", [](py::object py_file, const Matrix& x) {
+        _serialization()
+      },
+      VOID_SERIALIZE_OSTREAM_REF_CONST_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
+
+    m.def("deserialize", [](py::object py_file, Matrix& x) {
+        _deserialization()
+      },
+      VOID_DESERIALIZE_ISTREAM_REF_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
+
+    m.def("serialize", [](py::object py_file, const IntervalVector& x) {
+        _serialization()
+      },
+      VOID_SERIALIZE_OSTREAM_REF_CONST_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
+
+    m.def("deserialize", [](py::object py_file, IntervalVector& x) {
+        _deserialization()
+      },
+      VOID_DESERIALIZE_ISTREAM_REF_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
+
+    m.def("serialize", [](py::object py_file, const IntervalMatrix& x) {
+        _serialization()
+      },
+      VOID_SERIALIZE_OSTREAM_REF_CONST_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
+
+    m.def("deserialize", [](py::object py_file, IntervalMatrix& x) {
+        _deserialization()
+      },
+      VOID_DESERIALIZE_ISTREAM_REF_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
+
+  // SampledTraj<T>
+
+    m.def("serialize", [](py::object py_file, const py::object& x_)
+      {
+        if(is_instance<const SampledTraj<double>&>(x_))
+        {
+          const SampledTraj<double>& x = cast<const SampledTraj<double>&>(x_);
+          _serialization()
+        }
+        
+        else if(is_instance<const SampledTraj<Vector>&>(x_))
+        {
+          const SampledTraj<Vector>& x = cast<const SampledTraj<Vector>&>(x_);
+          _serialization()
+        }
+
+        else
+        {
+          assert_release("not able to serialize this object");
+        }
+      },
+      VOID_SERIALIZE_OSTREAM_REF_CONST_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
+
+    m.def("deserialize", [](py::object py_file, py::object& x_)
+      {
+        if(is_instance<const SampledTraj<double>&>(x_))
+        {
+          SampledTraj<double>& x = cast<SampledTraj<double>&>(x_);
+          _deserialization()
+        }
+
+        else if(is_instance<const SampledTraj<Vector>&>(x_))
+        {
+          SampledTraj<Vector>& x = cast<SampledTraj<Vector>&>(x_);
+          _deserialization()
+        }
+
+        else
+        {
+          assert_release("not able to deserialize this object");
+        }
+      },
+      VOID_DESERIALIZE_ISTREAM_REF_EIGEN_MATRIX_TRC_REF,
+      "f"_a, "x"_a);
 }

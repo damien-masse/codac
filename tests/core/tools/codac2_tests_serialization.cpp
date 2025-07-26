@@ -18,14 +18,14 @@ TEST_CASE("Serialization")
   Vector v({2,3,6});
 
   {
-    std::ofstream out("data.bin", std::ios::binary);
+    std::ofstream out("data.cdc", std::ios::binary);
     serialize(out, v);
     out.close();
   }
 
   {
     Vector v_deserialized;
-    std::ifstream in("data.bin", std::ios::binary);
+    std::ifstream in("data.cdc", std::ios::binary);
     deserialize(in, v_deserialized);
     CHECK(v == v_deserialized);
     in.close();

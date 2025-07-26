@@ -17,24 +17,91 @@ namespace codac2
 {
   // Trivial types (int, float, double...)
 
+    /**
+     * \brief Writes the binary representation of a trivially
+     * copyable object to the given output stream.
+     *
+     * Binary structure: <br>
+     *   [raw memory of x]
+     *
+     * \param f output stream
+     * \param x object/variable to be serialized
+     */
     template <typename T>
       requires (std::is_trivially_copyable_v<T>)
-    void serialize(std::ostream& f, const T& x)
+    inline void serialize(std::ostream& f, const T& x)
     {
       f.write(reinterpret_cast<const char*>(&x), sizeof(T));
     }
 
+    /**
+     * \brief Reads the binary representation of a trivially
+     * copyable object from the given input stream.
+     *
+     * Binary structure: <br>
+     *   [raw memory of x]
+     *
+     * \param f input stream
+     * \param x object to be deserialized
+     */
     template <typename T>
       requires (std::is_trivially_copyable_v<T>)
-    void deserialize(std::istream& f, T& x)
+    inline void deserialize(std::istream& f, T& x)
     {
       f.read(reinterpret_cast<char*>(&x), sizeof(T));
     }
 
-  // Vectors and matrices
+  // Interval
 
+    /**
+     * \brief Writes the binary representation of an
+     * ``Interval`` object to the given output stream.
+     * 
+     * Interval binary structure: <br>
+     *   [double_lb][double_ub]
+     *
+     * \param f output stream
+     * \param x ``Interval`` object to be serialized
+     */
+    inline void serialize(std::ostream& f, const Interval& x)
+    {
+      serialize(f,x.lb());
+      serialize(f,x.ub());
+    }
+
+    /**
+     * \brief Creates an ``Interval`` object from the binary
+     * representation given in an input stream.
+     *
+     * Interval binary structure: <br>
+     *   [double_lb][double_ub]
+     *
+     * \param f input stream
+     * \param x ``Interval`` object to be deserialized
+     */
+    inline void deserialize(std::istream& f, Interval& x)
+    {
+      double lb, ub;
+      deserialize(f,lb);
+      deserialize(f,ub);
+      x = Interval(lb,ub);
+    }
+
+  // Vectors and matrix structures (real or interval objects)
+
+    /**
+     * \brief Writes the binary representation of an ``Eigen::Matrix``
+     * to the given output stream. The structure can be a matrix, a row, a vector, 
+     * with ``double`` or ``Interval`` components.
+     *
+     * Matrix binary structure: <br>
+     *   [Index_rows][Index_cols][element_00][element_01]...[element_rc]
+     *
+     * \param f output stream
+     * \param x matrix structure to be serialized
+     */
     template<typename T,int R=-1,int C=-1>
-    void serialize(std::ostream& f, const Eigen::Matrix<T,R,C>& x)
+    inline void serialize(std::ostream& f, const Eigen::Matrix<T,R,C>& x)
     {
       Index r = x.rows(), c = x.cols();
       f.write(reinterpret_cast<const char*>(&r), sizeof(Index));
@@ -44,8 +111,19 @@ namespace codac2
           serialize(f,x(i,j));
     }
 
+    /**
+     * \brief Reads the binary representation of an ``Eigen::Matrix``
+     * from the given input stream. The structure can be a matrix, a row, a vector, 
+     * with ``double`` or ``Interval`` components.
+     *
+     * Matrix binary structure: <br>
+     *   [Index_rows][Index_cols][element_00][element_01]...[element_rc]
+     *
+     * \param f input stream
+     * \param x matrix structure to be deserialized
+     */
     template<typename T,int R=-1,int C=-1>
-    void deserialize(std::istream& f, Eigen::Matrix<T,R,C>& x)
+    inline void deserialize(std::istream& f, Eigen::Matrix<T,R,C>& x)
     {
       Index r, c;
       f.read(reinterpret_cast<char*>(&r), sizeof(Index));
@@ -65,8 +143,18 @@ namespace codac2
 
   // SampledTraj<T>
 
+    /**
+     * \brief Writes the binary representation of a ``SampledTraj``
+     * object to the given output stream.
+     *
+     * SampledTraj binary structure: <br>
+     *   [nb_samples][t0][x0][t1][x1]...[tn][xn]
+     *
+     * \param f output stream
+     * \param x ``SampledTraj`` object to be serialized
+     */
     template <typename T>
-    void serialize(std::ostream& f, const SampledTraj<T>& x)
+    inline void serialize(std::ostream& f, const SampledTraj<T>& x)
     {
       Index size = x.nb_samples();
       f.write(reinterpret_cast<const char*>(&size), sizeof(size));
@@ -78,8 +166,18 @@ namespace codac2
       }
     }
 
+    /**
+     * \brief Reads the binary representation of a ``SampledTraj``
+     * object from the given input stream.
+     *
+     * SampledTraj binary structure: <br>
+     *   [nb_samples][t0][x0][t1][x1]...[tn][xn]
+     *
+     * \param f input stream
+     * \param x ``SampledTraj`` object to be deserialized
+     */
     template <typename T>
-    void deserialize(std::istream& f, SampledTraj<T>& x)
+    inline void deserialize(std::istream& f, SampledTraj<T>& x)
     {
       Index size;
       x.clear();

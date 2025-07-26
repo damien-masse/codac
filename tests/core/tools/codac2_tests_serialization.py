@@ -17,11 +17,11 @@ class TestSerialization(unittest.TestCase):
 
     v = Vector([2,3,6])
 
-    with open("data.bin", "wb") as f:
+    with open("data.cdc", "wb") as f:
       serialize(f, v)
 
     v_deserialized = Vector(1)
-    with open("data.bin", "rb") as f:
+    with open("data.cdc", "rb") as f:
       deserialize(f, v_deserialized)
 
     self.assertTrue(v == v_deserialized)
