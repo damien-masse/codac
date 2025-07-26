@@ -103,4 +103,4 @@ Available functions
 
 .. admonition:: Technical documentation
 
-  See the `C++ API documentation of these functions <../../../api/html/codac2__serialization_8h>`_.
+  See the `C++ API documentation of these functions <../../api/html/codac2__serialization_8h>`_.
