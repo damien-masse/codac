@@ -449,7 +449,7 @@ namespace codac2
       std::vector<Interval> complementary(bool compactness = true) const;
 
       /**
-       * \brief Computes the result of \f$[x]\[y]\f$
+       * \brief Computes the result of \f$[x]\backslash[y]\f$
        * 
        * \param y interval to remove from this
        * \param compactness optional boolean to obtain or not disjoint intervals
