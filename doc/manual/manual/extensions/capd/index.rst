@@ -39,6 +39,7 @@ The functions are ``to_capd`` and ``to_codac``. They can be used to convert the 
 - ``capd::Interval`` <-> ``codac2::Interval``
 - ``capd::IVector`` <-> ``codac2::IntervalVector``
 - ``capd::IMatrix`` <-> ``codac2::IntervalMatrix``
+- ``capd::ITimeMap::SolutionCurve`` <-> ``codac2::SlicedTube``
 
 How to use
 ----------
@@ -164,9 +165,13 @@ If the desired result is the solution curve (or tube) of the ODE on the time dom
       :start-after: [codac-capd-7-beg]
       :end-before: [codac-capd-7-end]
 
-The variable ``solution`` is the desired solution curve (or tube). The operator ``solution(t)`` gives the solution at time :math:`t`.
+The variable ``solution`` is the desired solution curve (or tube). The operator ``solution(t)`` gives the solution at time :math:`t`. 
+It can be converted into a Codac ``SlicedTube`` with the function ``to_codac``. This functions takes two arguments:
 
-A full display can be done with the following code:
+- the ``SolutionCurve`` to convert.
+- a ``TDomain`` object defining the time domain of the tube.
+
+The resulting ``SlicedTube`` will have the same time domain as the one given in argument, completed with the CAPD gates. An example of conversion is : 
 
 .. tabs::
 
@@ -177,7 +182,19 @@ A full display can be done with the following code:
       :start-after: [codac-capd-8-beg]
       :end-before: [codac-capd-8-end]
 
+A full display can be done with the following code:
+
+.. tabs::
+
+  .. group-tab:: C++
+
+    .. literalinclude:: src.cpp
+      :language: c++
+      :start-after: [codac-capd-9-beg]
+      :end-before: [codac-capd-9-end]
+
 The result is the following figure, with in green the initial set (:math:`t=0s`) and in red the final set (:math:`t=20s`).
+The Tube is displayed in blue with a black edge for better visibility. The orange rectangles correspond to the Codac gates evaluations.
 
 .. image:: img/pendulum_result.png
    :alt: Integration of the pendulum

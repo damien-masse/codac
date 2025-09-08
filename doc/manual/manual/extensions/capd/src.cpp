@@ -56,9 +56,16 @@ int main()
   capd::IVector result = timeMap(T,s);
   // [codac-capd-6-end]
 
+  // [codac-capd-8-beg]
+
+  auto tdomain = create_tdomain(codac2::Interval(0,20),0.05, true); // true to have gates
+  auto codac_tube = to_codac(solution, tdomain);
+
+  // [codac-capd-8-end]
+
   if (false)
   {
-    // [codac-capd-8-beg]
+    // [codac-capd-9-beg]
     std::cout << "\ninitial set: " << c;
     std::cout << "\ndiam(initial set): " << diam(c) << std::endl;
 
@@ -67,12 +74,15 @@ int main()
 
     codac2::DefaultFigure::set_axes(codac2::axis(0,{-2,1.5}),codac2::axis(1,{-2,3}));
 
+    codac2::DefaultFigure::draw_tube(codac_tube, codac2::ColorMap::blue_tube());
+    codac2::DefaultFigure::draw_tube(codac_tube, codac2::Color::black());
+
     for (float t=0.;t<20.;t+=0.05)
-      codac2::DefaultFigure::draw_box(codac2::to_codac(solution(t)));
+      codac2::DefaultFigure::draw_box(codac2::to_codac(solution(t)), {codac2::Color::none(), codac2::Color::orange(0.5)});
 
     codac2::DefaultFigure::draw_box(codac2::to_codac(c),codac2::Color::green());
     codac2::DefaultFigure::draw_box(codac2::to_codac(result),codac2::Color::red());
-    // [codac-capd-8-end]
+    // [codac-capd-9-end]
   }
  
 }
