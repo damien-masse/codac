@@ -18,7 +18,7 @@ int main()
   vectorField.setParameter("g",capd::Interval(10.));  // gravity acceleration equal to 10
   // [codac-capd-2-end]
 
-  // the solver, is uses high order enclosure method to verify the existence 
+  // the solver uses high order enclosure method to verify the existence 
   // of the solution. The order is set to 20.
   // [codac-capd-3-beg]
   capd::IOdeSolver solver(vectorField,20);
@@ -28,8 +28,8 @@ int main()
 
   // [codac-capd-4-beg]
   capd::ITimeMap timeMap(solver);
-  capd::Interval initialTime (0.);  // initial time (t0)
-  capd::Interval finalTime (20.); // final time (tf)
+  capd::Interval initialTime(0.);  // initial time (t0)
+  capd::Interval finalTime(20.); // final time (tf)
   // [codac-capd-4-end]
 
   // initial set
