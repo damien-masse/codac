@@ -230,10 +230,11 @@ void Figure2D::draw_polygon(const Polygon& x, const StyleProperties& style)
     output_fig->draw_polygon(w,style);
 }
 
-void Figure2D::draw_zonotope(const Vector& z, const std::vector<Vector>& A, const StyleProperties& style)
+void Figure2D::draw_zonotope(const Zonotope& z, const StyleProperties& style)
 {
    std::map<double,Vector> sides;
-   for (auto &u : A) {
+   for (int i=0; i < z.A.cols(); i++) {
+       auto u = z.A.col(i);
        assert_release(u.size()==2);
        if (u==Vector::zero(2)) continue;
        double theta = std::atan2(u[1],u[0]);
@@ -246,7 +247,7 @@ void Figure2D::draw_zonotope(const Vector& z, const std::vector<Vector>& A, cons
        }
    }
    std::vector<Vector> vertices;
-   Vector point=z;
+   Vector point=z.c;
    // Start from v[1] maximum (and v[0] min for horizontal side)
    for (const auto &a : sides) {
        point+=a.second;
@@ -266,16 +267,16 @@ void Figure2D::draw_zonotope(const Vector& z, const std::vector<Vector>& A, cons
 }
 
 
-void Figure2D::draw_parallelepiped(const Vector& z, const Matrix& A, const StyleProperties& style)
+void Figure2D::draw_parallelepiped(const Parallelepiped& p, const StyleProperties& style)
 {
-  assert_release(A.is_squared() && A.rows() == z.size());
-  assert_release(z.size() == 2);
+  assert_release(p.A.is_squared() && p.A.rows() == p.c.size());
+  assert_release(p.c.size() == 2);
 
-  auto a1 = A.col(0), a2 = A.col(1);
+  auto a1 = p.A.col(0), a2 = p.A.col(1);
 
   draw_polygon(vector<Vector>({
-      Vector(z+a1+a2), Vector(z-a1+a2),
-      Vector(z-a1-a2), Vector(z+a1-a2)
+      Vector(p.c+a1+a2), Vector(p.c-a1+a2),
+      Vector(p.c-a1-a2), Vector(p.c+a1-a2)
     }), style);
 }
 

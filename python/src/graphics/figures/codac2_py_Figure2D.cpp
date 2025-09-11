@@ -163,12 +163,12 @@ void export_Figure2D(py::module& m)
       "x"_a, "style"_a=StyleProperties())
 
     .def("draw_parallelepiped", &Figure2D::draw_parallelepiped,
-      VOID_FIGURE2D_DRAW_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF_CONST_STYLEPROPERTIES_REF,
-      "z"_a, "A"_a, "style"_a=StyleProperties())
+      VOID_FIGURE2D_DRAW_PARALLELEPIPED_CONST_PARALLELEPIPED_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "style"_a=StyleProperties())
 
     .def("draw_zonotope", &Figure2D::draw_zonotope,
-      VOID_FIGURE2D_DRAW_ZONOTOPE_CONST_VECTOR_REF_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
-      "z"_a, "A"_a, "style"_a=StyleProperties())
+      VOID_FIGURE2D_DRAW_ZONOTOPE_CONST_ZONOTOPE_REF_CONST_STYLEPROPERTIES_REF,
+      "z"_a, "style"_a=StyleProperties())
 
     .def("draw_pie", &Figure2D::draw_pie,
       VOID_FIGURE2D_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
@@ -340,12 +340,12 @@ void export_Figure2D(py::module& m)
       "x"_a, "style"_a=StyleProperties())
 
     .def_static("draw_parallelepiped", &DefaultFigure::draw_parallelepiped,
-      STATIC_VOID_DEFAULTFIGURE_DRAW_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF_CONST_STYLEPROPERTIES_REF,
-      "z"_a, "A"_a, "style"_a=StyleProperties())
+      STATIC_VOID_DEFAULTFIGURE_DRAW_PARALLELEPIPED_CONST_PARALLELEPIPED_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "style"_a=StyleProperties())
 
     .def_static("draw_zonotope", &DefaultFigure::draw_zonotope,
-      STATIC_VOID_DEFAULTFIGURE_DRAW_ZONOTOPE_CONST_VECTOR_REF_CONST_VECTOR_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
-      "z"_a, "A"_a, "style"_a=StyleProperties())
+      STATIC_VOID_DEFAULTFIGURE_DRAW_ZONOTOPE_CONST_ZONOTOPE_REF_CONST_STYLEPROPERTIES_REF,
+      "z"_a, "style"_a=StyleProperties())
 
     .def_static("draw_pie", &DefaultFigure::draw_pie,
       STATIC_VOID_DEFAULTFIGURE_DRAW_PIE_CONST_VECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
