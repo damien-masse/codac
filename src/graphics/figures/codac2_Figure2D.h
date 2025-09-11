@@ -680,8 +680,7 @@ namespace codac2
       /**
        * \brief Draws a parallelepiped z+A*[-1,1]^2 on the figure
        * 
-       * \param z Coordinates of the center of the parallelepiped
-       * \param A Matrix of the parallelepiped
+       * \param p Parallelepiped to draw (center and shape matrix)
        * \param style Style of the parallelepiped (edge color and fill color)
        */
       static void draw_parallelepiped(const Parallelepiped& p, const StyleProperties& style = StyleProperties())
@@ -693,8 +692,7 @@ namespace codac2
       /**
        * \brief Draws a zonotope z+sum_i [-1,1] A_i on the figure
        * 
-       * \param z Coordinates of the center of the zonotope
-       * \param A list of vectors
+       * \param z Zonotope to draw (center and shape matrix)
        * \param style Style of the zonotope (edge color and fill color)
        */
       static void draw_zonotope(const Zonotope& z, const StyleProperties& style = StyleProperties())

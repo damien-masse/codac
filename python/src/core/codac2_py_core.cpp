@@ -69,6 +69,8 @@ py::class_<IntervalMatrix> export_IntervalMatrix(py::module& m);
 void export_Paving(py::module& m);
 void export_PavingNode(py::module& m);
 void export_Subpaving(py::module& m);
+void export_Parallelepiped(py::module& m);
+void export_Zonotope(py::module& m);
 void export_TDomain(py::module& m);
 void export_TSlice(py::module& m);
 void export_TubeBase(py::module& m);
@@ -228,6 +230,9 @@ PYBIND11_MODULE(_core, m)
   export_Paving(m);
   export_PavingNode(m);
   export_Subpaving(m);
+
+  export_Parallelepiped(m);
+  export_Zonotope(m);
 
   // function
   py::enum_<EvalMode>(m, "EvalMode")

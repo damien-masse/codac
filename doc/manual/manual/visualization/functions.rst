@@ -116,10 +116,10 @@ Geometric shapes
 .. doxygenfunction:: codac2::Figure2D::draw_polygon(const Polygon&, const StyleProperties&)
   :project: codac
 
-.. doxygenfunction:: codac2::Figure2D::draw_parallelepiped(const Vector&, const Matrix&, const StyleProperties&)
+.. doxygenfunction:: codac2::Figure2D::draw_parallelepiped(const Parallelepiped&, const StyleProperties&)
   :project: codac
 
-.. doxygenfunction:: codac2::Figure2D::draw_zonotope(const Vector&, const std::vector<Vector>&, const StyleProperties&)
+.. doxygenfunction:: codac2::Figure2D::draw_zonotope(const Zonotope&, const StyleProperties&)
   :project: codac
 
 .. doxygenfunction:: codac2::Figure2D::draw_pie(const Vector&, const Interval&, const Interval&, const StyleProperties&)
