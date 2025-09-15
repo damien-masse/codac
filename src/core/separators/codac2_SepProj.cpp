@@ -52,17 +52,18 @@ namespace codac2
 
         // If inner values entirely cover the input projection box x,
         // the algorithm can terminate
-        if(extract_x(w_sep_mid.inner).is_empty())
+        auto x_sep_mid_inner = extract_x(w_sep_mid.inner);
+        if(x_sep_mid_inner.is_empty())
           return { IntervalVector::empty(x.size()), x };
 
         // Otherwise, the inner parts are stored temporarily
-        l_in.push_back(extract_x(w_sep_mid.inner));
+        l_in.push_back(x_sep_mid_inner);
 
         // If the current guess w is not a leaf, proceed to a bisection of the guess
-        auto y = extract_y(w);
-        if(y.max_diam() > eps)
+        Index yi_max = y_max_diam_index(extract_y(w_sep.outer));
+        if(w_sep.outer[yi_max].diam() > eps)
         {
-          auto b = w.bisect(y_max_diam_index(y));
+          auto b = w_sep.outer.bisect(yi_max);
           l_stack.push_back(b.first);
           l_stack.push_back(b.second);
         }
