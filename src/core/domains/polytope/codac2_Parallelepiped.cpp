@@ -13,9 +13,8 @@ using namespace std;
 using namespace codac2;
 
 Parallelepiped::Parallelepiped(const Vector& z_, const Matrix& A_)
-  : z(z_), A(A_)
+  : Zonotope(z_, A_)
 {
-  assert_release(z.size() == A.rows());
   assert_release(A.cols() <= z.size() && "too many vectors, you are describing a zonotope");
 }
 

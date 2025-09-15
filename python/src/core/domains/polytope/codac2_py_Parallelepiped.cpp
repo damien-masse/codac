@@ -10,6 +10,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
+#include <codac2_Zonotope.h>
+#include "codac2_py_Zonotope_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include <codac2_Parallelepiped.h>
 #include "codac2_py_Parallelepiped_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_matlab.h"
@@ -22,7 +24,7 @@ using namespace pybind11::literals;
 
 void export_Parallelepiped(py::module& m)
 {
-  py::class_<Parallelepiped> 
+  py::class_<Parallelepiped, Zonotope> 
     exported(m, "Parallelepiped", PARALLELEPIPED_MAIN);
   exported
 
@@ -39,14 +41,5 @@ void export_Parallelepiped(py::module& m)
 
   .def("bounding_box", &Parallelepiped::bounding_box,
     INTERVALVECTOR_PARALLELEPIPED_BOUNDING_BOX_CONST)
-
-  .def_readwrite("z", &Parallelepiped::z,
-    VECTOR_PARALLELEPIPED_Z)
-
-  .def_readwrite("A", &Parallelepiped::A,
-    MATRIX_PARALLELEPIPED_A)
   ;
-
-  // Automatic cast from lists to Parallelepiped
-  py::implicitly_convertible<py::list, Parallelepiped>();
 }

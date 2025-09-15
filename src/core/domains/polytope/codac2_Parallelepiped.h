@@ -19,17 +19,48 @@ using namespace std;
 
 namespace codac2
 {
-  class Parallelepiped
+  /**
+   * \class Parallelepiped
+   * 
+   * \brief Class representing a parallelepiped z + A*[-1,1]^m
+   * 
+   * This class represents a parallelepiped in n-dimensional space, defined by a center point `z` and a shape matrix `A`.
+   * 
+   * A parallelepiped is a special case of a zonotope where the shape matrix `A` has `m` columns with `m <= n`.
+   */
+  class Parallelepiped : public Zonotope
   {
     public:
+
+      /**
+       * \brief Constructs a n-parallelepiped object with a given center and shape matrix
+       * 
+       * \param z Center of the parallelepiped (n-dimensional vector)
+       * \param A Shape matrix of the parallelepiped (n x m matrix with m <= n)
+       */
       Parallelepiped(const Vector& z, const Matrix& A);
 
-      Vector z;
-      Matrix A;
-
+      /**
+       * \brief Projects the parallelepiped onto the subspace defined by the given indices
+       * 
+       * \param indices Vector of indices of the dimensions to project onto
+       * 
+       * \return A new Zonotope object representing the projection of the parallelepiped onto the specified subspace
+       */
       Zonotope project(const vector<int>& indices) const;
       
+      /**
+       * \brief Computes the vertices of the parallelepiped
+       * 
+       * \return A vector containing the **unsorted** vertices of the parallelepiped
+       */
       vector<Vector> vertices() const;
+
+      /**
+       * \brief Computes the axis-aligned bounding box of the parallelepiped
+       * 
+       * \return An IntervalVector representing the axis-aligned bounding box of the parallelepiped
+       */
       IntervalVector bounding_box() const;
 
   };

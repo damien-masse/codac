@@ -36,7 +36,4 @@ void export_Zonotope(py::module& m)
   .def_readwrite("A", &Zonotope::A,
     MATRIX_ZONOTOPE_A)
   ;
-
-  // Automatic cast from lists to Zonotope
-  py::implicitly_convertible<py::list, Zonotope>();
 }
