@@ -24,6 +24,9 @@ namespace codac2
   {
     assert_release(eps > 0.);
     assert_release(x.size() == this->size());
+
+    if(_y.size() == 0) // the set is projected onto itself
+      return _sep.front()->separate(x);
     
     list<IntervalVector> l_stack { cart_prod_xy(x,_y) };
     list<IntervalVector> l_in, l_out;
