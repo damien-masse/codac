@@ -21,9 +21,9 @@ namespace codac2
   class Zonotope
   {
     public:
-      Zonotope(const Vector& c, const Matrix& A);
+      Zonotope(const Vector& z, const Matrix& A);
 
-      Vector c;
+      Vector z;
       Matrix A;
       
   };

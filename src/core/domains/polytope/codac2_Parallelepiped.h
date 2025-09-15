@@ -22,9 +22,9 @@ namespace codac2
   class Parallelepiped
   {
     public:
-      Parallelepiped(const Vector& c, const Matrix& A);
+      Parallelepiped(const Vector& z, const Matrix& A);
 
-      Vector c;
+      Vector z;
       Matrix A;
 
       Zonotope project(const vector<int>& indices) const;

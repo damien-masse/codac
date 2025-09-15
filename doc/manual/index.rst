@@ -365,7 +365,7 @@ Development
 -----------
 
 * :ref:`sec-dev-info`
-* Changelog
+* :ref:`sec-changelog`
 * C++ API
 
 
@@ -446,8 +446,8 @@ Development
    :maxdepth: 3
 
    development/info_dev.rst
+   development/changelog.rst
 .. 
-..    Changelog
 ..    C++ API
 
 

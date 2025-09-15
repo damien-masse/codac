@@ -12,9 +12,9 @@
 using namespace std;
 using namespace codac2;
 
-Zonotope::Zonotope(const Vector& c_, const Matrix& A_)
-  : c(c_), A(A_)
+Zonotope::Zonotope(const Vector& z_, const Matrix& A_)
+  : z(z_), A(A_)
 {
-  assert_release(c.size() == A.rows());
+  assert_release(z.size() == A.rows());
 }
 

@@ -28,10 +28,10 @@ void export_Zonotope(py::module& m)
 
   .def(py::init<const Vector&, const Matrix&>(),
     ZONOTOPE_ZONOTOPE_CONST_VECTOR_REF_CONST_MATRIX_REF,
-    "c"_a, "A"_a)
+    "z"_a, "A"_a)
 
-  .def_readwrite("c", &Zonotope::c,
-    VECTOR_ZONOTOPE_C)
+  .def_readwrite("z", &Zonotope::z,
+    VECTOR_ZONOTOPE_Z)
 
   .def_readwrite("A", &Zonotope::A,
     MATRIX_ZONOTOPE_A)

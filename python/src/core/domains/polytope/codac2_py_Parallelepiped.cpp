@@ -28,7 +28,7 @@ void export_Parallelepiped(py::module& m)
 
   .def(py::init<const Vector&, const Matrix&>(),
     PARALLELEPIPED_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF,
-    "c"_a, "A"_a)
+    "z"_a, "A"_a)
 
   .def("project", &Parallelepiped::project,
     ZONOTOPE_PARALLELEPIPED_PROJECT_CONST_VECTOR_INT_REF_CONST,
@@ -40,8 +40,8 @@ void export_Parallelepiped(py::module& m)
   .def("bounding_box", &Parallelepiped::bounding_box,
     INTERVALVECTOR_PARALLELEPIPED_BOUNDING_BOX_CONST)
 
-  .def_readwrite("c", &Parallelepiped::c,
-    VECTOR_PARALLELEPIPED_C)
+  .def_readwrite("z", &Parallelepiped::z,
+    VECTOR_PARALLELEPIPED_Z)
 
   .def_readwrite("A", &Parallelepiped::A,
     MATRIX_PARALLELEPIPED_A)
