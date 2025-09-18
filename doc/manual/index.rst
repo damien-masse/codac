@@ -366,7 +366,7 @@ Development
 -----------
 
 * :ref:`sec-dev-info`
-* :ref:`sec-changelog`
+* :ref:`sec-dev-changelog`
 * C++ API
 
 

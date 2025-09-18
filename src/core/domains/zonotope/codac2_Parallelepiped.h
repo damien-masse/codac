@@ -15,8 +15,6 @@
 #include <codac2_IntervalVector.h>
 #include "codac2_Zonotope.h"
 
-using namespace std;
-
 namespace codac2
 {
   /**
@@ -47,21 +45,21 @@ namespace codac2
        * 
        * \return A new Zonotope object representing the projection of the parallelepiped onto the specified subspace
        */
-      Zonotope project(const vector<int>& indices) const;
+      Zonotope proj(const std::vector<Index>& indices) const;
       
       /**
        * \brief Computes the vertices of the parallelepiped
        * 
        * \return A vector containing the **unsorted** vertices of the parallelepiped
        */
-      vector<Vector> vertices() const;
+      std::vector<Vector> vertices() const;
 
       /**
        * \brief Computes the axis-aligned bounding box of the parallelepiped
        * 
        * \return An IntervalVector representing the axis-aligned bounding box of the parallelepiped
        */
-      IntervalVector bounding_box() const;
+      IntervalVector box() const;
 
   };
 }

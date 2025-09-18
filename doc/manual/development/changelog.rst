@@ -1,4 +1,4 @@
-.. _sec-changelog:
+.. _sec-dev-changelog:
 
 Changelog
 =========

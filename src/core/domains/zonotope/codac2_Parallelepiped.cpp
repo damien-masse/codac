@@ -18,7 +18,7 @@ Parallelepiped::Parallelepiped(const Vector& z_, const Matrix& A_)
   assert_release(A.cols() <= z.size() && "too many vectors, you are describing a zonotope");
 }
 
-Zonotope Parallelepiped::project(const vector<int>& indices) const
+Zonotope Parallelepiped::proj(const std::vector<Index>& indices) const
 {
   assert_release(*std::min_element(indices.begin(), indices.end()) >= 0 && "indices out of range");
   assert_release(*std::max_element(indices.begin(), indices.end()) <= z.size() && "indices out of range");
@@ -48,7 +48,7 @@ void generate_vertices(int i, int n, const Vector& z, const Matrix& A, vector<Ve
   }
 }
 
-vector<Vector> Parallelepiped::vertices() const
+std::vector<Vector> Parallelepiped::vertices() const
 {
   vector<Vector> L_v;
   generate_vertices(0, z.size(),z,A,L_v);
@@ -56,7 +56,7 @@ vector<Vector> Parallelepiped::vertices() const
   return L_v;
 }
 
-IntervalVector Parallelepiped::bounding_box() const
+IntervalVector Parallelepiped::box() const
 {
   IntervalVector box (z);
   for (auto vertice : vertices())

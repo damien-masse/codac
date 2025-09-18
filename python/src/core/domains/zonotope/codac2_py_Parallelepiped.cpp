@@ -32,14 +32,17 @@ void export_Parallelepiped(py::module& m)
     PARALLELEPIPED_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF,
     "z"_a, "A"_a)
 
-  .def("project", &Parallelepiped::project,
-    ZONOTOPE_PARALLELEPIPED_PROJECT_CONST_VECTOR_INT_REF_CONST,
+  .def("proj",[](const Parallelepiped &self, const std::vector<Index_type>& indices)
+  {
+    return self.proj(matlab::convert_indices(indices));
+  },
+    ZONOTOPE_PARALLELEPIPED_PROJ_CONST_VECTOR_INDEX_REF_CONST,
     "indices"_a)
 
   .def("vertices", &Parallelepiped::vertices,
     VECTOR_VECTOR_PARALLELEPIPED_VERTICES_CONST)
 
-  .def("bounding_box", &Parallelepiped::bounding_box,
-    INTERVALVECTOR_PARALLELEPIPED_BOUNDING_BOX_CONST)
+  .def("box", &Parallelepiped::box,
+    INTERVALVECTOR_PARALLELEPIPED_BOX_CONST)
   ;
 }
