@@ -35,7 +35,7 @@ Zonotope Parallelepiped::proj(const std::vector<Index>& indices) const
   return Zonotope(z_cropped, A_cropped);
 }
 
-void generate_vertices(int i, int n, const Vector& z, const Matrix& A, vector<Vector>& L_v)
+void generate_vertices(Index i, Index n, const Vector& z, const Matrix& A, vector<Vector>& L_v)
 {
   if (i == n)
   {

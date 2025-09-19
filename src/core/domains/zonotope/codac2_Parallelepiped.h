@@ -20,11 +20,11 @@ namespace codac2
   /**
    * \class Parallelepiped
    * 
-   * \brief Class representing a parallelepiped z + A*[-1,1]^m
+   * \brief Class representing a parallelepiped \f$z + A \cdot [-1,1]^m\f$
    * 
-   * This class represents a parallelepiped in n-dimensional space, defined by a center point `z` and a shape matrix `A`.
+   * This class represents a parallelepiped in n-dimensional space, defined by a center point \f$z\f$ and a shape matrix \f$A\f$.
    * 
-   * A parallelepiped is a special case of a zonotope where the shape matrix `A` has `m` columns with `m <= n`.
+   * A parallelepiped is a special case of a zonotope where the shape matrix \f$A\f$ has \f$m\f$ columns with \f$m \leq n\f$.
    */
   class Parallelepiped : public Zonotope
   {

@@ -305,7 +305,7 @@ User manual
    * :ref:`sec-geom-utils`
    * :ref:`sec-geom-segment`
    * :ref:`sec-geom-polygon`
-   * :ref:`sec-polytope`
+   * :ref:`sec-zonotope`
    * Polyhedron
 
 * :ref:`sec-ellipsoids`

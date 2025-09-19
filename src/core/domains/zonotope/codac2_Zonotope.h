@@ -20,11 +20,11 @@ namespace codac2
 {
   /**
    * \class Zonotope
-   * \brief Class representing a zonotope z + A*[-1,1]^m
+   * \brief Class representing a zonotope \f$z + A \cdot [-1,1]^m\f$
    * 
-   * This class represents a zonotope in n-dimensional space, defined by a center point `z` and a shape matrix `A`.
+   * This class represents a zonotope in n-dimensional space, defined by a center point \f$z\f$ and a shape matrix \f$A\f$.
    * 
-   * The Vector `z` and each column of the Matrix `A` must have the same dimension `n`, but the matrix `A` can have any number of columns `m`.
+   * The Vector \f$z\f$ and each column of the Matrix \f$A\f$ must have the same dimension \f$n\f$, but the matrix \f$A\f$ can have any number of columns \f$m\f$.
    */
   class Zonotope
   {

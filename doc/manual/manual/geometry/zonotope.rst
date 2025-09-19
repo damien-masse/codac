@@ -1,11 +1,11 @@
-.. _sec-polytope:
+.. _sec-zonotope:
 
-Polytopes
+Zonotopes
 =========
 
   Main author: `Maël Godard <https://godardma.github.io/>`_
 
-The following classes represent polytopes.
+The following classes represent zonotopes.
 
 Zonotope
 --------

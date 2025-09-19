@@ -15,7 +15,7 @@ Because computations are based on interval arithmetic, all these functions provi
   utils.rst
   segment.rst
   polygon.rst
-  polytope.rst
+  zonotope.rst
 
 Related interval enumerations
 -----------------------------
