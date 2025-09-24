@@ -57,7 +57,12 @@ namespace codac2
         return std::const_pointer_cast<PavingNode<P>>(const_cast<const Paving<P,X...>*>(this)->tree());
       }
 
-      inline std::list<IntervalVector> boxes(const NodeValue_& node_value, const IntervalVector& intersecting_box = IntervalVector(size())) const
+      inline std::list<IntervalVector> boxes(const NodeValue_& node_value) const
+      {
+        return boxes(node_value, IntervalVector(size()));
+      }
+
+      inline std::list<IntervalVector> boxes(const NodeValue_& node_value, const IntervalVector& intersecting_box) const
       {
         std::list<IntervalVector> l;
 
