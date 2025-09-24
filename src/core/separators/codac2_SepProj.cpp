@@ -29,7 +29,9 @@ namespace codac2
       return _sep.front()->separate(x);
     
     list<IntervalVector> l_stack { cart_prod_xy(x,_y) };
-    list<IntervalVector> l_in, l_out;
+    
+    auto result_out = IntervalVector::empty(x.size());
+    auto result_in = x;
 
     // The stack allows to explore along the y-column to be projected,
     // performing bisections along y if necesary
@@ -41,24 +43,12 @@ namespace codac2
       auto w_sep = _sep.front()->separate(w);
       assert((w_sep.inner | w_sep.outer) == w);
 
+      if(extract_x(w) == x)
+        result_in &= extract_x(w_sep.inner);
+
       // If the guess box may contain some values
-      if(!w_sep.outer.is_empty())
+      if(!w_sep.outer.is_empty()) // i.e. extract_x(w_sep.outer).is_empty()
       {
-        // Trying to find inner values...
-        // A new guess is the y-middle of the previous one
-        auto w_mid = cart_prod_xy(x,extract_y(w).mid());
-        auto w_sep_mid = _sep.front()->separate(w_mid);
-        assert((w_sep_mid.inner | w_sep_mid.outer) == w_mid);
-
-        // If inner values entirely cover the input projection box x,
-        // the algorithm can terminate
-        auto x_sep_mid_inner = extract_x(w_sep_mid.inner);
-        if(x_sep_mid_inner.is_empty())
-          return { IntervalVector::empty(x.size()), x };
-
-        // Otherwise, the inner parts are stored temporarily
-        l_in.push_back(x_sep_mid_inner);
-
         // If the current guess w is not a leaf, proceed to a bisection of the guess
         Index yi_max = y_max_diam_index(extract_y(w_sep.outer));
         if(w_sep.outer[yi_max].diam() > eps)
@@ -68,24 +58,23 @@ namespace codac2
           l_stack.push_back(b.second);
         }
 
-        else // storing outer values for future reconstruction
-          l_out.push_back(extract_x(w_sep.outer));
+        else // only leaves are considered for result_out
+          result_out |= extract_x(w_sep.outer);
+
+        if(!result_in.is_empty())
+        {
+          // Trying to find inner values...
+          // A new guess is the y-middle of the previous one
+          auto w_mid = cart_prod_xy(x,extract_y(w_sep.outer).mid());
+          assert(!w_mid.is_empty());
+          auto w_sep_mid = _sep.front()->separate(w_mid);
+          assert((w_sep_mid.inner | w_sep_mid.outer) == w_mid);
+          result_in &= extract_x(w_sep_mid.inner);
+        }
       }
     }
 
-    // Reconstructing x_out from previous parts
-
-      auto x_out = IntervalVector::empty(x.size());
-      for(const auto& li_out : l_out)
-        x_out |= li_out;
-
-    // Reconstructing x_in from previous parts
-
-      auto x_in = x;
-      for(const auto& li_in : l_in)
-        x_in &= li_in;
-
-    assert((x_in | x_out) == x);
-    return { x_in, x_out };
+    assert((result_in | result_out) == x);
+    return { result_in, result_out };
   }
 }
