@@ -32,7 +32,7 @@ void export_drawwhilepaving(py::module& m)
     VOID_DRAW_WHILE_PAVING_CONST_INTERVALVECTOR_REF_CONST_C_REF_DOUBLE_CONST_FUNCTION_VOID_FIGURE2D_REFCONST_INTERVALVECTOR_REFCONST_STYLEPROPERTIES_REF__REF_SHARED_PTR_FIGURE2D,
     "x0"_a, "c"_a, "eps"_a, "draw_box"_a, "fig"_a=nullptr);
 
-  m.def("draw_while_paving_polar", (void (*)(const IntervalVector& x0, const CtcBase<IntervalVector>& c, double eps,
+  m.def("draw_while_paving", (void (*)(const IntervalVector& x0, const CtcBase<IntervalVector>& c, double eps,
       std::shared_ptr<Figure2D> fig)) &draw_while_paving,
     VOID_DRAW_WHILE_PAVING_CONST_INTERVALVECTOR_REF_CONST_C_REF_DOUBLE_SHARED_PTR_FIGURE2D,
     "x0"_a, "c"_a, "eps"_a, "fig"_a=nullptr);
@@ -43,7 +43,7 @@ void export_drawwhilepaving(py::module& m)
     VOID_DRAW_WHILE_PAVING_CONST_INTERVALVECTOR_REF_CONST_S_REF_DOUBLE_CONST_FUNCTION_VOID_FIGURE2D_REFCONST_INTERVALVECTOR_REFCONST_STYLEPROPERTIES_REF__REF_SHARED_PTR_FIGURE2D,
     "x0"_a, "s"_a, "eps"_a, "draw_box"_a, "fig"_a=nullptr);
 
-  m.def("draw_while_paving_polar", (void (*)(const IntervalVector& x0, const SepBase& s, double eps,
+  m.def("draw_while_paving", (void (*)(const IntervalVector& x0, const SepBase& s, double eps,
       std::shared_ptr<Figure2D> fig)) &draw_while_paving,
     VOID_DRAW_WHILE_PAVING_CONST_INTERVALVECTOR_REF_CONST_S_REF_DOUBLE_SHARED_PTR_FIGURE2D,
     "x0"_a, "s"_a, "eps"_a, "fig"_a=nullptr);
