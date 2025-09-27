@@ -52,17 +52,13 @@ std::vector<Vector> Parallelepiped::vertices() const
 {
   vector<Vector> L_v;
   generate_vertices(0, z.size(),z,A,L_v);
-
   return L_v;
 }
 
 IntervalVector Parallelepiped::box() const
 {
-  IntervalVector box (z);
-  for (auto vertice : vertices())
-  {
-    box |= IntervalVector(vertice);
-  }
+  IntervalVector box(z);
+  for(const auto& v : vertices())
+    box |= v;
   return box;
 }
-

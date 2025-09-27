@@ -1,13 +1,8 @@
 /** 
  *  Codac tests
- *  
- *  Most of these tests come from the IBEX library (Gilles Chabert)
- *  See more: https://ibex-lib.readthedocs.io
- *  They have been revised to fit with Codac (v2)
- *
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Gilles Chabert, (Simon Rohou)
+ *  \author     Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
