@@ -68,6 +68,10 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_Paving.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_PavingNode.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_Subpaving.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Parallelepiped.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Parallelepiped.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Slice.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.h
@@ -262,6 +266,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/eigen
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube
     ${CMAKE_CURRENT_SOURCE_DIR}/functions
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic

@@ -305,6 +305,7 @@ User manual
    * :ref:`sec-geom-utils`
    * :ref:`sec-geom-segment`
    * :ref:`sec-geom-polygon`
+   * :ref:`sec-zonotope`
    * Polyhedron
 
 * :ref:`sec-ellipsoids`
@@ -365,7 +366,7 @@ Development
 -----------
 
 * :ref:`sec-dev-info`
-* Changelog
+* :ref:`sec-dev-changelog`
 * C++ API
 
 
@@ -446,8 +447,8 @@ Development
    :maxdepth: 3
 
    development/info_dev.rst
+   development/changelog.rst
 .. 
-..    Changelog
 ..    C++ API
 
 
