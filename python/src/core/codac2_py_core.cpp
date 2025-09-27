@@ -120,6 +120,7 @@ void export_pave(py::module& m);
 // separators
 py::class_<SepBase,pySep> export_Sep(py::module& m);
 void export_SepAction(py::module& m, py::class_<SepBase,pySep>& pysep);
+void export_SepCartPolar(py::module& m, py::class_<SepBase,pySep>& pysep);
 void export_SepCartProd(py::module& m, py::class_<SepBase,pySep>& pysep);
 void export_SepChi(py::module& m, py::class_<SepBase,pySep>& pysep);
 void export_SepCross(py::module& m, py::class_<SepBase,pySep>& pysep);
@@ -269,6 +270,7 @@ PYBIND11_MODULE(_core, m)
   // separators
   auto py_sep = export_Sep(m);
   export_SepAction(m,py_sep);
+  export_SepCartPolar(m,py_sep);
   export_SepCartProd(m,py_sep);
   export_SepChi(m,py_sep);
   export_SepCross(m,py_sep);

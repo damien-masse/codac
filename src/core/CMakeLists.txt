@@ -192,6 +192,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_Sep.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepAction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepAction.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartPolar.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartPolar.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartProd.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartProd.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepChi.cpp

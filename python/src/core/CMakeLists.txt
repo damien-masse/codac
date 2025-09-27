@@ -87,6 +87,7 @@
     separators/codac2_py_Sep.cpp
     separators/codac2_py_Sep.h
     separators/codac2_py_SepAction.cpp
+    separators/codac2_py_SepCartPolar.cpp
     separators/codac2_py_SepCartProd.cpp
     separators/codac2_py_SepChi.cpp
     separators/codac2_py_SepCross.cpp
