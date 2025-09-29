@@ -31,14 +31,13 @@ namespace codac2
     requires IsCtcBaseOrPtr<C,IntervalVector>
   inline void Figure2D::pave(const IntervalVector& x0, const C& c, double eps,
     const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-    const StyleProperties& s_boundary,
-    const StyleProperties& s_outside)
+    const PavingStyle& style)
   {
     assert_release(eps > 0.);
     assert_release(c.size() >= 2 && "cannot reveal 1d contractors");
 
     if(x0.size() > 2)
-      draw_box(*this, x0, s_outside);
+      draw_box(*this, x0, style.outside);
 
     clock_t t_start = clock();
     std::list<IntervalVector> l { x0 };
@@ -53,14 +52,14 @@ namespace codac2
 
       if(x0.size() == 2)
         for(const auto& bi : prev_x.diff(x))
-          draw_box(*this, bi, s_outside);
+          draw_box(*this, bi, style.outside);
 
       if(!x.is_empty())
       {
         if(x.max_diam() < eps)
         {
           n++;
-          draw_box(*this, x, s_boundary);
+          draw_box(*this, x, style.boundary);
         }
 
         else
@@ -76,20 +75,16 @@ namespace codac2
   
   template<typename C>
     requires IsCtcBaseOrPtr<C,IntervalVector>
-  inline void Figure2D::pave(const IntervalVector& x0, const C& c, double eps,
-    const StyleProperties& s_boundary,
-    const StyleProperties& s_outside)
+  inline void Figure2D::pave(const IntervalVector& x0, const C& c, double eps, const PavingStyle& style)
   {
-    return pave(x0, c, eps, cartesian_drawing(), s_boundary, s_outside);
+    return pave(x0, c, eps, cartesian_drawing(), style);
   }
 
   template<typename S>
     requires IsSepBaseOrPtr<S>
   inline void Figure2D::pave(const IntervalVector& x0, const S& s, double eps,
     const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-    const StyleProperties& s_boundary,
-    const StyleProperties& s_outside,
-    const StyleProperties& s_inside)
+    const PavingStyle& style)
   {
     assert_release(eps > 0.);
     assert_release(size_of(s) >= 2 && "cannot reveal 1d separators");
@@ -106,15 +101,15 @@ namespace codac2
       auto boundary = x_sep.inner & x_sep.outer;
 
       for(const auto& bi : x.diff(x_sep.inner))
-        draw_box(*this, bi, s_inside);
+        draw_box(*this, bi, style.inside);
 
       for(const auto& bi : x.diff(x_sep.outer))
-        draw_box(*this, bi, s_outside);
+        draw_box(*this, bi, style.outside);
 
       if(!boundary.is_empty())
       {
         if(boundary.max_diam() <= eps)
-          draw_box(*this, boundary, s_boundary);
+          draw_box(*this, boundary, style.boundary);
 
         else
         {
@@ -130,10 +125,8 @@ namespace codac2
   template<typename S>
     requires IsSepBaseOrPtr<S>
   inline void Figure2D::pave(const IntervalVector& x0, const S& s, double eps,
-    const StyleProperties& s_boundary,
-    const StyleProperties& s_outside,
-    const StyleProperties& s_inside)
+    const PavingStyle& style)
   {
-    return pave(x0, s, eps, cartesian_drawing(), s_boundary, s_outside, s_inside);
+    return pave(x0, s, eps, cartesian_drawing(), style);
   }
 }

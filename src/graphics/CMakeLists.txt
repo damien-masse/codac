@@ -26,6 +26,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_Color.h
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_ColorMap.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_ColorMap.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_PavingStyle.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_PavingStyle.h
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_StyleProperties.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_StyleProperties.h
   )

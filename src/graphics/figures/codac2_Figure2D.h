@@ -19,6 +19,7 @@
 #include "codac2_Parallelepiped.h"
 #include "codac2_Zonotope.h"
 #include "codac2_ColorMap.h"
+#include "codac2_PavingStyle.h"
 #include "codac2_Ellipsoid.h"
 #include "codac2_Polygon.h"
 #include "codac2_SlicedTube.h"
@@ -431,53 +432,41 @@ namespace codac2
        * \brief Draws a previously computed paving (outer approximation) on the figure
        * 
        * \param p PavingOut to draw (result of a paving with contractors)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
+       * \param style ``PavingStyle`` for the drawing
        */
       void draw_paving(const PavingOut& p,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside());
+        const PavingStyle& style = PavingStyle::default_style());
 
       /**
        * \brief Draws a previously computed paving (outer approximation) on the figure
        * 
        * \param p PavingOut to draw (result of a paving with contractors)
-       * \param draw_box Custom drawing function (for instance, if one want to draw in polar coordinates)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
+       * \param draw_box Custom drawing function (for instance, if one wants to draw in polar coordinates)
+       * \param style ``PavingStyle`` for the drawing
        */
       void draw_paving(const PavingOut& p,
         const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside());
+        const PavingStyle& style = PavingStyle::default_style());
 
       /**
        * \brief Draws a previously computed paving (inner/outer approximation) on the figure
        * 
        * \param p PavingInOut to draw (result of a paving with separators)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
-       * \param s_inside Style of the inside of the paving
+       * \param style ``PavingStyle`` for the drawing
        */
       void draw_paving(const PavingInOut& p,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside(),
-        const StyleProperties& s_inside = StyleProperties::inside());
+        const PavingStyle& style = PavingStyle::default_style());
 
       /**
        * \brief Draws a previously computed paving (inner/outer approximation) on the figure
        * 
        * \param p PavingInOut to draw (result of a paving with separators)
-       * \param draw_box Custom drawing function (for instance, if one want to draw in polar coordinates)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
-       * \param s_inside Style of the inside of the paving
+       * \param draw_box Custom drawing function (for instance, if one wants to draw in polar coordinates)
+       * \param style ``PavingStyle`` for the drawing
        */
       void draw_paving(const PavingInOut& p,
         const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside(),
-        const StyleProperties& s_inside = StyleProperties::inside());
+        const PavingStyle& style = PavingStyle::default_style());
 
       /**
        * \brief Draws a paving from a contractor while it is being computed
@@ -485,14 +474,12 @@ namespace codac2
        * \param x0 Initial box
        * \param c Contractor to be paved
        * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
+       * \param style ``PavingStyle`` for the drawing
        */  
       template<typename C>
         requires IsCtcBaseOrPtr<C,IntervalVector>
       void pave(const IntervalVector& x0, const C& c, double eps,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside());
+        const PavingStyle& style = PavingStyle::default_style());
 
       /**
        * \brief Draws a paving from a contractor while it is being computed
@@ -500,16 +487,14 @@ namespace codac2
        * \param x0 Initial box
        * \param c Contractor to be paved
        * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-       * \param draw_box Optional custom drawing function (for instance, if one want to draw in polar coordinates)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
+       * \param draw_box Optional custom drawing function (for instance, if one wants to draw in polar coordinates)
+       * \param style ``PavingStyle`` for the drawing
        */  
       template<typename C>
         requires IsCtcBaseOrPtr<C,IntervalVector>
       void pave(const IntervalVector& x0, const C& c, double eps,
         const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside());
+        const PavingStyle& style = PavingStyle::default_style());
 
       /**
        * \brief Draws a paving from a separator while it is being computed
@@ -517,16 +502,12 @@ namespace codac2
        * \param x0 Initial box
        * \param s Separator to be paved
        * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
-       * \param s_inside Style of the inside of the paving
+       * \param style ``PavingStyle`` for the drawing
        */  
       template<typename S>
         requires IsSepBaseOrPtr<S>
       void pave(const IntervalVector& x0, const S& s, double eps,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside(),
-        const StyleProperties& s_inside = StyleProperties::inside());
+        const PavingStyle& style = PavingStyle::default_style());
 
       /**
        * \brief Draws a paving from a separator while it is being computed
@@ -534,18 +515,14 @@ namespace codac2
        * \param x0 Initial box
        * \param s Separator to be paved
        * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-       * \param draw_box Optional custom drawing function (for instance, if one want to draw in polar coordinates)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
-       * \param s_inside Style of the inside of the paving
+       * \param draw_box Optional custom drawing function (for instance, if one wants to draw in polar coordinates)
+       * \param style ``PavingStyle`` for the drawing
        */  
       template<typename S>
         requires IsSepBaseOrPtr<S>
       void pave(const IntervalVector& x0, const S& s, double eps,
         const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside(),
-        const StyleProperties& s_inside = StyleProperties::inside());
+        const PavingStyle& style = PavingStyle::default_style());
 
       /**
        * \brief Draws a subpaving on the figure
@@ -993,72 +970,60 @@ namespace codac2
        * \brief Draws a previously computed paving (outer approximation) on the figure
        * 
        * \param p PavingOut to draw (result of a paving with contractors)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
+       * \param style ``PavingStyle`` for the drawing
        */
       static void draw_paving(const PavingOut& p,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside())
+        const PavingStyle& style = PavingStyle::default_style())
       {
         if(auto_init())
           init_axes_paving(p.tree()->hull());
-        selected_fig()->draw_paving(p, s_boundary, s_outside);
+        selected_fig()->draw_paving(p, style);
       }
 
       /**
        * \brief Draws a previously computed paving (outer approximation) on the figure
        * 
        * \param p PavingOut to draw (result of a paving with contractors)
-       * \param draw_box Custom drawing function (for instance, if one want to draw in polar coordinates)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
+       * \param draw_box Custom drawing function (for instance, if one wants to draw in polar coordinates)
+       * \param style ``PavingStyle`` for the drawing
        */
       static void draw_paving(const PavingOut& p,
         const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside())
+        const PavingStyle& style = PavingStyle::default_style())
       {
         if(auto_init())
           init_axes_paving(p.tree()->hull());
-        selected_fig()->draw_paving(p, draw_box, s_boundary, s_outside);
+        selected_fig()->draw_paving(p, draw_box, style);
       }
 
       /**
        * \brief Draws a previously computed paving (inner/outer approximation) on the figure
        * 
        * \param p PavingInOut to draw (result of a paving with separators)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
-       * \param s_inside Style of the inside of the paving
+       * \param style ``PavingStyle`` for the drawing
        */
       static void draw_paving(const PavingInOut& p,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside(),
-        const StyleProperties& s_inside = StyleProperties::inside())
+        const PavingStyle& style = PavingStyle::default_style())
       {
         if(auto_init())
           init_axes_paving(p.tree()->hull());
-        selected_fig()->draw_paving(p, s_boundary, s_outside, s_inside);
+        selected_fig()->draw_paving(p, style);
       }
 
       /**
        * \brief Draws a previously computed paving (inner/outer approximation) on the figure
        * 
        * \param p PavingInOut to draw (result of a paving with separators)
-       * \param draw_box Custom drawing function (for instance, if one want to draw in polar coordinates)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
-       * \param s_inside Style of the inside of the paving
+       * \param draw_box Custom drawing function (for instance, if one wants to draw in polar coordinates)
+       * \param style ``PavingStyle`` for the drawing
        */
       static void draw_paving(const PavingInOut& p,
         const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside(),
-        const StyleProperties& s_inside = StyleProperties::inside())
+        const PavingStyle& style = PavingStyle::default_style())
       {
         if(auto_init())
           init_axes_paving(p.tree()->hull());
-        selected_fig()->draw_paving(p, draw_box, s_boundary, s_outside, s_inside);
+        selected_fig()->draw_paving(p, draw_box, style);
       }
 
       /**
@@ -1067,18 +1032,16 @@ namespace codac2
        * \param x0 Initial box
        * \param c Contractor to be paved
        * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
+       * \param style ``PavingStyle`` for the drawing
        */
       template<typename C>
         requires IsCtcBaseOrPtr<C,IntervalVector>
       static void pave(const IntervalVector& x0, const C& c, double eps,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside())
+        const PavingStyle& style = PavingStyle::default_style())
       {
         if(auto_init())
           init_axes_paving(x0);
-        selected_fig()->pave(x0, c, eps, s_boundary, s_outside);
+        selected_fig()->pave(x0, c, eps, style);
       }
 
       /**
@@ -1087,20 +1050,18 @@ namespace codac2
        * \param x0 Initial box
        * \param c Contractor to be paved
        * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-       * \param draw_box Optional custom drawing function (for instance, if one want to draw in polar coordinates)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
+       * \param draw_box Optional custom drawing function (for instance, if one wants to draw in polar coordinates)
+       * \param style ``PavingStyle`` for the drawing
        */  
       template<typename C>
         requires IsCtcBaseOrPtr<C,IntervalVector>
       static void pave(const IntervalVector& x0, const C& c, double eps,
         const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside())
+        const PavingStyle& style = PavingStyle::default_style())
       {
         if(auto_init())
           init_axes_paving(x0);
-        selected_fig()->pave(x0, c, eps, draw_box, s_boundary, s_outside);
+        selected_fig()->pave(x0, c, eps, draw_box, style);
       }
 
       /**
@@ -1109,20 +1070,16 @@ namespace codac2
        * \param x0 Initial box
        * \param s Separator to be paved
        * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
-       * \param s_inside Style of the inside of the paving
+       * \param style ``PavingStyle`` for the drawing
        */  
       template<typename S>
         requires IsSepBaseOrPtr<S>
       static void pave(const IntervalVector& x0, const S& s, double eps,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside(),
-        const StyleProperties& s_inside = StyleProperties::inside())
+        const PavingStyle& style = PavingStyle::default_style())
       {
         if(auto_init())
           init_axes_paving(x0);
-        selected_fig()->pave(x0, s, eps, s_boundary, s_outside, s_inside);
+        selected_fig()->pave(x0, s, eps, style);
       }
 
       /**
@@ -1131,22 +1088,18 @@ namespace codac2
        * \param x0 Initial box
        * \param s Separator to be paved
        * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-       * \param draw_box Optional custom drawing function (for instance, if one want to draw in polar coordinates)
-       * \param s_boundary Style of the boundary of the paving
-       * \param s_outside Style of the outside of the paving
-       * \param s_inside Style of the inside of the paving
+       * \param draw_box Optional custom drawing function (for instance, if one wants to draw in polar coordinates)
+       * \param style ``PavingStyle`` for the drawing
        */  
       template<typename S>
         requires IsSepBaseOrPtr<S>
       static void pave(const IntervalVector& x0, const S& s, double eps,
         const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-        const StyleProperties& s_boundary = StyleProperties::boundary(),
-        const StyleProperties& s_outside = StyleProperties::outside(),
-        const StyleProperties& s_inside = StyleProperties::inside())
+        const PavingStyle& style = PavingStyle::default_style())
       {
         if(auto_init())
           init_axes_paving(x0);
-        selected_fig()->pave(x0, s, eps, draw_box, s_boundary, s_outside, s_inside);
+        selected_fig()->pave(x0, s, eps, draw_box, style);
       }
 
       /**
