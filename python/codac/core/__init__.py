@@ -532,6 +532,9 @@ class SlicedTube:
 
   def primitive(self):
     return self.tube.primitive()
+    
+  def as_function(self):
+    return AnalyticFunction(self.tube.as_function())
 
 
 def fixpoint(contract, *x):

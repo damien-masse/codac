@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_Traj_operator.h
+ *  \file codac2_Tube_operator.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -15,15 +15,17 @@
 
 namespace codac2
 {
-  template<typename TR>
-  struct TrajectoryOp
+  template<typename TU>
+  struct TubeOp
   {
-    static typename TR::Type::Domain fwd(const TR& x1, const Interval& x2)
+    using Type = typename ExprType<TU>::Type;
+
+    static typename Type::Domain fwd(const TU& x1, const Interval& x2)
     {
       return x1(x2);
     }
 
-    static typename TR::Type fwd(const TR& x1, const ScalarType& x2)
+    static Type fwd(const TU& x1, const ScalarType& x2)
     {
       IntervalMatrix d(x1.size(),x2.da.cols());
 
@@ -31,33 +33,33 @@ namespace codac2
         fwd(x1,x2.m),
         fwd(x1,x2.a),
         d,
-        x2.def_domain && x1.tdomain().is_superset(x2.m)
+        x2.def_domain && x1.tdomain()->t0_tf().is_superset(x2.m)
       };
     }
 
     static void bwd(
-      [[maybe_unused]] const TR& x1,
-      [[maybe_unused]] const typename TR::Type::Domain& y,
+      [[maybe_unused]] const TU& x1,
+      [[maybe_unused]] const typename Type::Domain& y,
       [[maybe_unused]] Interval& x2)
     {
       // todo
     }
   };
 
-  // todo: merge this code with SlicedTube_operator
-  template<typename TR, typename T, typename S>
-  class AnalyticOperationExpr<TrajectoryOp<TR>,T,S>
-    : public AnalyticExpr<typename TR::Type>, public OperationExprBase<AnalyticExpr<ScalarType>>
+  // todo: merge this code with Traj_operator
+  template<typename TU, typename T, typename S>
+  class AnalyticOperationExpr<TubeOp<TU>,T,S>
+    : public AnalyticExpr<T>, public OperationExprBase<AnalyticExpr<ScalarType>>
   {
     public:
 
-      AnalyticOperationExpr(const TR& x1, const ScalarExpr& x2)
+      AnalyticOperationExpr(const TU& x1, const ScalarExpr& x2)
         : OperationExprBase<AnalyticExpr<ScalarType>>(x2), _x1(x1)
       { }
 
       std::shared_ptr<ExprBase> copy() const
       {
-        return std::make_shared<AnalyticOperationExpr<TrajectoryOp<TR>,T,ScalarType>>(*this);
+        return std::make_shared<AnalyticOperationExpr<TubeOp<TU>,T,ScalarType>>(*this);
       }
 
       void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
@@ -68,12 +70,12 @@ namespace codac2
       T fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval) const
       {
         return AnalyticExpr<T>::init_value(
-          v, TrajectoryOp<TR>::fwd(_x1, std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval)));
+          v, TubeOp<TU>::fwd(_x1, std::get<0>(this->_x)->fwd_eval(v, total_input_size, natural_eval)));
       }
       
       void bwd_eval(ValuesMap& v) const
       {
-        TrajectoryOp<TR>::bwd(_x1, AnalyticExpr<T>::value(v).a, std::get<0>(this->_x)->value(v).a);
+        TubeOp<TU>::bwd(_x1, AnalyticExpr<T>::value(v).a, std::get<0>(this->_x)->value(v).a);
         std::get<0>(this->_x)->bwd_eval(v);
       }
 
@@ -99,6 +101,6 @@ namespace codac2
 
     protected:
 
-      const TR _x1;
+      const TU _x1;
   };
 }
