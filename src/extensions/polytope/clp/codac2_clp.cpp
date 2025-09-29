@@ -26,6 +26,7 @@
 
 
 #include "codac2_BoolInterval.h"
+#include "codac2_Facet.h"
 #include "codac2_clp.h"
 
 #undef CODAC2_EXTENSION_POLYTOPE_CLP_DEBUG
@@ -34,45 +35,147 @@ namespace codac2 {
 
 /**********  Problem building funtions ***********/
 
-LPclp::LPclp(const Matrix &mat, const Row &objvect,
-                const Vector &rhsvect) : 
-   nbRows(mat.rows()), nbCols(mat.cols()), 
-   Amat(mat), 
-   objvect(objvect),
-   rhsvect(rhsvect), cststat(nbRows,0), 
+LPclp::LPclp (Index dim, const std::vector<Facet> &facets,
+      	  const Row &objvect) :
+   nbRows(facets.size()), nbCols(dim),
+   Afacets(facets), objvect(objvect),
+   cststat(nbRows,0),
    rowBasis(nbRows,false), built(false), model(nullptr),
    primalSol(nbCols), dualSol(nbRows), primalRay(nbCols), dualRay(nbRows),
    bbox(nbCols)
 {
+}
+
+LPclp::LPclp (Index dim, const std::vector<Facet> &facets) :
+   nbRows(facets.size()), nbCols(dim),
+   Afacets(facets), objvect(Row::Zero(nbCols)),
+   cststat(nbRows,0),
+   rowBasis(nbRows,false), built(false), model(nullptr),
+   primalSol(nbCols), dualSol(nbRows), primalRay(nbCols), dualRay(nbRows),
+   bbox(nbCols)
+{
+}
+
+LPclp::LPclp (Index dim, const std::vector<Facet> &facets,
+		const IntervalVector &box) :
+   nbRows(facets.size()), nbCols(dim),
+   Afacets(facets), objvect(Row::Zero(nbCols)),
+   cststat(nbRows,0),
+   rowBasis(nbRows,false), built(false), model(nullptr),
+   primalSol(nbCols), dualSol(nbRows), primalRay(nbCols), dualRay(nbRows),
+   bbox(box)
+{
+}
+
+LPclp::LPclp(const Matrix &mat, const Row &objvect,
+                const Vector &rhsvect, const std::vector<Index> &eqSet) : 
+   nbRows(mat.rows()), nbCols(mat.cols()), 
+   Afacets(nbRows),
+   objvect(objvect),
+   cststat(nbRows,0), 
+   rowBasis(nbRows,false), built(false), model(nullptr),
+   primalSol(nbCols), dualSol(nbRows), primalRay(nbCols), dualRay(nbRows),
+   bbox(nbCols)
+{
+   for (Index i=0;i<nbRows;i++) {
+      Afacets[i].row = mat.row(i);
+      Afacets[i].rhs = rhsvect[i];
+      Afacets[i].eqcst = false;
+   }
+   for (Index i: eqSet) {
+     assert_release(i>=0 && i<nbRows);
+     Afacets[i].eqcst = true;
+   }
 }
 
 LPclp::LPclp(const Matrix &mat, 
-                const Vector &rhsvect) : 
+                const Vector &rhsvect, const std::vector<Index> &eqSet) : 
    nbRows(mat.rows()), nbCols(mat.cols()), 
-   Amat(mat),
+   Afacets(nbRows),
    objvect(Row::Zero(nbCols)),
-   rhsvect(rhsvect), cststat(nbRows,0), 
+   cststat(nbRows,0), 
    rowBasis(nbRows,false), built(false), model(nullptr),
    primalSol(nbCols), dualSol(nbRows), primalRay(nbCols), dualRay(nbRows),
    bbox(nbCols)
 {
-   
+   for (Index i=0;i<nbRows;i++) {
+      Afacets[i].row = mat.row(i);
+      Afacets[i].rhs = rhsvect[i];
+      Afacets[i].eqcst = false;
+   }
+   for (Index i: eqSet) {
+     assert_release(i>=0 && i<nbRows);
+     Afacets[i].eqcst = true;
+   }
 }
 
-LPclp::LPclp(Index dim, Index nbcsts) :
-   nbRows(nbcsts), nbCols(dim), 
-   Amat(Matrix::Zero(nbRows,nbCols)), 
+LPclp::LPclp(Index dim) :
+   nbRows(0), nbCols(dim), 
    objvect(Row::Zero(nbCols)),
-   rhsvect(Vector::Zero(nbRows)),
-   cststat(nbRows,1<<REMOVED),
-   rowBasis(nbRows,false), built(false), model(nullptr),
-   primalSol(nbCols), dualSol(nbRows), primalRay(nbCols), dualRay(nbRows),
+   built(false), model(nullptr),
+   primalSol(nbCols), primalRay(nbCols),
    bbox(nbCols)
+{
+}
+
+LPclp::LPclp(const LPclp &P) :
+    nbRows(P.nbRows), nbCols(P.nbCols),
+    Afacets(P.Afacets), objvect(P.objvect), cststat(P.cststat),
+    rowBasis(nbRows,false), built(false), model(nullptr),
+    primalSol(nbCols), dualSol(nbRows), primalRay(nbCols), dualRay(nbRows),
+    bbox(P.bbox), timeout(P.timeout), maxIteration(P.maxIteration),
+    tolerance(P.tolerance)
 {
 }
 
 LPclp::~LPclp() {
    delete(model);
+}
+
+void LPclp::addFacetToCoinBuild(CoinBuild &buildObject,
+	     const Facet &facet, lp_cststatus status,
+             int *row2Index, double *row2Vals) const {
+    double bndUp = ((status[REMOVED] || status[INACTIVE]
+	|| status[REDUNDANT]) ?  COIN_DBL_MAX : facet.rhs);
+    double bndLow = (!facet.eqcst ||
+	  (status[REMOVED] || status[INACTIVE] || status[REDUNDANT]) ?
+                        -COIN_DBL_MAX : facet.rhs);
+    if (built_emptytest) {
+      for (Index j=0;j<nbCols;j++) { 
+	/* direct copy, needed if emptytest is true */
+           row2Vals[j]=facet.row[j];
+      }
+      row2Vals[nbCols]=(facet.eqcst ? 0.0 : 1.0); 
+      buildObject.addRow(nbCols+1, row2Index, row2Vals, bndLow, bndUp);
+   } else {
+      buildObject.addRow(nbCols, row2Index, facet.row.data(), bndLow, bndUp);
+   }
+}
+
+
+Index LPclp::addConstraint(const Facet &facet) {
+   this->Afacets.push_back(facet);
+   this->cststat.push_back(0);
+   this->dualSol.resize(nbRows+1);
+   this->dualRay.resize(nbRows+1);
+   if (built) {
+     CoinBuild buildObject;
+     Index nbCols2=nbCols+(built_emptytest ? 1 : 0);
+     int* row2Index = new int[nbCols2];
+     for(Index i=0;i<nbCols2;i++){row2Index[i]=i;}
+     double* row2Vals = built_emptytest ? (new double[nbCols2]) : nullptr;
+     this->addFacetToCoinBuild(buildObject,facet,0,row2Index,row2Vals);
+     delete row2Index;
+     if (built_emptytest) delete row2Vals;
+     model->addRows(buildObject);
+     this->status=1<<CHANGED;
+   }
+   return (nbRows++);
+}
+
+Index LPclp::addConstraint(const Row &vst, double rhs, bool isEq) {
+   Facet newFacet(vst,rhs,isEq);
+   return this->addConstraint(newFacet);
 }
 
 void LPclp::setObjective(const Row &objvect) {
@@ -89,12 +192,18 @@ void LPclp::setActive(Index cst, bool state) {
     if (state) {
        if (!cststat[cst][INACTIVE]) return;
        cststat[cst][INACTIVE]=false;
-       if (built) model->setRowUpper(cst,rhsvect[cst]);
+       if (built) {
+           model->setRowUpper(cst,Afacets[cst].rhs);
+           if (Afacets[cst].eqcst) model->setRowLower(cst,Afacets[cst].rhs);
+       }
        this->status=1<<CHANGED;
     } else {
        if (cststat[cst][INACTIVE]) return;
        cststat[cst][INACTIVE]=true;
-       if (built) model->setRowUpper(cst,DBL_MAX);
+       if (built) {
+            model->setRowUpper(cst,DBL_MAX);
+            model->setRowLower(cst,-DBL_MAX);
+       }
        this->status=1<<CHANGED;
     }
 }
@@ -121,24 +230,14 @@ void LPclp::buildModel(bool emptytest) {
    }
 
    /* adding the rows using BuildObject ? */
+   built_emptytest=emptytest;
    CoinBuild buildObject;
    int* row2Index = new int[nbCols2];
    for(Index i=0;i<nbCols2;i++){row2Index[i]=i;}
-   double* row2Vals = new double[nbCols2];
+   double* row2Vals = emptytest ? (new double[nbCols2]) : nullptr;
    for(Index k=0; k<nbRows; k++) {
-         double bnd = ((cststat[k][REMOVED] || cststat[k][INACTIVE]
-			|| cststat[k][REDUNDANT]) ? 
-			COIN_DBL_MAX : rhsvect[k]);
-         
-         for (Index j=0;j<nbCols;j++) { 
-		/* FIXME : frustrating approach for the model,
-                   but Amat is not in "correct" storage order.
-		   (or we consider the transpose order ? */
-           row2Vals[j]=Amat(k,j);
-         }
-         if (emptytest) { row2Vals[nbCols]=1.0; }
-         buildObject.addRow(nbCols2, row2Index, row2Vals,
-                     -COIN_DBL_MAX, bnd);
+         this->addFacetToCoinBuild(buildObject,
+		Afacets[k],cststat[k],row2Index,row2Vals);
    }
    model->addRows(buildObject);
    delete row2Vals;
@@ -151,7 +250,6 @@ void LPclp::buildModel(bool emptytest) {
    if (emptytest) 
       model->setObjectiveCoefficient(nbCols, 1.0);
    built=true;
-   built_emptytest=emptytest;
 }
 
 /* adding/removing emptiness testing on a built model */
@@ -165,7 +263,8 @@ void LPclp::setModel(bool emptytest) {
       int* col2Index=new int[nbRows];
       for(Index i=0;i<nbRows;i++){col2Index[i]=i;}
       double *col2Vals = new double[nbRows];
-      for(Index i=0;i<nbRows;i++){col2Vals[i]=1.0;}
+      for(Index i=0;i<nbRows;i++)
+  	 { col2Vals[i]=Afacets[i].eqcst ? 0.0 : 1.0; }
       model->addColumn
 	(nbRows,col2Index,col2Vals,-COIN_DBL_MAX,COIN_DBL_MAX,1.0);
       for (Index i =0; i<nbCols; i++)
@@ -207,26 +306,72 @@ LPclp::lp_result_stat LPclp::solve(bool checkempty, int option) {
    return testGeneralApproach(model->status(),checkempty);
 }
 
+int LPclp::minimize_eqpolytope() {
+    std::vector<IntervalRow> triMat;
+    std::vector<Interval> triRhs;
+    Index nbCsts=0;
+    std::vector<Index> mainCol;
+    for (Index i = 0; i<nbRows; i++) {
+       if (!this->Afacets[i].eqcst) continue; 
+       if (cststat[i][REMOVED] || cststat[i][INACTIVE] || cststat[i][REDUNDANT])
+           continue;
+       triMat.emplace_back(this->Afacets[i].row);
+       triRhs.emplace_back(this->Afacets[i].rhs);
+       for (Index j=0;j<nbCsts;j++) {
+          if (mainCol[j]<0) continue;
+          Interval pivot = triMat[nbCsts][mainCol[j]]/triMat[j][mainCol[j]];
+          triMat[nbCsts] -= triMat[j]*pivot;
+          triMat[nbCsts][mainCol[j]]=0.0;
+          triRhs[nbCsts] -= triRhs[j]*pivot;
+       }
+       Index bCol=-1;
+       double bVal=0.0;
+       for (Index j=0;j<nbCols;j++) {
+          double a = triMat[nbCsts][j].mig();
+          if (a>bVal) {
+             bVal=a;
+	     bCol=j;
+          }        
+       }
+       if (bCol==-1) {
+          if (triRhs[nbCsts].contains(0)) {
+             cststat[i][REDUNDANT]=true;
+             continue;
+          }
+          for (Index j=0;j<nbCols;j++) {
+              if (triMat[nbCsts][j].mag()==0.0) continue;
+              triRhs[nbCsts] -= bbox[j]*triMat[nbCsts][j];
+              if (triRhs[nbCsts].contains(0)) break;
+          }
+          if (!triRhs[nbCsts].contains(0)) return -1;
+       }
+       mainCol.push_back(bCol);
+       nbCsts++;
+    }
+    return nbCsts;
+}
 
 int LPclp::minimize_polytope(const  Interval &tolerance, bool checkempty) {
+    int nb = this->minimize_eqpolytope();
+    if (nb==-1) return -1;
     if (checkempty) {
        lp_result_stat stat=this->solve(true);
        if (stat[EMPTY]) return -1;
     }
     bool solvedOnce=checkempty;
-    int nb=0;
     for (Index i=nbRows-1;i>=0;i--) {
        if (cststat[i][REMOVED] || 
 	   cststat[i][INACTIVE] || 
 	   cststat[i][REDUNDANT])
            continue;
+       if (this->Afacets[i].eqcst) { nb++; continue; }
        this->setActive(i,false);
-       this->setObjective(this->getCst(i));
+       this->setObjective(this->Afacets[i].row);
        lp_result_stat stat=this->solve(false,(solvedOnce ? 4 : 0));
        if (stat[EMPTY]) return -1;
        if (stat[BOUNDED]) {
-           if (this->Valobj.ub()<=rhsvect[i]+tolerance.ub() 
-		&& this->Valobj.lb()<=rhsvect[i]+tolerance.lb()) {
+           if (this->Valobj.ub()<=this->Afacets[i].rhs+tolerance.ub() 
+		&& this->Valobj.lb()<=this->Afacets[i].rhs+tolerance.lb()) {
               cststat[i][REDUNDANT]=true;
               continue;
            }
@@ -331,6 +476,54 @@ void LPclp::correctBasisInverse(IntervalMatrix &basisInverse,
     basisInverse = (Id+Eps)*basisInverse;
 }   
 
+Interval LPclp::dotprodrhs(const IntervalRow &d) const {
+   Interval r(0.0);
+   for (Index i=0;i<nbRows;i++) {
+      r += d[i]*this->Afacets[i].rhs;
+   }
+   return r;
+}
+
+
+/* 
+  try to check a product dualVect * facets(extended) + initSum = 0,
+  correcting it if needed using basisInverse
+ */
+BoolInterval LPclp::checkDualForm(IntervalRow &dualVect,
+		IntervalRow &initSum, const IntervalMatrix &basisInverse,
+                const std::vector<Index> &wholeBasis, Index nbRowsInBasis,
+                bool checkempty) const {
+   for (Index i=0;i<nbRows;i++) {
+       initSum.head(nbCols)+= dualVect[i]*Afacets[i].row;
+       if (checkempty && !Afacets[i].eqcst) initSum[nbCols]+=dualVect[i];
+   }
+   /* calcul de "l'erreur" à appliquer sur dualVect */
+   IntervalRow error = initSum*basisInverse;
+   BoolInterval ok=BoolInterval::TRUE;
+   for (Index i=0;i<nbRowsInBasis;i++) {
+       int r = wholeBasis[i];
+       dualVect[r] -= error[i]; /* modify the ray with the error,
+			       the value must stay positive... */
+       if (Afacets[r].eqcst) continue; /* ... except for equalities */
+       if (dualVect[r].ub()<0.0) { return BoolInterval::FALSE; }
+       if (dualVect[r].lb()<0.0) { ok = BoolInterval::UNKNOWN; }
+   }
+   /* vérifie les variables  colonnes, qui doivent
+		  être libre, ainsi que les contraintes inactives */
+   for (Index i=nbRowsInBasis;i<nbCols+(checkempty ? 1 : 0);i++) {
+     if (error[i].mig()>0.0) {
+        return BoolInterval::FALSE;
+     }
+   }
+   for (Index i=0;i<nbRows;i++) {
+     if ((cststat[i][INACTIVE] || cststat[i][REMOVED]) &&
+        (dualVect[i].mig()>0.0)) { ok=BoolInterval::FALSE; break; }
+   }
+   return ok;
+}
+
+
+
 /* this function tests all part sequentially. It starts
    from the result of CLP solve */
 LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
@@ -390,7 +583,7 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
     for (Index c=0;c<nbCols;c++) {
        for (Index i=0;i<nbRowsInBasis;i++) {
           int r = wholeBasis[i];
-          basis(i,c)=Amat(r,c);
+          basis(i,c)=this->Afacets[r].row[c];
        }
     }
     if (checkempty) {
@@ -496,38 +689,17 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
          std::cout << "dualRay: " << dualRay << "\n";
 #endif
          IntervalRow errorNeum=IntervalRow::Zero(nbCols2);
-         errorNeum.head(nbCols)=dualRay*Amat;
-         if (checkempty) errorNeum[nbCols]=dualRay.sum()-1.0;
-         IntervalRow error = errorNeum*basisInverse;
-         BoolInterval ok=BoolInterval::TRUE;
-         for (Index i=0;i<nbRowsInBasis;i++) {
-             int r = wholeBasis[i];
-             dualRay[r] -= error[i]; /* modify the ray with the error,
-			    the value must stay positive */
-             if (dualRay[r].ub()<0.0) { ok = BoolInterval::FALSE; break; }
-             if (dualRay[r].lb()<0.0) { ok = BoolInterval::UNKNOWN; }
+         if (checkempty) {
+            errorNeum[nbCols]=-1.0;
          }
+         BoolInterval ok = this->checkDualForm(dualRay, errorNeum,
+		basisInverse, wholeBasis, nbRowsInBasis, checkempty);
 #ifdef CODAC2_EXTENSION_POLYTOPE_CLP_DEBUG
          std::cout << "dualRay with error: " << dualRay << "\n";
          std::cout << "ok: " << ok << "\n";
 #endif
-         if ((ok & BoolInterval::TRUE)==BoolInterval::TRUE)
-	 { /* vérifie les variables  colonnes, qui doivent
-		  être libre, ainsi que les contraintes inactives */
-            for (Index i=nbRowsInBasis;i<nbCols2;i++) {
-              if (error[i].mig()>0.0) {
- 	         ok=BoolInterval::FALSE;
-	         break;
-              }
-            } 
-            if ((ok & BoolInterval::TRUE)==BoolInterval::TRUE) 
-               for (Index i=0;i<nbRows;i++) {
-	          if ((cststat[i][INACTIVE] || cststat[i][REMOVED]) &&
-		     (dualRay[i].mig()>0.0)) { ok=BoolInterval::FALSE; break; }
-               }
-	}
         if ((ok & BoolInterval::TRUE)==BoolInterval::TRUE) {
-          Interval product = dualRay.dot(rhsvect);
+          Interval product = this->dotprodrhs(dualRay);
           if (checkempty) Valobj=Interval(-oo,product.ub());         
           if (product.lb()>=0.0) ok=BoolInterval::FALSE;
           else if (product.ub()>=0) ok=BoolInterval::UNKNOWN;
@@ -542,13 +714,13 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
            return status;
         } 
         /* attempt with Neumaier */
-        if (!bbox.is_unbounded()) {
+        if (!checkempty && !bbox.is_unbounded()) {
             /* restart with the ray */
             for (Index i=0;i<nbRows;i++) { 
-                assert_release(ray[i]<0.0);
+                if (!Afacets[i].eqcst) assert_release(ray[i]<0.0);
 		dualRay[i]=ray[i]; 
             }
-	    Interval productNeum = dualRay.dot(rhsvect);
+            Interval productNeum = this->dotprodrhs(dualRay);
             productNeum -= errorNeum.head(nbCols).dot(bbox);
             if (productNeum.ub()<0.0) {
               status[EMPTY]=true;
@@ -560,10 +732,15 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
             }
         } else {
 	/* other approach : we try to compensate with other values */ 
-          IntervalMatrix comp = ((IntervalMatrix)(Amat))*basisInverse.topRows(nbCols);
-          if (checkempty) {
-             IntervalVector v = IntervalVector::Ones(nbRows);
-             comp += v*basisInverse.row(nbCols);
+          IntervalMatrix comp(nbRows,nbCols2);
+          {
+            IntervalVector v = IntervalVector::Ones(nbRows);
+            for (Index j=0;j<nbRows;j++) {
+              comp.row(j)=((IntervalRow)(this->Afacets[j].row))*
+			basisInverse.topRows(nbCols);
+              if (this->Afacets[j].eqcst) v[j]=0.0;
+            }
+            if (checkempty) comp += v*basisInverse.row(nbCols);
           }
           /* for each epsilon value in dualSol, try to find a complement
              in comp */
@@ -574,6 +751,7 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
 			okrow[j].set_empty(); nbok--; continue; 
              }
              if (rowBasis[j]) { okrow[j].set_empty(); nbok--; continue; }
+             if (Afacets[j].eqcst) { okrow[j].init(); }
           }
           for (Index i=0;i<nbRowsInBasis;i++) {
              if (nbok==0) break;
@@ -586,7 +764,7 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
                    } else {
 			Interval u(dualRay[r].lb());
 			u /= comp(j,i).ub();
-                        okrow[j] &= Interval(0.0,
+                        okrow[j] &= Interval(Afacets[j].eqcst ? -oo : 0.0,
 				u.lb());
 			if (okrow[j].is_empty()) { nbok--; continue; }
                    }
@@ -619,17 +797,26 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
 #endif
                 dualRay[j]=okrow[j].lb(); /* in theory, lb should
 			be sufficient. In practice... that's a problem */
+                if (dualRay[j].lb()==-oo) dualRay[j]=okrow[j].ub()-1.0;
+                else
                 if (dualRay[j].ub()>okrow[j].ub()) dualRay[j]=okrow[j].mid();
 		break;
              }
-             errorNeum.head(nbCols)=dualRay*Amat;
-             if (checkempty) errorNeum[nbCols]=dualRay.sum()-1.0;
-             error = errorNeum*basisInverse;
+             errorNeum=IntervalRow::Zero(nbCols2);
+             for (Index i=0;i<nbRows;i++) {
+                errorNeum.head(nbCols)+= dualRay[i]*Afacets[i].row;
+                if (checkempty && !Afacets[i].eqcst) 
+				errorNeum[nbCols]+=dualRay[i];
+             }
+             if (checkempty) {
+                errorNeum[nbCols]-=1.0;
+             }
+             IntervalRow error = errorNeum*basisInverse;
              ok=BoolInterval::TRUE;
              for (Index i=0;i<nbRowsInBasis;i++) {
                 int r = wholeBasis[i];
                 dualRay[r] -= error[i];
- 		dualRay[r] &= Interval(0.0,oo);
+ 		if (!Afacets[r].eqcst) dualRay[r] &= Interval(0.0,oo);
 //                if (dualSol[r].ub()<0.0) { ok = BoolInterval::FALSE; break; }
 //                if (dualSol[r].lb()<0.0) { ok = BoolInterval::UNKNOWN; break; }
              }
@@ -651,7 +838,7 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
                 } 
              }
              if ((ok & BoolInterval::TRUE)==BoolInterval::TRUE) {
-                Interval product = dualRay.dot(rhsvect);
+                Interval product = this->dotprodrhs(dualRay);
                 if (checkempty) Valobj=Interval(-oo,product.ub());         
                 if (product.lb()>=0.0) ok=BoolInterval::FALSE;
                 else if (product.ub()>=0) ok=BoolInterval::UNKNOWN;
@@ -679,19 +866,21 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
         if (!checkempty)
         { 
            IntervalRow dSol= objvect*basisInverse;
-           Interval product = dSol.dot(rhsvect);
+           Interval product = this->dotprodrhs(dSol);
            dualSol.setZero();
            bool ok=true;
            for (Index i=0;i<nbRowsInBasis;i++) {
-               if (dSol[i].lb()<0.0) { ok=false; break; }
-               dualSol[wholeBasis[i]]=dSol[i];
+               int r = wholeBasis[i];
+               if (!Afacets[r].eqcst && dSol[i].lb()<0.0)
+			 { ok=false; break; }
+               dualSol[r]=dSol[i];
            }
            if (ok) {
               for (Index i=nbRowsInBasis;i<nbCols;i++) {
-                 if (dSol[i].lb()<0.0 || dualSol[i].ub()>0.0) {
+                 if (dSol[i].mig()>0.0) {
                     if (bbox.is_unbounded()) { ok=false; break; }
                     status[BOUNDED_BBOX]=true;
-                    product -= dSol[i].lb() * 
+                    product -= dSol[i] * 
 				bbox[wholeBasis[i]-nbRows];
                  }
               }
@@ -709,20 +898,29 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
        /* 1) we modify primalSol to get a box around the "optimal" place */
        /* note: should be done only for checkempty=false
           (we do not _really_ want a box around the "center" of the polytope */
-       IntervalVector errorPart = Amat*primalSol - rhsvect;
+       IntervalVector errorPart(nbRows);
+       for (Index i=0;i<nbRows;i++) {
+           errorPart[i] = this->Afacets[i].row*primalSol - this->Afacets[i].rhs;
+       } 
        if (!checkempty) {
           IntervalVector errorInBasis= IntervalVector::Zero(nbCols2);
-       /* error must be always negative, the real error is the positive part */
+       /* except for equalities,
+	  error must be always negative, the real error is the positive part */
           for (Index i=0;i<nbRowsInBasis;i++) {
               int r = wholeBasis[i];
               if (cststat[r][INACTIVE] || cststat[r][REMOVED]) continue;
+              if (this->Afacets[r].eqcst) { 
+		  errorInBasis[i] = errorPart[r]; continue; 
+	      }
               errorInBasis[i]=max(errorPart[r],Interval::zero());
 			 /* negative is ok */
           }
        /* compute the correction */
           IntervalVector correction=basisInverse*errorInBasis;
           primalSol -= correction;
-          errorPart = Amat*primalSol - rhsvect;
+          for (Index i=0;i<nbRows;i++) {
+             errorPart[i] = this->Afacets[i].row*primalSol - this->Afacets[i].rhs;
+          } 
        }
 
        /* check the different constraints 
@@ -742,6 +940,7 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
 #ifdef CODAC2_EXTENSION_POLYTOPE_CLP_DEBUG
            std::cout << "check " << i << "\n";
 #endif
+           if (Afacets[i].eqcst) errorPart[i]=abs(errorPart[i]);
            mxVal=max(errorPart[i],mxVal);
            if (mxVal.lb()>0.0) break;
        }
@@ -756,12 +955,16 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
 		 it back if needed */
               IntervalVector primalSol2=primalSol.mid();
               for (Index i=0;i<nbRows;i++) {
-                  Interval err = Amat.row(i)*primalSol2 - rhsvect[i];
+                  if (Afacets[i].eqcst) continue; 	
+			/* we should not even try, in this case */
+                  Interval err = this->Afacets[i].row*primalSol2 - this->Afacets[i].rhs;
                   if (err.ub()>=0.0) 
-		     primalSol2 -= (1.1*err.ub()/Amat.row(i).squaredNorm())*Amat.row(i);
+		     primalSol2 -= (1.1*err.ub()/this->Afacets[i].row.squaredNorm())*this->Afacets[i].row;
               }
               primalSol2=primalSol2.mid();
-              errorPart=Amat*primalSol2 - rhsvect;
+              for (Index i=0;i<nbRows;i++) {
+                errorPart[i] = this->Afacets[i].row*primalSol2 - this->Afacets[i].rhs;
+              } 
 #ifdef CODAC2_EXTENSION_POLYTOPE_CLP_DEBUG
               std::cout << "new primalSol : " << primalSol2 << "\n";
               std::cout << "errorPart 2 : " << errorPart << "\n";
@@ -770,6 +973,10 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
               for (Index i=0;i<nbRows;i++) {
                  if (cststat[i][INACTIVE] || cststat[i][REMOVED]) continue;
                  if (errorPart[i].ub()>0.0) {
+                    ok=false; /* failed */
+                    break;
+                 }
+                 if (Afacets[i].eqcst && errorPart[i].lb()<0.0) {
                     ok=false; /* failed */
                     break;
                  }
@@ -798,7 +1005,10 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
             for (Index i=0;i<nbCols;i++) primalRay[i]=ray[i];
             delete(ray);
          }
-         IntervalVector errorPart = Amat*primalRay;
+         IntervalVector errorPart(nbRows);
+         for (Index i=0;i<nbRows;i++) {
+            errorPart[i] = this->Afacets[i].row*primalRay;
+         }  
          if (!checkempty) {
 	    /* if !checkempty, the ray "follows" some facets,
                so we need to guarantee that it will not cross it */
@@ -806,18 +1016,23 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
             for (Index i=0;i<nbRowsInBasis;i++) {
                 int r = wholeBasis[i];
                 if (cststat[r][INACTIVE] || cststat[r][REMOVED]) continue;
+                if (this->Afacets[r].eqcst)
+	             { errorInBasis[i] = errorPart[r]; continue; }
                 errorInBasis[i]=max(errorPart[r],Interval::zero());
 			 /* negative is ok */
             }
             /* compute the correction */
             IntervalVector correction=basisInverse*errorInBasis;
             primalRay -= correction;
-            errorPart = Amat*primalRay;
+            for (Index i=0;i<nbRows;i++) {
+               errorPart[i] = this->Afacets[i].row*primalRay;
+            }  
          }
          Interval mxVal(-1.0);
          for (Index i=0;i<nbRows;i++) {
              if (cststat[i][INACTIVE] || cststat[i][REMOVED]) continue;
              if (!checkempty && rowBasis[i]) continue;
+             if (Afacets[i].eqcst) errorPart[i]=abs(errorPart[i]);
              mxVal=max(errorPart[i],mxVal);
              if (mxVal.lb()>0.0) break;
           }
@@ -829,13 +1044,17 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
 		    it back if needed */
                   IntervalVector primalRay2=primalRay.mid();
                   for (Index i=0;i<nbRows;i++) {
-                      Interval err = Amat.row(i)*primalRay2;
+                      if (Afacets[i].eqcst) continue; 	
+			/* we should not even try, in this case */
+                      Interval err = this->Afacets[i].row*primalRay2;
                       if (err.ub()>=0.0) {
-		          primalRay2 -= (1.1*err.ub()/Amat.row(i).squaredNorm())*Amat.row(i);
+		          primalRay2 -= (1.1*err.ub()/this->Afacets[i].row.squaredNorm())*this->Afacets[i].row;
                       }
                   }
                   primalRay2=primalRay2.mid();
-                  errorPart=Amat*primalRay2;
+                  for (Index i=0;i<nbRows;i++) {
+                     errorPart[i] = this->Afacets[i].row*primalRay2;
+                  }  
 #ifdef CODAC2_EXTENSION_POLYTOPE_CLP_DEBUG
                   std::cout << "new primalRay : " << primalRay2 << "\n";
                   std::cout << "errorPart 2 : " << errorPart << "\n";
@@ -875,48 +1094,28 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
 		val*Amat*basisInverse => basisInverse.cols */
       /* if checkempty, the goal may be to prove the global
          boundedness of the polytope */
-      IntervalRow errorNeum=IntervalRow::Zero(nbCols2);
+      BoolInterval ok;
+      IntervalRow errorNeum;
       if (checkempty) {
-         errorNeum.head(nbCols)=dualSol*Amat;
-         errorNeum[nbCols]=dualSol.sum()-1.0;
+          errorNeum=IntervalRow::Zero(nbCols2);
+          errorNeum[nbCols]= -1.0;
       } else {
-         errorNeum = dualSol*Amat-objvect;
+          errorNeum=-objvect;
       }
-      IntervalRow error = errorNeum*basisInverse;
-      BoolInterval ok=BoolInterval::TRUE;
-      for (Index i=0;i<nbRowsInBasis;i++) {
-          int r = wholeBasis[i];
-          dualSol[r] -= error[i];
-          if (dualSol[r].ub()<0.0) { ok = BoolInterval::FALSE; break; }
-          if (dualSol[r].lb()<0.0) { ok = BoolInterval::UNKNOWN; }
-      }
-      if ((ok & BoolInterval::TRUE)==BoolInterval::TRUE) { 
-            /* vérifie les variables  colonnes, qui doivent
-               être libre, ainsi que les contraintes inactives */
-            for (Index i=nbRowsInBasis;i<nbCols2;i++) {
-               if (error[i].mig()>0.0) {
- 	          ok=BoolInterval::FALSE;
-	          break;
-               }
-            } 
-            if ((ok & BoolInterval::TRUE)==BoolInterval::TRUE) 
-              for (Index i=0;i<nbRows;i++) {
-	         if ((cststat[i][INACTIVE] || cststat[i][REMOVED]) &&
-		     (dualSol[i].mig()>0.0)) { ok=BoolInterval::FALSE; break; }
-              }
-      }
+      ok  = this->checkDualForm(dualSol, errorNeum,
+		basisInverse, wholeBasis, nbRowsInBasis, checkempty);
       if (ok==BoolInterval::TRUE) {
          status[BOUNDED]=true;
-	 Valobj = min(Valobj,dualSol.dot(rhsvect));
+	 Valobj = min(Valobj,this->dotprodrhs(dualSol));
          return status;
       } 
       /* Neumaier's approach , only with !checkempty */
-      if (!bbox.is_unbounded()) {
+      if (!checkempty && !bbox.is_unbounded()) {
           /* rebuild the solution */
           for (Index i=0;i<nbRows;i++) {
              dualSol[i]=model->dualRowSolution()[i];
           }
-	  Interval productNeum = dualSol.dot(rhsvect);
+	  Interval productNeum = this->dotprodrhs(dualSol);
           productNeum -= errorNeum.head(nbCols).dot(bbox);
           status[BOUNDED_BBOX]=true;
           status[BOUNDED]=true;
@@ -926,7 +1125,13 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
 	/* other approach : we try to compensate with other values */ 
           /* for each epsilon value in dualSol, try to find a complement
              in comp */
-          IntervalMatrix comp = ((IntervalMatrix)(Amat))*basisInverse;
+          IntervalMatrix comp(nbRows,nbCols);
+          {
+            for (Index j=0;j<nbRows;j++) {
+              comp.row(j)=((IntervalRow)(this->Afacets[j].row))*
+			basisInverse;
+            }
+          }
           std::vector<Interval> okrow(nbRows,Interval(0.0,oo));
           int nbok=nbRows;
           for (Index j=0;j<nbRows;j++) {
@@ -934,6 +1139,7 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
 			okrow[j].set_empty(); nbok--; continue; 
              }
              if (rowBasis[j]) { okrow[j].set_empty(); nbok--; continue; }
+             if (Afacets[j].eqcst) { okrow[j].init(); }
           }
           for (Index i=0;i<nbRowsInBasis;i++) {
              if (nbok==0) break;
@@ -946,7 +1152,7 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
                    } else {
 			Interval u(dualSol[r].lb());
 			u /= comp(j,i).ub();
-                        okrow[j] &= Interval(0.0,
+                        okrow[j] &= Interval(Afacets[j].eqcst ? -oo : 0.0,
 				u.lb());
 			if (okrow[j].is_empty()) { nbok--; continue; }
                    }
@@ -980,13 +1186,16 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
                 if (dualSol[j].ub()>okrow[j].ub()) dualSol[j]=okrow[j].mid();
 		break;
              }
-             errorNeum = dualSol*Amat-objvect;
-             error = errorNeum*basisInverse;
+             errorNeum=-objvect;
+             for (Index i=0;i<nbRows;i++) {
+                errorNeum += dualSol[i]*this->Afacets[i].row;
+             }
+             IntervalRow error = errorNeum*basisInverse;
              ok=BoolInterval::TRUE;
              for (Index i=0;i<nbRowsInBasis;i++) {
                 int r = wholeBasis[i];
                 dualSol[r] -= error[i];
- 		dualSol[r] &= Interval(0.0,oo);
+ 		if (!Afacets[r].eqcst) dualRay[r] &= Interval(0.0,oo);
 //                if (dualSol[r].ub()<0.0) { ok = BoolInterval::FALSE; break; }
 //                if (dualSol[r].lb()<0.0) { ok = BoolInterval::UNKNOWN; break; }
              }
@@ -1009,7 +1218,7 @@ LPclp::lp_result_stat LPclp::testGeneralApproach(int stat,bool checkempty) {
              }
              if (ok==BoolInterval::TRUE) { 
                 status[BOUNDED]=true;
-	        Valobj = min(Valobj,dualSol.dot(rhsvect));
+	        Valobj = min(Valobj,this->dotprodrhs(dualSol));
                 return status;
              } 
            }  

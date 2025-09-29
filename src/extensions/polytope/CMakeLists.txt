@@ -6,6 +6,11 @@ list(APPEND CODAC_POLYTOPE_SRC
     
   ${CMAKE_CURRENT_SOURCE_DIR}/clp/codac2_clp.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/clp/codac2_clp.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Facet.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_dd.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_dd.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Polytope.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Polytope.cpp
 )
 
 ################################################################################
@@ -20,6 +25,8 @@ list(APPEND CODAC_POLYTOPE_SRC
   add_library(${PROJECT_NAME}-polytope ${CODAC_POLYTOPE_SRC})
   target_include_directories(${PROJECT_NAME}-polytope PUBLIC
     ${CLP_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/
+    ${CMAKE_CURRENT_SOURCE_DIR}/clp
   )
   target_link_libraries(${PROJECT_NAME}-polytope PUBLIC ${PROJECT_NAME}-core Ibex::ibex Eigen3::Eigen ${CLP_LIBRARIES})
 

@@ -1,5 +1,5 @@
 /**
- * \file codac2_polytope_clp.h
+ * \file codac2_clp.h
  * ----------------------------------------------------------------------------
  *  \date       2025
  *  \author     Damien Massé
@@ -26,10 +26,14 @@
 #include "codac2_IntervalRow.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_IntervalMatrix.h"
+#include "codac2_BoolInterval.h"
+#include "codac2_Facet.h"
 
-class ClpSimplex; /* or #include <ClpSimplex.hpp> */
+class ClpSimplex;  /* instead of including ClpSimplex.hpp */
+class CoinBuild;   
 
 namespace codac2 {
+
 
 /** \class LPclp
  *  \brief LPclp class, to modelise different LP problems
@@ -37,16 +41,46 @@ namespace codac2 {
  */
 class LPclp {
     public:
-      /** \brief Constructor of the whole problem
+      /** \brief Constructor with the set of facets 
+       *
+       * LP problem : max objvect X s.t. mat X <= rhsvect  
+       *
+       * \param dim dimension of the space
+       * \param facets the facets 
+       * \param objvect the objective */
+      LPclp (Index dim, const std::vector<Facet> &facets,
+	const Row &objvect);
+
+      /** \brief Constructor with the set of facets, no objective 
+       *
+       * LP problem : max objvect X s.t. mat X <= rhsvect  
+       *
+       * \param dim dimension of the space
+       * \param facets the facets */
+      LPclp (Index dim, const std::vector<Facet> &facets);
+
+      /** \brief Constructor with the set of facets, bbox, no objective 
+       *
+       * LP problem : max objvect X s.t. mat X <= rhsvect  
+       *
+       * \param dim dimension of the space
+       * \param facets the facets
+       * \param box the bounding box for Neumaier's approx */
+      LPclp (Index dim, const std::vector<Facet> &facets,
+		const IntervalVector &box);
+
+      /** \brief Constructor from a matrix
        *   
        *  LP problem : max objvect X s.t. mat X <= rhsvect  
        *
        *  \param mat Matrix of the constraints (constraints in rows)
        *  \param objvect Vector of objectives (length = mat.cols())
        *  \param rhsvect RHS of the contraints  (length = mat.rows())
+       *  \param eqSet rows which are equalities
        */
       LPclp (const Matrix &mat, const Row &objvect,
-		const Vector &rhsvect);
+		const Vector &rhsvect, 
+		const std::vector<Index> &eqSet=std::vector<Index>());
 
       /** \brief Constructor of the constraints, objective = 0
        *   
@@ -56,23 +90,41 @@ class LPclp {
        *
        *  \param mat Matrix of the constraints (constraints in rows)
        *  \param rhsvect RHS of the contraints  (length = mat.rows())
+       *  \param eqSet rows which are equalities
        */
-      LPclp (const Matrix &mat, const Vector &rhsvect);
+      LPclp (const Matrix &mat, const Vector &rhsvect, 
+		const std::vector<Index> &eqSet=std::vector<Index>());
 
-      /** \brief Empty constructors, with only the size of the problem
-       *  \param dim number of variables
-       *  \param nbcsts number of constraints
+      /** \brief Copy constructor
+       *  Do not build the model, even if the original model is built
+       *  also do not copy all results related to the last computation :
+       *  status, row_basis, valObj, primalSol, primalRay, dualSol, dualRay
        */
-      LPclp(Index dim, Index nbcsts);
+      LPclp (const LPclp& P);
+
+      /** \brief Empty constructor
+       *  \param dim number of variables
+       */
+      LPclp(Index dim);
 
       /** \brief destructor */
       ~LPclp();
 
+      /** \brief set bbox
+       *  \param bbox the new bbox
+       */
+      void set_bbox(const IntervalVector &box);
+
+      /** \brief Add a constraint
+       *  \param facet the facet
+       *  \return the row number of the constraint */
+      Index addConstraint(const Facet &facet);
       /** \brief Add a constraint
        *  \param vst the (row) vector 
        *  \param rhs its RHS 
+       *  \param isEq true if it is an equality
        *  \return the row number of the constraint */
-      Index addConstraint(const Row &vst, double rhs);
+      Index addConstraint(const Row &vst, double rhs, bool isEq=false);
       /** \brief Set the objvective
        *  \param objvect the new objective
        *  \param rhs its RHS */
@@ -96,22 +148,26 @@ class LPclp {
        */
       bool isRedundant(Index cst) const;
 
-      /** \brief Get the matrix of constraint 
-         \return the matrix 
+      /** \brief Get the set of facets 
+         \return the facets
       */
-      const Matrix &getMat() const;
+      const std::vector<Facet> &getFacets() const;
       /** \brief Get the objective row
        *  \return the objective 
        */
       const Row &getObjvect() const;
-      /** \brief Get the RHS vector 
+      /** \brief Build the matrix
+       *  \return the matrix
+       */
+      Matrix getMat() const;
+      /** \brief Build the RHS vector 
        *  \return the rhs vector
        */
-      const Vector &getRhsvect() const;
-      /** \brief Get a single constraint, as an IntervalRow
+      Vector getRhsvect() const;
+      /** \brief Get a single constraint, as an facet
        *  \return the rhs vector
        */
-      Row getCst(Index i) const;
+      const Facet &getCst(Index i) const;
 
       /** \brief Status a constraint (internal)
        *  \arg \c REMOVED Constraint removed or never added
@@ -186,6 +242,19 @@ class LPclp {
        *  from previous solutions if possible). */
       lp_result_stat solve(bool checkempty=false, int option=0);
 
+      /** \brief detect redundant equality constraints
+       * returns the number of remaining equality constraints, -1 if empty
+       * tolerance works as follows : 
+       *   each new equality is added to a (pseudo)-triangular matrix
+       *    of IntervalVector
+       *   when a row with all coefficients containing 0 appears,
+       *      a) if 0 is in the rhs, declare the row as redundant
+       *      b) if not, and all coefficients are exactly 0, returns empty
+       *      c) if bounding box, use it to try to prove emptiness, if not
+       *         possible keep the row (and hope for emptiness later?)
+       */
+      int minimize_eqpolytope();
+
       /** \brief detect redundant constraints, with a tolerance.
        * return the number of remaining constraints, -1 if the polytope
        * is empty.
@@ -222,12 +291,12 @@ class LPclp {
        *  (with \c UNBOUNDED and \c UNBOUNDED_APPROX result).  */
       const IntervalVector &getUnboundedVect() const;
 
+
    private:
       /* initial problem */
       Index nbRows, nbCols;  /* dimension of the matrix */
-      Matrix Amat;     /* the constraint matrix.*/
+      std::vector<Facet> Afacets; /* the facets */
       Row objvect;  /* objective vector */
-      Vector rhsvect;  /* rhs values */
       std::vector<lp_cststatus> cststat;
 
       lp_result_stat status;
@@ -245,6 +314,10 @@ class LPclp {
       double timeout=4.0;
       double maxIteration=200;
       double tolerance=1e-9;
+ 
+      void addFacetToCoinBuild(CoinBuild &buildObject,
+			const Facet &facet, lp_cststatus status,
+			int *row2Index, double *row2Vals) const;
 
       void buildModel(bool emptytest); 
       void setModel(bool emptytest); 
@@ -252,25 +325,34 @@ class LPclp {
       void correctBasisInverse(IntervalMatrix &basisInverse,
            const IntervalMatrix &basis) const;
       void reset_solution();
+      Interval dotprodrhs(const IntervalRow &d) const;
+
+      BoolInterval checkDualForm(IntervalRow &dualVect,
+                IntervalRow &initSum, const IntervalMatrix &basisInverse,
+                const std::vector<Index> &wholeBasis, Index nbRowsInBasis,
+                bool checkempty) const;
       lp_result_stat testGeneralApproach(int stat, bool checkempty);
 
+
       static IntervalMatrix infinite_sum_enclosure (const IntervalMatrix& M);
+
 };
 
 
 std::ostream& print_lp_stat(std::ostream& os, const LPclp::lp_result_stat x);
 // std::ostream& operator<<(std::ostream& os, const LPclp &lp);
 
-inline const Matrix &LPclp::getMat() const { return Amat; }
+// inline const Matrix &LPclp::getMat() const { return Amat; } /* TODO */
 inline const Row &LPclp::getObjvect() const { return objvect; } 
-inline const Vector &LPclp::getRhsvect() const { return rhsvect; }
-inline Row LPclp::getCst(Index i) const { return Amat.row(i); }
+// inline const Vector &LPclp::getRhsvect() const { return rhsvect; } /* TODO */
+inline const Facet &LPclp::getCst(Index i) const { return Afacets[i]; }
 inline const Interval &LPclp::getValobj() const { return Valobj; }
 inline bool LPclp::isRedundant(Index cst) const { return cststat[cst][REDUNDANT]; }
-inline const IntervalVector &LPclp::getFeasiblePoint() const { return primalSol; }
-inline const IntervalRow &LPclp::getBoundedRow() const { return dualSol; }
-inline const IntervalRow &LPclp::getEmptyRow() const { return dualRay; }
-inline const IntervalVector &LPclp::getUnboundedVect() const { return primalRay; }
+ inline const IntervalVector &LPclp::getFeasiblePoint() const { return this->primalSol; }
+inline const IntervalRow &LPclp::getBoundedRow() const { return this->dualSol; }
+inline const IntervalRow &LPclp::getEmptyRow() const { return this->dualRay; }
+inline const IntervalVector &LPclp::getUnboundedVect() const { return this->primalRay; }
+inline void LPclp::set_bbox(const IntervalVector &box) { this->bbox=box; }
 
 }
 

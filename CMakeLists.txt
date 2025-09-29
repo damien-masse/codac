@@ -159,15 +159,22 @@
 # Looking for CLP (if needed)
 ################################################################################
 
-  option(WITH_POLYTOPE "Build with polytopes using CLP" OFF)
+option(WITH_POLYTOPE "Build with polytopes using CLP" OFF)
 
-  if(WITH_POLYTOPE)
-    include(./src/extensions/polytope/FindClp.cmake)
-    message(STATUS "Found CLP version ${CLP_VERSION}")
-    message(STATUS "Found CLP inclusion ${CLP_INCLUDE_DIRS}")
-  endif()
+ if(WITH_POLYTOPE)
+   include(./src/extensions/polytope/FindClp.cmake)
+   message(STATUS "Found CLP version ${CLP_VERSION}")
+   message(STATUS "Found CLP inclusion ${CLP_INCLUDE_DIRS}")
+ endif()
 
-
+#  option(WITH_POLYTOPE "Build with polytopes using CDD library" ON)
+#
+#  if(WITH_POLYTOPE)
+#    include(./src/extensions/cdd-polytope/FindCdd.cmake)
+#    message(STATUS "Found CDD version ${CDD_VERSION}")
+#    message(STATUS "Found CDD inclusion ${CDD_INCLUDE_DIRS}")
+#  endif()
+#
 ################################################################################
 # Compile sources
 ################################################################################
