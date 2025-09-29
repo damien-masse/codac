@@ -204,52 +204,52 @@ namespace codac2
        * \brief Draws a point on the figure
        * 
        * \param c Coordinates of the point
-       * \param style Style of the point (edge color and fill color)
+       * \param s Style of the point (edge color and fill color)
        */
-      void draw_point(const Vector& c, const StyleProperties& style = StyleProperties());
+      void draw_point(const Vector& c, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a box on the figure
        * 
        * \param x Box to draw
-       * \param style Style of the box (edge color and fill color)
+       * \param s Style of the box (edge color and fill color)
        */
-      void draw_box(const IntervalVector& x, const StyleProperties& style = StyleProperties());
+      void draw_box(const IntervalVector& x, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a circle on the figure
        * 
        * \param c Center of the circle
        * \param r Radius of the circle
-       * \param style Style of the circle (edge color and fill color)
+       * \param s Style of the circle (edge color and fill color)
        */
-      void draw_circle(const Vector& c, double r, const StyleProperties& style = StyleProperties());
+      void draw_circle(const Vector& c, double r, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a ring on the figure
        * 
        * \param c Center of the ring
        * \param r Inner and outer radius of the ring
-       * \param style Style of the ring (edge color and fill color)
+       * \param s Style of the ring (edge color and fill color)
        */
-      void draw_ring(const Vector& c, const Interval& r, const StyleProperties& style = StyleProperties());
+      void draw_ring(const Vector& c, const Interval& r, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a line on the figure
        * 
        * \param p1 First point of the line
        * \param p2 Second point of the line
-       * \param style Style of the line (edge color)
+       * \param s Style of the line (edge color)
        */
-      void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& style = StyleProperties());
+      void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a line on the figure
        * 
        * \param e segment to be drawn
-       * \param style Style of the line (edge color)
+       * \param s Style of the line (edge color)
        */
-      void draw_line(const Segment& e, const StyleProperties& style = StyleProperties());
+      void draw_line(const Segment& e, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws an arrow on the figure
@@ -257,50 +257,50 @@ namespace codac2
        * \param p1 First point of the arrow
        * \param p2 Second point of the arrow
        * \param tip_length Length of the tip of the arrow
-       * \param style Style of the arrow (edge color and fill color)
+       * \param s Style of the arrow (edge color and fill color)
        */
-      void draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& style = StyleProperties());
+      void draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a polyline on the figure
        * 
        * \param x Vector of the points of the polyline
-       * \param style Style of the polyline (edge color)
+       * \param s Style of the polyline (edge color)
        */
-      void draw_polyline(const std::vector<Vector>& x, const StyleProperties& style = StyleProperties());
+      void draw_polyline(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a polyline on the figure
        * 
        * \param x Vector of the points of the polyline
        * \param tip_length Length of the tip of the arrow
-       * \param style Style of the polyline (edge color and fill color)
+       * \param s Style of the polyline (edge color and fill color)
        */
-      void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& style = StyleProperties());
+      void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a ``Polygon`` object on the figure
        * 
        * \param x the ``Polygon`` object to be displayed
-       * \param style Style of the polygone (edge color and fill color)
+       * \param s Style of the polygone (edge color and fill color)
        */
-      void draw_polygon(const Polygon& x, const StyleProperties& style = StyleProperties());
+      void draw_polygon(const Polygon& x, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a parallelepiped z+A*[-1,1]^2 on the figure
        * 
        * \param p Parallelepiped to draw (center and shape matrix)
-       * \param style Style of the parallelepiped (edge color and fill color)
+       * \param s Style of the parallelepiped (edge color and fill color)
        */
-      void draw_parallelepiped(const Parallelepiped& p, const StyleProperties& style = StyleProperties());
+      void draw_parallelepiped(const Parallelepiped& p, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a zonotope z+sum_i [-1,1] A_i on the figure
        * 
        * \param z Zonotope to draw (center and shape matrix)
-       * \param style Style of the zonotope (edge color and fill color)
+       * \param s Style of the zonotope (edge color and fill color)
        */
-      void draw_zonotope(const Zonotope& z, const StyleProperties& style = StyleProperties());
+      void draw_zonotope(const Zonotope& z, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a pie on the figure
@@ -308,9 +308,9 @@ namespace codac2
        * \param c Center of the pie
        * \param r Inner and outer radius of the pie
        * \param theta Start and end angle of the pie (in radians)
-       * \param style Style of the pie (edge color and fill color)
+       * \param s Style of the pie (edge color and fill color)
        */
-      void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& style = StyleProperties());
+      void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws an ellipse on the figure
@@ -318,33 +318,33 @@ namespace codac2
        * \param c Center of the ellipse
        * \param ab Half-lengths of the ellipse
        * \param theta Rotation angle of the ellipse (in radians)
-       * \param style Style of the ellipse (edge color and fill color)
+       * \param s Style of the ellipse (edge color and fill color)
        */
-      void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& style = StyleProperties());
+      void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws an ellipsoid on the figure
        * 
        * \param e Ellipsoid to draw
-       * \param style Style of the ellipsoid (edge color and fill color)
+       * \param s Style of the ellipsoid (edge color and fill color)
        */
-      void draw_ellipsoid(const Ellipsoid& e, const StyleProperties& style = StyleProperties());
+      void draw_ellipsoid(const Ellipsoid& e, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a trajectory on the figure
        * 
        * \param x SampledTraj to draw
-       * \param style Style of the trajectory (edge color)
+       * \param s Style of the trajectory (edge color)
        */
-      void draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& style = StyleProperties());
+      void draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a trajectory on the figure
        * 
        * \param x AnalyticTraj to draw
-       * \param style Style of the trajectory (edge color)
+       * \param s Style of the trajectory (edge color)
        */
-      void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& style = StyleProperties());
+      void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a trajectory on the figure with a colormap
@@ -366,25 +366,25 @@ namespace codac2
        * \brief Plots a trajectory on the figure (x-axis is the time)
        * 
        * \param x SampledTraj to plot
-       * \param style Style of the trajectory (edge color)
+       * \param s Style of the trajectory (edge color)
        */
-      void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& style = StyleProperties());
+      void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Plots a set of trajectories on the figure (x-axis is the time)
        * 
        * \param x SampledTraj<Vector> set of trajectories to plot
-       * \param style Style of the trajectory (edge color)
+       * \param s Style of the trajectory (edge color)
        */
-      void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& style = StyleProperties());
+      void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a tube of `IntervalVector` on the figure
        * 
        * \param x SlicedTube to draw
-       * \param style Style of the tube
+       * \param s Style of the tube
        */
-      void draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& style);
+      void draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s);
 
       /**
        * \brief Draws a tube of `IntervalVector` on the figure with a colormap
@@ -401,27 +401,27 @@ namespace codac2
        * 
        * \param x Coordinates of the tank
        * \param size Size of the tank
-       * \param style Style of the tank (edge color and fill color)
+       * \param s Style of the tank (edge color and fill color)
        */
-      void draw_tank(const Vector& x, float size, const StyleProperties& style = StyleProperties());
+      void draw_tank(const Vector& x, float size, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws an AUV on the figure
        * 
        * \param x Coordinates of the AUV
        * \param size Size of the AUV
-       * \param style Style of the AUV (edge color and fill color)
+       * \param s Style of the AUV (edge color and fill color)
        */
-      void draw_AUV(const Vector& x, float size, const StyleProperties& style = StyleProperties());
+      void draw_AUV(const Vector& x, float size, const StyleProperties& s = StyleProperties());
 
       /**
        * \brief Draws a motor boat on the figure
        * 
        * \param x Coordinates of the motor boat
        * \param size Size of the motor boat
-       * \param style Style of the motor boat (edge color and fill color)
+       * \param s Style of the motor boat (edge color and fill color)
        */
-      void draw_motor_boat(const Vector& x, float size, const StyleProperties& style = StyleProperties());
+      void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties());
 
       // Pavings
 
@@ -453,13 +453,13 @@ namespace codac2
        * \brief Draws a subpaving on the figure
        * 
        * \param p Subpaving to draw
-       * \param style Style of the subpaving
+       * \param s Style of the subpaving
        */
       template<typename P>
-      void draw_subpaving(const Subpaving<P>& p, const StyleProperties& style = StyleProperties())
+      void draw_subpaving(const Subpaving<P>& p, const StyleProperties& s = StyleProperties())
       {
         for(const auto& pi : p.boxes())
-          draw_box(pi, style);
+          draw_box(pi, s);
       }
 
     protected:
@@ -555,24 +555,24 @@ namespace codac2
        * \brief Draws a point on the figure
        * 
        * \param c Coordinates of the point
-       * \param style Style of the point (edge color and fill color)
+       * \param s Style of the point (edge color and fill color)
        */
-      static void draw_point(const Vector& c, const StyleProperties& style = StyleProperties())
+      static void draw_point(const Vector& c, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_point(c,style);
+        selected_fig()->draw_point(c,s);
       }
 
       /**
        * \brief Draws a box on the figure
        * 
        * \param x Box to draw
-       * \param style Style of the box (edge color and fill color)
+       * \param s Style of the box (edge color and fill color)
        */
-      static void draw_box(const IntervalVector& x, const StyleProperties& style = StyleProperties())
+      static void draw_box(const IntervalVector& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_box(x,style);
+        selected_fig()->draw_box(x,s);
       }
 
       /**
@@ -580,12 +580,12 @@ namespace codac2
        * 
        * \param c Center of the circle
        * \param r Radius of the circle
-       * \param style Style of the circle (edge color and fill color)
+       * \param s Style of the circle (edge color and fill color)
        */
-      static void draw_circle(const Vector& c, double r, const StyleProperties& style = StyleProperties())
+      static void draw_circle(const Vector& c, double r, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_circle(c,r,style);
+        selected_fig()->draw_circle(c,r,s);
       }
 
       /**
@@ -593,12 +593,12 @@ namespace codac2
        * 
        * \param c Center of the ring
        * \param r Inner and outer radius of the ring
-       * \param style Style of the ring (edge color and fill color)
+       * \param s Style of the ring (edge color and fill color)
        */
-      static void draw_ring(const Vector& c, const Interval& r, const StyleProperties& style = StyleProperties())
+      static void draw_ring(const Vector& c, const Interval& r, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_ring(c,r,style);
+        selected_fig()->draw_ring(c,r,s);
       }
 
       /**
@@ -606,24 +606,24 @@ namespace codac2
        * 
        * \param p1 First point of the line
        * \param p2 Second point of the line
-       * \param style Style of the line (edge color)
+       * \param s Style of the line (edge color)
        */
-      static void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& style = StyleProperties())
+      static void draw_line(const Vector& p1, const Vector& p2, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_line(p1,p2,style);
+        selected_fig()->draw_line(p1,p2,s);
       }
 
       /**
        * \brief Draws a line on the figure
        * 
        * \param e segment to be drawn
-       * \param style Style of the line (edge color)
+       * \param s Style of the line (edge color)
        */
-      static void draw_line(const Segment& e, const StyleProperties& style = StyleProperties())
+      static void draw_line(const Segment& e, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_line(e,style);
+        selected_fig()->draw_line(e,s);
       }
 
       /**
@@ -632,24 +632,24 @@ namespace codac2
        * \param p1 First point of the arrow
        * \param p2 Second point of the arrow
        * \param tip_length Length of the tip of the arrow
-       * \param style Style of the arrow (edge color and fill color)
+       * \param s Style of the arrow (edge color and fill color)
        */
-      static void draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& style = StyleProperties())
+      static void draw_arrow(const Vector& p1, const Vector& p2, float tip_length, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_arrow(p1,p2,tip_length,style);
+        selected_fig()->draw_arrow(p1,p2,tip_length,s);
       }
 
       /**
        * \brief Draws a polyline on the figure
        * 
        * \param x Vector of the points of the polyline
-       * \param style Style of the polyline (edge color)
+       * \param s Style of the polyline (edge color)
        */
-      static void draw_polyline(const std::vector<Vector>& x, const StyleProperties& style = StyleProperties())
+      static void draw_polyline(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_polyline(x,style);
+        selected_fig()->draw_polyline(x,s);
       }
 
       /**
@@ -657,48 +657,48 @@ namespace codac2
        * 
        * \param x Vector of the points of the polyline
        * \param tip_length Length of the tip of the arrow
-       * \param style Style of the polyline (edge color and fill color)
+       * \param s Style of the polyline (edge color and fill color)
        */
-      static void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& style = StyleProperties())
+      static void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_polyline(x,tip_length,style);
+        selected_fig()->draw_polyline(x,tip_length,s);
       }
 
       /**
        * \brief Draws a ``Polygon`` object on the figure
        * 
        * \param x the ``Polygon`` object to be drawn
-       * \param style Style of the polygone (edge color and fill color)
+       * \param s Style of the polygone (edge color and fill color)
        */
-      static void draw_polygon(const Polygon& x, const StyleProperties& style = StyleProperties())
+      static void draw_polygon(const Polygon& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_polygon(x,style);
+        selected_fig()->draw_polygon(x,s);
       }
 
       /**
        * \brief Draws a parallelepiped z+A*[-1,1]^2 on the figure
        * 
        * \param p Parallelepiped to draw (center and shape matrix)
-       * \param style Style of the parallelepiped (edge color and fill color)
+       * \param s Style of the parallelepiped (edge color and fill color)
        */
-      static void draw_parallelepiped(const Parallelepiped& p, const StyleProperties& style = StyleProperties())
+      static void draw_parallelepiped(const Parallelepiped& p, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_parallelepiped(p,style);
+        selected_fig()->draw_parallelepiped(p,s);
       }
 
       /**
        * \brief Draws a zonotope z+sum_i [-1,1] A_i on the figure
        * 
        * \param z Zonotope to draw (center and shape matrix)
-       * \param style Style of the zonotope (edge color and fill color)
+       * \param s Style of the zonotope (edge color and fill color)
        */
-      static void draw_zonotope(const Zonotope& z, const StyleProperties& style = StyleProperties())
+      static void draw_zonotope(const Zonotope& z, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_zonotope(z,style);
+        selected_fig()->draw_zonotope(z,s);
       }
 
       /**
@@ -707,12 +707,12 @@ namespace codac2
        * \param c Center of the pie
        * \param r Inner and outer radius of the pie
        * \param theta Start and end angle of the pie (in radians)
-       * \param style Style of the pie (edge color and fill color)
+       * \param s Style of the pie (edge color and fill color)
        */
-      static void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& style = StyleProperties())
+      static void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_pie(c,r,theta,style);
+        selected_fig()->draw_pie(c,r,theta,s);
       }
 
       /**
@@ -721,48 +721,48 @@ namespace codac2
        * \param c Center of the ellipse
        * \param ab Half-lengths of the ellipse
        * \param theta Rotation angle of the ellipse (in radians)
-       * \param style Style of the ellipse (edge color and fill color)
+       * \param s Style of the ellipse (edge color and fill color)
        */
-      static void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& style = StyleProperties())
+      static void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_ellipse(c,ab,theta,style);
+        selected_fig()->draw_ellipse(c,ab,theta,s);
       }
 
       /**
        * \brief Draws an ellipsoid on the figure
        * 
        * \param e Ellipsoid to draw
-       * \param style Style of the ellipsoid (edge color and fill color)
+       * \param s Style of the ellipsoid (edge color and fill color)
        */
-      static void draw_ellipsoid(const Ellipsoid& e, const StyleProperties& style = StyleProperties())
+      static void draw_ellipsoid(const Ellipsoid& e, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_ellipsoid(e,style);
+        selected_fig()->draw_ellipsoid(e,s);
       }
 
       /**
        * \brief Draws a trajectory on the figure
        * 
        * \param x Trajectory to draw
-       * \param style Style of the trajectory (edge color)
+       * \param s Style of the trajectory (edge color)
        */
-      static void draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& style = StyleProperties())
+      static void draw_trajectory(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_trajectory(x,style);
+        selected_fig()->draw_trajectory(x,s);
       }
 
       /**
        * \brief Draws a trajectory on the figure
        * 
        * \param x AnalyticTraj to draw
-       * \param style Style of the trajectory (edge color)
+       * \param s Style of the trajectory (edge color)
        */
-      static void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& style = StyleProperties())
+      static void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_trajectory(x,style);
+        selected_fig()->draw_trajectory(x,s);
       }
 
       /**
@@ -793,36 +793,36 @@ namespace codac2
        * \brief Plots a trajectory on the figure (x-axis is the time)
        * 
        * \param x SampledTraj to plot
-       * \param style Style of the trajectory (edge color)
+       * \param s Style of the trajectory (edge color)
        */
-      static void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& style = StyleProperties())
+      static void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->plot_trajectory(x,style);
+        selected_fig()->plot_trajectory(x,s);
       }
 
       /**
        * \brief Plots a set of trajectories on the figure (x-axis is the time)
        * 
        * \param x SampledTraj<Vector> set of trajectories to plot
-       * \param style Style of the trajectory (edge color)
+       * \param s Style of the trajectory (edge color)
        */
-      static void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& style = StyleProperties())
+      static void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->plot_trajectories(x,style);
+        selected_fig()->plot_trajectories(x,s);
       }
 
       /**
        * \brief Draws a tube of `IntervalVector` on the figure
        * 
        * \param x SlicedTube to draw
-       * \param style Style of the tube
+       * \param s Style of the tube
        */
-      static void draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& style)
+      static void draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s)
       {
         auto_init();
-        selected_fig()->draw_tube(x,style);
+        selected_fig()->draw_tube(x,s);
       }
 
       /**
@@ -844,12 +844,12 @@ namespace codac2
        * 
        * \param x Coordinates of the tank
        * \param size Size of the tank
-       * \param style Style of the tank (edge color and fill color)
+       * \param s Style of the tank (edge color and fill color)
        */
-      static void draw_tank(const Vector& x, float size, const StyleProperties& style = StyleProperties())
+      static void draw_tank(const Vector& x, float size, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_tank(x,size,style);
+        selected_fig()->draw_tank(x,size,s);
       }
 
       /**
@@ -857,12 +857,12 @@ namespace codac2
        * 
        * \param x Coordinates of the AUV
        * \param size Size of the AUV
-       * \param style Style of the AUV (edge color and fill color)
+       * \param s Style of the AUV (edge color and fill color)
        */
-      static void draw_AUV(const Vector& x, float size, const StyleProperties& style = StyleProperties())
+      static void draw_AUV(const Vector& x, float size, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_AUV(x,size,style);
+        selected_fig()->draw_AUV(x,size,s);
       }
 
       /**
@@ -870,12 +870,12 @@ namespace codac2
        * 
        * \param x Coordinates of the motor boat
        * \param size Size of the motor boat
-       * \param style Style of the motor boat (edge color and fill color)
+       * \param s Style of the motor boat (edge color and fill color)
        */
-      static void draw_motor_boat(const Vector& x, float size, const StyleProperties& style = StyleProperties())
+      static void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_motor_boat(x,size,style);
+        selected_fig()->draw_motor_boat(x,size,s);
       }
 
       // Pavings
@@ -884,12 +884,12 @@ namespace codac2
        * \brief Draws a paving on the figure
        * 
        * \param p PavingOut to draw (result of a paving with contractors)
-       * \param boundary_style Style of the boundary of the paving
-       * \param outside_style Style of the outside of the paving
+       * \param s_boundary Style of the boundary of the paving
+       * \param s_outside Style of the outside of the paving
        */
       static void draw_paving(const PavingOut& p,
-        const StyleProperties& boundary_style = StyleProperties::boundary(),
-        const StyleProperties& outside_style = StyleProperties::outside())
+        const StyleProperties& s_boundary = StyleProperties::boundary(),
+        const StyleProperties& s_outside = StyleProperties::outside())
       {
         if(auto_init())
         {
@@ -899,21 +899,21 @@ namespace codac2
           _default_fig->set_axes(axis(0,p.tree()->hull()[0]),axis(1,p.tree()->hull()[1]));
         }
 
-        selected_fig()->draw_paving(p, boundary_style, outside_style);
+        selected_fig()->draw_paving(p, s_boundary, s_outside);
       }
 
       /**
        * \brief Draws a paving on the figure
        * 
        * \param p PavingInOut to draw (result of a paving with separators)
-       * \param boundary_style Style of the boundary of the paving
-       * \param outside_style Style of the outside of the paving
-       * \param inside_style Style of the inside of the paving
+       * \param s_boundary Style of the boundary of the paving
+       * \param s_outside Style of the outside of the paving
+       * \param s_inside Style of the inside of the paving
        */
       static void draw_paving(const PavingInOut& p,
-        const StyleProperties& boundary_style = StyleProperties::boundary(),
-        const StyleProperties& outside_style = StyleProperties::outside(),
-        const StyleProperties& inside_style = StyleProperties::inside())
+        const StyleProperties& s_boundary = StyleProperties::boundary(),
+        const StyleProperties& s_outside = StyleProperties::outside(),
+        const StyleProperties& s_inside = StyleProperties::inside())
       {
         if(auto_init())
         {
@@ -923,20 +923,20 @@ namespace codac2
           _default_fig->set_axes(axis(0,p.tree()->hull()[0]),axis(1,p.tree()->hull()[1]));
         }
 
-        selected_fig()->draw_paving(p, boundary_style, outside_style, inside_style);
+        selected_fig()->draw_paving(p, s_boundary, s_outside, s_inside);
       }
 
       /**
        * \brief Draws a subpaving on the figure
        * 
        * \param p Subpaving to draw
-       * \param style Style of the subpaving
+       * \param s Style of the subpaving
        */
       template<typename P>
-      static void draw_subpaving(const Subpaving<P>& p, const StyleProperties& style = StyleProperties())
+      static void draw_subpaving(const Subpaving<P>& p, const StyleProperties& s = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_subpaving(p, style);
+        selected_fig()->draw_subpaving(p, s);
       }
 
 

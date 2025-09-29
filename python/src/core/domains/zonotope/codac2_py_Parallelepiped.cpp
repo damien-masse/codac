@@ -28,21 +28,22 @@ void export_Parallelepiped(py::module& m)
     exported(m, "Parallelepiped", PARALLELEPIPED_MAIN);
   exported
 
-  .def(py::init<const Vector&, const Matrix&>(),
-    PARALLELEPIPED_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF,
-    "z"_a, "A"_a)
+    .def(py::init<const Vector&,const Matrix&>(),
+      PARALLELEPIPED_PARALLELEPIPED_CONST_VECTOR_REF_CONST_MATRIX_REF,
+      "z"_a, "A"_a)
 
-  .def("proj",[](const Parallelepiped &self, const std::vector<Index_type>& indices)
-  {
-    return self.proj(matlab::convert_indices(indices));
-  },
-    ZONOTOPE_PARALLELEPIPED_PROJ_CONST_VECTOR_INDEX_REF_CONST,
-    "indices"_a)
+    .def("proj",[](const Parallelepiped& x, const std::vector<Index_type>& indices)
+        {
+          return x.proj(matlab::convert_indices(indices));
+        },
+      ZONOTOPE_PARALLELEPIPED_PROJ_CONST_VECTOR_INDEX_REF_CONST,
+      "indices"_a)
 
-  .def("vertices", &Parallelepiped::vertices,
-    VECTOR_VECTOR_PARALLELEPIPED_VERTICES_CONST)
+    .def("vertices", &Parallelepiped::vertices,
+      VECTOR_VECTOR_PARALLELEPIPED_VERTICES_CONST)
 
-  .def("box", &Parallelepiped::box,
-    INTERVALVECTOR_PARALLELEPIPED_BOX_CONST)
+    .def("box", &Parallelepiped::box,
+      INTERVALVECTOR_PARALLELEPIPED_BOX_CONST)
+
   ;
 }
