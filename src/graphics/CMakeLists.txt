@@ -20,6 +20,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_Figure3D.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/figures/codac2_Figure3D.h
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_drawwhilepaving.h # deprecated, to be removed
+
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_Color.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_Color.h
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_ColorMap.cpp
@@ -42,6 +44,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/3rd/ipe
     ${CMAKE_CURRENT_SOURCE_DIR}/3rd/vibes
     ${CMAKE_CURRENT_SOURCE_DIR}/figures
+    ${CMAKE_CURRENT_SOURCE_DIR}/paver # deprecated, to be removed
     ${CMAKE_CURRENT_SOURCE_DIR}/styles
   )
   target_link_libraries(${PROJECT_NAME}-graphics PUBLIC ${PROJECT_NAME}-core Ibex::ibex Eigen3::Eigen ${PROJECT_NAME}-core)

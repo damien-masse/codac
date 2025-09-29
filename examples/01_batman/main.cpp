@@ -37,10 +37,7 @@ int main()
     half_bat() | OctaSym({-1,2})(half_bat())
   };
 
-  double e = 0.1;
-
-  auto p = pave({{-8,8},{-4,4}}, bat.create_sep(), e);
-  DefaultFigure::draw_paving(p);
+  DefaultFigure::pave({{-8,8},{-4,4}}, bat.create_sep(), 0.1);
 
   #if 0 // towards paving features..
   auto p = pave({{-8,8},{-4,4}}, *bat.create_sep(), e);
