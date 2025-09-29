@@ -10,7 +10,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <codac2_CtcPolygon.h>
 #include <codac2_pave.h>
-#include <codac2_drawwhilepaving.h>
 #include <codac2_Figure2D.h>
 
 using namespace std;

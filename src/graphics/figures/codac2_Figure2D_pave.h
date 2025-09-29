@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_drawwhilepaving.h
+ *  \file codac2_Figure2D_pave.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -9,15 +9,10 @@
 
 #pragma once
 
-#include "codac2_Ctc.h"
-#include "codac2_Sep.h"
-#include "codac2_Figure2D.h"
 #include "codac2_template_tools.h"
 
 namespace codac2
 {
-  void init_fig(std::shared_ptr<Figure2D>& fig, const IntervalVector& x0);
-
   inline std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)> cartesian_drawing()
   {
     return [](Figure2D& fig, const IntervalVector& x, const StyleProperties& s) {
@@ -32,33 +27,20 @@ namespace codac2
     };
   }
   
-  /**
-   * \brief Draws the paving while it is being computed, with custom drawing function
-   * 
-   * \param x0 Initial box
-   * \param c Contractor to use
-   * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-   * \param fig Figure to draw on (optionnal, if not provided, the default figure will be used)
-   * \param draw_box Optional custom drawing function (for instance, if one want to draw in polar coordinates)
-   */  
   template<typename C>
     requires IsCtcBaseOrPtr<C,IntervalVector>
-  inline void draw_while_paving(const IntervalVector& x0, const C& c, double eps,
+  inline void Figure2D::pave(const IntervalVector& x0, const C& c, double eps,
     const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-    std::shared_ptr<Figure2D> fig = nullptr)
+    const StyleProperties& s_boundary,
+    const StyleProperties& s_outside)
   {
     assert_release(eps > 0.);
     assert_release(c.size() >= 2 && "cannot reveal 1d contractors");
-    
-    if(!fig)
-      fig = DefaultFigure::selected_fig();
-    init_fig(fig, x0);
-
-    clock_t t_start = clock();
 
     if(x0.size() > 2)
-      draw_box(*fig, x0, StyleProperties::outside());
+      draw_box(*this, x0, s_outside);
 
+    clock_t t_start = clock();
     std::list<IntervalVector> l { x0 };
     Index n = 0;
 
@@ -71,14 +53,14 @@ namespace codac2
 
       if(x0.size() == 2)
         for(const auto& bi : prev_x.diff(x))
-          draw_box(*fig, bi, StyleProperties::outside());
+          draw_box(*this, bi, s_outside);
 
       if(!x.is_empty())
       {
         if(x.max_diam() < eps)
         {
           n++;
-          draw_box(*fig, x, StyleProperties::boundary());
+          draw_box(*this, x, s_boundary);
         }
 
         else
@@ -92,45 +74,27 @@ namespace codac2
     printf("Computation time: %.4fs, %ld boxes\n", (double)(clock()-t_start)/CLOCKS_PER_SEC, n);
   }
   
-  /**
-   * \brief Draws the paving while it is being computed, in default Cartesian coordinates
-   * 
-   * \param x0 Initial box
-   * \param c Contractor to use
-   * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-   * \param fig Figure to draw on (optionnal, if not provided, the default figure will be used)
-   */  
   template<typename C>
     requires IsCtcBaseOrPtr<C,IntervalVector>
-  inline void draw_while_paving(const IntervalVector& x0, const C& c, double eps, std::shared_ptr<Figure2D> fig = nullptr)
+  inline void Figure2D::pave(const IntervalVector& x0, const C& c, double eps,
+    const StyleProperties& s_boundary,
+    const StyleProperties& s_outside)
   {
-    return draw_while_paving(x0, c, eps, cartesian_drawing(), fig);
+    return pave(x0, c, eps, cartesian_drawing(), s_boundary, s_outside);
   }
 
-  /**
-   * \brief Draws the paving while it is being computed, with custom drawing function
-   * 
-   * \param x0 Initial box
-   * \param s Separator to use
-   * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-   * \param draw_box Custom drawing function (for instance, if one want to draw in polar coordinates)
-   * \param fig Figure to draw on (optionnal, if not provided, the default figure will be used)
-   */
   template<typename S>
     requires IsSepBaseOrPtr<S>
-  inline void draw_while_paving(const IntervalVector& x0, const S& s, double eps,
+  inline void Figure2D::pave(const IntervalVector& x0, const S& s, double eps,
     const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
-    std::shared_ptr<Figure2D> fig = nullptr)
+    const StyleProperties& s_boundary,
+    const StyleProperties& s_outside,
+    const StyleProperties& s_inside)
   {
     assert_release(eps > 0.);
     assert_release(size_of(s) >= 2 && "cannot reveal 1d separators");
 
-    if(!fig)
-      fig = DefaultFigure::selected_fig();
-    init_fig(fig, x0);
-    
     clock_t t_start = clock();
-
     std::list<IntervalVector> l { x0 };
 
     while(!l.empty())
@@ -142,15 +106,15 @@ namespace codac2
       auto boundary = x_sep.inner & x_sep.outer;
 
       for(const auto& bi : x.diff(x_sep.inner))
-        draw_box(*fig, bi, StyleProperties::inside());
+        draw_box(*this, bi, s_inside);
 
       for(const auto& bi : x.diff(x_sep.outer))
-        draw_box(*fig, bi, StyleProperties::outside());
+        draw_box(*this, bi, s_outside);
 
       if(!boundary.is_empty())
       {
         if(boundary.max_diam() <= eps)
-          draw_box(*fig, boundary, StyleProperties::boundary());
+          draw_box(*this, boundary, s_boundary);
 
         else
         {
@@ -163,18 +127,13 @@ namespace codac2
     printf("Computation time: %.4fs\n", (double)(clock()-t_start)/CLOCKS_PER_SEC);
   }
 
-  /**
-   * \brief Draws the paving while it is being computed, in default Cartesian coordinates
-   * 
-   * \param x0 Initial box
-   * \param s Separator to use
-   * \param eps Accuracy of the paving algorithm (the undefined boxes will have their max_diam <= eps)
-   * \param fig Figure to draw on (optionnal, if not provided, the default figure will be used)
-   */
   template<typename S>
     requires IsSepBaseOrPtr<S>
-  inline void draw_while_paving(const IntervalVector& x0, const S& s, double eps, std::shared_ptr<Figure2D> fig = nullptr)
+  inline void Figure2D::pave(const IntervalVector& x0, const S& s, double eps,
+    const StyleProperties& s_boundary,
+    const StyleProperties& s_outside,
+    const StyleProperties& s_inside)
   {
-    return draw_while_paving(x0, s, eps, cartesian_drawing(), fig);
+    return pave(x0, s, eps, cartesian_drawing(), s_boundary, s_outside, s_inside);
   }
 }

@@ -15,7 +15,6 @@
 #include <codac2_Subpaving.h>
 #include <codac2_CtcWrapper.h>
 #include <codac2_SepInverse.h>
-#include <codac2_drawwhilepaving.h>
 
 using namespace std;
 using namespace codac2;

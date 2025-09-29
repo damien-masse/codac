@@ -2,10 +2,10 @@ from codac import *
 import math
 
 
-class DumbCtc(Ctc):
+class DumbCtc(Ctc_IntervalVector):
 
   def __init__(self):
-    Ctc.__init__(self, 2)
+    Ctc_IntervalVector.__init__(self, 2)
 
   def contract(self, x):
     return x
@@ -55,7 +55,7 @@ def coloration(n):
 
       while x_in != prev_x_in:
 
-        prev_x_in.init(x_in)
+        prev_x_in = IntervalVector(x_in)
 
         for li in lbi:
           d = h.diff(li)

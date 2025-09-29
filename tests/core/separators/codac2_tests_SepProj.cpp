@@ -14,7 +14,6 @@
 #include <codac2_pave.h>
 #include <codac2_Approx.h>
 #include <codac2_Figure2D.h>
-#include <codac2_drawwhilepaving.h>
 
 using namespace std;
 using namespace codac2;

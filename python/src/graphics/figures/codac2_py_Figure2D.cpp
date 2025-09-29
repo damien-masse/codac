@@ -258,13 +258,51 @@ void export_Figure2D(py::module& m)
 
     // Pavings
 
-    .def("draw_paving", (void(Figure2D::*)(const PavingOut&,const StyleProperties&,const StyleProperties&))&Figure2D::draw_paving,
+    .def("draw_paving", (void(Figure2D::*)(const PavingOut&,
+        const StyleProperties&,const StyleProperties&))&Figure2D::draw_paving,
       VOID_FIGURE2D_DRAW_PAVING_CONST_PAVINGOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
-      "p"_a, "boundary_style"_a=StyleProperties::boundary(), "outside_style"_a=StyleProperties::outside())
+      "p"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside())
 
-    .def("draw_paving", (void(Figure2D::*)(const PavingInOut&,const StyleProperties&,const StyleProperties&,const StyleProperties&))&Figure2D::draw_paving,
+    .def("draw_paving", (void(Figure2D::*)(const PavingOut&,
+        const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>&,
+        const StyleProperties&,const StyleProperties&))&Figure2D::draw_paving,
+      VOID_FIGURE2D_DRAW_PAVING_CONST_PAVINGOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "draw_box"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside())
+
+    .def("draw_paving", (void(Figure2D::*)(const PavingInOut&,
+        const StyleProperties&,const StyleProperties&,const StyleProperties&))&Figure2D::draw_paving,
       VOID_FIGURE2D_DRAW_PAVING_CONST_PAVINGINOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
-      "p"_a, "boundary_style"_a=StyleProperties::boundary(), "outside_style"_a=StyleProperties::outside(), "inside_style"_a=StyleProperties::inside())
+      "p"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside(), "s_inside"_a=StyleProperties::inside())
+
+    .def("draw_paving", (void(Figure2D::*)(const PavingInOut&,
+        const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>&,
+        const StyleProperties&,const StyleProperties&,const StyleProperties&))&Figure2D::draw_paving,
+      VOID_FIGURE2D_DRAW_PAVING_CONST_PAVINGINOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "draw_box"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside(), "s_inside"_a=StyleProperties::inside())
+
+
+    .def("pave", (void(Figure2D::*)(const IntervalVector& x0, const CtcBase<IntervalVector>& c, double eps,
+        const StyleProperties&, const StyleProperties&))&Figure2D::pave,
+      VOID_FIGURE2D_PAVE_CONST_INTERVALVECTOR_REF_CONST_C_REF_DOUBLE_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "x0"_a, "c"_a, "eps"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside())
+
+    .def("pave", (void(Figure2D::*)(const IntervalVector& x0, const CtcBase<IntervalVector>& c, double eps,
+        const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>&,
+        const StyleProperties&, const StyleProperties&))&Figure2D::pave,
+      VOID_FIGURE2D_PAVE_CONST_INTERVALVECTOR_REF_CONST_C_REF_DOUBLE_CONST_FUNCTION_VOID_FIGURE2D_REFCONST_INTERVALVECTOR_REFCONST_STYLEPROPERTIES_REF__REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "x0"_a, "c"_a, "eps"_a, "draw_box"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside())
+
+    .def("pave", (void(Figure2D::*)(const IntervalVector& x0, const SepBase& s, double eps,
+        const StyleProperties&, const StyleProperties&, const StyleProperties&))&Figure2D::pave,
+      VOID_FIGURE2D_PAVE_CONST_INTERVALVECTOR_REF_CONST_S_REF_DOUBLE_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "x0"_a, "s"_a, "eps"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside(), "s_inside"_a=StyleProperties::inside())
+
+    .def("pave", (void(Figure2D::*)(const IntervalVector& x0, const SepBase& s, double eps,
+        const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>&,
+        const StyleProperties&, const StyleProperties&, const StyleProperties&))&Figure2D::pave,
+      VOID_FIGURE2D_PAVE_CONST_INTERVALVECTOR_REF_CONST_S_REF_DOUBLE_CONST_FUNCTION_VOID_FIGURE2D_REFCONST_INTERVALVECTOR_REFCONST_STYLEPROPERTIES_REF__REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "x0"_a, "s"_a, "eps"_a, "draw_box"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside(), "s_inside"_a=StyleProperties::inside())
+
 
     .def("draw_subpaving", (void(Figure2D::*)(const Subpaving<PavingOut>&,const StyleProperties&))&Figure2D::draw_subpaving,
       VOID_FIGURE2D_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
@@ -435,13 +473,51 @@ void export_Figure2D(py::module& m)
 
     // Pavings
 
-    .def_static("draw_paving", (void(*)(const PavingOut&,const StyleProperties&,const StyleProperties&))&DefaultFigure::draw_paving,
+    .def_static("draw_paving", (void(*)(const PavingOut&,
+        const StyleProperties&,const StyleProperties&))&DefaultFigure::draw_paving,
       STATIC_VOID_DEFAULTFIGURE_DRAW_PAVING_CONST_PAVINGOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
-      "p"_a, "boundary_style"_a=StyleProperties::boundary(), "outside_style"_a=StyleProperties::outside())
+      "p"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside())
 
-    .def_static("draw_paving", (void(*)(const PavingInOut&,const StyleProperties&,const StyleProperties&,const StyleProperties&))&DefaultFigure::draw_paving,
+    .def_static("draw_paving", (void(*)(const PavingOut&,
+        const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
+        const StyleProperties&,const StyleProperties&))&DefaultFigure::draw_paving,
+      STATIC_VOID_DEFAULTFIGURE_DRAW_PAVING_CONST_PAVINGOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "draw_box"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside())
+
+    .def_static("draw_paving", (void(*)(const PavingInOut&,
+        const StyleProperties&,const StyleProperties&,const StyleProperties&))&DefaultFigure::draw_paving,
       STATIC_VOID_DEFAULTFIGURE_DRAW_PAVING_CONST_PAVINGINOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
-      "p"_a, "boundary_style"_a=StyleProperties::boundary(), "outside_style"_a=StyleProperties::outside(), "inside_style"_a=StyleProperties::inside())
+      "p"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside(), "s_inside"_a=StyleProperties::inside())
+
+    .def_static("draw_paving", (void(*)(const PavingInOut&,
+        const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
+        const StyleProperties&,const StyleProperties&,const StyleProperties&))&DefaultFigure::draw_paving,
+      STATIC_VOID_DEFAULTFIGURE_DRAW_PAVING_CONST_PAVINGINOUT_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "p"_a, "draw_box"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside(), "s_inside"_a=StyleProperties::inside())
+
+
+    .def_static("pave", (void (*)(const IntervalVector& x0, const CtcBase<IntervalVector>& c, double eps,
+        const StyleProperties&, const StyleProperties&))&DefaultFigure::pave,
+      STATIC_VOID_DEFAULTFIGURE_PAVE_CONST_INTERVALVECTOR_REF_CONST_C_REF_DOUBLE_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "x0"_a, "c"_a, "eps"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside())
+
+    .def_static("pave", (void (*)(const IntervalVector& x0, const CtcBase<IntervalVector>& c, double eps,
+        const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box,
+        const StyleProperties&, const StyleProperties&))&DefaultFigure::pave,
+      STATIC_VOID_DEFAULTFIGURE_PAVE_CONST_INTERVALVECTOR_REF_CONST_C_REF_DOUBLE_CONST_FUNCTION_VOID_FIGURE2D_REFCONST_INTERVALVECTOR_REFCONST_STYLEPROPERTIES_REF__REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "x0"_a, "c"_a, "eps"_a, "draw_box"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside())
+
+    .def_static("pave", (void (*)(const IntervalVector& x0, const SepBase& s, double eps,
+        const StyleProperties&, const StyleProperties&, const StyleProperties&))&DefaultFigure::pave,
+      STATIC_VOID_DEFAULTFIGURE_PAVE_CONST_INTERVALVECTOR_REF_CONST_S_REF_DOUBLE_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "x0"_a, "s"_a, "eps"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside(), "s_inside"_a=StyleProperties::inside())
+
+    .def_static("pave", (void (*)(const IntervalVector& x0, const SepBase& s, double eps,
+        const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>&,
+        const StyleProperties&, const StyleProperties&, const StyleProperties&))&DefaultFigure::pave,
+      STATIC_VOID_DEFAULTFIGURE_PAVE_CONST_INTERVALVECTOR_REF_CONST_S_REF_DOUBLE_CONST_FUNCTION_VOID_FIGURE2D_REFCONST_INTERVALVECTOR_REFCONST_STYLEPROPERTIES_REF__REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF_CONST_STYLEPROPERTIES_REF,
+      "x0"_a, "s"_a, "eps"_a, "draw_box"_a, "s_boundary"_a=StyleProperties::boundary(), "s_outside"_a=StyleProperties::outside(), "s_inside"_a=StyleProperties::inside())
+
 
     .def_static("draw_subpaving", (void(*)(const Subpaving<PavingOut>&,const StyleProperties&))&DefaultFigure::draw_subpaving,
       STATIC_VOID_DEFAULTFIGURE_DRAW_SUBPAVING_CONST_SUBPAVING_P_REF_CONST_STYLEPROPERTIES_REF,
@@ -452,4 +528,8 @@ void export_Figure2D(py::module& m)
       "p"_a, "style"_a=StyleProperties())
 
   ;
+
+  m.def("cartesian_drawing", &cartesian_drawing);
+  m.def("polar_drawing", &polar_drawing);
+    
 }
