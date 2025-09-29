@@ -22,7 +22,7 @@ e1 = AnalyticFunction([x], e(x,Vector([3,1,-1,0,math.pi/3.])))
 e2 = AnalyticFunction([x], e(x,Vector([2,0.5,-1,0,math.pi/3.])))
 s = SepCtcPair(DumbCtc(), CtcInverse(e1,[1]) | CtcInverse(e2,[1]))
 
-#draw_while_paving([[-4,3],[-3,3]], s, 0.1)
+#DefaultFigure.pave([[-4,3],[-3,3]], s, 0.1)
 
 
 p = pave([[-4,2],[-3,3]], s, 0.1)
