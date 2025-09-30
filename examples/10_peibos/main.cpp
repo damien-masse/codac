@@ -55,8 +55,7 @@ int main()
   for (const auto& p : v_par_3d)
   {
     figure3d.draw_parallelepiped(p, Color::green(0.5));
-    Zonotope z = p.proj({0,1});
-    figure_3d_proj.draw_zonotope(z , {Color::black(),Color::green(0.2)});
+    figure_3d_proj.draw_zonotope(p.proj({0,1}) , {Color::black(),Color::green(0.2)});
   }
 
   // nD example of the PEIBOS algorithm
@@ -103,9 +102,7 @@ int main()
   for (const auto& p : v_par_nd)
   {
     figure_3d_nd.draw_parallelepiped(p, Color::green(0.5));
-    Zonotope z_xy = p.proj({0,1});
-    Zonotope z_zy = p.proj({2,1});
-    figure_2d_nd_xy.draw_zonotope(z_xy, {Color::black(),Color::green(0.2)});
-    figure_2d_nd_zy.draw_zonotope(z_zy, {Color::black(),Color::green(0.2)});
+    figure_2d_nd_xy.draw_zonotope(p.proj({0,1}), {Color::black(),Color::green(0.2)});
+    figure_2d_nd_zy.draw_zonotope(p.proj({2,1}), {Color::black(),Color::green(0.2)});
   }
 }
