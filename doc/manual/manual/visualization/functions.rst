@@ -169,10 +169,16 @@ Vehicles
 Paving
 ------
 
-.. doxygenfunction:: codac2::Figure2D::draw_paving(const PavingOut&, const StyleProperties&, const StyleProperties&)
+.. doxygenfunction:: codac2::Figure2D::draw_paving(const PavingOut&, const PavingStyle&)
   :project: codac
 
-.. doxygenfunction:: codac2::Figure2D::draw_paving(const PavingInOut&, const StyleProperties&, const StyleProperties&, const StyleProperties&)
+.. doxygenfunction:: codac2::Figure2D::draw_paving(const PavingOut&, const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>&, const PavingStyle&)
+  :project: codac
+
+.. doxygenfunction:: codac2::Figure2D::draw_paving(const PavingInOut&, const PavingStyle&)
+  :project: codac
+
+.. doxygenfunction:: codac2::Figure2D::draw_paving(const PavingInOut&, const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>&, const PavingStyle&)
   :project: codac
 
 .. doxygenfunction:: codac2::Figure2D::draw_subpaving(const Subpaving<P>&, const StyleProperties&)

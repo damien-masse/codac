@@ -485,35 +485,47 @@ void Figure2D::draw_motor_boat(const Vector& x, float size, const StylePropertie
   }
 }
 
-void Figure2D::draw_paving(const PavingOut& p,
-  const StyleProperties& s_boundary, const StyleProperties& s_outside)
+void Figure2D::draw_paving(const PavingOut& p, const PavingStyle& style)
 {
-    p.tree()->left()->visit([&]
-      (std::shared_ptr<const PavingOut_Node> n)
-      {
-        const IntervalVector& outer = get<0>(n->boxes());
-
-        if(n->top() == p.tree())
-          draw_box(get<0>(n->top()->boxes()), s_outside);
-
-        else
-        {
-          auto b = get<0>(n->top()->boxes()).bisect_largest();
-          IntervalVector hull = n->top()->left() == n ? b.first : b.second;
-
-          for(const auto& bi : hull.diff(outer))
-            draw_box(bi, s_outside);
-        }
-
-        if(n->is_leaf())
-          draw_box(outer, s_boundary);
-
-        return true;
-      });
+  draw_paving(p, cartesian_drawing(), style);
 }
 
-void Figure2D::draw_paving(const PavingInOut& p, const StyleProperties& s_boundary,
-  const StyleProperties& s_outside, const StyleProperties& s_inside)
+void Figure2D::draw_paving(const PavingOut& p,
+  const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box_,
+  const PavingStyle& style)
+{
+  p.tree()->left()->visit([&]
+    (std::shared_ptr<const PavingOut_Node> n)
+    {
+      const IntervalVector& outer = get<0>(n->boxes());
+
+      if(n->top() == p.tree())
+        draw_box_(*this, get<0>(n->top()->boxes()), style.outside);
+
+      else
+      {
+        auto b = get<0>(n->top()->boxes()).bisect_largest();
+        IntervalVector hull = n->top()->left() == n ? b.first : b.second;
+
+        for(const auto& bi : hull.diff(outer))
+          draw_box_(*this, bi, style.outside);
+      }
+
+      if(n->is_leaf())
+        draw_box_(*this, outer, style.boundary);
+
+      return true;
+    });
+}
+
+void Figure2D::draw_paving(const PavingInOut& p, const PavingStyle& style)
+{
+  draw_paving(p, cartesian_drawing(), style);
+}
+
+void Figure2D::draw_paving(const PavingInOut& p,
+  const std::function<void(Figure2D&,const IntervalVector&,const StyleProperties&)>& draw_box_,
+  const PavingStyle& style)
 {
   p.tree()->visit([&]
     (std::shared_ptr<const PavingInOut_Node> n)
@@ -524,13 +536,13 @@ void Figure2D::draw_paving(const PavingInOut& p, const StyleProperties& s_bounda
       IntervalVector hull = inner | outer;
 
       for(const auto& bi : hull.diff(inner))
-        draw_box(bi, s_inside);
+        draw_box_(*this, bi, style.inside);
 
       for(const auto& bi : hull.diff(outer))
-        draw_box(bi, s_outside);
+        draw_box_(*this, bi, style.outside);
 
       if(n->is_leaf())
-          draw_box(inner & outer, s_boundary);
+          draw_box_(*this, inner & outer, style.boundary);
 
       return true;
     });
