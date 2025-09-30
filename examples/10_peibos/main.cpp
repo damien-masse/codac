@@ -68,7 +68,10 @@ int main()
   Matrix rot_matrix_2 ({ {1/std::sqrt(2.0),-1/std::sqrt(2.0),0},
                           {1/std::sqrt(2.0),+1/std::sqrt(2.0),0},
                           {0,0,1} });
+
+  // Function mapping cube to sphere
   AnalyticFunction g_nd ({y_nd}, {y_nd[0]/sqrt(sqr(y_nd[0])+sqr(y_nd[1])+sqr(y_nd[2])), y_nd[1]/sqrt(sqr(y_nd[0])+sqr(y_nd[1])+sqr(y_nd[2])), y_nd[2]/sqrt(sqr(y_nd[0])+sqr(y_nd[1])+sqr(y_nd[2]))});
+  // Apply two rotations
   AnalyticFunction f_nd ({y_nd}, rot_matrix_1 * rot_matrix_2 * g_nd(y_nd));
   
   VectorVar X_nd(1);

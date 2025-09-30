@@ -45,17 +45,6 @@ namespace codac2
     return sqrt(N).ub();
   }
 
-  double error(const IntervalMatrix& JJf, const IntervalMatrix& JJf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X)
-  {
-    auto xc = X.mid();
-
-    IntervalMatrix JJg_punc=JJf_punc*(symmetry.permutation_matrix().template cast<Interval>())*psi_0.diff(xc);
-
-    IntervalMatrix JJg=JJf*(symmetry.permutation_matrix().template cast<Interval>())*psi_0.diff(X);
-
-    return error(JJg, JJg_punc, X);
-  }
-
   Matrix inflate_flat_parallelepiped(const Matrix& A, const Vector& e_vec, double rho)
   {
     Index m = A.cols();
@@ -104,8 +93,12 @@ namespace codac2
 
   Parallelepiped parallelepiped_inclusion(const Vector& z, const IntervalMatrix& JJf, const IntervalMatrix& JJf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X, double true_eps)
   {
+    // Computation of the Jacobian of g = f o symmetry(psi_0)
+    IntervalMatrix JJg=JJf*(symmetry.permutation_matrix().template cast<Interval>())*psi_0.diff(X);
+    IntervalMatrix JJg_punc=JJf_punc*(symmetry.permutation_matrix().template cast<Interval>())*psi_0.diff(X.mid());
+
     // Maximum error computation
-    double rho = error( JJf, JJf_punc, psi_0, symmetry, X);
+    double rho = error(JJg, JJg_punc, X);
 
     auto Jz = (JJf_punc * (symmetry.permutation_matrix().template cast<Interval>()) * psi_0.diff(X.mid())).mid();
 
@@ -139,6 +132,7 @@ namespace codac2
 
     for (const auto& symmetry : symmetries)
     {
+      // Simon : would it be possible to create a function g = f o symmetry(psi_0) ?
       for (const auto& X : boxes)
       {
         IntervalVector Y = symmetry(psi_0.eval(X)) + offset;

@@ -18,7 +18,6 @@ namespace codac2
   double split (const IntervalVector& X, double eps, vector<IntervalVector>& boxes);
 
   double error(const IntervalMatrix& JJg, const IntervalMatrix& JJg_punc, const IntervalVector& X);
-  double error(const IntervalMatrix& JJf, const IntervalMatrix& JJf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X);
 
   Matrix inflate_flat_parallelepiped (const Matrix& A, const Vector& e_vec, double rho);
 
