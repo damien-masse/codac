@@ -82,7 +82,7 @@ namespace codac2
 
       template<typename V>
         // To avoid ambiguity with operator()(const Eigen::MatrixBase<Derived>& x):
-        requires (std::is_same_v<V,VectorExpr> || std::is_same_v<VectorVar>)
+        requires (std::is_same_v<V,VectorExpr> || std::is_same_v<V,VectorVar>)
       inline VectorExpr operator()(const V& x1) const
       {
         if constexpr(std::is_same_v<V,VectorExpr>)
