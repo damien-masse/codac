@@ -20,6 +20,7 @@
 #include <memory>
 #include <map>
 #include <set>
+#include <stdexcept>
 
 #include "codac2_Index.h"
 #include "codac2_Vector.h"
@@ -36,9 +37,10 @@ struct DDvertex {
    
    enum ddvertexstatus {
      VERTEXNEW,
-     VERTEXLT,
-     VERTEXGT,
-     VERTEXEQ,
+     VERTEXLT, /* (GT,LT) => new vertex */
+     VERTEXLE, /* (GT,LE) => extend LE vertex */
+     VERTEXGT,  
+     VERTEXEQ, /*
    };
    ddvertexstatus status;
 
@@ -133,22 +135,68 @@ struct DDfacet {
 
 class DDbuildF2V {
   public:
-     DDbuildF2V(const IntervalVector &box);
+     DDbuildF2V(const IntervalVector &box, 
+		const std::vector<Facet> &eqconstraints);
    
      int add_facet(Index idFacet, const Facet& fct);
 
      friend std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build);
 
   private:
+     Index initDDvertex(Index id, const IntervalVector &v,
+		 std::set<Index> &links, std::vector<Index> &fcts);
      Index addDDvertex(const IntervalVector &v, std::set<Index> &links,
 		std::vector<Index> &fcts);
      Index addDDvertex(IntervalVector &&v, std::set<Index> &links,
 		std::vector<Index> &fcts);
-     Index addVertexSon(const DDvertex &p1, DDvertex &p2, 
-				Index idFacet, bool isEq); 
+     Index addVertexSon(const DDvertex &p1, DDvertex &p2, double rhs,
+				Index idFacet); 
      void removeVertex(Index Id, bool removeLnks);
      
      std::map<Index,DDvertex> vertices;
+
+     /* x_dim = eqcst x + rhs */
+     struct EqFacet {
+        Index dim;
+        Row eqcst;
+        Interval valcst;
+        
+        EqFacet (Index dim, const Row &eqcst, const Interval &valcst) :
+		dim(dim), eqcst(eqcst), valcst(valcst) { };
+
+        /* computation of the value */
+        void computeVal(IntervalVector &x) const {
+            x[dim] = this->eqcst.dot(x) + valcst;
+        }
+
+        /* adapt box */
+        void adapt_box(IntervalVector &bbox) const;
+       
+        /* adaptation of an equality constraint  cst x = rhs */
+        /* with alpha = cst[dim], 
+           we have (cst' + alpha*eqcst).mid x' = rhs - alpha*valcst +
+				[-1,1] * (cst' + alpha*eqcst).rad * box */
+        void adapt_eqconstraint(const IntervalVector &bbox,
+			        Row &cst, Interval &rhs) const;
+
+        /* adaptation of an inequality constraint  cst x <= rhs */
+        /* with alpha = cst[dim], 
+           we have (cst' + alpha*eqcst) x' <== (rhs - alpha*valcst).ub */
+        void adapt_ineqconstraint(IntervalRow &cst, double &rhs) const;
+
+        /* construction of a new eqfacet from an equality constraint 
+                  cst x = rhs */
+        static EqFacet build_EqFacet(const IntervalVector &bbox,
+			const Row &cst, Interval &rhs);
+     };
+
+     IntervalVector recompute_vertex(const IntervalVector &vect) const; 
+
+     std::vector<EqFacet> eqfacets;
+     std::vector<Index> dim_facets;
+     IntervalVector bbox;
+
+     bool empty;
      Index nbIn;
      double tolerance = 1e-9;
 };

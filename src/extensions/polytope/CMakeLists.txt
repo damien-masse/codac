@@ -7,6 +7,7 @@ list(APPEND CODAC_POLYTOPE_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/clp/codac2_clp.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/clp/codac2_clp.h
   ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Facet.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Facet.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/codac2_dd.h
   ${CMAKE_CURRENT_SOURCE_DIR}/codac2_dd.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Polytope.h

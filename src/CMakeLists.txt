@@ -18,10 +18,6 @@
     add_subdirectory(extensions/polytope/)
   endif()
 
-  #if(WITH_IBEX) # included by default for now
-    add_subdirectory(extensions/ibex)
-  #endif()
-
   #if(WITH_PYTHON)
   #  add_subdirectory(sympy)
   #endif()
@@ -123,7 +119,6 @@
 
   endif()
 
-<<<<<<< HEAD
   if(WITH_POLYTOPE)
 
     file(APPEND ${CODAC_CMAKE_CONFIG_FILE} "
@@ -162,8 +157,6 @@
 
   #endif()
 
-=======
->>>>>>> 93a76fa4ad5b3f67ca14383e60f6f8a9ea3d0efc
   file(APPEND ${CODAC_CMAKE_CONFIG_FILE} "
     set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_GRAPHICS_LIBRARY} \${CODAC_CORE_LIBRARY})
     ")
