@@ -103,7 +103,6 @@ namespace codac2
     auto Jz = (JJf_punc * (symmetry.permutation_matrix().template cast<Interval>()) * psi_0.diff(X.mid())).mid();
 
     // Inflation of the parallelepiped
-
     auto A = inflate_flat_parallelepiped(Jz, 0.5*true_eps*Vector::ones(X.size()), rho);
 
     return Parallelepiped(z, A);
@@ -132,26 +131,11 @@ namespace codac2
 
     for (const auto& symmetry : symmetries)
     {
-      // Simon : would it be possible to create a function g = f o symmetry(psi_0) ?
-      for (const auto& X : boxes)
-      {
-        IntervalVector Y = symmetry(psi_0.eval(X)) + offset;
+      VectorVar x(m);
+      AnalyticFunction g_i ({x}, f(symmetry(psi_0(x))+offset));
 
-        auto JJf=f.diff(Y);
-
-        auto xc = X.mid();
-        auto yc = (symmetry(psi_0.eval(xc)) + offset).mid();
-
-        auto JJf_punc=f.diff(yc).mid();
-
-        // Center of the parallelepiped
-        auto z = f.eval(yc).mid();
-
-        auto p = parallelepiped_inclusion(z, JJf, JJf_punc, psi_0, symmetry, X, true_eps);
-        
-        output.push_back(p);
-
-      }
+      for (const auto& X : boxes)        
+        output.push_back( parallelepiped_inclusion(g_i, X));
     }
 
     if (verbose)

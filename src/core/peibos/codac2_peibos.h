@@ -12,6 +12,8 @@
 #include "codac2_Parallelepiped.h"
 #include "codac2_AnalyticFunction.h"
 #include "codac2_OctaSym.h"
+#include <codac2_OctaSym_operator.h>
+
 
 namespace codac2
 {
