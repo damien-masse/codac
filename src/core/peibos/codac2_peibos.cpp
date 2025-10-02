@@ -148,7 +148,5 @@ namespace codac2
     }
 
     return output;
-
   }
-
 }
