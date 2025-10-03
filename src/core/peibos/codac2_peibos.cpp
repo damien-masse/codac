@@ -91,7 +91,7 @@ namespace codac2
     return Parallelepiped(f.eval(X.mid()).mid(), A_inf);
   }
 
-  Parallelepiped parallelepiped_inclusion(const Vector& z, const IntervalMatrix& JJf, const IntervalMatrix& JJf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X, double true_eps)
+  Parallelepiped parallelepiped_inclusion(const Vector& z, const IntervalMatrix& JJf, const IntervalMatrix& JJf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X)
   {
     // Computation of the Jacobian of g = f o symmetry(psi_0)
     IntervalMatrix JJg=JJf*(symmetry.permutation_matrix().template cast<Interval>())*psi_0.diff(X);
@@ -102,8 +102,12 @@ namespace codac2
 
     auto Jz = (JJf_punc * (symmetry.permutation_matrix().template cast<Interval>()) * psi_0.diff(X.mid())).mid();
 
+    Vector x_rad (X.size());
+    for (int i = 0; i < X.size(); i++)
+      x_rad(i) = X(i).rad();
+
     // Inflation of the parallelepiped
-    auto A = inflate_flat_parallelepiped(Jz, 0.5*true_eps*Vector::ones(X.size()), rho);
+    auto A = inflate_flat_parallelepiped(Jz, x_rad, rho);
 
     return Parallelepiped(z, A);
   }
@@ -135,7 +139,7 @@ namespace codac2
       AnalyticFunction g_i ({x}, f(symmetry(psi_0(x))+offset));
 
       for (const auto& X : boxes)        
-        output.push_back( parallelepiped_inclusion(g_i, X));
+        output.push_back(parallelepiped_inclusion(g_i, X));
     }
 
     if (verbose)

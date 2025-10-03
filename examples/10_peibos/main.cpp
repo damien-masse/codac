@@ -78,8 +78,6 @@ int main()
   OctaSym id_nd ({1,2,3});
   OctaSym s1_nd ({-2,1,3});
   OctaSym s2_nd ({3,2,-1});
-  OctaSym s3_nd ({1,-2,-3});
-
 
   Figure3D figure_3d_nd ("Cube on Sphere");
   figure_3d_nd.draw_axes(0.5);
