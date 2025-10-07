@@ -37,12 +37,8 @@ namespace codac2
     auto dX=X-xc;
 
     auto E = (JJg - JJg_punc)*dX;
-    Interval N(0.);
 
-    for (int i = 0; i < E.rows(); i++)
-      N += sqr(E[i]);
-
-    return sqrt(N).ub();
+    return E.norm().ub();
   }
 
   Matrix inflate_flat_parallelepiped(const Matrix& A, const Vector& e_vec, double rho)
@@ -82,7 +78,7 @@ namespace codac2
     double rho = error(f.diff(X), A, X);
 
     // We need to add the radius of z to rho to account for the fact that we have a (small) box enclosing f(x_bar) and not f(x_bar) itself
-    rho += z.rad().maxCoeff();
+    rho += z.norm().diam();
 
     // Inflation of the parallelepiped
     auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
@@ -101,7 +97,7 @@ namespace codac2
     double rho = error(JJg, JJg_punc, X);
 
     // We need to add the radius of z to rho to account for the fact that we have a (small) box enclosing z and not z itself
-    rho += z.rad().maxCoeff();
+    rho += z.norm().diam();
 
     // Inflation of the parallelepiped
     auto A = inflate_flat_parallelepiped(JJg_punc, X.rad(), rho);
