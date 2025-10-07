@@ -74,14 +74,10 @@ namespace codac2
     assert_release (f.input_size() < f.output_size() && "input size must be strictly lower than output size");
     assert_release (X.size() == f.input_size() && "dimension of X must match input size of f");
 
-    VectorVar psi_0(f.input_size());
-
     // Maximum error computation
     double rho = error(f.diff(X), f.diff(X.mid()).mid(), X);
 
-    Vector x_rad (X.size());
-    for (int i = 0; i < X.size(); i++)
-      x_rad(i) = X(i).rad();
+    Vector x_rad = X.rad();
 
     Matrix A = f.diff(X.mid()).mid();
 
@@ -102,9 +98,7 @@ namespace codac2
 
     auto Jz = (JJf_punc * (symmetry.permutation_matrix().template cast<Interval>()) * psi_0.diff(X.mid())).mid();
 
-    Vector x_rad (X.size());
-    for (int i = 0; i < X.size(); i++)
-      x_rad(i) = X(i).rad();
+    Vector x_rad = X.rad();
 
     // Inflation of the parallelepiped
     auto A = inflate_flat_parallelepiped(Jz, x_rad, rho);
@@ -131,7 +125,7 @@ namespace codac2
     vector<Parallelepiped> output;
 
     vector<IntervalVector> boxes;
-    double true_eps = split(Interval(-1.,1.)*IntervalVector::Ones(m), epsilon, boxes);
+    double true_eps = split(IntervalVector::constant(m,{-1,1}), epsilon, boxes);
 
     for (const auto& symmetry : symmetries)
     {
