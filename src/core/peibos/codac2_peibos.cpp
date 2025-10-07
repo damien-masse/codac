@@ -30,7 +30,7 @@ namespace codac2
     }
   }
 
-  double error(const IntervalMatrix& JJg, const IntervalMatrix& JJg_punc, const IntervalVector& X)
+  double error(const IntervalMatrix& JJg, const Matrix& JJg_punc, const IntervalVector& X)
   {
     auto xc = X.mid();
 
@@ -74,36 +74,39 @@ namespace codac2
     assert_release (f.input_size() < f.output_size() && "input size must be strictly lower than output size");
     assert_release (X.size() == f.input_size() && "dimension of X must match input size of f");
 
-    // Maximum error computation
-    double rho = error(f.diff(X), f.diff(X.mid()).mid(), X);
-
-    Vector x_rad = X.rad();
+    auto z = f.eval(X.mid());
 
     Matrix A = f.diff(X.mid()).mid();
 
-    // Inflation of the parallelepiped
-    auto A_inf = inflate_flat_parallelepiped(A, x_rad, rho);
+    // Maximum error computation
+    double rho = error(f.diff(X), A, X);
 
-    return Parallelepiped(f.eval(X.mid()).mid(), A_inf);
+    // We need to add the radius of z to rho to account for the fact that we have a (small) box enclosing f(x_bar) and not f(x_bar) itself
+    rho += z.rad().maxCoeff();
+
+    // Inflation of the parallelepiped
+    auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
+
+    return Parallelepiped(z.mid(), A_inf);
   }
 
-  Parallelepiped parallelepiped_inclusion(const Vector& z, const IntervalMatrix& JJf, const IntervalMatrix& JJf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X)
+  Parallelepiped parallelepiped_inclusion(const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& JJf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X)
   {
     // Computation of the Jacobian of g = f o symmetry(psi_0)
-    IntervalMatrix JJg=JJf*(symmetry.permutation_matrix().template cast<Interval>())*psi_0.diff(X);
-    IntervalMatrix JJg_punc=JJf_punc*(symmetry.permutation_matrix().template cast<Interval>())*psi_0.diff(X.mid());
+    IntervalMatrix JJg = JJf * (symmetry.permutation_matrix().template cast<Interval>()) * psi_0.diff(X);
+
+    Matrix JJg_punc = (JJf_punc * symmetry.permutation_matrix() * (psi_0.diff(X.mid()).mid()));
 
     // Maximum error computation
     double rho = error(JJg, JJg_punc, X);
 
-    auto Jz = (JJf_punc * (symmetry.permutation_matrix().template cast<Interval>()) * psi_0.diff(X.mid())).mid();
-
-    Vector x_rad = X.rad();
+    // We need to add the radius of z to rho to account for the fact that we have a (small) box enclosing z and not z itself
+    rho += z.rad().maxCoeff();
 
     // Inflation of the parallelepiped
-    auto A = inflate_flat_parallelepiped(Jz, x_rad, rho);
+    auto A = inflate_flat_parallelepiped(JJg_punc, X.rad(), rho);
 
-    return Parallelepiped(z, A);
+    return Parallelepiped(z.mid(), A);
   }
 
   vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& symmetries, double epsilon, bool verbose)
