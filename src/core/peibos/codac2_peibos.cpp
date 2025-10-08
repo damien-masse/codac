@@ -84,12 +84,13 @@ namespace codac2
     return Parallelepiped(z.mid(), A);
   }
 
-  Parallelepiped parallelepiped_inclusion(const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& Jf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X)
+  Parallelepiped parallelepiped_inclusion(const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& Jf_tild, const AnalyticFunction<VectorType>& psi_0, const OctaSym& sigma, const IntervalVector& X)
   {
-    // Computation of the Jacobian of g = f o symmetry(psi_0)
-    IntervalMatrix JJg = JJf * (symmetry.permutation_matrix().template cast<Interval>()) * psi_0.diff(X);
+    // Computation of the Jacobian of g = f o sigma(psi_0)
+    IntervalMatrix JJg = JJf * (sigma.permutation_matrix().template cast<Interval>()) * psi_0.diff(X);
 
-    Matrix B = (Jf_punc * symmetry.permutation_matrix() * (psi_0.diff(X.mid()).mid()));
+    // B is an approximation of the Jacobian of g at the center of X
+    Matrix B = (Jf_tild * sigma.permutation_matrix() * (psi_0.diff(X.mid()).mid()));
 
     // Maximum error computation
     double rho = error(z, JJg, B, X);
