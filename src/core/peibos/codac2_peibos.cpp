@@ -30,13 +30,15 @@ namespace codac2
     }
   }
 
-  double error(const IntervalMatrix& JJg, const Matrix& JJg_punc, const IntervalVector& X)
+  double error(const IntervalVector& z, const IntervalMatrix& JJg, const Matrix& B, const IntervalVector& X)
   {
     auto xc = X.mid();
 
-    auto dX=X-xc;
+    auto dX = X-xc;
 
-    auto E = (JJg - JJg_punc)*dX;
+    auto a =  z.mid();
+
+    auto E = (z - a) + (JJg - B)*dX;
 
     return E.norm().ub();
   }
@@ -54,7 +56,6 @@ namespace codac2
 
     Matrix Q = (A_tild.transpose() * A_tild).inverse();
 
-    // Matrix mult (n, n);
     Matrix mult = Matrix::Zero(n,n);
     for (int i = 0; i < n; i++)
       mult(i,i) = rho*std::sqrt(Q(i,i));
@@ -72,35 +73,29 @@ namespace codac2
 
     auto z = f.eval(X.mid());
 
-    Matrix A = f.diff(X.mid()).mid();
+    Matrix B = f.diff(X.mid()).mid();
 
     // Maximum error computation
-    double rho = error(f.diff(X), A, X);
-
-    // We need to add the radius of z to rho to account for the fact that we have a (small) box enclosing f(x_bar) and not f(x_bar) itself
-    rho += z.norm().diam();
+    double rho = error(z, f.diff(X), B, X);
 
     // Inflation of the parallelepiped
-    auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
+    auto A = inflate_flat_parallelepiped(B, X.rad(), rho);
 
-    return Parallelepiped(z.mid(), A_inf);
+    return Parallelepiped(z.mid(), A);
   }
 
-  Parallelepiped parallelepiped_inclusion(const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& JJf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X)
+  Parallelepiped parallelepiped_inclusion(const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& Jf_punc, const AnalyticFunction<VectorType>& psi_0, const OctaSym& symmetry, const IntervalVector& X)
   {
     // Computation of the Jacobian of g = f o symmetry(psi_0)
     IntervalMatrix JJg = JJf * (symmetry.permutation_matrix().template cast<Interval>()) * psi_0.diff(X);
 
-    Matrix JJg_punc = (JJf_punc * symmetry.permutation_matrix() * (psi_0.diff(X.mid()).mid()));
+    Matrix B = (Jf_punc * symmetry.permutation_matrix() * (psi_0.diff(X.mid()).mid()));
 
     // Maximum error computation
-    double rho = error(JJg, JJg_punc, X);
-
-    // We need to add the radius of z to rho to account for the fact that we have a (small) box enclosing z and not z itself
-    rho += z.norm().diam();
+    double rho = error(z, JJg, B, X);
 
     // Inflation of the parallelepiped
-    auto A = inflate_flat_parallelepiped(JJg_punc, X.rad(), rho);
+    auto A = inflate_flat_parallelepiped(B, X.rad(), rho);
 
     return Parallelepiped(z.mid(), A);
   }

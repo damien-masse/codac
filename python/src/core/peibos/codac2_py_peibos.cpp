@@ -34,12 +34,12 @@ void export_peibos(py::module& m)
     "f"_a, "X"_a);
 
   m.def("parallelepiped_inclusion", 
-    [](const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& JJf_punc, const py::object& psi_0, const OctaSym& symmetry, const IntervalVector& X)
+    [](const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& Jf_punc, const py::object& psi_0, const OctaSym& symmetry, const IntervalVector& X)
     {
-      return parallelepiped_inclusion(z, JJf, JJf_punc, cast<AnalyticFunction<VectorType>>(psi_0), symmetry, X);
+      return parallelepiped_inclusion(z, JJf, Jf_punc, cast<AnalyticFunction<VectorType>>(psi_0), symmetry, X);
     },
     PARALLELEPIPED_PARALLELEPIPED_INCLUSION_CONST_INTERVALVECTOR_REF_CONST_INTERVALMATRIX_REF_CONST_MATRIX_REF_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_CONST_OCTASYM_REF_CONST_INTERVALVECTOR_REF,
-    "z"_a, "JJf"_a, "JJf_punc"_a, "psi_0"_a, "symmetry"_a, "X"_a);
+    "z"_a, "JJf"_a, "Jf_punc"_a, "psi_0"_a, "symmetry"_a, "X"_a);
 
 
   m.def("PEIBOS", 
