@@ -60,6 +60,8 @@ TEST_CASE("Interval class - manual")
     x.diam();   // diameter
     x.mag();    // magnitude
     x.mig();    // mignitude
+    x.smag();   // signed magnitude
+    x.smig();   // signed mignitude
     x.size();   // dimension (always 1)
     // [interval-class-4-end]
   }

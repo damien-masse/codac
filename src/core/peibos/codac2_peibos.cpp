@@ -46,23 +46,38 @@ namespace codac2
     Index m = A.cols();
     Index n = A.rows();
 
-    Eigen::FullPivLU<Eigen::MatrixXd> lu_decomp(A.transpose());
-    Eigen::MatrixXd N = lu_decomp.kernel();
+    IntervalMatrix A_int (A);
 
-    Matrix A_tild (n,n);
+    IntvFullPivLU LUdec((IntervalMatrix) A_int.transpose());
+    IntervalMatrix N = LUdec.kernel();
+
+    IntervalMatrix A_tild (n,n);
     A_tild << A, N;
 
-    IntervalMatrix A_tild_int (A_tild);
-    IntervalMatrix Q = inverse_enclosure(A_tild_int.transpose() * A_tild_int);
+    IntervalMatrix Q = inverse_enclosure(A_tild.transpose() * A_tild);
 
-    IntervalMatrix mult = Matrix::Zero(n,n);
+    IntervalMatrix mult = IntervalMatrix::Zero(n,n);
     for (int i = 0; i < n; i++)
       mult(i,i) = rho*sqrt(Q(i,i));
 
     for (int i = 0; i < m; i++)
       mult(i,i) += e_vec(i);
+
+    // From here we have an IntervalMatrix A_inf, meaning that each vector is an interval vector
+    IntervalMatrix A_inf = A_tild * mult;
+
+    // We inflate each generator's IntervalVector by the diameter of the other generators
+    IntervalMatrix A_add = A_inf.diam()*Interval(-1,1);
+
+    for (int i = 0; i < n; i++)
+      for (int j = 0; j < n; j++)
+        if (i != j)
+          A_inf.col(i) += A_add.col(j);
+
+    // We return the matrix of the signed magnitude of A_inf. 
+    // Thanks to the previous inflation step, we are certain to contain every combination of generators in the resulting parallelepiped
     
-    return A_tild * mult.ub();
+    return A_inf.smag();
   }
 
   Parallelepiped parallelepiped_inclusion(const AnalyticFunction<VectorType>& f, const IntervalVector& X)

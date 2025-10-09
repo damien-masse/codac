@@ -14,6 +14,7 @@
 #include "codac2_OctaSym.h"
 #include "codac2_inversion.h"
 #include "codac2_OctaSym_operator.h"
+#include "codac2_IntvFullPivLU.h"
 
 
 namespace codac2
