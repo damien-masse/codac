@@ -31,12 +31,13 @@ namespace codac2
   /**
    * \brief Compute the error term for the parallelepiped inclusion. The error is later used to inflate the flat parallelepiped \f$\mathbf{a}+\mathbf{B}\cdot(\left[\mathbf{x}\right]-\bar{\mathbf{x}})\f$
    * 
-   * \param z The box enclosing \f$\mathbf{f}(\bar{\mathbf{x}})\f$. \f$\mathbf{a}\f$ is its center
-   * \param JJg The interval Jacobian matrix containing \f$\frac{d\mathbf{f}}{d\mathbf{x}}([\mathbf{x}])\f$
-   * \param B Any Matrix with the same dimension as JJg. Usually we pick an approximation of \f$\frac{d\mathbf{f}}{d\mathbf{x}}(\bar{\mathbf{x}})\f$
+   * \param Y The box enclosing \f$\mathbf{f}(\bar{\mathbf{x}})\f$
+   * \param z Any Vector with the same dimension as z. Usually we pick an approximation of \f$\mathbf{f}(\bar{\mathbf{x}})\f$
+   * \param Jf The interval Jacobian matrix containing \f$\frac{d\mathbf{f}}{d\mathbf{x}}([\mathbf{x}])\f$
+   * \param A Any Matrix with the same dimension as Jf. Usually we pick an approximation of \f$\frac{d\mathbf{f}}{d\mathbf{x}}(\bar{\mathbf{x}})\f$
    * \param X The box \f$[\mathbf{x}]\f$
    */
-  double error(const IntervalVector& z, const IntervalMatrix& JJg, const Matrix& B, const IntervalVector& X);
+  double error(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X);
 
   /**
    * \brief Inflate the flat parallelepiped \f$\mathbf{A}\cdot e_{vec}\f$ by \f$\rho\f$.
@@ -62,8 +63,8 @@ namespace codac2
   /**
    * \brief Used in PEIBOS. Compute a parallelepiped enclosing of \f$\mathbf{g}([\mathbf{x}])\f$ where \f$\mathbf{g} = \mathbf{f}\circ \sigma \circ \psi_0\f$.
    * 
-   * \param z The box enclosing \f$\mathbf{f}(\sigma(\psi_0(\bar{\mathbf{x}})))\f$.
-   * \param JJf The interval Jacobian matrix containing \f$\frac{d\mathbf{f}}{d\mathbf{y}}([\mathbf{y}])\f$ where \f$\mathbf{y} = \sigma(\psi_0(\left[\mathbf{x}\right]))\f$
+   * \param Y The box enclosing \f$\mathbf{f}(\sigma(\psi_0(\bar{\mathbf{x}})))\f$.
+   * \param Jf The interval Jacobian matrix containing \f$\frac{d\mathbf{f}}{d\mathbf{y}}([\mathbf{y}])\f$ where \f$\mathbf{y} = \sigma(\psi_0(\left[\mathbf{x}\right]))\f$
    * \param Jf_tild An approximation of \f$\frac{d\mathbf{f}}{d\mathbf{y}}(\sigma(\psi_0(\bar{\mathbf{x}})))\f$
    * \param psi_0 The analytic function \f$\psi_0:\mathbb{R}^m\rightarrow\mathbb{R}^n\f$ to construct the atlas
    * \param sigma The symmetry operator to construct the atlas
@@ -71,8 +72,31 @@ namespace codac2
    * 
    * \return A Parallelepiped enclosing \f$\mathbf{g}([\mathbf{x}])\f$
    */
-  Parallelepiped parallelepiped_inclusion(const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& Jf_tild, const AnalyticFunction<VectorType>& psi_0, const OctaSym& sigma, const IntervalVector& X);
+  Parallelepiped parallelepiped_inclusion(const IntervalVector& Y, const IntervalMatrix& Jf, const Matrix& Jf_tild, const AnalyticFunction<VectorType>& psi_0, const OctaSym& sigma, const IntervalVector& X);
 
-  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& symmetries, double epsilon, bool verbose = false);
-  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& symmetries, double epsilon, const Vector& offset, bool verbose = false);  
+  /**
+   * \brief Compute a set of parallelepipeds enclosing \f$\mathbf{f}(\sigma(\psi_0([-1,1]^m)))\f$ for each symmetry \f$\sigma\f$ in the set of symmetries \f$\Sigma\f$. Note that \f$\left\{\psi_0,\Sigma\right\}\f$ form a gnomonic atlas.
+   * 
+   * \param f The analytic function \f$\mathbf{f}:\mathbb{R}^n\rightarrow\mathbb{R}^n\f$ 
+   * \param psi_0 The transformation function \f$\psi_0:\mathbb{R}^m\rightarrow\mathbb{R}^n\f$ to construct the atlas
+   * \param Sigma The set of symmetry operators \f$\sigma\f$ to construct the atlas
+   * \param epsilon The maximum diameter of the boxes to split \f$[-1,1]^m\f$ before computing the parallelepiped inclusions
+   * \param verbose If true, print the time taken to compute the parallelepiped inclusions with other statistics 
+   * 
+   * \return A vector of Parallelepipeds enclosing \f$\mathbf{f}(\sigma(\psi_0([-1,1]^m)))\f$ for each symmetry \f$\sigma\f$ in the set of symmetries \f$\Sigma\f$.
+   */
+  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, bool verbose = false);
+
+  /**
+   * \brief Compute a set of parallelepipeds enclosing \f$\mathbf{f}(\sigma(\psi_0([-1,1]^m)) + offset) \f$ for each symmetry \f$\sigma\f$ in the set of symmetries \f$\Sigma\f$. Note that \f$\left\{\psi_0,\Sigma\right\}\f$ form a gnomonic atlas.
+   * \param f The analytic function \f$\mathbf{f}:\mathbb{R}^n\rightarrow\mathbb{R}^n\f$ 
+   * \param psi_0 The transformation function \f$\psi_0:\mathbb{R}^m\rightarrow\mathbb{R}^n\f$ to construct the atlas
+   * \param Sigma The set of symmetry operators \f$\sigma\f$ to construct the atlas
+   * \param epsilon The maximum diameter of the boxes to split \f$[-1,1]^m\f$ before computing the parallelepiped inclusions
+   * \param offset The offset to add to \f$\sigma(\psi_0([-1,1]^m))\f$ (used to translate the initial manifold)
+   * \param verbose If true, print the time taken to compute the parallelepiped inclusions with other statistics 
+   * 
+   * \return A vector of Parallelepipeds enclosing \f$\mathbf{f}(\sigma(\psi_0([-1,1]^m))+ offset)\f$ for each symmetry \f$\sigma\f$ in the set of symmetries \f$\Sigma\f$.
+   */
+  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose = false);  
 }

@@ -34,27 +34,27 @@ void export_peibos(py::module& m)
     "f"_a, "X"_a);
 
   m.def("parallelepiped_inclusion", 
-    [](const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& Jf_punc, const py::object& psi_0, const OctaSym& symmetry, const IntervalVector& X)
+    [](const IntervalVector& z, const IntervalMatrix& Jf, const Matrix& Jf_tild, const py::object& psi_0, const OctaSym& sigma, const IntervalVector& X)
     {
-      return parallelepiped_inclusion(z, JJf, Jf_punc, cast<AnalyticFunction<VectorType>>(psi_0), symmetry, X);
+      return parallelepiped_inclusion(z, Jf, Jf_tild, cast<AnalyticFunction<VectorType>>(psi_0), sigma, X);
     },
     PARALLELEPIPED_PARALLELEPIPED_INCLUSION_CONST_INTERVALVECTOR_REF_CONST_INTERVALMATRIX_REF_CONST_MATRIX_REF_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_CONST_OCTASYM_REF_CONST_INTERVALVECTOR_REF,
-    "z"_a, "JJf"_a, "Jf_punc"_a, "psi_0"_a, "symmetry"_a, "X"_a);
+    "z"_a, "Jf"_a, "Jf_tild"_a, "psi_0"_a, "sigma"_a, "X"_a);
 
 
   m.def("PEIBOS", 
-    [](const py::object& f, const py::object& psi_0, const vector<OctaSym>& symmetries, double epsilon, bool verbose = false)
+    [](const py::object& f, const py::object& psi_0, const vector<OctaSym>& Sigma, double epsilon, bool verbose = false)
     {
-      return PEIBOS(cast<AnalyticFunction<VectorType>>(f), cast<AnalyticFunction<VectorType>>(psi_0), symmetries, epsilon, verbose);
+      return PEIBOS(cast<AnalyticFunction<VectorType>>(f), cast<AnalyticFunction<VectorType>>(psi_0), Sigma, epsilon, verbose);
     },
     VECTOR_PARALLELEPIPED_PEIBOS_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_CONST_VECTOR_OCTASYM_REF_DOUBLE_BOOL,
-    "f"_a, "psi_0"_a, "symmetries"_a, "epsilon"_a, "verbose"_a = false);
+    "f"_a, "psi_0"_a, "Sigma"_a, "epsilon"_a, "verbose"_a = false);
 
   m.def("PEIBOS", 
-    [](const py::object& f, const py::object& psi_0, const vector<OctaSym>& symmetries, double epsilon, const Vector& offset, bool verbose = false)
+    [](const py::object& f, const py::object& psi_0, const vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose = false)
     {
-      return PEIBOS(cast<AnalyticFunction<VectorType>>(f), cast<AnalyticFunction<VectorType>>(psi_0), symmetries, epsilon, offset, verbose);
+      return PEIBOS(cast<AnalyticFunction<VectorType>>(f), cast<AnalyticFunction<VectorType>>(psi_0), Sigma, epsilon, offset, verbose);
     },
     VECTOR_PARALLELEPIPED_PEIBOS_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_CONST_VECTOR_OCTASYM_REF_DOUBLE_CONST_VECTOR_REF_BOOL,
-    "f"_a, "psi_0"_a, "symmetries"_a, "epsilon"_a, "offset"_a, "verbose"_a = false);
+    "f"_a, "psi_0"_a, "Sigma"_a, "epsilon"_a, "offset"_a, "verbose"_a = false);
 }

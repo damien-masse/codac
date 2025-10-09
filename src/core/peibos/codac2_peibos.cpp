@@ -30,15 +30,13 @@ namespace codac2
     }
   }
 
-  double error(const IntervalVector& z, const IntervalMatrix& JJg, const Matrix& B, const IntervalVector& X)
+  double error(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X)
   {
     auto xc = X.mid();
 
     auto dX = X-xc;
 
-    auto a =  z.mid();
-
-    auto E = (z - a) + (JJg - B)*dX;
+    auto E = (Y - z) + (Jf - A)*dX;
 
     return E.norm().ub();
   }
@@ -71,49 +69,51 @@ namespace codac2
     assert_release (f.input_size() < f.output_size() && "input size must be strictly lower than output size");
     assert_release (X.size() == f.input_size() && "dimension of X must match input size of f");
 
-    auto z = f.eval(X.mid());
+    auto Y = f.eval(X.mid());
+    auto z = Y.mid();
 
-    Matrix B = f.diff(X.mid()).mid();
+    Matrix A = f.diff(X.mid()).mid();
 
     // Maximum error computation
-    double rho = error(z, f.diff(X), B, X);
+    double rho = error(Y, z, f.diff(X), A, X);
 
     // Inflation of the parallelepiped
-    auto A = inflate_flat_parallelepiped(B, X.rad(), rho);
+    auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
 
-    return Parallelepiped(z.mid(), A);
+    return Parallelepiped(z, A_inf);
   }
 
-  Parallelepiped parallelepiped_inclusion(const IntervalVector& z, const IntervalMatrix& JJf, const Matrix& Jf_tild, const AnalyticFunction<VectorType>& psi_0, const OctaSym& sigma, const IntervalVector& X)
+  Parallelepiped parallelepiped_inclusion(const IntervalVector& Y, const IntervalMatrix& Jf, const Matrix& Jf_tild, const AnalyticFunction<VectorType>& psi_0, const OctaSym& sigma, const IntervalVector& X)
   {
     // Computation of the Jacobian of g = f o sigma(psi_0)
-    IntervalMatrix JJg = JJf * (sigma.permutation_matrix().template cast<Interval>()) * psi_0.diff(X);
+    IntervalMatrix Jg = Jf * (sigma.permutation_matrix().template cast<Interval>()) * psi_0.diff(X);
 
-    // B is an approximation of the Jacobian of g at the center of X
-    Matrix B = (Jf_tild * sigma.permutation_matrix() * (psi_0.diff(X.mid()).mid()));
+    Vector z = Y.mid();
+    // A is an approximation of the Jacobian of g at the center of X
+    Matrix A = (Jf_tild * sigma.permutation_matrix() * (psi_0.diff(X.mid()).mid()));
 
     // Maximum error computation
-    double rho = error(z, JJg, B, X);
+    double rho = error(Y, z, Jg, A, X);
 
     // Inflation of the parallelepiped
-    auto A = inflate_flat_parallelepiped(B, X.rad(), rho);
+    auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
 
-    return Parallelepiped(z.mid(), A);
+    return Parallelepiped(z, A_inf);
   }
 
-  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& symmetries, double epsilon, bool verbose)
+  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, bool verbose)
   {
-    return PEIBOS(f, psi_0, symmetries, epsilon, Vector::Zero(psi_0.output_size()), verbose);
+    return PEIBOS(f, psi_0, Sigma, epsilon, Vector::Zero(psi_0.output_size()), verbose);
   }
 
-  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& symmetries, double epsilon, const Vector& offset, bool verbose)
+  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose)
   {
     Index m = psi_0.input_size();
 
     assert_release (f.input_size() == psi_0.output_size() && "output size of psi_0 must match input size of f");
     assert_release (offset.size() == psi_0.output_size() && "offset size must match output size of psi_0");
     assert_release (m < psi_0.output_size());
-    assert_release (symmetries.size() > 0 && (int) symmetries[0].size() == psi_0.output_size() && "no generator given or wrong dimension of generator (must match output size of psi_0)");
+    assert_release (Sigma.size() > 0 && (int) Sigma[0].size() == psi_0.output_size() && "no generator given or wrong dimension of generator (must match output size of psi_0)");
 
     clock_t t_start = clock();
 
@@ -122,10 +122,10 @@ namespace codac2
     vector<IntervalVector> boxes;
     double true_eps = split(IntervalVector::constant(m,{-1,1}), epsilon, boxes);
 
-    for (const auto& symmetry : symmetries)
+    for (const auto& sigma : Sigma)
     {
       VectorVar x(m);
-      AnalyticFunction g_i ({x}, f(symmetry(psi_0(x))+offset));
+      AnalyticFunction g_i ({x}, f(sigma(psi_0(x))+offset));
 
       for (const auto& X : boxes)        
         output.push_back(parallelepiped_inclusion(g_i, X));
@@ -135,7 +135,6 @@ namespace codac2
     {
       printf("\nPEIBOS statistics:\n");
       printf("------------------\n");
-      printf("Number of symmetries: %ld\n", symmetries.size());
       printf("Real epsilon: %.4f\n", true_eps);
       printf("Computation time: %.4fs\n\n", (double)(clock()-t_start)/CLOCKS_PER_SEC);
     }
