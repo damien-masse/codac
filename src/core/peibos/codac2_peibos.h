@@ -29,7 +29,7 @@ namespace codac2
   double split (const IntervalVector& X, double eps, vector<IntervalVector>& boxes);
 
   /**
-   * \brief Compute the error term for the parallelepiped inclusion. The error is later used to inflate the flat parallelepiped \f$\mathbf{a}+\mathbf{B}\cdot(\left[\mathbf{x}\right]-\bar{\mathbf{x}})\f$
+   * \brief Compute the error term for the parallelepiped inclusion. The error is later used to inflate the flat parallelepiped \f$\mathbf{z}+\mathbf{A}\cdot(\left[\mathbf{x}\right]-\bar{\mathbf{x}})\f$
    * 
    * \param Y The box enclosing \f$\mathbf{f}(\bar{\mathbf{x}})\f$
    * \param z Any Vector with the same dimension as z. Usually we pick an approximation of \f$\mathbf{f}(\bar{\mathbf{x}})\f$
