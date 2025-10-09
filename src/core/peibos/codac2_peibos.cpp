@@ -52,16 +52,17 @@ namespace codac2
     Matrix A_tild (n,n);
     A_tild << A, N;
 
-    Matrix Q = (A_tild.transpose() * A_tild).inverse();
+    IntervalMatrix A_tild_int (A_tild);
+    IntervalMatrix Q = inverse_enclosure(A_tild_int.transpose() * A_tild_int);
 
-    Matrix mult = Matrix::Zero(n,n);
+    IntervalMatrix mult = Matrix::Zero(n,n);
     for (int i = 0; i < n; i++)
-      mult(i,i) = rho*std::sqrt(Q(i,i));
+      mult(i,i) = rho*sqrt(Q(i,i));
 
     for (int i = 0; i < m; i++)
       mult(i,i) += e_vec(i);
     
-    return A_tild*mult;
+    return A_tild * mult.ub();
   }
 
   Parallelepiped parallelepiped_inclusion(const AnalyticFunction<VectorType>& f, const IntervalVector& X)
