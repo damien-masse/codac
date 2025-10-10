@@ -79,14 +79,12 @@ namespace codac2
 
     IntervalMatrix Q2 = inverse_enclosure(Y.transpose() * Y);
 
-    IntervalMatrix mult2 = IntervalMatrix::Zero(n,n);
+    IntervalMatrix Y2 = IntervalMatrix::Zero(n,n);
 
     for (int i = 0; i < n; i++)
-      mult2(i,i) = 1+rho2*sqrt(Q2(i,i));
-
-    IntervalMatrix Y2 = Y.template cast<Interval>() * mult2;
+      Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
     
-    return (Y2).smag();
+    return Y2.smag();
   }
 
   Parallelepiped parallelepiped_inclusion(const AnalyticFunction<VectorType>& f, const IntervalVector& X)
