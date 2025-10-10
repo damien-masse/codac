@@ -63,21 +63,30 @@ namespace codac2
     for (int i = 0; i < m; i++)
       mult(i,i) += e_vec(i);
 
-    // From here we have an IntervalMatrix A_inf, meaning that each vector is an interval vector
+    // From here we have an IntervalMatrix A_inf, meaning that each generator is an interval vector
     IntervalMatrix A_inf = A_tild * mult;
 
-    // We inflate each generator's IntervalVector by the diameter of the other generators
-    IntervalMatrix A_add = A_inf.diam()*Interval(-1,1);
+    // The initial parallelepiped is <y> = Y*[-1,1]^n
+    Matrix Y = A_inf.smig();
+
+    // The following is similar to the previous operations. The difference is that here the Matrix Y is square and not interval
+
+    // rho2 is the sum of the radiuses of the circle enclosing each interval generator
+    Interval rho2 (0.);
 
     for (int i = 0; i < n; i++)
-      for (int j = 0; j < n; j++)
-        if (i != j)
-          A_inf.col(i) += A_add.col(j);
+      rho2 += (A_inf.col(i)-A_inf.col(i).mid()).ub().norm();
 
-    // We return the matrix of the signed magnitude of A_inf. 
-    // Thanks to the previous inflation step, we are certain to contain every combination of generators in the resulting parallelepiped
+    IntervalMatrix Q2 = inverse_enclosure(Y.transpose() * Y);
+
+    IntervalMatrix mult2 = IntervalMatrix::Zero(n,n);
+
+    for (int i = 0; i < n; i++)
+      mult2(i,i) = 1+rho2*sqrt(Q2(i,i));
+
+    IntervalMatrix Y2 = Y.template cast<Interval>() * mult2;
     
-    return A_inf.smag();
+    return (Y2).smag();
   }
 
   Parallelepiped parallelepiped_inclusion(const AnalyticFunction<VectorType>& f, const IntervalVector& X)
@@ -94,7 +103,7 @@ namespace codac2
     double rho = error(Y, z, f.diff(X), A, X);
 
     // Inflation of the parallelepiped
-    auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
+    auto A_inf = inflate_flat_parallelepiped(A, (X-X.mid()).ub(), rho);
 
     return Parallelepiped(z, A_inf);
   }
@@ -112,7 +121,7 @@ namespace codac2
     double rho = error(Y, z, Jg, A, X);
 
     // Inflation of the parallelepiped
-    auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
+    auto A_inf = inflate_flat_parallelepiped(A, (X-X.mid()).ub(), rho);
 
     return Parallelepiped(z, A_inf);
   }

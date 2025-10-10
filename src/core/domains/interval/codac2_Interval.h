@@ -221,8 +221,8 @@ namespace codac2
       /**
        * \brief Returns the signed mignitude of this 
        * 
-       * lower bound if lower_bound > 0
-       * upper bound if upper_bound < 0
+       * lower bound if lower_bound > 0,
+       * upper bound if upper_bound < 0,
        * 0 otherwise.
        * 
        * \return the signed mignitude of the interval
