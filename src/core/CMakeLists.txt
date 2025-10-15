@@ -71,6 +71,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_Subpaving.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Parallelepiped.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Parallelepiped.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Parallelepiped_eval.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Slice.h

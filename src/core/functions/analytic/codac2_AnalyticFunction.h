@@ -51,6 +51,8 @@ namespace codac2
   template<typename T>
   class SlicedTube;
 
+  class Parallelepiped;
+
   template<typename T>
     requires std::is_base_of_v<AnalyticTypeBase,T>
   class AnalyticFunction : public FunctionBase<AnalyticExpr<T>>
@@ -193,6 +195,9 @@ namespace codac2
 
         return y;
       }
+
+      Parallelepiped parallelepiped_eval(const IntervalVector& x) const;
+      // -> is defined in codac2_Parallelepiped_eval.h file
 
       Index output_size() const
       {
