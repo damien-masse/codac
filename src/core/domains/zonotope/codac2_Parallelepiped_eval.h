@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "codac2_AnalyticFunction.h"
 #include "codac2_Parallelepiped.h"
 
 namespace codac2
@@ -22,7 +23,7 @@ namespace codac2
     assert_release(this->args().size() == 1 && "f must have only one arg");
 
     // todo
-    
+
     return Parallelepiped({{0.}},{{0.}});
   }
 }

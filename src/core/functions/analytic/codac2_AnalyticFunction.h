@@ -19,6 +19,7 @@
 #include "codac2_operators.h"
 #include "codac2_cart_prod.h"
 #include "codac2_vec.h"
+#include "codac2_Parallelepiped.h"
 
 namespace codac2
 {
@@ -50,8 +51,6 @@ namespace codac2
 
   template<typename T>
   class SlicedTube;
-
-  class Parallelepiped;
 
   template<typename T>
     requires std::is_base_of_v<AnalyticTypeBase,T>
