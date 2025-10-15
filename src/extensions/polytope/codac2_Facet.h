@@ -11,6 +11,7 @@
 #pragma once
 
 #include <utility> /* uses swap */
+#include <bitset>
 
 #include "codac2_Index.h"
 #include "codac2_Vector.h"
@@ -19,6 +20,7 @@
 #include "codac2_IntervalVector.h"
 #include "codac2_IntervalRow.h"
 #include "codac2_BoolInterval.h"
+#include "codac2_operators.h"
 
 namespace codac2 {
 
