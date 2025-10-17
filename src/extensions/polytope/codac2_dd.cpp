@@ -110,7 +110,11 @@ DDbuildF2V::DDbuildF2V(Index dim, const IntervalVector &box,
       IntvFullPivLU LUdec(MatEQ);
       if (LUdec.is_injective()!=BoolInterval::TRUE) {
          /* TODO : check emptiness */
-         IntervalMatrix eqsolve = LUdec.solve(RhsEQ);
+         /* IntervalMatrix eqsolve = LUdec.solve(RhsEQ);
+         if (eqsolve.is_empty()) { empty=true; return; }  */
+			/* FIXME : NOT CORRECT, as solve DOES NOT
+			   guarantee the emptiness of solutions. We need
+			   to use e.g. a bounding box */
       }
       
       
