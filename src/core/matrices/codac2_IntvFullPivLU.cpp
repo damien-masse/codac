@@ -309,6 +309,64 @@ IntervalMatrix IntvFullPivLU::kernel() const {
     return res;
 }
 
+IntervalMatrix IntvFullPivLU::cokernel() const {
+    /* same approach than the kernel computation algorithm. 
+       however, we do not consider only U, but L and the diagonal of U.
+       in practice it means that we simplify the computation : all rows
+       with 0 in the diagonal of U (or after the diagonal) are "generating" */
+    std::vector<IntervalRow> cokernel;
+    std::vector<bool> generating(matrixLU_.rows(),true);
+    for (Index r=0;r<matrixLU_.rows();r++) {
+      /* a potential cokernel row is built as follows :
+         we consider each row r and states that the vector must be 0
+         for all row > r , and 1 for r.
+         if we manage to build such a vector by filling dependant indices
+         < r, then this index is stated as "generating" and will be 0 for
+         the next vectors. Otherwise, it is states as "not generating" and 
+         and used in next vectors */
+      /* before anything, if r<matrixLU_.rows() and 
+         matrixLU_(r,r) does not contains 0, just states that 
+         r is not generating and go on */
+      if (r<matrixLU_.cols() && !matrixLU_(r,r).contains(0.0)) {
+          generating[r]=false;
+          continue;
+      }
+      IntervalRow vect = IntervalRow::Zero(matrixLU_.rows());
+      vect[r]=1.0;
+      for (Index r1=r-1;r1>=0;r1--) {
+         if (r1>=matrixLU_.cols())  {
+             /* the only possible case is generating[r1] true */
+             continue;
+         }
+         /* in the following, either 0.0 \notin matrixLU_(r1,r1)
+            and generating(r1) is false, which is fine,
+            or 0.0 in matrixLU_(r1,r1). Much less fine, in this case we 
+            consider vect[r1]=0.0. Normally we must have generating[r1] true
+            so that's ok */
+         vect[r1]=0.0;
+         if (!matrixLU_(r1,r1).contains(0.0)) {
+           for (Index r2=r1+1;r2<=r;r2++) {
+             vect[r1] -= matrixLU_(r2,r1)*vect[r2];
+           }
+         }
+         /* note: here, in theory if generating[r1] is 0 we should
+            be able to put vect[r1]=0.0 even if 0.0 is not in 
+            vect[r1], because the actual kernel is a combination
+            of found vectors. _however_, it means that the vector
+            we are constructing is _not_ in the kernel, just that it
+            can be used to build the kernel... but that may be the only
+            acceptable approach */
+      }
+      cokernel.push_back(vect*_LU.permutationP());
+    }
+    /* build the matrix */
+    IntervalMatrix res(cokernel.size(),matrixLU_.rows());
+    for (unsigned int r=0;r<cokernel.size();r++) {
+       res.row(r)=cokernel[r];
+    }
+    return res;
+}
+
 IntervalMatrix IntvFullPivLU::solve(const IntervalMatrix &rhs) const {
     assert_release(rhs.rows()==matrixLU_.rows());
     IntervalMatrix prhs = _LU.permutationP()*rhs;
@@ -347,6 +405,40 @@ IntervalMatrix IntvFullPivLU::solve(const IntervalMatrix &rhs) const {
         }
     }
     return _LU.permutationQ()*res;
+}
+
+void IntvFullPivLU::solve(const IntervalMatrix &rhs, IntervalMatrix &B) const {
+    assert_release(rhs.rows()==matrixLU_.rows() && B.rows()==matrixLU_.cols());
+    IntervalMatrix prhs = _LU.permutationP()*rhs;
+    /* inverse L */
+    for (Index r = 0; r<matrixLU_.rows()-1; r++) {
+       for (Index r1=r+1;r1<matrixLU_.rows();r1++) {
+          prhs.row(r1) -= matrixLU_(r1,r)*prhs.row(r);
+       }
+    }
+    /* first check, if rows>cols, the 0 lines */
+    for (Index r=matrixLU_.cols(); r<matrixLU_.rows();r++) {
+        for (Index a=0;a<prhs.cols();a++) {
+            if (!prhs(r,a).contains(0.0)) {
+               B.set_empty(); return;
+            }
+        }
+    }
+    IntervalMatrix qB = _LU.permutationQ().inverse()*B;
+    /* then use the diagonal elements */
+//    IntervalMatrix res = IntervalMatrix::Zero(matrixLU_.cols(),rhs.cols());
+    Index dim = std::min(matrixLU_.cols(),matrixLU_.rows());
+    IntervalMatrix U = matrixLU_.triangularView<Eigen::Upper>();
+    for (Index r = dim-1;r>=0;r--) {
+        IntervalRow rw=U.row(r);
+        for (Index c = 0;c<qB.cols();c++) {
+           IntervalVector bvect=qB.col(c);
+           MulOp::bwd(prhs(r,c),rw,bvect);
+           if (bvect.is_empty()) { B.set_empty(); return; }
+           qB.col(c)=bvect;
+        }
+    }
+    B &= _LU.permutationQ()*qB;
 }
 
 IntervalMatrix IntvFullPivLU::reconstructed_matrix() const {

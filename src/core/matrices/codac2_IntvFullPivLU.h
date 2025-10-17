@@ -84,6 +84,14 @@ namespace codac2
       *  \return a matrix of column vectors, may be empty
       */
      IntervalMatrix kernel() const;
+     /** \brief overapproximation of the left-null ("cokernel") space as 
+      *  a matrix of row vectors.
+      *  any vector V which is not a linear combination of the row
+      *  vectors is guaranteed to be outside the kernel ( \f$VM \neq 0\f$ )
+      *
+      *  \return a matrix of row vectors, may be empty
+      */
+     IntervalMatrix cokernel() const;
      /** \brief ``underapproximation'' of the column space of the matrix,
       *  ie return a set of independant columns of the original matrix
       *  which is possibly maximal. As for Eigen, you must 
@@ -97,6 +105,19 @@ namespace codac2
       */
      template <typename Derived> Derived
 	image(const Eigen::MatrixBase<Derived> &M) const;
+     /** \brief ``underapproximation'' of the row space of the matrix,
+      *  ie return a set of independant rows of the original matrix
+      *  which is possibly maximal. As for Eigen, you must 
+      *  provide the original matrix used for the decomposition.
+      *
+      *  \pre M is the matrix used to build the decomposition
+      *
+      *  \param M the matrix used to build the decomposition.
+      *  \return a matrix of rows of M, or one row of 0
+      *  if the rank of M may be 0.
+      */
+     template <typename Derived> Derived
+	coimage(const Eigen::MatrixBase<Derived> &M) const;
      /** \brief equation solving M X = rhs 
       *  precisely look for solutions where the only non-zero
       *  values are those on non-zero pivots 
@@ -110,12 +131,35 @@ namespace codac2
       *  if the matrix is not full-rank, 
       *     empty means that no solution is possible with the
       *        initial precondition (non-zero values for non-zero pivots)
+      *        if the goal is to prove the absence of solution, see
+      *        solve with a bounding box
       *     non empty presents the possible solutions found 
       *  
       *  \param rhs right-hand side of the equation 
       *  \return a potential solution of the equation M X = rhs
       */
      IntervalMatrix solve(const IntervalMatrix &rhs) const;
+     /** \brief equation solving M X = rhs with bounding matrix B for
+      *  the solution, i.e. contraction of the matrix on the solutions
+      *  on M X.
+      *  Especially useful where the matrix is not
+      *  full-rank, where solve without bounding box may return empty
+      *  even if solutions exist.
+      *  if the matrix is full-rank and surjective (cols >= rows),
+      *  it gives an overapproximation of the solutions (for each 
+      *  possible values of rhs)
+      *  if the matrix is full-rank and injective (rows >= cols),
+      *  it returns empty if no solution is possible, and a
+      *  possible overapproximation of the solutions otherwise
+      *  (but there _may_ still be no solution)
+      *  if the matrix is not full-rank, 
+      *     empty means that no solution is possible inside the bounding matrix
+      *     non empty presents the possible solutions found 
+      *  
+      *  \param rhs right-hand side of the equation 
+      *  \param B bounding-box of the left hand-side, contracted so that MB=rhs
+      */
+     void solve(const IntervalMatrix &rhs, IntervalMatrix &B) const;
 
 
      /** \brief rebuilding of the matrix, ie compute P^{-1}[L][U]Q^{-1}
@@ -198,6 +242,28 @@ inline  Derived IntvFullPivLU::image
    for (Index i = 0; i<dim; i++) {
       if (!matrixLU_(i,i).contains(0.0)) {
          ret.col(p) = M.col(Q.indices().coeff(i));
+         p++;
+      }
+   }
+   return ret;
+}
+
+template<typename Derived>
+inline  Derived IntvFullPivLU::coimage
+	(const Eigen::MatrixBase<Derived> &M) const
+{
+   int rk = this->rank().lb();
+   if (rk==0) {
+      return Derived::Zero(1,M.cols()); 
+   }
+   Derived ret = 
+		Derived::Zero(rk,M.cols());
+   Index p = 0;
+   Index dim = std::min(matrixLU_.rows(),matrixLU_.cols());
+   auto P = this->_LU.permutationP();
+   for (Index i = 0; i<dim; i++) {
+      if (!matrixLU_(i,i).contains(0.0)) {
+         ret.row(p) = M.row(P.indices().coeff(i));
          p++;
       }
    }

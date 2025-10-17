@@ -43,11 +43,19 @@ void export_IntvFullPivLU(py::module& m)
 
     .def("kernel",&IntvFullPivLU::kernel,INTERVALMATRIX_INTVFULLPIVLU_KERNEL_CONST)
 
+    .def("cokernel",&IntvFullPivLU::cokernel,INTERVALMATRIX_INTVFULLPIVLU_COKERNEL_CONST)
+
     .def("image",&IntvFullPivLU::image<IntervalMatrix>,DERIVED_INTVFULLPIVLU_IMAGE_CONST_EIGEN_MATRIXBASE_DERIVED_REF_CONST,"M"_a)
+
+    .def("coimage",&IntvFullPivLU::coimage<IntervalMatrix>,DERIVED_INTVFULLPIVLU_COIMAGE_CONST_EIGEN_MATRIXBASE_DERIVED_REF_CONST,"M"_a)
 
     .def("image",[](const IntvFullPivLU &S, const Matrix& M) { return S.image(M); },DERIVED_INTVFULLPIVLU_IMAGE_CONST_EIGEN_MATRIXBASE_DERIVED_REF_CONST,"M"_a)
 
-    .def("solve",&IntvFullPivLU::solve,INTERVALMATRIX_INTVFULLPIVLU_SOLVE_CONST_INTERVALMATRIX_REF_CONST,"rhs"_a)
+    .def("coimage",[](const IntvFullPivLU &S, const Matrix& M) { return S.coimage(M); },DERIVED_INTVFULLPIVLU_COIMAGE_CONST_EIGEN_MATRIXBASE_DERIVED_REF_CONST,"M"_a)
+
+    .def("solve",[](const IntvFullPivLU &S, const IntervalMatrix &rhs) { return S.solve(rhs); },INTERVALMATRIX_INTVFULLPIVLU_SOLVE_CONST_INTERVALMATRIX_REF_CONST,"rhs"_a)
+
+    .def("solve",[](const IntvFullPivLU &S, const IntervalMatrix &rhs, IntervalMatrix &B){ S.solve(rhs,B); },VOID_INTVFULLPIVLU_SOLVE_CONST_INTERVALMATRIX_REF_INTERVALMATRIX_REF_CONST,"rhs"_a,"B"_a)
 
     .def("reconstructed_matrix",&IntvFullPivLU::reconstructed_matrix,INTERVALMATRIX_INTVFULLPIVLU_RECONSTRUCTED_MATRIX_CONST)
 
