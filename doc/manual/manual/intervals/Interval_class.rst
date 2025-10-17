@@ -145,6 +145,7 @@ You can access key interval properties:
     x.mig       % mignitude
     x.size      % dimension (always 1)
 
+Note that these methods are reliable in the sense that they are pessimistic. For instance, ``x.rad()`` returns the radius using outward rounding.
 
 Testing intervals
 -----------------
