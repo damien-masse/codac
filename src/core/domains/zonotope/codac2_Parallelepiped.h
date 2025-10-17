@@ -37,15 +37,6 @@ namespace codac2
        * \param A Shape matrix of the parallelepiped (\f$n\times m\f$ matrix with \f$m \leqslant n\f$)
        */
       Parallelepiped(const Vector& z, const Matrix& A);
-
-      /**
-       * \brief Projects the parallelepiped onto the subspace defined by the given indices
-       * 
-       * \param indices Vector of indices of the dimensions to project onto
-       * 
-       * \return A new Zonotope object representing the projection of the parallelepiped onto the specified subspace
-       */
-      Zonotope proj(const std::vector<Index>& indices) const;
       
       /**
        * \brief Computes the vertices of the parallelepiped
