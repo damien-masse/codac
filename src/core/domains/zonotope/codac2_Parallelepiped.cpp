@@ -45,3 +45,12 @@ IntervalVector Parallelepiped::box() const
     box |= v;
   return box;
 }
+
+bool Parallelepiped::contains(const Vector& v) const
+{
+  assert_release(A.rows() == A.cols() && "Matrix A must be square to check containment.");
+
+  IntervalVector IV = Interval(-1,1)*IntervalVector::Ones(A.cols());
+
+  return IV.contains(A.inverse()*(v - z));
+}

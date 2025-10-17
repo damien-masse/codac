@@ -77,6 +77,8 @@ list(APPEND SRC_TESTS # listing files without extension
 
   core/operators/codac2_tests_operators
 
+  core/peibos/codac2_tests_peibos
+
   core/separators/codac2_tests_SepCartProd
   core/separators/codac2_tests_SepCtcBoundary
   core/separators/codac2_tests_SepInverse

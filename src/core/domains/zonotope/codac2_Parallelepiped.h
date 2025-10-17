@@ -52,5 +52,14 @@ namespace codac2
        */
       IntervalVector box() const;
 
+      /**
+       * \brief Checks if a given point is contained within the parallelepiped. The matrix A has to be square and invertible.
+       * 
+       * \param v The point to check (n-dimensional vector)
+       * 
+       * \return true if the point is inside the parallelepiped, false otherwise
+       */
+      bool contains(const Vector& v) const;
+
   };
 }

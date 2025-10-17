@@ -18,6 +18,7 @@ class TestParallelepiped(unittest.TestCase):
 
     p = Parallelepiped(Vector([0,2,4]), Matrix([[0.5,0,0],[0,1,0],[0,1,1]]))
     self.assertTrue(p.box() == IntervalVector([[-0.5,0.5],[1,3],[2,6]]))
+    self.assertTrue(p.contains(Vector([0.1,2.1,4.1])))
 
     z = p.proj([2,1,0])
     self.assertTrue(z.z == Vector([4,2,0]))

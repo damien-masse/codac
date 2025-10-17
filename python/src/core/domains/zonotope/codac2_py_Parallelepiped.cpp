@@ -38,5 +38,9 @@ void export_Parallelepiped(py::module& m)
     .def("box", &Parallelepiped::box,
       INTERVALVECTOR_PARALLELEPIPED_BOX_CONST)
 
+    .def("contains", &Parallelepiped::contains,
+      BOOL_PARALLELEPIPED_CONTAINS_CONST_VECTOR_REF_CONST,
+      "x"_a)
+
   ;
 }
