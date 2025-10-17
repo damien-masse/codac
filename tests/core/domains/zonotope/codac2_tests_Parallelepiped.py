@@ -2,7 +2,7 @@
 
 #  Codac tests
 # ----------------------------------------------------------------------------
-#  \date       2024
+#  \date       2025
 #  \author     Maël Godard
 #  \copyright  Copyright 2024 Codac Team
 #  \license    GNU Lesser General Public License (LGPL)

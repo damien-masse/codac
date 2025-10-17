@@ -1,7 +1,7 @@
 /** 
  *  Codac tests
  * ----------------------------------------------------------------------------
- *  \date       2024
+ *  \date       2025
  *  \author     Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
@@ -9,7 +9,6 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <codac2_Parallelepiped.h>
-#include <limits>
 
 using namespace std;
 using namespace codac2;

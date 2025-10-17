@@ -21,7 +21,10 @@ namespace codac2
   inline Parallelepiped AnalyticFunction<T>::parallelepiped_eval(const Args&... x) const
   {
     this->check_valid_inputs(x...);
-    assert_release(this->input_size() < this->output_size());
+    assert_release(this->input_size() < this->output_size() &&
+                   "Parallelepiped evaluation requires more outputs than inputs.");
+    assert_release(this->input_size() > 0 &&
+                   "Parallelepiped evaluation requires at least one input.");
 
     auto Y = this->eval(x.mid()...);
     auto z = Y.mid();
