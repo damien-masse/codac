@@ -17,14 +17,10 @@ int main(){
   // we use Fermat's spiral
   AnalyticFunction f1 ({t},{a*sqrt(t)*cos(t),a*sqrt(t)*sin(t)});
 
-  VectorVar t_vec(1);
-  AnalyticFunction f2 ({t_vec},{a*sqrt(t_vec[0])*cos(t_vec[0]),a*sqrt(t_vec[0])*sin(t_vec[0])});
-
   double dt=0.2;
   double time=0.0;
   while (time<100.0) {
      Interval T(time,time+dt);
-     IntervalVector Tvec ({T});
      // using eval_<true> would be easier, but it's not allowed :(
      IntervalVector df = f1.diff(T);
      if (df.is_empty() || df.is_unbounded()) {
@@ -41,7 +37,7 @@ int main(){
       v << (T.rad()*df.mid()), Vector({ inflationbox[0], 0.0 }), Vector({ 0.0, inflationbox[1] });
        fig4.draw_zonotope({cent.mid(),v},{{Color::red(),Color::yellow(0.1)},"zonotopes"});
 
-      Parallelepiped p = parallelepiped_inclusion(f2,Tvec);
+      Parallelepiped p = f1.parallelepiped_eval(T);
       fig4.draw_parallelepiped(p,{{Color::black(),Color::green(0.1)},"parallelepipeds"});
      }
      time = time+dt;

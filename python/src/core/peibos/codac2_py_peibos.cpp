@@ -26,14 +26,6 @@ using namespace pybind11::literals;
 void export_peibos(py::module& m)
 {
   m.def("parallelepiped_inclusion", 
-    [](const py::object& f, const IntervalVector& X)
-    {
-      return parallelepiped_inclusion(cast<AnalyticFunction<VectorType>>(f), X);
-    },
-    PARALLELEPIPED_PARALLELEPIPED_INCLUSION_CONST_ANALYTICFUNCTION_VECTORTYPE_REF_CONST_INTERVALVECTOR_REF,
-    "f"_a, "X"_a);
-
-  m.def("parallelepiped_inclusion", 
     [](const IntervalVector& z, const IntervalMatrix& Jf, const Matrix& Jf_tild, const py::object& psi_0, const OctaSym& sigma, const IntervalVector& X)
     {
       return parallelepiped_inclusion(z, Jf, Jf_tild, cast<AnalyticFunction<VectorType>>(psi_0), sigma, X);

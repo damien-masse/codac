@@ -8,6 +8,7 @@
  */
 
 #include "codac2_peibos.h"
+#include "codac2_Parallelepiped_eval.h"
 
 using namespace std;
 using namespace codac2;
@@ -75,7 +76,7 @@ namespace codac2
     Interval rho2 (0.);
 
     for (int i = 0; i < n; i++)
-      rho2 += (A_inf.col(i)-A_inf.col(i).mid()).ub().norm();
+      rho2 += A_inf.col(i).rad().norm();
 
     IntervalMatrix Q2 = inverse_enclosure(Y.transpose() * Y);
 
@@ -85,25 +86,6 @@ namespace codac2
       Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
     
     return Y2.smag();
-  }
-
-  Parallelepiped parallelepiped_inclusion(const AnalyticFunction<VectorType>& f, const IntervalVector& X)
-  {
-    assert_release (f.input_size() < f.output_size() && "input size must be strictly lower than output size");
-    assert_release (X.size() == f.input_size() && "dimension of X must match input size of f");
-
-    auto Y = f.eval(X.mid());
-    auto z = Y.mid();
-
-    Matrix A = f.diff(X.mid()).mid();
-
-    // Maximum error computation
-    double rho = error(Y, z, f.diff(X), A, X);
-
-    // Inflation of the parallelepiped
-    auto A_inf = inflate_flat_parallelepiped(A, (X-X.mid()).ub(), rho);
-
-    return Parallelepiped(z, A_inf);
   }
 
   Parallelepiped parallelepiped_inclusion(const IntervalVector& Y, const IntervalMatrix& Jf, const Matrix& Jf_tild, const AnalyticFunction<VectorType>& psi_0, const OctaSym& sigma, const IntervalVector& X)
@@ -119,7 +101,7 @@ namespace codac2
     double rho = error(Y, z, Jg, A, X);
 
     // Inflation of the parallelepiped
-    auto A_inf = inflate_flat_parallelepiped(A, (X-X.mid()).ub(), rho);
+    auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
 
     return Parallelepiped(z, A_inf);
   }
@@ -151,7 +133,7 @@ namespace codac2
       AnalyticFunction g_i ({x}, f(sigma(psi_0(x))+offset));
 
       for (const auto& X : boxes)        
-        output.push_back(parallelepiped_inclusion(g_i, X));
+        output.push_back(g_i.parallelepiped_eval(X));
     }
 
     if (verbose)

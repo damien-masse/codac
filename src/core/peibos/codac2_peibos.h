@@ -53,16 +53,6 @@ namespace codac2
   Matrix inflate_flat_parallelepiped (const Matrix& A, const Vector& e_vec, double rho);
 
   /**
-   * \brief Compute a parallelepiped enclosing of \f$\mathbf{f}([\mathbf{x}])\f$ when \f$\mathbf{f}:\mathbb{R}^m\rightarrow\mathbb{R}^n\f$ is an analytic function with \f$m < n\f$.
-   * 
-   * \param f The analytic function \f$\mathbf{f}\f$
-   * \param X The box \f$[\mathbf{x}]\f$
-   * 
-   * \return A Parallelepiped enclosing \f$\mathbf{f}([\mathbf{x}])\f$
-   */
-  Parallelepiped parallelepiped_inclusion(const AnalyticFunction<VectorType>& f, const IntervalVector& X);
-
-  /**
    * \brief Used in PEIBOS. Compute a parallelepiped enclosing of \f$\mathbf{g}([\mathbf{x}])\f$ where \f$\mathbf{g} = \mathbf{f}\circ \sigma \circ \psi_0\f$.
    * 
    * \param Y The box enclosing \f$\mathbf{f}(\sigma(\psi_0(\bar{\mathbf{x}})))\f$.
