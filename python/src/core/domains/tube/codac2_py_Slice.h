@@ -43,7 +43,7 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
     .def("size", &Slice<T>::size,
       INDEX_SLICE_T_SIZE_CONST)
 
-    .def("codomain", (const T& (Slice<T>::*)() const) &Slice<T>::codomain,
+    .def("codomain", [](const Slice<T>& x) { return x.codomain(); },
       CONST_T_REF_SLICE_T_CODOMAIN_CONST)
 
     .def("is_gate", &Slice<T>::is_gate,

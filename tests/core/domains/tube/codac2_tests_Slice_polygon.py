@@ -179,3 +179,7 @@ class TestPolygonSlice(unittest.TestCase):
 
     p2 = ConvexPolygon([ [12,1],[14,5.5] ])
     self.assertTrue(Approx(p1,1e-10) == p2)
+
+
+if __name__ ==  '__main__':
+  unittest.main()
