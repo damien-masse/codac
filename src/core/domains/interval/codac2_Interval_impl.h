@@ -134,6 +134,16 @@ namespace codac2
     return gaol::interval::mig();
   }
 
+  inline double Interval::smag() const
+  {
+    return (abs(lb()) > abs(ub())) ? lb() : ub();
+  }
+
+  inline double Interval::smig() const
+  {
+    return gaol::interval::smig();
+  }
+
   inline double Interval::rand() const
   {
     if(is_empty())

@@ -143,6 +143,8 @@ You can access key interval properties:
     x.diam      % diameter
     x.mag       % magnitude
     x.mig       % mignitude
+    x.smag      % signed magnitude
+    x.smig      % signed mignitude
     x.size      % dimension (always 1)
 
 Note that these methods are reliable in the sense that they are pessimistic. For instance, ``x.rad()`` returns the radius using outward rounding.

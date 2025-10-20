@@ -321,12 +321,7 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
 
   if constexpr(std::is_same_v<T,VectorType>)
   {
-    exported
-
-      .def("parallelepiped_eval", &AnalyticFunction<T>::parallelepiped_eval,
-        PARALLELEPIPED_ANALYTICFUNCTION_T_PARALLELEPIPED_EVAL_CONST_INTERVALVECTOR_REF_CONST,
-        "x"_a)
-    ;
+    bind_(exported, "parallelepiped_eval", parallelepiped_eval, PARALLELEPIPED_ANALYTICFUNCTION_T_PARALLELEPIPED_EVAL_CONST_ARGS_REF_VARIADIC_CONST);
   }
 
   exported

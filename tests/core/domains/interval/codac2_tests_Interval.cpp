@@ -103,6 +103,10 @@ TEST_CASE("Interval - tests from IBEX")
   CHECK(x.mid() == 1);
   CHECK(x.rad() == 1);
   CHECK(x.diam() == 2);
+  CHECK(x.mag() == 2);
+  CHECK(x.mig() == 0);
+  CHECK(x.smag() == 2);
+  CHECK(x.smig() == 0);
 
   x = Interval(-3,-1);
 
@@ -111,6 +115,10 @@ TEST_CASE("Interval - tests from IBEX")
   CHECK(x.mid() == -2);
   CHECK(x.rad() == 1);
   CHECK(x.diam() == 2);
+  CHECK(x.mag() == 3);
+  CHECK(x.mig() == 1);
+  CHECK(x.smag() == -3);
+  CHECK(x.smig() == -1);
 
   x = Interval(-3,1);
 
@@ -119,6 +127,10 @@ TEST_CASE("Interval - tests from IBEX")
   CHECK(x.mid() == -1);
   CHECK(x.rad() == 2);
   CHECK(x.diam() == 4);
+  CHECK(x.mag() == 3);
+  CHECK(x.mig() == 0);
+  CHECK(x.smag() == -3);
+  CHECK(x.smig() == 0);
 
   x = Interval(-oo,0);
 
@@ -127,6 +139,10 @@ TEST_CASE("Interval - tests from IBEX")
   CHECK(x.mid() == -std::numeric_limits<double>::max());
   CHECK(x.rad() == oo);
   CHECK(x.diam() == oo);
+  CHECK(x.mag() == oo);
+  CHECK(x.mig() == 0);
+  CHECK(x.smag() == -oo);
+  CHECK(x.smig() == 0);
 
   x = Interval(-oo,oo);
 
@@ -135,6 +151,10 @@ TEST_CASE("Interval - tests from IBEX")
   CHECK(x.mid() == 0);
   CHECK(x.rad() == oo);
   CHECK(x.diam() == oo);
+  CHECK(x.mag() == oo);
+  CHECK(x.mig() == 0);
+  CHECK(x.smag() == oo);
+  CHECK(x.smig() == 0);
 
   x = Interval(std::numeric_limits<double>::max(),oo);
 
@@ -143,6 +163,10 @@ TEST_CASE("Interval - tests from IBEX")
   CHECK(x.mid() == std::numeric_limits<double>::max());
   CHECK(x.rad() == oo);
   CHECK(x.diam() == oo);
+  CHECK(x.mag() == oo);
+  CHECK(x.mig() == std::numeric_limits<double>::max());
+  CHECK(x.smag() == oo);
+  CHECK(x.smig() == std::numeric_limits<double>::max());
 
   x = Interval(-1,1);
   for(size_t i = 0 ; i < 10 ; i++)

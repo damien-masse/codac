@@ -38,6 +38,15 @@ namespace codac2
       Zonotope(const Vector& z, const Matrix& A);
 
       /**
+       * \brief Projects the Zonotope onto the subspace defined by the given indices
+       * 
+       * \param indices Vector of indices of the dimensions to project onto
+       * 
+       * \return A new Zonotope object representing the projection of the Zonotope onto the specified subspace
+       */
+      Zonotope proj(const std::vector<Index>& indices) const;
+
+      /**
        * \brief Center of the zonotope
        */
       Vector z;
