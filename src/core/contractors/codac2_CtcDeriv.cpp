@@ -35,10 +35,6 @@ void CtcDeriv::contract(Slice<Interval>& x, const Slice<Interval>& v) const
   
   Interval ingate = x.input_gate();
   Interval outgate = x.output_gate();
-  Interval envelope = x.codomain();
-
-  auto prev_x = x.prev_slice();
-  auto next_x = x.next_slice();
 
   // Gates contraction
   ingate &= x.output_gate() - x.t0_tf().diam() * v.codomain();
@@ -46,12 +42,8 @@ void CtcDeriv::contract(Slice<Interval>& x, const Slice<Interval>& v) const
 
   if(outgate.is_superset(x.output_gate()) || ingate.is_superset(x.input_gate()))
   {
-    // Optimal computation
-
-    // todo: remove this: (or use Polygons with truncation)
-    //envelope &= Interval(-BOUNDED_INFINITY,BOUNDED_INFINITY);
-
-    x.set(envelope, false);
+    auto prev_x = x.prev_slice();
+    auto next_x = x.next_slice();
 
     // Gates needed for polygon computation
     if(prev_x->is_gate())
@@ -60,24 +52,16 @@ void CtcDeriv::contract(Slice<Interval>& x, const Slice<Interval>& v) const
       next_x->set(outgate, false);
 
     // Optimal envelope
-    envelope &= x.polygon_slice(v).box()[1];
-
-    // todo: remove this: (or use Polygons with truncation)
-    //if(envelope.ub() == BOUNDED_INFINITY) envelope = Interval(envelope.lb(),POS_INFINITY);
-    //if(envelope.lb() == -BOUNDED_INFINITY) envelope = Interval(NEG_INFINITY,envelope.ub());
-    //if(ingate.ub() == BOUNDED_INFINITY) ingate = Interval(ingate.lb(),POS_INFINITY);
-    //if(ingate.lb() == -BOUNDED_INFINITY) ingate = Interval(NEG_INFINITY,ingate.ub());
-    //if(outgate.ub() == BOUNDED_INFINITY) outgate = Interval(outgate.lb(),POS_INFINITY);
-    //if(outgate.lb() == -BOUNDED_INFINITY) outgate = Interval(NEG_INFINITY,outgate.ub());
+    x.set(x.polygon_slice(v).box()[1], false);
   }
 
   else
   {
-    envelope &= ingate + Interval(0,x.t0_tf().diam()) * v.codomain();
-    envelope &= outgate - Interval(0,x.t0_tf().diam()) * v.codomain();
+    x.set(x.codomain()
+      & (ingate + Interval(0,x.t0_tf().diam()) * v.codomain())
+      & (outgate - Interval(0,x.t0_tf().diam()) * v.codomain())
+    , false);
   }
-
-  x.set(envelope, false);
 }
 
 void CtcDeriv::contract(Slice<IntervalVector>& x, const Slice<IntervalVector>& v) const
