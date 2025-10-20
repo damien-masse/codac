@@ -211,6 +211,25 @@ namespace codac2
       double mig() const;
 
       /**
+       * \brief Returns the signed magnitude of this 
+       * i.e. lower bound if |lower bound|>|upper bound|, upper bound otherwise.
+       * 
+       * \return the signed magnitude of the interval
+       */
+      double smag() const;
+
+      /**
+       * \brief Returns the signed mignitude of this 
+       * 
+       * lower bound if lower_bound > 0,
+       * upper bound if upper_bound < 0,
+       * 0 otherwise.
+       * 
+       * \return the signed mignitude of the interval
+       */
+      double smig() const;
+
+      /**
        * \brief Returns a random value inside the interval
        *
        * \note The seed of the pseudo-random number generator is 

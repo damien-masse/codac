@@ -195,7 +195,8 @@ namespace codac2
         return y;
       }
 
-      Parallelepiped parallelepiped_eval(const IntervalVector& x) const;
+      template<typename... Args>
+      Parallelepiped parallelepiped_eval(const Args&... x) const;
       // -> is defined in codac2_Parallelepiped_eval.h file
 
       Index output_size() const
