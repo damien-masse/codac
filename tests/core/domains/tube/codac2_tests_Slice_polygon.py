@@ -18,7 +18,7 @@ class TestPolygonSlice(unittest.TestCase):
 
     tdomain = create_tdomain([-1,3])
     x = SlicedTube(tdomain, Interval())
-    v = SlicedTube(tdomain, [-1,1])
+    v = SlicedTube(tdomain, Interval(-1,1))
 
     sx = x.first_slice()
     sv = v.first_slice()
@@ -41,8 +41,8 @@ class TestPolygonSlice(unittest.TestCase):
   def test_polygon_slice_2(self):
 
     tdomain = create_tdomain([-1,3])
-    x = SlicedTube(tdomain, [-5,3])
-    v = SlicedTube(tdomain, [-1])
+    x = SlicedTube(tdomain, Interval(-5,3))
+    v = SlicedTube(tdomain, Interval(-1))
 
     sx = x.first_slice()
     sv = v.first_slice()
@@ -63,8 +63,8 @@ class TestPolygonSlice(unittest.TestCase):
   def test_polygon_slice_3(self):
 
     tdomain = create_tdomain([-1,3])
-    x = SlicedTube(tdomain, [-5,3])
-    v = SlicedTube(tdomain, [-1,1])
+    x = SlicedTube(tdomain, Interval(-5,3))
+    v = SlicedTube(tdomain, Interval(-1,1))
 
     sx = x.first_slice()
     sv = v.first_slice()
@@ -89,8 +89,8 @@ class TestPolygonSlice(unittest.TestCase):
   def test_polygon_slice_4(self):
 
     tdomain = create_tdomain([0,4])
-    x = SlicedTube(tdomain, [-1,7])
-    v = SlicedTube(tdomain, [-1.5,4])
+    x = SlicedTube(tdomain, Interval(-1,7))
+    v = SlicedTube(tdomain, Interval(-1.5,4))
 
     sx = x.first_slice()
     sv = v.first_slice()
@@ -111,8 +111,8 @@ class TestPolygonSlice(unittest.TestCase):
   def test_polygon_slice_4b(self):
 
     tdomain = create_tdomain([4,8])
-    x = SlicedTube(tdomain, [-1,7])
-    v = SlicedTube(tdomain, [-0.75,-0.5])
+    x = SlicedTube(tdomain, Interval(-1,7))
+    v = SlicedTube(tdomain, Interval(-0.75,-0.5))
 
     sx = x.first_slice()
     sv = v.first_slice()
@@ -135,8 +135,8 @@ class TestPolygonSlice(unittest.TestCase):
   def test_polygon_slice_5(self):
 
     tdomain = create_tdomain([8,12])
-    x = SlicedTube(tdomain, [-1,7])
-    v = SlicedTube(tdomain, [-1./3.,1])
+    x = SlicedTube(tdomain, Interval(-1,7))
+    v = SlicedTube(tdomain, Interval(-1./3.,1))
 
     sx = x.first_slice()
     sv = v.first_slice()
@@ -159,7 +159,7 @@ class TestPolygonSlice(unittest.TestCase):
   def test_polygon_slice_6(self):
 
     tdomain = create_tdomain([12,14])
-    x = SlicedTube(tdomain, [-1,7])
+    x = SlicedTube(tdomain, Interval(-1,7))
     v = SlicedTube(tdomain, Interval(4.5)/2)
 
     sx = x.first_slice()
