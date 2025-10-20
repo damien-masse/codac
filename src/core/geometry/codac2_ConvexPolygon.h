@@ -37,14 +37,14 @@ namespace codac2
        *
        * \param vertices A vector of vertices defining the convex polygon.
        */
-      ConvexPolygon(const std::vector<Vector>& vertices);
+      ConvexPolygon(const std::vector<Vector>& vertices, bool compute_convex_hull = true);
 
       /**
        * \brief Constructs a ``ConvexPolygon`` from a vector of ``IntervalVector`` vertices.
        *
        * \param vertices A vector of ``IntervalVector``s enclosing the convex polygon vertices.
        */
-      explicit ConvexPolygon(const std::vector<IntervalVector>& vertices);
+      explicit ConvexPolygon(const std::vector<IntervalVector>& vertices, bool compute_convex_hull = true);
 
       /**
        * \brief Constructs a ``ConvexPolygon`` from an initializer list of ``Segment`` edges.
