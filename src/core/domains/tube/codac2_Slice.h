@@ -10,6 +10,7 @@
 #pragma once
 
 #include "codac2_SliceBase.h"
+#include "codac2_ConvexPolygon.h"
 
 namespace codac2
 {
@@ -178,6 +179,9 @@ namespace codac2
       {
         return codomain() == x.codomain();
       }
+
+      ConvexPolygon polygon_slice(const Slice<T>& v) const
+        requires std::is_same_v<T,Interval>;
 
       friend inline std::ostream& operator<<(std::ostream& os, const Slice& x)
       {

@@ -90,5 +90,15 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
       OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_SLICE_REF)
   ;
 
+  if constexpr(std::is_same_v<T,Interval>)
+  {
+    exported_slice_class
+
+      .def("polygon_slice", &Slice<Interval>::polygon_slice,
+        CONVEXPOLYGON_SLICE_T_POLYGON_SLICE_CONST_SLICE_T_REF_CONST,
+        "v"_a)
+    ;
+  }
+
   return exported_slice_class;
 }
