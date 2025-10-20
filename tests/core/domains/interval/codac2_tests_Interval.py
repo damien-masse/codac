@@ -207,10 +207,10 @@ class TestInterval(unittest.TestCase):
     self.assertTrue(not Interval(0,next_float(0)).is_bisectable())
     self.assertTrue(Interval(0,next_float(next_float(0))).is_bisectable())
     self.assertTrue(Interval(10,next_float(next_float(10))).is_bisectable())
-    self.assertTrue(Interval(previous_float(previous_float(0)),0).is_bisectable())
-    self.assertTrue(Interval(previous_float(previous_float(10)),10).is_bisectable())
+    self.assertTrue(Interval(prev_float(prev_float(0)),0).is_bisectable())
+    self.assertTrue(Interval(prev_float(prev_float(10)),10).is_bisectable())
     self.assertTrue(not Interval(10,next_float(10)).is_bisectable())
-    self.assertTrue(not Interval(previous_float(0),0).is_bisectable())
+    self.assertTrue(not Interval(prev_float(0),0).is_bisectable())
 
     self.assertTrue(Interval(0,2).mid() == 1.0)
     self.assertTrue(Interval(-oo,oo).mid() == 0)

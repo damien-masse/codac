@@ -294,7 +294,7 @@ void Figure2D::draw_pie(const Vector& c, const Interval& r, const Interval& thet
 
   Interval r_(r);
   if(r.is_unbounded())
-    r_ &= Interval(0,previous_float(oo));
+    r_ &= Interval(0,prev_float(oo));
 
   for(const auto& output_fig : _output_figures)
     output_fig->draw_pie(c,r_,theta_,s);

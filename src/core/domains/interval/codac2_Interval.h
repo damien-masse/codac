@@ -731,7 +731,7 @@ namespace codac2
    * \param x The input double value.
    * \return The previous representable double value before x.
    */
-  double previous_float(double x);
+  double prev_float(double x);
 
   /**
    * \brief Returns the next representable double-precision floating-point value after x.
@@ -739,7 +739,7 @@ namespace codac2
    * This function computes the smallest double value that is strictly greater than the input value x,
    * effectively moving one step up in the floating-point representation.
    * 
-   * \see For obtaining the previous representable double value less than x, use ``previous_float()``.
+   * \see For obtaining the previous representable double value less than x, use ``prev_float()``.
    *
    * \param x The input double value.
    * \return The next representable double value after x.

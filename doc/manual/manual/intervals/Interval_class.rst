@@ -271,10 +271,10 @@ In C++, a user-defined literal is provided in C++ to construct an interval direc
 Floating-point adjacency
 ------------------------
 
-The ``previous_float`` and ``next_float`` functions return the floating-point numbers directly adjacent to a given value.
+The ``prev_float`` and ``next_float`` functions return the floating-point numbers directly adjacent to a given value.
 These functions are useful in the context of interval arithmetic to tightly control rounding directions.
 
-.. doxygenfunction:: codac2::previous_float
+.. doxygenfunction:: codac2::prev_float
   :project: codac
 
 .. tabs::
@@ -297,7 +297,7 @@ These functions are useful in the context of interval arithmetic to tightly cont
 
   .. code-tab:: matlab
 
-    x = previous_float(1.0);
+    x = prev_float(1.0);
     % x = 0.9999999999999999
 
 
