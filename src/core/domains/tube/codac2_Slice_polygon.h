@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_Slice_polygon.cpp
+ *  \file codac2_Slice_polygon.h
  * ----------------------------------------------------------------------------
  *  \date       2024
  *  \author     Simon Rohou
@@ -7,16 +7,13 @@
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
-#include "codac2_Interval.h"
-#include "codac2_Slice.h"
-#include "codac2_cart_prod.h"
-
-using namespace std;
+#pragma once
 
 namespace codac2
 {
-  template<>
-  ConvexPolygon Slice<Interval>::polygon_slice(const Slice<Interval>& v) const
+  template<typename T>
+  ConvexPolygon Slice<T>::polygon_slice(const Slice<T>& v) const
+    requires std::is_same_v<T,Interval>
   {
     const Interval& t = t0_tf();
 

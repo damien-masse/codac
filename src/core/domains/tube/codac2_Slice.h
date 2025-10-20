@@ -180,8 +180,9 @@ namespace codac2
         return codomain() == x.codomain();
       }
 
-      ConvexPolygon polygon_slice(const Slice<T>& v) const
+      inline ConvexPolygon polygon_slice(const Slice<T>& v) const
         requires std::is_same_v<T,Interval>;
+      // -> is defined in codac2_Slice_polygon.h file
 
       friend inline std::ostream& operator<<(std::ostream& os, const Slice& x)
       {
@@ -225,3 +226,5 @@ namespace codac2
       }
   };
 }
+
+#include "codac2_Slice_polygon.h"
