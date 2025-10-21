@@ -17,10 +17,10 @@
 namespace codac2
 {
   template<typename T>
-    requires std::is_base_of_v<VectorType,T>
   template<typename... Args>
     requires ((!std::is_same_v<MatrixType,typename ExprType<Args>::Type>) && ...)
   inline Parallelepiped AnalyticFunction<T>::parallelepiped_eval(const Args&... x) const
+    requires std::is_same_v<VectorType,T>
   {
     this->check_valid_inputs(x...);
     assert_release(this->input_size() < this->output_size() &&

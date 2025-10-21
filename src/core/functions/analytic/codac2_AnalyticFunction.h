@@ -197,7 +197,8 @@ namespace codac2
 
       template<typename... Args>
         requires ((!std::is_same_v<MatrixType,typename ExprType<Args>::Type>) && ...)
-      Parallelepiped parallelepiped_eval(const Args&... x) const;
+      Parallelepiped parallelepiped_eval(const Args&... x) const
+        requires std::is_same_v<VectorType,T>;
       // -> is defined in codac2_Parallelepiped_eval.h file
 
       Index output_size() const
