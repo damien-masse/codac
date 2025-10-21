@@ -8,6 +8,7 @@
  */
 
 #include "codac2_Parallelepiped.h"
+#include "codac2_inversion.h"
 
 using namespace std;
 using namespace codac2;
@@ -46,11 +47,23 @@ IntervalVector Parallelepiped::box() const
   return box;
 }
 
-bool Parallelepiped::contains(const Vector& v) const
+BoolInterval Parallelepiped::contains(const IntervalVector& v) const
 {
   assert_release(A.rows() == A.cols() && "Matrix A must be square to check containment.");
+  assert_release(v.size() == z.size() && "Point dimension must match parallelepiped dimension.");
 
-  IntervalVector IV = Interval(-1,1)*IntervalVector::Ones(A.cols());
+  // auto B = inverse_enclosure(A)*(v - z);
+  auto B = (A.inverse())*(v - z);
+  auto IV = IntervalVector::constant(A.cols(),{-1,1});
 
-  return IV.contains(A.inverse()*(v - z));
+  if (!(B.intersects(IV)))
+    return BoolInterval::FALSE;
+
+  else
+  {
+    if (B.is_subset(IV))
+      return BoolInterval::TRUE;
+    else
+      return BoolInterval::UNKNOWN;
+  }
 }

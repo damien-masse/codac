@@ -9,6 +9,9 @@
 
 #include "codac2_peibos.h"
 #include "codac2_Parallelepiped_eval.h"
+#include "codac2_inversion.h"
+#include "codac2_OctaSym_operator.h"
+#include "codac2_IntvFullPivLU.h"
 
 using namespace std;
 using namespace codac2;
@@ -52,8 +55,22 @@ namespace codac2
     IntvFullPivLU LUdec((IntervalMatrix) A_int.transpose());
     IntervalMatrix N = LUdec.kernel();
 
+    
+
+    vector<int> col_indices;
+
+    for (int i = 0; i < m; i++)
+      if (! (A.col(i).isZero()) )
+        col_indices.push_back(i);
+
+    // A_reduced is composed of the non empty vectors of A_int
+    IntervalMatrix A_reduced (n, col_indices.size());
+    for (int i = 0; i < (int) col_indices.size(); i++)
+      A_reduced.col(i) = A_int.col(col_indices[i]);    
+
+    // Construct the new matrix A_tild = [A_reduced | N]
     IntervalMatrix A_tild (n,n);
-    A_tild << A, N;
+    A_tild << A_reduced,N;
 
     IntervalMatrix Q = inverse_enclosure(A_tild.transpose() * A_tild);
 

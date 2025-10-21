@@ -14,6 +14,7 @@
 #include "codac2_Matrix.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_Zonotope.h"
+#include "codac2_BoolInterval.h"
 
 namespace codac2
 {
@@ -53,13 +54,13 @@ namespace codac2
       IntervalVector box() const;
 
       /**
-       * \brief Checks if a given point is contained within the parallelepiped. The matrix A has to be square and invertible.
+       * \brief NOT YET GUARANTEED. Checks if a given box is contained within the parallelepiped. The matrix A has to be square and invertible.
        * 
-       * \param v The point to check (n-dimensional vector)
+       * \param v The box to check
        * 
-       * \return true if the point is inside the parallelepiped, false otherwise
+       * \return BoolInterval true if the box is inside the parallelepiped, false if is outside, and unknown otherwise
        */
-      bool contains(const Vector& v) const;
+      BoolInterval contains(const IntervalVector& v) const;
 
   };
 }

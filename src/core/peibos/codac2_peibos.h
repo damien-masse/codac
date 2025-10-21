@@ -12,10 +12,6 @@
 #include "codac2_Parallelepiped.h"
 #include "codac2_AnalyticFunction.h"
 #include "codac2_OctaSym.h"
-#include "codac2_inversion.h"
-#include "codac2_OctaSym_operator.h"
-#include "codac2_IntvFullPivLU.h"
-
 
 namespace codac2
 {
