@@ -8,7 +8,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
-#include <codac2_Parallelepiped_eval.h>
+#include <codac2_AnalyticFunction.h>
 #include <codac2_Approx.h>
 
 using namespace std;

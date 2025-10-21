@@ -206,6 +206,7 @@ User manual
    * Set-membership functions
       * The class SetMembershipFunction
       * Extension to custom expressions
+   * :ref:`sec-functions-parallelepiped-eval`
 
 * Tubes
    * What is a tube?
