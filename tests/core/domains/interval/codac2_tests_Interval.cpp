@@ -213,10 +213,10 @@ TEST_CASE("Interval - tests from IBEX")
   CHECK(!Interval(0,codac2::next_float(0)).is_bisectable());
   CHECK(Interval(0,codac2::next_float(codac2::next_float(0))).is_bisectable());
   CHECK(Interval(10,codac2::next_float(codac2::next_float(10))).is_bisectable());
-  CHECK(Interval(codac2::previous_float(codac2::previous_float(0)),0).is_bisectable());
-  CHECK(Interval(codac2::previous_float(codac2::previous_float(10)),10).is_bisectable());
+  CHECK(Interval(codac2::prev_float(codac2::prev_float(0)),0).is_bisectable());
+  CHECK(Interval(codac2::prev_float(codac2::prev_float(10)),10).is_bisectable());
   CHECK(!Interval(10,codac2::next_float(10)).is_bisectable());
-  CHECK(!Interval(codac2::previous_float(0),0).is_bisectable());
+  CHECK(!Interval(codac2::prev_float(0),0).is_bisectable());
 
   CHECK(Interval(0,2).mid() == 1.0);
   CHECK(Interval(-oo,oo).mid() == 0);
@@ -267,8 +267,8 @@ TEST_CASE("Interval - other tests")
 
   x = Interval(0,oo);
   a = x.bisect(0.5);
-  CHECK(a.first == Interval(0,codac2::previous_float(oo)));
-  CHECK(a.second == Interval(codac2::previous_float(oo),oo));
+  CHECK(a.first == Interval(0,codac2::prev_float(oo)));
+  CHECK(a.second == Interval(codac2::prev_float(oo),oo));
 
   x = Interval(-oo,0);
   a = x.bisect(0.5);
