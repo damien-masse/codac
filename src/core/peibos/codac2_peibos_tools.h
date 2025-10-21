@@ -1,5 +1,5 @@
 /** 
- *  \file codac2_peibos.h
+ *  \file codac2_peibos_tools.h
  * ----------------------------------------------------------------------------
  *  \date       2025
  *  \author     Maël Godard
