@@ -19,6 +19,7 @@
 #include <bitset>
 #include <memory>
 #include <map>
+#include <forward_list>
 #include <set>
 #include <unordered_set>
 #include <stdexcept>
@@ -37,14 +38,19 @@ struct DDvertex {
    Index Id;
    IntervalVector vertex;
    Interval lambda;
+   std::vector<Index> fcts; 
+	/* note : double redirection here, a ``real'' facet may have several
+           Ids */
    
    enum ddvertexstatus {
-     VERTEXNEW,
+     VERTEXNEW, /* created */
+     VERTEXTODO, /* unknown status */
      VERTEXLT, /* < (GT,LT) => new vertex */
      VERTEXON, /* <,=,> (GT,LE) => for now, equivalent to LT */
      VERTEXGE, /* = and possible small >
 		  keep the vertex. no change with (GT,GE) */
-     VERTEXGT, /* remove vertex, add new vertices for links */
+     VERTEXGT, /* vertex in stack for later treatment */
+     VERTEXREM /* vertex GT treated, to be removed */
    };
    ddvertexstatus status;
 
@@ -70,68 +76,67 @@ struct DDvertex {
 
    void removeLnk(const std::map<Index,DDlink>::iterator &a);
 
-#if 0
    void addFct(Index a) {
       auto rev_it = this->fcts.rbegin();
       while (rev_it != this->fcts.rend() && (*rev_it)>a) it++;
       if (rev_it!=this->fcts.rend() && (*rev_it)==a) return;
       this->fcts.insert(rev_it.base(),a);
    }
-#endif
 };
 
 struct DDlink {
-   std::map<Index,DDvertex>::iterator V1;
-   std::map<Index,DDvertex>::iterator V2;
-   std::unordered_set<std::vector<Index>> fcts;
+   std::forward_list<DDvertex>::iterator V1;
+   std::forward_list<DDvertex>::iterator V2;
+//   std::unordered_set<std::vector<Index>> fcts;
   
-   DDlink(Index dim, const std::map<Index,DDvertex>::iterator &V1,
-		const std::map<Index,DDvertex>::iterator &V2,
-		const std::vector<Index> &fcts) : V1(V1), V2(V2) {
-       this->fcts.insert(fcts);
+   DDlink(const std::forward_list<DDvertex>::iterator &V1,
+	  const std::forward_list<DDvertex>::iterator &V2
+		/*, const std::vector<Index> &fcts*/) : V1(V1), V2(V2) {
+/*       this->fcts.insert(fcts); */
    }
 
-   void changeVertex(const std::map<Index,DDvertex>::iterator &Vold,
-                const std::map<Index,DDvertex>::iterator &Vnew) {
+   void changeVertex(const std::forward_list<DDvertex>::iterator &Vold,
+                const std::forward_list<DDvertex>::iterator &Vnew) {
        if (this->V1==Vold) { this->V1=Vnew; return; }
        this->V2=Vnew;
    }
    
-   const std::map<Index,DDvertex>::iterator &otherVertex
-		(const std::map<Index,DDvertex>::iterator &V) const {
+   const std::forward_list<DDvertex>::iterator &otherVertex
+		(const std::forward_list<DDvertex>::iterator &V) const {
        if (V==V1) return V2;
        return V1;
    }
   
+#if 0
    void addFct(const std::vector<Index> &fcts) {
       this->fcts.insert(fcts);
    }
+#endif
 };
 
 class DDbuildF2V {
   public:
      DDbuildF2V(Index dim, const IntervalVector &box,
-		const std::vector<Facet> &eqconstraints);
+		const std::vector<Facet> &eqconstraints, bool include_box=true);
+     
+//     void add_constraint_box(const IntervalVector &box);
    
      int add_facet(Index idFacet, const Facet& fct);
 
      friend std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build);
 
   private:
-     std::map<Index,DDvertex>::iterator initDDvertex(Index id,
-		 const IntervalVector &v, std::vector<Index> &fcts);
      Index initDDlinks(const std::map<Index,DDvertex>::iterator& V1,
    		      const std::map<Index,DDvertex>::iterator& V2,
    		      std::vector<Index> &fct);
 
-     std::map<Index,DDvertex>::iterator addDDvertex(const IntervalVector &v,
-		std::vector<Index> &fcts);
-     std::map<Index,DDvertex>::iterator addDDvertex(IntervalVector &&v,
-	        std::vector<Index> &fcts);
+     std::forward_list<DDvertex>::iterator addDDvertex(const IntervalVector &v);
+     std::map<Index,DDvertex>::iterator addDDvertex(IntervalVector &&v);
      std::map<Index,DDvertex>::iterator addVertexSon(const DDvertex &p1,
 		 DDvertex &p2, double rhs, Index idFacet); 
      void removeVertex(Index Id, bool removeLnks);
 
+#if 0
      /* x_dim = eqcst x + rhs */
      struct EqFacet {
         Index dim;
@@ -166,20 +171,26 @@ class DDbuildF2V {
         static EqFacet build_EqFacet(const IntervalVector &bbox,
 			const Row &cst, Interval &rhs);
      };
+#endif
 
      IntervalVector recompute_vertex(const IntervalVector &vect) const; 
 
      Index dim;
-     Index fdim;
-     IntervalMatrix M_EQ1, M_EQ2;
-     std::vector<EqFacet> eqfacets;
-     std::vector<Index> dim_facets;
+     Index fdim; /* dimension - nb independant equalities constraints */
 
-     std::map<Index,DDvertex> vertices;
-     std::map<Index,DDlink> total_links;
-     std::map<Index,std::pair<IntervalRow,double>> ineqfacets;
+     /* if fdim<dim :
+        constraint a X <= b becomes (-b 0) + (a M_EQ) 
+        vertex : (c Y) becomes X = M_EQ (1 Y/c) */
+     IntervalMatrix M_EQ;
 
-     bool empty;
+     std::vector<IntervalVector> lines; /* lines (for unbounded polyhedron) */
+               /* rays can be handled as classical vertices */
+
+     std::forward_list<DDvertex> vertices;
+     std::forward_list<DDlink> total_links;
+     std::vector<Index> reffacets; /* indirection for facets */
+
+     bool empty, flat;
      Index nbIdVertex;
      Index nbIdLinks;
      double tolerance = 1e-9;

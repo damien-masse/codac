@@ -94,122 +94,81 @@ struct PairMaxSets<T> {
 /********************/
 
 DDbuildF2V::DDbuildF2V(Index dim, const IntervalVector &box,
-	const std::vector<Facet> &eqconstraints) : dim(dim),
+	const std::vector<Facet> &eqconstraints, bool include_box) : dim(dim),
 		fdim(dim), 
-		bbox(box), empty(false), nbInVertex(0), nbInLinks(0) {
-   if (eqconstraints.size()!=0) {
+		bbox(box), empty(false), flat(false),
+		nbInVertex(0), nbInLinks(0) {
+   int nb_eq_dim= eqconstraints.size();
+   if (include_box) {
+      for (int i=0;i<dim;i++) {
+         if (bbox[i].is_degenerated()) nb_eq_dim++;
+      }
+   }
+   if (nb_eq_dim>0) {
       /* managing the equalities */
       /* we first check the existence of a solution, and get a finite
          number of idependant equalities */
-      Matrix MatEQ = Matrix(eqconstraints.size(),dim);
-      IntervalVector RhsEQ = IntervalVector(eqconstraints.size());
+      Matrix MatEQ = Matrix::Zero(nb_eq_dim,dim);
+      IntervalVector RhsEQ = 
+			IntervalVector::Zero(nb_eq_dim);
+      int base=0; 
+      if (include_box) {
+        for (int i=0;i<dim;i++) {
+           if (!bbox[i].is_degenerated()) continue;
+           MatEQ[base][i]=1.0;
+           RhsRQ[base]=box[i];
+           base++;
+        }
+      }
       for (Index i=0;i<eqconstraints.size();i++) {
-          MatEQ.row(i) = eqconstraints[i].row;
-          RhsEQ[i] = eqconstraints[i].rhs;
+          MatEQ.row(base+i) = eqconstraints[i].row;
+          RhsEQ[base+i] = eqconstraints[i].rhs;
       }
       IntvFullPivLU LUdec(MatEQ);
-      if (LUdec.is_injective()!=BoolInterval::TRUE) {
+#if 0
+      if (LUdec.is_surjective)!=BoolInterval::TRUE) {
          /* TODO : check emptiness */
          /* IntervalMatrix eqsolve = LUdec.solve(RhsEQ);
          if (eqsolve.is_empty()) { empty=true; return; }  */
 			/* FIXME : NOT CORRECT, as solve DOES NOT
 			   guarantee the emptiness of solutions. We need
-			   to use e.g. a bounding box */
+			   to use e.g. a bounding box... wait for 
+			   pull request */
+      } else 
+#endif
+      {
+         this->fdim = this->dim - nb_eq_dim;
+         this->M_EQ = IntervalMatrix::Zero(this->dim,this->fdim+1);
+         this->M_EQ.col(0) = LUdec.solve(RhsEQ);
+         this->M_EQ.rightCols(this->fdim) = LUdec.kernel();
+	 this->flat=true;
       }
-      
-      
-
-   }
-   for (const Facet &f : eqconstraints) {
-       assert(f.eqcst);
-       Row cst = f.row;
-       Interval rhs(f.rhs);
-       for (const EqFacet &e : eqfacets) {
-           e.adapt_eqconstraint(bbox,cst,rhs);
-       }
-       try {
-           eqfacets.push_back(EqFacet::build_EqFacet(bbox,cst,rhs));
-       } catch (const std::domain_error &error) {
-           if (rhs.contains(0.0)) continue;
-           empty=true;
-           eqfacets.clear();
-           return;
-       }
+#ifdef DEBUG_CODAC2_DD
+      std::cout << "M_EQ : " << M_EQ << std::endl;
+#endif
    } 
-   for (const EqFacet &e : eqfacets) {
-       e.adapt_box(bbox);
-       if (bbox.is_empty()) {
-           empty=true;
-           eqfacets.clear();
-           return;
-       }
+   /* initial vertice :
+      (1 0 0 ... ), + rays */
+   IntervalVector v = IntervalVector::Zero(this->fdim+1);
+   v[0]=1.0;
+   this->addDDvertex(v);
+   for (int i=0;i<fdim;i++) {
+       IntervalVector line = IntervalVector::Zero(this->fdim+1);
+       line[i+1]=1.0;
+       lines.push_back(line);
    }
-   /* we order dim_facets in decreasing order, to build fcts in the
-      correct order later */
-   for (Index i=bbox.size()-1; i>=0; i--) {
-       bool found=false;
-       for (const EqFacet &e : eqfacets) {
-           if (e.dim ==i) { found=true; break; }
-       }
-       if (!found) dim_facets.push_back(i);
-   }
-   /* we use "negative" number for the box constraints :
-      one for each negative bounds (-s to -1), one for all positive bounds 
-	(-s-1).
-      idem for links, which means we use specific id for the vertices */
-   std::vector<Index> fcts;
-   for (Index i : dim_facets) {
-      fcts.push_back(-i-1);
-   }
-   IntervalVector l = bbox.lb();
-   this->initDDvertex(-bbox.size()-1,l,fcts);
-   Interval sum = bbox.sum();
-   for (Index i : dim_facets) {
-      l=box.lb();
-      l[i]=l[i]+sum.ub()-sum.lb();
-      fcts.push_back(-bbox.size()-1);
-      for (Index j : dim_facets) {
-         if (j==i) continue;
-         fcts.push_back(-j-1);
-      }
-      this->initDDvertex(-i-1,l,fcts);
-   }
-   for (Index i : dim_facets) {
-      for (Index j : dim_facets) {
-         if (j==i) continue;
-         fcts.push(back(-j-1);
-      }
-      this->initDDlinks(vertices.find(-bbox.size()-1),
-			vertices.find(-i-1),fcts));
-      for (Index j : dim_facets) {
-         if (j<=i) continue;
-         fcts.push_back(-bbox.size()-1);
-         for (Index k : dim_facets) {
-           if (k!=i) continue;
-           if (k!=j) continue;
-           fcts.push_back(-k-1);
-         }
-         this->initDDlinks(vertices.find(-i-1),
-			   vertices.find(-j-1),fcts);
-      }
-   }  
+//   if (include_box) this->add_constraint_box(bbox);
 }
 
-Index DDbuildF2V::initDDvertex(Index id, const IntervalVector &v,
-		 std::vector<Index> &fcts) {
-    vertices.emplace(id,
-         DDvertex(v,id,fcts));
-    return id;
-}
-Index DDbuildF2V::addDDvertex(const IntervalVector &v, std::vector<Index> &fcts) {
+std::list<DDvertex>::iterator DDbuildF2V::addDDvertex(const IntervalVector &v) {
     nbIn++;
-    vertices.emplace(nbIn, DDvertex(v,nbIn,fcts));
-    return nbIn;
+    vertices.emplace_front(DDvertex(v,nbIn));
+    return vertices.begin();
 }
-Index DDbuildF2V::addDDvertex(IntervalVector &&v, std::vector<Index> &fcts) {
+std::list<DDvertex>::iterator  DDbuildF2V::addDDvertex(IntervalVector &&v) {
     nbIn++;
-    vertices.emplace(nbIn, DDvertex(v,nbIn,fcts));
-    return nbIn;
+    vertices.emplace_front(DDvertex(v,nbIn));
+    return vertices.begin();
 }
 
 /* p1 has lambda>rhs, p2 has lambda<rhs ;
@@ -258,15 +217,104 @@ Index DDbuildF2V::addVertexSon(const DDvertex &p1, DDvertex &p2, double rhs,
 
 int DDbuildF2V::add_facet(Index idFacet, const Facet& fct) {
    if (empty) return 0;
-   IntervalRow rowI = fct.row;
-   double rhs = fct.rhs;
-   /* treat eqfacets to remove some dimensions */
-   for (const EqFacet &e : eqfacets) {
-      e.adapt_ineqconstraint(rowI,rhs);
+   /* the first step is to take the equalities constraints into account */
+   IntervalRow facet = IntervalRow::Zero(this->fdim+1);
+   facet[0] = -fct.rhs;
+   if (flat) {
+      facet += fct.row * this->M_EQ;
+   } else {
+      facet.tail(this->fdim) = fct.row;
    }
-   ineqfacets.emplace(idFacet,std::pair<IntervalRow,double>(rowI,rhs));
-   int cnt=0;
-   /* compute the status of each vertices */
+   /* then consider lines */
+   Index bestline=-1;
+   double maxmig=0.0;
+   for (Index i=0;i<lines.size();i++) {
+      Interval u = facet.dot(lines[i]);
+      if (u.contains(0.0)) continue;
+      double mg=u.mig();
+      if (mg>maxmig) {
+         bestline=i;
+         maxmig=mg;
+      }
+   }  
+   if (bestline!=-1) {
+      Index codeFacet = reffacets.size();
+      reffacets.push_back(idFacet);
+      if (bestline!=lines.size()-1) {
+	lines[bestline].swap(lines.back());
+      }
+      IntervalVector& bstline = lines.back();
+      Interval ubest = facet.dot(bstline);
+      /* traitement des lines */
+      for (Index i=0;i<lines.size()-1;i++) {
+         Interval u = facet.dot(lines[i]);
+         lines[i] = ubest*lines[i] - u*bstline;
+      }
+      /* traitement des sommets */
+      for (DDvertex &v : vertices) {
+         double lower =  facet.dot(v.vertex).lb();
+         if (ubest.lb()>0.0) {
+            if (lower>0.0) 
+              v.vertex = ubest.ub()*v.vertex - lower*bstline;
+            else
+	      v.vertex = ubest.lb()*v.vertex - lower*bstline;
+	 } else  {
+            if (lower>0.0) 
+              v.vertex = -ubest.lb()*v.vertex + lower*bstline;
+            else
+	      v.vertex = -ubest.ub()*v.vertex + lower*bstline;
+         }
+         v.addFct(codeFacet);
+      }
+      /* ajout du nouveau sommet et des liens */
+      std::forward_list<DDvertex>::iterator itVertex = vertices.begin();
+      std::forward_list<DDvertex>::iterator newVertex = 
+		this->addDDvertex(ubest.lb()<0.0 ? bstline : (-bstline));
+      for (;itVertex!=vertices.end();++itVertex) {
+          this->addDDlink(itVertex,newVertex);
+      }
+      for (Index a=0;a<codeFacet;a++) {
+          newVertex->addFct(a);
+      }
+      return 1;
+   }
+   /* end of line treatments , the following 
+      is when no line is available */
+
+   std::forward_list<DDvertex>::iterator itVertex = vertices.begin();
+   std::vector<std::forward_list<DDvertex>::iterator> stack;
+   Index refFacet=-1;
+   while (itVertex!=vertices.end()) {
+       std::forward_list<DDvertex>::iterator actVertex;
+       if (stack.size()>0) {
+          actVertex = stack.back();
+          stack.pop_back();
+          if (actVertex->status!=VERTEXGT) continue;
+       } else {
+          actVertex=itVertex;
+          ++itVertex;
+          if (actVertex->status!=VERTEXTODO) continue;
+          actVertex->lambda = facet.dot(actVertex->vertex);
+          if (actVertex->lambda.ub()<0.0) {
+             actVertex->status = VERTEXLT;
+             continue;
+          }
+          if (actVertex->lambda.lb()<0.0) {
+             actVertex->status = VERTEXON;
+             continue;
+          }
+          if (actVertex->lambda.lb()<this->tolerance) {
+             actVertex->status = VERTEXGE;
+             continue;
+          }
+          retFacet = reffacets.size(); /* new facet identification */
+          reffacets.push_back(idFacet);
+       }
+       actVertex->status = VERTEXREM;
+
+   }
+   
+   
    for (std::pair<const Index, DDvertex> &v : vertices) {
       DDvertex &d = v.second;
       d.lambda = rowI*d.vertex;
