@@ -18,6 +18,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCross.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDeriv.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDeriv.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.h
@@ -75,6 +76,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Slice.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Slice_polygon.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SlicedTube.h

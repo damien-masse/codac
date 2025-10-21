@@ -279,7 +279,7 @@ py::class_<Interval> export_Interval(py::module& m)
 
   // The following functions are defined in GAOL:
 
-    m.def("previous_float", &codac2::previous_float,
+    m.def("prev_float", &codac2::prev_float,
       "Returns the previous floating point value",
       "x"_a);
 
