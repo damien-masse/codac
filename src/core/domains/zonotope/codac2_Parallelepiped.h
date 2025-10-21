@@ -54,13 +54,22 @@ namespace codac2
       IntervalVector box() const;
 
       /**
-       * \brief NOT YET GUARANTEED. Checks if a given box is contained within the parallelepiped. The matrix A has to be square and invertible.
+       * \brief Checks if a given point is contained within the parallelepiped. The matrix A has to be square and invertible.
        * 
-       * \param v The box to check
+       * \param v The point to check
+       * 
+       * \return BoolInterval true if the point is inside the parallelepiped, false if is outside, and unknown otherwise
+       */
+      BoolInterval contains(const Vector& v) const;
+
+      /**
+       * \brief Checks if a given box is contained within the parallelepiped. The matrix A has to be square and invertible.
+       * 
+       * \param x The box to check
        * 
        * \return BoolInterval true if the box is inside the parallelepiped, false if is outside, and unknown otherwise
        */
-      BoolInterval contains(const IntervalVector& v) const;
+      BoolInterval is_superset(const IntervalVector& x) const;
 
   };
 }

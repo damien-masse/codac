@@ -353,7 +353,7 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
 
   if constexpr(std::is_same_v<T,VectorType>)
   {
-    bind_parallelepiped_eval(exported, "parallelepiped_eval", parallelepiped_eval, PARALLELEPIPED_ANALYTICFUNCTION_T_PARALLELEPIPED_EVAL_CONST_ARGS_REF_VARIADIC_CONST);
+    bind_parallelepiped_eval(exported, "parallelepiped_eval", parallelepiped_eval, PARALLELEPIPED_PARALLELEPIPED_EVAL_CONST_ARGS_REF_VARIADIC_X__CONST_STD_INDE_ANALYTICFUNCTION_T_OUTPUT_SIZE_____CONST);
   }
 
   exported

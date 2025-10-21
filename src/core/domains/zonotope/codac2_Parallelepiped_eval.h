@@ -28,8 +28,8 @@ namespace codac2
     assert_release(this->input_size() > 0 &&
                 "Parallelepiped evaluation requires at least one input.");
 
-    auto Y = this->eval(((typename Wrapper<Args>::Domain)(x)).mid()...);
-    auto z = Y.mid();
+    IntervalVector Y = this->eval(((typename Wrapper<Args>::Domain)(x)).mid()...);
+    Vector z = Y.mid();
 
     Matrix A = this->diff(((typename Wrapper<Args>::Domain)(x)).mid()...).mid();
 
@@ -37,7 +37,7 @@ namespace codac2
     double rho = error(Y, z, this->diff(x...), A, cart_prod(x...));
 
     // Inflation of the parallelepiped
-    auto A_inf = inflate_flat_parallelepiped(A, ((IntervalVector) cart_prod(x...)).rad(), rho);
+    Matrix A_inf = inflate_flat_parallelepiped(A, (cart_prod(x...).template cast<Interval>()).rad(), rho);
 
     return Parallelepiped(z, A_inf);
   }

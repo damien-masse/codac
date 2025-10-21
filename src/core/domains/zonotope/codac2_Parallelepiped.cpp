@@ -47,14 +47,18 @@ IntervalVector Parallelepiped::box() const
   return box;
 }
 
-BoolInterval Parallelepiped::contains(const IntervalVector& v) const
+BoolInterval Parallelepiped::contains(const Vector& v) const
+{
+  return is_superset(v.template cast<Interval>());
+}
+
+BoolInterval Parallelepiped::is_superset(const IntervalVector& x) const
 {
   assert_release(A.rows() == A.cols() && "Matrix A must be square to check containment.");
-  assert_release(v.size() == z.size() && "Point dimension must match parallelepiped dimension.");
+  assert_release(x.size() == z.size() && "Point dimension must match parallelepiped dimension.");
 
-  // auto B = inverse_enclosure(A)*(v - z);
-  auto B = (A.inverse())*(v - z);
-  auto IV = IntervalVector::constant(A.cols(),{-1,1});
+  IntervalVector B = inverse_enclosure(A)*(x - z);
+  IntervalVector IV = IntervalVector::constant(A.cols(),{-1,1});
 
   if (!(B.intersects(IV)))
     return BoolInterval::FALSE;

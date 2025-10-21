@@ -36,11 +36,11 @@ namespace codac2
 
   double error(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X)
   {
-    auto xc = X.mid();
+    Vector xc = X.mid();
 
-    auto dX = X-xc;
+    IntervalVector dX = X-xc;
 
-    auto E = (Y - z) + (Jf - A)*dX;
+    IntervalVector E = (Y - z) + (Jf - A)*dX;
 
     return E.norm().ub();
   }
@@ -118,7 +118,7 @@ namespace codac2
     double rho = error(Y, z, Jg, A, X);
 
     // Inflation of the parallelepiped
-    auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
+    Matrix A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
 
     return Parallelepiped(z, A_inf);
   }
