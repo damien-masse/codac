@@ -203,5 +203,47 @@ class TestConvexPolygon(unittest.TestCase):
     self.assertTrue(Approx(q.edges()[0][0],1e-5) == IntervalVector([-4,-3]))
     self.assertTrue(Approx(q.edges()[0][1],1e-5) == IntervalVector([-4,3]))
 
+    # Parallel edges
+    p1 = ConvexPolygon([
+      [-1,-10],
+      [3,-10],
+      [3,1],
+      [-1,6],
+    ])
+    p2 = ConvexPolygon([
+      [-1,10],
+      [-1,-1],
+      [3,-6],
+      [3,10],
+    ])
+    q = p1 & p2
+    self.assertTrue(q == ConvexPolygon([
+      [3,-6],
+      [3,1],
+      [-1,6],
+      [-1,-1],
+    ]))
+
+    # Parallel edges towards infinity
+    p1 = ConvexPolygon([
+      [-1,next_float(-oo)],
+      [3,next_float(-oo)],
+      [3,1],
+      [-1,6],
+    ])
+    p2 = ConvexPolygon([
+      [-1,prev_float(oo)],
+      [-1,-1],
+      [3,-6],
+      [3,prev_float(oo)],
+    ])
+    q = p1 & p2
+    self.assertTrue(q == ConvexPolygon([
+      [3,-6],
+      [3,1],
+      [-1,6],
+      [-1,-1],
+    ]))
+
 if __name__ ==  '__main__':
   unittest.main()

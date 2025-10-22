@@ -22,6 +22,10 @@ namespace codac2
     : std::array<IntervalVector,2>(x)
   {
     assert_release(x[0].size() == 2 && x[1].size() == 2);
+    if((*this)[0][1].contains(prev_float(oo)) || (*this)[0][1].contains(next_float(-oo)))
+      (*this)[0][0] = (*this)[1][0];
+    if((*this)[1][1].contains(prev_float(oo)) || (*this)[1][1].contains(next_float(-oo)))
+      (*this)[1][0] = (*this)[0][0];
   }
 
   Segment::Segment(const IntervalVector& x1, const IntervalVector& x2)
@@ -117,10 +121,22 @@ namespace codac2
 
   IntervalVector proj_intersection(const Segment& e1, const Segment& e2)
   {
-    const auto& x1 = e1[0][0], &y1 = e1[0][1];
-    const auto& x2 = e1[1][0], &y2 = e1[1][1];
-    const auto& x3 = e2[0][0], &y3 = e2[0][1];
-    const auto& x4 = e2[1][0], &y4 = e2[1][1];
+    auto cond = [](Interval& x, const Interval& y1, const Interval& y2, const Interval& y3)
+    {
+      // Performing some preconditioning to deal with near-infinite cases
+      if(x.contains(next_float(-oo)))
+        x = (y1 | y2 | y3).lb();
+      if(x.contains(prev_float(oo)))
+        x = (y1 | y2 | y3).ub();
+    };
+
+    Interval x1 = e1[0][0], y1 = e1[0][1];
+    Interval x2 = e1[1][0], y2 = e1[1][1];
+    Interval x3 = e2[0][0], y3 = e2[0][1];
+    Interval x4 = e2[1][0], y4 = e2[1][1];
+
+    cond(x1,x2,x3,x4); cond(x2,x1,x3,x4); cond(x3,x1,x2,x4); cond(x4,x1,x2,x3);
+    cond(y1,y2,y3,y4); cond(y2,y1,y3,y4); cond(y3,y1,y2,y4); cond(y4,y1,y2,y3);
 
     Interval c = ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
 
