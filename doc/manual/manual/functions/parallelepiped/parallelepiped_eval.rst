@@ -3,7 +3,7 @@
 Parallelepiped inclusion function
 =================================
 
-  Main authors: `Maël Godard <https://godardma.github.io>`_
+  Main author: `Maël Godard <https://godardma.github.io>`_
 
 
 Use case
@@ -287,4 +287,4 @@ The resulting plot is shown below. In green is the result of the evaluation usin
 Related work
 ------------
 
-This method comes from `this article <https://www.sciencedirect.com/science/article/pii/S0888613X25002154?via%3Dihub>`_
+This method comes from `this article <https://www.sciencedirect.com/science/article/pii/S0888613X25002154?via%3Dihub>`_.
