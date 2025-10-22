@@ -27,8 +27,9 @@ void export_CtcDeriv(py::module& m)
   py::class_<CtcDeriv> exported(m, "CtcDeriv", CTCDERIV_MAIN);
   exported
 
-    .def(py::init<>(),
-      CTCDERIV_CTCDERIV)
+    .def(py::init<const TimePropag&>(),
+      CTCDERIV_CTCDERIV_CONST_TIMEPROPAG_REF,
+      "time_propag"_a=TimePropag::FWD_BWD)
 
     .def("contract", (void (CtcDeriv::*)(Slice<Interval>&,const Slice<Interval>&) const) &CtcDeriv::contract,
       VOID_CTCDERIV_CONTRACT_SLICE_INTERVAL_REF_CONST_SLICE_INTERVAL_REF_CONST,

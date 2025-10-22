@@ -9,35 +9,26 @@
 
 #pragma once
 
+#include <iostream>
+#include <iomanip>
+#include "codac2_cart_prod.h"
+#include "codac2_CtcDeriv.h"
+
 namespace codac2
 {
   template<typename T>
   ConvexPolygon Slice<T>::polygon_slice(const Slice<T>& v) const
     requires std::is_same_v<T,Interval>
   {
-    const Interval& t = t0_tf();
+    const Interval& t = this->t0_tf();
+    Interval input = this->input_gate(), output = this->output_gate();
+    Interval proj_output =  input + t.diam() * v;
+    Interval proj_input  = output - t.diam() * v;
 
-    ConvexPolygon p(IntervalVector({t,codomain()
-       & Interval(next_float(-oo),prev_float(oo)) // todo: remove this
-     }));
-
-    if(v.codomain().is_unbounded())
-      return p;
-
-    ConvexPolygon p_fwd(std::vector<Vector>({
-      {t.ub(), (input_gate().ub()+Interval(t.diam())*v.codomain().ub()).ub()},
-      {t.ub(), (input_gate().lb()+Interval(t.diam())*v.codomain().lb()).lb()},
-      {t.lb(), input_gate().lb()},
-      {t.lb(), input_gate().ub()}
-    }), false); // false: avoid costly computation of convex hull (vertices are already ordered)
-
-    ConvexPolygon p_bwd(std::vector<Vector>({
-      {t.lb(), (output_gate().ub()-Interval(t.diam())*v.codomain().lb()).ub()},
-      {t.lb(), (output_gate().lb()-Interval(t.diam())*v.codomain().ub()).lb()},
-      {t.ub(), output_gate().lb()},
-      {t.ub(), output_gate().ub()}
-    }), false); // false: avoid costly computation of convex hull (vertices are already ordered)
-
-    return p & p_fwd & p_bwd;
+    return CtcDeriv::polygon_slice(
+      t, this->codomain(),
+      input, proj_input,
+      output, proj_output,
+      v.codomain());
   }
 }
