@@ -14,7 +14,7 @@ import math
 
 def return_a_tube():
   return SlicedTube(
-    create_tdomain(Interval(0,2),0.5),
+    create_tdomain(Interval(0,2),0.5,False),
     IntervalVector.constant(3,Interval(-1.5,1)))
 
 class TestSlicedTube(unittest.TestCase):
@@ -209,7 +209,7 @@ class TestSlicedTube(unittest.TestCase):
 
   def test_sliceT(self):
 
-    tdomain = create_tdomain(Interval(0,1), 0.1)
+    tdomain = create_tdomain(Interval(0,1), 0.1, False)
     x = SlicedTube(tdomain, IntervalVector(2))
     self.assertTrue(x.nb_slices() == 10)
     # C++ like: self.assertTrue(tdomain.tslice(-oo) == tdomain.end())
@@ -302,7 +302,7 @@ class TestSlicedTube(unittest.TestCase):
 
   def test_specific_detected_bug_from_sampling(self):
 
-    tdomain = create_tdomain([0.,46.], 0.5)
+    tdomain = create_tdomain([0.,46.], 0.5, False)
     x = SlicedTube(tdomain, Interval())
     tdomain.sample(46, False)
     x.set([-1,3], [30,31])
@@ -319,7 +319,7 @@ class TestSlicedTube(unittest.TestCase):
     f = AnalyticFunction([t], cos(t))
     analytic_traj = AnalyticTraj(f, [-PI,PI])
     sampled_traj = analytic_traj.sampled(1e-2)
-    tdomain = create_tdomain([-PI,PI],1e-2)
+    tdomain = create_tdomain([-PI,PI],1e-2,False)
     tube = SlicedTube(tdomain, sampled_traj)
     g = tube.as_function();
 
@@ -340,7 +340,7 @@ class TestSlicedTube(unittest.TestCase):
 
     analytic_traj = AnalyticTraj(f, [0,5])
     sampled_traj = analytic_traj.sampled(1e-2)
-    tdomain = create_tdomain([0,5],1e-3)
+    tdomain = create_tdomain([0,5],1e-3,False)
     tube = SlicedTube(tdomain, sampled_traj)
     g = tube.as_function()
 

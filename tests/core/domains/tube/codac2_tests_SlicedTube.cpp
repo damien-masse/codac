@@ -22,7 +22,7 @@ using namespace codac2;
 SlicedTube<IntervalVector> return_a_tube()
 {
   return SlicedTube(
-    create_tdomain(Interval(0,2),0.5),
+    create_tdomain(Interval(0,2),0.5,false),
     IntervalVector::constant(3,Interval(-1.5,1)));
 }
 
@@ -242,7 +242,7 @@ TEST_CASE("SlicedTube")
 
   SECTION("Test Slice<T>")
   {
-    auto tdomain = create_tdomain(Interval(0,1), 0.1);
+    auto tdomain = create_tdomain(Interval(0,1), 0.1, false);
     SlicedTube x(tdomain, IntervalVector(2));
     CHECK(x.nb_slices() == 10);
     CHECK(tdomain->tslice(-oo) == tdomain->end());
@@ -289,7 +289,7 @@ TEST_CASE("SlicedTube")
     SlicedTube<Interval> *x;
 
     {
-      auto tdomain = create_tdomain(Interval(0,1), 0.1);
+      auto tdomain = create_tdomain(Interval(0,1), 0.1, false);
       x = new SlicedTube<Interval>(tdomain, Interval());
       CHECK(x->tdomain() == tdomain);
     }
@@ -308,7 +308,7 @@ TEST_CASE("SlicedTube")
 
   SECTION("Reverse iterator")
   {
-    auto tdomain = create_tdomain(Interval(0,1), 0.5);
+    auto tdomain = create_tdomain(Interval(0,1), 0.5, false);
     SlicedTube x(tdomain, Interval());
 
     auto it1 = x.begin();
@@ -397,7 +397,7 @@ TEST_CASE("SlicedTube")
 
   SECTION("Testing specific detected bug from sampling")
   {
-    auto tdomain = create_tdomain({0.,46.}, 0.5);
+    auto tdomain = create_tdomain({0.,46.}, 0.5, false);
     SlicedTube x(tdomain, Interval());
     list<TSlice>::iterator it = tdomain->sample(46, false);
     CHECK(*it == Interval(45.5,46));
@@ -416,7 +416,7 @@ TEST_CASE("SlicedTube")
     AnalyticFunction f { {t}, cos(t) };
     AnalyticTraj analytic_traj(f, {-PI,PI});
     auto sampled_traj = analytic_traj.sampled(1e-2);
-    auto tdomain = create_tdomain({-PI,PI},1e-2);
+    auto tdomain = create_tdomain({-PI,PI},1e-2,false);
     SlicedTube<Interval> tube(tdomain, sampled_traj);
     auto g = tube.as_function();
 
@@ -436,7 +436,7 @@ TEST_CASE("SlicedTube")
 
     auto analytic_traj = AnalyticTraj(f, {0,5});
     auto sampled_traj = analytic_traj.sampled(1e-2);
-    auto tdomain = create_tdomain({0,5},1e-3);
+    auto tdomain = create_tdomain({0,5},1e-3,false);
     SlicedTube<IntervalVector> tube(tdomain, sampled_traj);
     auto g = tube.as_function();
 

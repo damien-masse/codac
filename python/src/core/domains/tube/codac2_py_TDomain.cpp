@@ -78,7 +78,7 @@ void export_TDomain(py::module& m)
 
     .def("create_tdomain", (std::shared_ptr<TDomain> (*)(const Interval&,double,bool)) &create_tdomain,
       SHARED_PTR_TDOMAIN_CREATE_TDOMAIN_CONST_INTERVAL_REF_DOUBLE_BOOL,
-      "t0_tf"_a, "dt"_a, "with_gates"_a=false)
+      "t0_tf"_a, "dt"_a, "with_gates"_a=true)
 
   ;
 }

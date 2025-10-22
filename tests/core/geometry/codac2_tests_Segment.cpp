@@ -128,7 +128,7 @@ TEST_CASE("Segment")
     CHECK(proj_intersection(Segment({2,0},{6,4}), Segment({6,5},{5,6})) == IntervalVector({6.5,4.5}));
   }
 
-  SECTION("intersection - other case")
+  SECTION("intersection - near infinite cases")
   {
     Segment e1({-1,6},{-1,next_float(-oo)});
     Segment e2({-1,-1},{3,-6});
