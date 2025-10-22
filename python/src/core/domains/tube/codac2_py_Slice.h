@@ -82,6 +82,10 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
     .def(py::self != py::self,
       "x"_a)
 
+    .def("invert", (Interval (Slice<T>::*)(const T&,const Interval&) const) &Slice<T>::invert,
+      INTERVAL_SLICE_T_INVERT_CONST_T_REF_CONST_INTERVAL_REF_CONST,
+      "y"_a, "t"_a=Interval())
+
     .def("__repr__", [](const Slice<T>& x) {
           std::ostringstream stream;
           stream << x;
@@ -89,6 +93,17 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
         },
       OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_SLICE_REF)
   ;
+
+  if constexpr(std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
+  {
+    exported_slice_class
+
+    .def("invert", (Interval (Slice<T>::*)(const T&,const Slice<T>&,const Interval&) const) &Slice<T>::invert,
+      INTERVAL_SLICE_T_INVERT_CONST_T_REF_CONST_SLICE_T_REF_CONST_INTERVAL_REF_CONST,
+      "y"_a, "v"_a, "t"_a=Interval())
+
+    ;
+  }
 
   if constexpr(std::is_same_v<T,Interval>)
   {
@@ -98,18 +113,12 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
         CONVEXPOLYGON_SLICE_T_POLYGON_SLICE_CONST_SLICE_T_REF_CONST,
         "v"_a)
 
-      .def("__call__", [](const Slice<T>& x, double t, const Slice<T>& v)
-          {
-            return x(t,v);
-          },
-        CONST_INTERVAL_SLICE_T_OPERATORCALL_DOUBLE_CONST_SLICE_T_REF_CONST,
+      .def("__call__", (T (Slice<T>::*)(double,const Slice<T>&) const) &Slice<T>::operator(),
+        T_SLICE_T_OPERATORCALL_DOUBLE_CONST_SLICE_T_REF_CONST,
         "t"_a, "v"_a)
 
-      .def("__call__", [](const Slice<T>& x, const Interval& t, const Slice<T>& v)
-          {
-            return x(t,v);
-          },
-        CONST_INTERVAL_SLICE_T_OPERATORCALL_CONST_INTERVAL_REF_CONST_SLICE_T_REF_CONST,
+      .def("__call__", (T (Slice<T>::*)(const Interval&,const Slice<T>&) const) &Slice<T>::operator(),
+        T_SLICE_T_OPERATORCALL_CONST_INTERVAL_REF_CONST_SLICE_T_REF_CONST,
         "t"_a, "v"_a)
 
     ;
