@@ -277,4 +277,49 @@ TEST_CASE("ConvexPolygon - intersection")
     CHECK(Approx(q.edges()[0][0],1e-5) == IntervalVector({-4,-3}));
     CHECK(Approx(q.edges()[0][1],1e-5) == IntervalVector({-4,3}));
   }
+
+  { // Parallel edges
+    ConvexPolygon p1({
+      {-1,-10},
+      {3,-10},
+      {3,1},
+      {-1,6},
+    });
+    ConvexPolygon p2({
+      {-1,10},
+      {-1,-1},
+      {3,-6},
+      {3,10},
+    });
+    auto q = p1 & p2;
+    CHECK(q == ConvexPolygon({
+      {3,-6},
+      {3,1},
+      {-1,6},
+      {-1,-1},
+    }));
+  }
+
+  { // Parallel edges towards infinity
+    ConvexPolygon p1({
+      {-1,next_float(-oo)},
+      {3,next_float(-oo)},
+      {3,1},
+      {-1,6},
+    });
+    ConvexPolygon p2({
+      {-1,prev_float(oo)},
+      {-1,-1},
+      {3,-6},
+      {3,prev_float(oo)},
+    });
+
+    auto q = p1 & p2;
+    CHECK(q == ConvexPolygon({
+      {3,-6},
+      {3,1},
+      {-1,6},
+      {-1,-1},
+    }));
+  }
 }

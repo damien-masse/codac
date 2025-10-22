@@ -119,5 +119,10 @@ class TestSegment(unittest.TestCase):
     self.assertTrue((Segment([2,0],[6,4]) & Segment([6,5],[5,6])) == IntervalVector.empty(2))
     self.assertTrue(proj_intersection(Segment([2,0],[6,4]), Segment([6,5],[5,6])) == IntervalVector([6.5,4.5]))
 
+    # Near infinite cases
+    e1 = Segment([-1,6],[-1,next_float(-oo)])
+    e2 = Segment([-1,-1],[3,-6])
+    self.assertTrue((e1 & e2) == IntervalVector([-1,-1]))
+
 if __name__ ==  '__main__':
   unittest.main()

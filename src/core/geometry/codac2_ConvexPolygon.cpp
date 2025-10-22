@@ -51,6 +51,12 @@ namespace codac2
   {
     return ConvexPolygon();
   }
+  
+  ConvexPolygon& ConvexPolygon::operator&=(const ConvexPolygon& p)
+  {
+    *this = *this & p;
+    return *this;
+  }
 
   ConvexPolygon operator&(const ConvexPolygon& p1, const ConvexPolygon& p2)
   {

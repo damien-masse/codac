@@ -73,6 +73,7 @@ void export_Subpaving(py::module& m);
 void export_Zonotope(py::module& m);
 void export_Parallelepiped(py::module& m);
 void export_TDomain(py::module& m);
+void export_TimePropag(py::module& m);
 void export_TSlice(py::module& m);
 void export_TubeBase(py::module& m);
 void export_tube_cart_prod(py::module& m);
@@ -157,6 +158,8 @@ PYBIND11_MODULE(_core, m)
   m.doc() = string(FOR_MATLAB ? "Matlab" : "Python") + " binding of Codac (core)";
   m.attr("oo") = oo;
   m.attr("PI") = PI;
+  
+  export_TimePropag(m);
 
   // 3rd
 

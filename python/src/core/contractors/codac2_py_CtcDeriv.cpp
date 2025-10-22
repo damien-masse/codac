@@ -27,14 +27,15 @@ void export_CtcDeriv(py::module& m)
   py::class_<CtcDeriv> exported(m, "CtcDeriv", CTCDERIV_MAIN);
   exported
 
-    .def(py::init<>(),
-      CTCDERIV_CTCDERIV)
+    .def(py::init<const TimePropag&>(),
+      CTCDERIV_CTCDERIV_CONST_TIMEPROPAG_REF,
+      "time_propag"_a=TimePropag::FWD_BWD)
 
     .def("contract", (void (CtcDeriv::*)(Slice<Interval>&,const Slice<Interval>&) const) &CtcDeriv::contract,
-      VOID_CTCDERIV_CONTRACT_SLICE_INTERVAL_REF_CONST_SLICE_INTERVAL_REF_CONST,
+      VOID_CTCDERIV_CONTRACT_SLICE_T_REF_CONST_SLICE_T_REF_CONST,
       "x"_a, "v"_a)
     .def("contract", (void (CtcDeriv::*)(Slice<IntervalVector>&,const Slice<IntervalVector>&) const) &CtcDeriv::contract,
-      VOID_CTCDERIV_CONTRACT_SLICE_INTERVALVECTOR_REF_CONST_SLICE_INTERVALVECTOR_REF_CONST,
+      VOID_CTCDERIV_CONTRACT_SLICE_T_REF_CONST_SLICE_T_REF_CONST,
       "x"_a, "v"_a)
 
     .def("contract", [](const CtcDeriv& ctc, py::object& x, const py::object& v) -> py::object& {
