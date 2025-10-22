@@ -87,7 +87,7 @@ int main()
     {
         Interval X0_if(x0_if, x0_if+dx_if);
         auto p = f_if.parallelepiped_eval(X0_if);
-        DefaultFigure::draw_parallelepiped(p, Color::green());
+        DefaultFigure::draw_parallelepiped(p, Color::dark_green());
         
         x0_if+=dx_if;
     }
