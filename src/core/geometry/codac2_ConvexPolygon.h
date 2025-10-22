@@ -84,6 +84,14 @@ namespace codac2
        */
       static ConvexPolygon empty();
 
+      /**
+       * \brief Self intersection of this and p
+       * 
+       * \param p the other convex polygon
+       * \return a reference to this
+       */
+      ConvexPolygon& operator&=(const ConvexPolygon& p);
+
     protected:
 
       /**

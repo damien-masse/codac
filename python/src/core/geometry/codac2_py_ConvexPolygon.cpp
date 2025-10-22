@@ -39,6 +39,15 @@ void export_ConvexPolygon(py::module& m)
       CONVEXPOLYGON_CONVEXPOLYGON_CONST_INTERVALVECTOR_REF,
       "x"_a)
 
+    .def(py::self &= py::self,
+      CONVEXPOLYGON_REF_CONVEXPOLYGON_OPERATORANDEQ_CONST_CONVEXPOLYGON_REF,
+      "p"_a)
+
+    // For MATLAB compatibility
+    .def("self_inter", &ConvexPolygon::operator&=,
+      CONVEXPOLYGON_REF_CONVEXPOLYGON_OPERATORANDEQ_CONST_CONVEXPOLYGON_REF,
+      "p"_a)
+
     .def("__and__",
         [](const ConvexPolygon& p1, const ConvexPolygon& p2) -> ConvexPolygon
         {
