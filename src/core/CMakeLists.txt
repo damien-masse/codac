@@ -84,6 +84,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SlicedTubeBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TDomain.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TDomain.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TimePropag.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TSlice.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TSlice.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TubeBase.h
