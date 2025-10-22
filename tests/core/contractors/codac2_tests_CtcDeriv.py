@@ -76,10 +76,10 @@ class TestCtcDeriv(unittest.TestCase):
     self.assertTrue(sx.input_gate() == Interval(1))
     self.assertTrue(sx.output_gate() == Interval(-3))
     self.assertTrue(sx.codomain() == Interval(-3,1))
-    #self.assertTrue(sx.interpol(-1, sv) == Interval(1))
-    #self.assertTrue(sx.interpol(1, sv) == Interval(-1))
-    #self.assertTrue(sx.interpol(3, sv) == Interval(-3))
-    #self.assertTrue(sx.interpol(0, sv) == Interval(0))
+    self.assertTrue(sx(-1, sv) == Interval(1))
+    self.assertTrue(sx(1, sv) == Interval(-1))
+    self.assertTrue(sx(3, sv) == Interval(-3))
+    self.assertTrue(sx(0, sv) == Interval(0))
 
     # Test slice, empty case
 
@@ -407,8 +407,8 @@ class TestCtcDeriv(unittest.TestCase):
 
     self.assertTrue(sx.input_gate() == Interval(-1,3))
     self.assertTrue(sx.output_gate() == Interval(-5,-1))
-    #self.assertTrue(sx.interpol(Interval(2.), sv) == Interval(-4,0))
-    #self.assertTrue(sx.interpol(Interval(-1,3), sv) == Interval(-5,3))
+    self.assertTrue(sx(Interval(2.), sv) == Interval(-4,0))
+    self.assertTrue(sx(Interval(-1,3), sv) == Interval(-5,3))
 
     # From: Test slice, complete contraction (degenerate tube)
 
@@ -425,9 +425,9 @@ class TestCtcDeriv(unittest.TestCase):
     ctc_deriv = CtcDeriv()
     ctc_deriv.contract(x,v)
 
-    #self.assertTrue(sx.interpol(Interval(0.5,2), sv) == Interval(-2,-0.5))
-    #self.assertTrue(sx.interpol(Interval(1), sv) == Interval(-1))
-    #self.assertTrue(sx.interpol(Interval(-1,3), sv) == Interval(-3,1))
+    self.assertTrue(sx(Interval(0.5,2), sv) == Interval(-2,-0.5))
+    self.assertTrue(sx(Interval(1), sv) == Interval(-1))
+    self.assertTrue(sx(Interval(-1,3), sv) == Interval(-3,1))
 
 
 if __name__ ==  '__main__':

@@ -76,7 +76,6 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Slice.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Slice_polygon.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SlicedTube.h

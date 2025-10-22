@@ -82,10 +82,10 @@ TEST_CASE("CtcDeriv")
     CHECK(sx->input_gate() == Interval(1));
     CHECK(sx->output_gate() == Interval(-3));
     CHECK(sx->codomain() == Interval(-3,1));
-    //CHECK(sx->interpol(-1, *sv) == Interval(1));
-    //CHECK(sx->interpol(1, *sv) == Interval(-1));
-    //CHECK(sx->interpol(3, *sv) == Interval(-3));
-    //CHECK(sx->interpol(0, *sv) == Interval(0));
+    CHECK(sx->operator()(-1, *sv) == Interval(1));
+    CHECK(sx->operator()(1, *sv) == Interval(-1));
+    CHECK(sx->operator()(3, *sv) == Interval(-3));
+    CHECK(sx->operator()(0, *sv) == Interval(0));
   }
 
   SECTION("Test slice, empty case")
@@ -441,8 +441,8 @@ TEST_CASE("CtcDeriv")
 
     CHECK(sx->input_gate() == Interval(-1,3));
     CHECK(sx->output_gate() == Interval(-5,-1));
-    //CHECK(sx->interpol(Interval(2.), *sv) == Interval(-4,0));
-    //CHECK(sx->interpol(Interval(-1,3), *sv) == Interval(-5,3));
+    CHECK(sx->operator()(Interval(2.), *sv) == Interval(-4,0));
+    CHECK(sx->operator()(Interval(-1,3), *sv) == Interval(-5,3));
   }
 
   SECTION("From: Test slice, complete contraction (degenerate tube)")
@@ -460,8 +460,8 @@ TEST_CASE("CtcDeriv")
     CtcDeriv ctc_deriv;
     ctc_deriv.contract(x,v);
 
-    //CHECK(sx->interpol(Interval(0.5,2), *sv) == Interval(-2,-0.5));
-    //CHECK(sx->interpol(Interval(1), *sv) == Interval(-1));
-    //CHECK(sx->interpol(Interval(-1,3), *sv) == Interval(-3,1));
+    CHECK(sx->operator()(Interval(0.5,2), *sv) == Interval(-2,-0.5));
+    CHECK(sx->operator()(Interval(1), *sv) == Interval(-1));
+    CHECK(sx->operator()(Interval(-1,3), *sv) == Interval(-3,1));
   }
 }

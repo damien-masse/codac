@@ -97,6 +97,21 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
       .def("polygon_slice", &Slice<Interval>::polygon_slice,
         CONVEXPOLYGON_SLICE_T_POLYGON_SLICE_CONST_SLICE_T_REF_CONST,
         "v"_a)
+
+      .def("__call__", [](const Slice<T>& x, double t, const Slice<T>& v)
+          {
+            return x(t,v);
+          },
+        CONST_INTERVAL_SLICE_T_OPERATORCALL_DOUBLE_CONST_SLICE_T_REF_CONST,
+        "t"_a, "v"_a)
+
+      .def("__call__", [](const Slice<T>& x, const Interval& t, const Slice<T>& v)
+          {
+            return x(t,v);
+          },
+        CONST_INTERVAL_SLICE_T_OPERATORCALL_CONST_INTERVAL_REF_CONST_SLICE_T_REF_CONST,
+        "t"_a, "v"_a)
+
     ;
   }
 

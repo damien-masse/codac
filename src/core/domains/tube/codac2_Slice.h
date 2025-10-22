@@ -11,6 +11,8 @@
 
 #include "codac2_SliceBase.h"
 #include "codac2_ConvexPolygon.h"
+#include "codac2_CtcDeriv.h"
+#include "codac2_cart_prod.h"
 
 namespace codac2
 {
@@ -181,8 +183,47 @@ namespace codac2
       }
 
       inline ConvexPolygon polygon_slice(const Slice<T>& v) const
-        requires std::is_same_v<T,Interval>;
-      // -> is defined in codac2_Slice_polygon.h file
+        requires std::is_same_v<T,Interval>
+      {
+        const Interval& t = this->t0_tf();
+        Interval input = this->input_gate(), output = this->output_gate();
+        Interval proj_output =  input + t.diam() * v;
+        Interval proj_input  = output - t.diam() * v;
+
+        return CtcDeriv::polygon_slice(
+          t, this->codomain(),
+          input, proj_input,
+          output, proj_output,
+          v.codomain());
+      }
+
+      /**
+       * \brief Returns the optimal evaluation of this slice at \f$t\f$,
+       *        based on the derivative information \f$[v](\cdot)\f$
+       *
+       * \param t temporal input (``double``, must belong to the ``Slice``'s tdomain)
+       * \param v derivative slice such that \f$\dot{x}(\cdot)\in[v](\cdot)\f$
+       * \return ``Interval`` value of \f$[x](t)\f$
+       */
+      const Interval operator()(double t, const Slice<T>& v) const
+        requires std::is_same_v<T,Interval>
+      {
+        return operator()(Interval(t),v);
+      }
+
+      /**
+       * \brief Returns the optimal evaluation of this slice over \f$[t]\f$,
+       *        based on the derivative information \f$[v](\cdot)\f$
+       *
+       * \param t temporal input (``Interval``, must be a subset of ``Slice``'s tdomain)
+       * \param v derivative slice such that \f$\dot{x}(\cdot)\in[v](\cdot)\f$
+       * \return ``Interval`` value of \f$[x]([t])\f$
+       */
+      const Interval operator()(const Interval& t, const Slice<T>& v) const
+        requires std::is_same_v<T,Interval>
+      {
+        return (polygon_slice(v) & ConvexPolygon(cart_prod(t,codomain()))).box()[1];
+      }
 
       friend inline std::ostream& operator<<(std::ostream& os, const Slice& x)
       {
@@ -226,5 +267,3 @@ namespace codac2
       }
   };
 }
-
-#include "codac2_Slice_polygon.h"
