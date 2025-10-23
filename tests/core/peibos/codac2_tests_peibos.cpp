@@ -39,11 +39,11 @@ TEST_CASE("Peibos")
 
   for (const auto& p : v_par_2d)
   {
-    if (p.contains(b0))
+    if ((p.contains(b0))==BoolInterval::TRUE)
       count_b0++;
-    if (p.contains(b1))
+    if ((p.contains(b1))==BoolInterval::TRUE)
       count_b1++;
-    if (p.contains(b2))
+    if ((p.contains(b2))==BoolInterval::TRUE)
       count_b2++;
   }
 

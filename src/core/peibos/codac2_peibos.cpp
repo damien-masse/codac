@@ -8,86 +8,14 @@
  */
 
 #include "codac2_peibos.h"
-#include "codac2_Parallelepiped_eval.h"
+#include "codac2_peibos_tools.h"
+#include "codac2_OctaSym_operator.h"
 
 using namespace std;
 using namespace codac2;
 
 namespace codac2
 {
-  double split (const IntervalVector& X, double eps, vector<IntervalVector>& boxes)
-  {
-    if (X.max_diam()<=eps)
-    {
-      boxes.push_back(X);
-      return X.max_diam();
-    }
-    else
-    {
-      auto p = X.bisect_largest(0.5);
-      double diam1 = split(p.first,eps,boxes);
-      double diam2 = split (p.second,eps,boxes);
-      return std::max(diam1,diam2);
-    }
-  }
-
-  double error(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X)
-  {
-    auto xc = X.mid();
-
-    auto dX = X-xc;
-
-    auto E = (Y - z) + (Jf - A)*dX;
-
-    return E.norm().ub();
-  }
-
-  Matrix inflate_flat_parallelepiped(const Matrix& A, const Vector& e_vec, double rho)
-  {
-    Index m = A.cols();
-    Index n = A.rows();
-
-    IntervalMatrix A_int (A);
-
-    IntvFullPivLU LUdec((IntervalMatrix) A_int.transpose());
-    IntervalMatrix N = LUdec.kernel();
-
-    IntervalMatrix A_tild (n,n);
-    A_tild << A, N;
-
-    IntervalMatrix Q = inverse_enclosure(A_tild.transpose() * A_tild);
-
-    IntervalMatrix mult = IntervalMatrix::Zero(n,n);
-    for (int i = 0; i < n; i++)
-      mult(i,i) = rho*sqrt(Q(i,i));
-
-    for (int i = 0; i < m; i++)
-      mult(i,i) += e_vec(i);
-
-    // From here we have an IntervalMatrix A_inf, meaning that each generator is an interval vector
-    IntervalMatrix A_inf = A_tild * mult;
-
-    // The initial parallelepiped is <y> = Y*[-1,1]^n
-    Matrix Y = A_inf.smig();
-
-    // The following is similar to the previous operations. The difference is that here the Matrix Y is square and not interval
-
-    // rho2 is the sum of the radiuses of the circle enclosing each interval generator
-    Interval rho2 (0.);
-
-    for (int i = 0; i < n; i++)
-      rho2 += A_inf.col(i).rad().norm();
-
-    IntervalMatrix Q2 = inverse_enclosure(Y.transpose() * Y);
-
-    IntervalMatrix Y2 = IntervalMatrix::Zero(n,n);
-
-    for (int i = 0; i < n; i++)
-      Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
-    
-    return Y2.smag();
-  }
-
   Parallelepiped parallelepiped_inclusion(const IntervalVector& Y, const IntervalMatrix& Jf, const Matrix& Jf_tild, const AnalyticFunction<VectorType>& psi_0, const OctaSym& sigma, const IntervalVector& X)
   {
     // Computation of the Jacobian of g = f o sigma(psi_0)
@@ -101,7 +29,7 @@ namespace codac2
     double rho = error(Y, z, Jg, A, X);
 
     // Inflation of the parallelepiped
-    auto A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
+    Matrix A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
 
     return Parallelepiped(z, A_inf);
   }

@@ -206,6 +206,7 @@ User manual
    * Set-membership functions
       * The class SetMembershipFunction
       * Extension to custom expressions
+   * :ref:`sec-functions-parallelepiped-eval`
 
 * Tubes
    * What is a tube?
@@ -308,6 +309,9 @@ User manual
    * :ref:`sec-zonotope`
    * Polyhedron
 
+* :ref:`sec-actions`
+   * :ref:`sec-actions-octasym`
+
 * :ref:`sec-ellipsoids`
    * :ref:`sec-ellipsoids-intro`
    * :ref:`sec-ellipsoids-class`
@@ -366,6 +370,7 @@ Development
 -----------
 
 * :ref:`sec-dev-info`
+* :ref:`sec-dev-common-issues`
 * :ref:`sec-dev-changelog`
 * C++ API
 
@@ -395,6 +400,7 @@ Development
    manual/functions/index.rst
    manual/contractors/index.rst
    manual/geometry/index.rst
+   manual/actions/index.rst
    manual/ellipsoids/index.rst
    manual/visualization/index.rst
    manual/tools/index.rst
@@ -447,6 +453,7 @@ Development
    :maxdepth: 3
 
    development/info_dev.rst
+   development/common_issues.rst
    development/changelog.rst
 .. 
 ..    C++ API
