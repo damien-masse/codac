@@ -9,6 +9,7 @@
 
 #include "codac2_Figure2D_VIBes.h"
 #include "codac2_math.h"
+#include "codac2_trunc.h"
 
 using namespace std;
 using namespace codac2;
@@ -126,7 +127,7 @@ void Figure2D_VIBes::draw_polyline(const std::vector<Vector>& x, float tip_lengt
   for(size_t k = 0 ; k < x.size() ; k++)
   {
     assert(_fig.size() <= x[k].size());
-    vx[k] = x[k][i()]; vy[k] = x[k][j()];
+    vx[k] = graphic_trunc(x[k][i()]); vy[k] = graphic_trunc(x[k][j()]);
   }
 
   if(tip_length != 0.)
