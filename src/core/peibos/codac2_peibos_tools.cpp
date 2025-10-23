@@ -11,9 +11,6 @@
 #include "codac2_inversion.h"
 #include "codac2_IntvFullPivLU.h"
 
-// TO DELETE
-#include <iostream>
-
 using namespace std;
 using namespace codac2;
 
