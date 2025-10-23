@@ -36,7 +36,7 @@ namespace codac2
 
   vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, bool verbose)
   {
-    return PEIBOS(f, psi_0, Sigma, epsilon, Vector::Zero(psi_0.output_size()), verbose);
+    return PEIBOS(f, psi_0, Sigma, epsilon, Vector::zero(psi_0.output_size()), verbose);
   }
 
   vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose)

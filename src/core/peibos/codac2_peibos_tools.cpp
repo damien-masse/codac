@@ -11,6 +11,9 @@
 #include "codac2_inversion.h"
 #include "codac2_IntvFullPivLU.h"
 
+// TO DELETE
+#include <iostream>
+
 using namespace std;
 using namespace codac2;
 
@@ -53,8 +56,6 @@ namespace codac2
     IntvFullPivLU LUdec((IntervalMatrix) A_int.transpose());
     IntervalMatrix N = LUdec.kernel();
 
-    
-
     vector<int> col_indices;
 
     for (int i = 0; i < m; i++)
@@ -64,7 +65,7 @@ namespace codac2
     // A_reduced is composed of the non empty vectors of A_int
     IntervalMatrix A_reduced (n, col_indices.size());
     for (int i = 0; i < (int) col_indices.size(); i++)
-      A_reduced.col(i) = A_int.col(col_indices[i]);    
+      A_reduced.col(i) = A_int.col(col_indices[i]);
 
     // Construct the new matrix A_tild = [A_reduced | N]
     IntervalMatrix A_tild (n,n);
@@ -72,7 +73,7 @@ namespace codac2
 
     IntervalMatrix Q = inverse_enclosure(A_tild.transpose() * A_tild);
 
-    IntervalMatrix mult = IntervalMatrix::Zero(n,n);
+    IntervalMatrix mult = IntervalMatrix::zero(n,n);
     for (int i = 0; i < n; i++)
       mult(i,i) = rho*sqrt(Q(i,i));
 
@@ -95,7 +96,7 @@ namespace codac2
 
     IntervalMatrix Q2 = inverse_enclosure(Y.transpose() * Y);
 
-    IntervalMatrix Y2 = IntervalMatrix::Zero(n,n);
+    IntervalMatrix Y2 = IntervalMatrix::zero(n,n);
 
     for (int i = 0; i < n; i++)
       Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
