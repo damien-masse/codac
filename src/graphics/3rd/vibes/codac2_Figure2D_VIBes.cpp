@@ -138,18 +138,22 @@ void Figure2D_VIBes::draw_polyline(const std::vector<Vector>& x, float tip_lengt
 
 void Figure2D_VIBes::draw_polygon(const std::vector<Vector>& x, const StyleProperties& style)
 {
-  assert(x.size() > 1);
-
   update_drawing_properties(style);
-  
-  vector<double> vx(x.size()), vy(x.size());
-  for(size_t k = 0 ; k < x.size() ; k++)
-  {
-    assert(_fig.size() <= x[k].size());
-    vx[k] = x[k][i()]; vy[k] = x[k][j()];
-  }
 
-  vibes::drawPolygon(vx,vy, to_vibes_style(style), _params);
+  if(x.size() == 1)
+    draw_point(x[0], style);
+
+  else if(x.size() > 1)
+  {
+    vector<double> vx(x.size()), vy(x.size());
+    for(size_t k = 0 ; k < x.size() ; k++)
+    {
+      assert(_fig.size() <= x[k].size());
+      vx[k] = x[k][i()]; vy[k] = x[k][j()];
+    }
+
+    vibes::drawPolygon(vx,vy, to_vibes_style(style), _params);
+  }
 }
 
 void Figure2D_VIBes::draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& style)
