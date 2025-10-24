@@ -11,7 +11,6 @@
 #include "codac2_inversion.h"
 #include "codac2_IntvFullPivLU.h"
 
-// TO DELETE 
 #include <iostream>
 
 using namespace std;
@@ -46,7 +45,7 @@ namespace codac2
     return E.norm().ub();
   }
 
-  double conditionNumber(const Matrix& A) 
+  double condition_number(const Matrix& A) 
   {
     Eigen::JacobiSVD<Matrix> svd(A);
     double sigma_max = svd.singularValues()(0);
@@ -105,10 +104,9 @@ namespace codac2
     IntervalMatrix M = Y.transpose() * Y;
 
     double eps = 1e-10 * M.norm().ub();
-    double condY = conditionNumber(Y);
-    Interval factor = sqrt(1.0 + eps * condY);
+    double cond_Y = condition_number(Y);
 
-    if (condY>1e10)
+    if (cond_Y>1e10)
     {
       cerr << "Warning: ill-conditioned matrix in the inflate process. The result may not be guaranteed " << endl;
       M += IntervalMatrix::Identity(n,n)*eps; // if Y is ill-conditioned, we add a small term to M to make it invertible
@@ -118,6 +116,7 @@ namespace codac2
     
     IntervalMatrix Y2 = IntervalMatrix::zero(n,n);
 
+    Interval factor = sqrt(1.0 + eps * condY);
     for (int i = 0; i < n; i++)
       if (condY>1e10)
         Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i))*factor); // sufficient to keep the guarantee ?
