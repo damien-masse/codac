@@ -215,9 +215,6 @@ namespace codac2
         // Maximum error computation
         double rho = error(Y, z, this->diff(x...), A, cart_prod(x...));
 
-        if (rho < 1e-5)
-          rho = 1e-5; // to avoid numerical issues, to do best
-
         // Inflation of the parallelepiped
         Matrix A_inf = inflate_flat_parallelepiped(A, (cart_prod(x...).template cast<Interval>()).rad(), rho);
 

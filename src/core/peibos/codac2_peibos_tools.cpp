@@ -11,6 +11,9 @@
 #include "codac2_inversion.h"
 #include "codac2_IntvFullPivLU.h"
 
+// TO DELETE 
+#include <iostream>
+
 using namespace std;
 using namespace codac2;
 
@@ -41,6 +44,14 @@ namespace codac2
     IntervalVector E = (Y - z) + (Jf - A)*dX;
 
     return E.norm().ub();
+  }
+
+  double conditionNumber(const Matrix& A) 
+  {
+    Eigen::JacobiSVD<Matrix> svd(A);
+    double sigma_max = svd.singularValues()(0);
+    double sigma_min = svd.singularValues()(svd.singularValues().size() - 1);
+    return sigma_max / sigma_min;
   }
 
   Matrix inflate_flat_parallelepiped(const Matrix& A, const Vector& e_vec, double rho)
@@ -83,6 +94,11 @@ namespace codac2
     // The initial parallelepiped is <y> = Y*[-1,1]^n
     Matrix Y = A_inf.smig();
 
+    IntervalMatrix M = Y.transpose() * Y;
+
+    if (conditionNumber(Y)>1e10)
+      M += IntervalMatrix::Identity(n,n)*(1e-10)*M.norm().ub(); // if Y is ill-conditioned, we add a small term to M to make it invertible
+
     // The following is similar to the previous operations. The difference is that here the Matrix Y is square and not interval
 
     // rho2 is the sum of the radiuses of the circle enclosing each interval generator
@@ -91,7 +107,8 @@ namespace codac2
     for (int i = 0; i < n; i++)
       rho2 += A_inf.col(i).rad().norm();
 
-    IntervalMatrix Q2 = inverse_enclosure(Y.transpose() * Y);
+    IntervalMatrix Q2 = inverse_enclosure(M);
+    
 
     IntervalMatrix Y2 = IntervalMatrix::zero(n,n);
 
