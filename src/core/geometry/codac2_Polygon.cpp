@@ -105,19 +105,15 @@ namespace codac2
   Polygon::Polygon(const IntervalVector& x)
     : Polygon([&x]() -> std::vector<IntervalVector>
       {
+        assert_release(x.size() == 2);
+
         if(x.is_empty())
           return { };
         
-        else if(x[0].is_degenerated())
+        else if(x.is_flat())
           return {
             { x[0].lb(),x[1].lb() },
-            { x[0].lb(),x[1].ub() }
-          };
-
-        else if(x[1].is_degenerated())
-          return {
-            { x[0].lb(),x[1].lb() },
-            { x[1].ub(),x[1].lb() }
+            { x[0].ub(),x[1].ub() }
           };
 
         else
@@ -225,21 +221,16 @@ namespace codac2
       retry = false;
 
       // Horizontal ray candidate:
-      Segment try_transect { {{-oo,next_float(-oo)},p[1]+eps}, p };
+      Segment try_transect { {next_float(-oo),p[1]+eps}, p };
 
       // The ray may pass through the vertices, we must double counting
       for(const auto& pi : unsorted_vertices())
-      {
-        auto b = try_transect.contains(pi);
-        if(b == BoolInterval::UNKNOWN)
-          return BoolInterval::UNKNOWN;
-        else if(b == BoolInterval::TRUE)
+        if(try_transect.contains(pi) != BoolInterval::FALSE)
         {
           eps = Interval(0,1).rand();
           retry = true;
           break;
         }
-      }
 
       if(!retry)
         transect = try_transect;
@@ -251,9 +242,6 @@ namespace codac2
 
     for(const auto& e : *this)
     {
-      if(transect.box().is_strict_superset(e.box()))
-        continue; // case of a ray passing over a colinear edge
-
       switch(transect.intersects(e))
       {
         case BoolInterval::TRUE:

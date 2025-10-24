@@ -482,6 +482,9 @@ class SlicedTube:
   def last_slice(self):
     return self.tube.last_slice()
 
+  def slice(self,*args):
+    return self.tube.slice(*args)
+
   def is_empty(self):
     return self.tube.is_empty()
 
@@ -538,6 +541,9 @@ class SlicedTube:
     
   def as_function(self):
     return AnalyticFunction(self.tube.as_function())
+
+  def invert(self,*args):
+    return self.tube.invert(*args)
 
 
 def fixpoint(contract, *x):

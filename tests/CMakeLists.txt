@@ -51,6 +51,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/domains/zonotope/codac2_tests_Parallelepiped
   core/domains/zonotope/codac2_tests_Parallelepiped_eval
   core/domains/tube/codac2_tests_TDomain
+  core/domains/tube/codac2_tests_Slice
   core/domains/tube/codac2_tests_Slice_polygon
   core/domains/tube/codac2_tests_SlicedTube
   core/domains/tube/codac2_tests_SlicedTube_integral

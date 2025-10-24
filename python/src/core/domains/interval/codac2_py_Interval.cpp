@@ -23,7 +23,7 @@ using namespace pybind11::literals;
 
 py::class_<Interval> export_Interval(py::module& m)
 {
-  py::class_<Interval> exported_interval_class(m, "Interval", INTERVAL_MAIN);
+  py::class_<Interval,std::shared_ptr<Interval>> exported_interval_class(m, "Interval", INTERVAL_MAIN);
   exported_interval_class
   
     .def(py::init<>(),

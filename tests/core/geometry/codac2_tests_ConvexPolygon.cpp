@@ -322,4 +322,31 @@ TEST_CASE("ConvexPolygon - intersection")
       {-1,-1},
     }));
   }
+
+  {
+    ConvexPolygon p1({{4,3.5},{5,4},{4,4.5}});
+    ConvexPolygon p2({{4,3.5},{5,3.5},{5,4.25},{4.5,4.25},{4,4}});
+    //DefaultFigure::draw_polygon(p1, StyleProperties({Color::black(),Color::none()},"1e-2"));
+    //DefaultFigure::draw_polygon(p2, {Color::red(),Color::none()});
+    //DefaultFigure::draw_polygon(p1 & p2, {Color::none(),Color::blue(0.3)});
+    CHECK(Approx(p1 & p2) == ConvexPolygon({{4,4},{4,3.5},{5,4},{4.5,4.25}}));
+  }
+
+  {
+    ConvexPolygon p1({{4,4},{4,3.5},{5,4},{4.5,4.25}});
+    ConvexPolygon p2(IntervalVector({{4,5},{4.1}}));
+    //DefaultFigure::draw_polygon(p1, StyleProperties({Color::black(),Color::none()},"1e-2"));
+    //DefaultFigure::draw_polygon(p2, {Color::red(),Color::none()});
+    //DefaultFigure::draw_polygon(p1 & p2, {Color::none(),Color::blue(0.3)});
+    CHECK(Approx(p1 & p2, 1e-10) == ConvexPolygon(IntervalVector({{4.2,4.8},{4.1}})));
+  }
+
+  {
+    ConvexPolygon p1({{4,4},{4,3.5},{5,4},{4.5,4.25}});
+    ConvexPolygon p2(IntervalVector({{4,5},Interval(41)/10}));
+    //DefaultFigure::draw_polygon(p1, StyleProperties({Color::black(),Color::none()},"1e-2"));
+    //DefaultFigure::draw_polygon(p2, {Color::red(),Color::none()});
+    //DefaultFigure::draw_polygon(p1 & p2, {Color::none(),Color::blue(0.3)});
+    CHECK(Approx(p1 & p2, 1e-10) == ConvexPolygon(IntervalVector({{4.2,4.8},Interval(41)/10})));
+  }
 }

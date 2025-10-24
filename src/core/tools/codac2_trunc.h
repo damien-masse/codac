@@ -18,4 +18,6 @@ namespace codac2
   
   double untrunc(double x);
   Interval untrunc(const Interval& x);
+
+  double graphic_trunc(double x);
 }

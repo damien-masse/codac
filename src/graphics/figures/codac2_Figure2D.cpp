@@ -215,8 +215,6 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
 
 void Figure2D::draw_polygon(const Polygon& x, const StyleProperties& s)
 {
-  assert_release(x.size() >= 1);
-
   vector<Vector> w;
   for(const auto& xi : x.sorted_vertices())
   {

@@ -67,7 +67,7 @@ namespace codac2
         for(auto it = _tdomain->begin(); it != _tdomain->end(); ++it)
           it->_slices.insert({
             this,
-            std::make_shared<Slice<T>>(*x(it), *this)
+            std::make_shared<Slice<T>>(*x.slice(it), *this)
           });
       }
 
@@ -76,7 +76,7 @@ namespace codac2
         assert_release(_tdomain == x._tdomain);
 
         for(auto it = _tdomain->begin(); it != _tdomain->end(); ++it)
-          (*this)(it)->set(x(it)->codomain(), false);
+          slice(it)->set(x.slice(it)->codomain(), false);
 
         return *this;
       }
@@ -126,6 +126,38 @@ namespace codac2
         return std::static_pointer_cast<const Slice<T>>(
           this->SlicedTubeBase::last_slice());
       }
+      
+      inline std::shared_ptr<Slice<T>> slice(const std::list<TSlice>::iterator& it)
+      {
+        return std::const_pointer_cast<Slice<T>>(
+          static_cast<const SlicedTube&>(*this).slice(it));
+      }
+      
+      inline std::shared_ptr<const Slice<T>> slice(const std::list<TSlice>::const_iterator& it) const
+      {
+        return std::static_pointer_cast<const Slice<T>>(
+          it->slices().at(this));
+      }
+      
+      inline std::shared_ptr<Slice<T>> slice(const std::list<TSlice>::reverse_iterator& it)
+      {
+        return std::const_pointer_cast<Slice<T>>(
+          static_cast<const SlicedTube&>(*this).slice(it));
+      }
+      
+      inline std::shared_ptr<const Slice<T>> slice(const std::list<TSlice>::const_reverse_iterator& it) const
+      {
+        return std::static_pointer_cast<const Slice<T>>(
+          it->slices().at(this));
+      }
+      
+      inline std::shared_ptr<Slice<T>> slice(std::shared_ptr<TSlice> ptr)
+      {
+        // Used in Python binding
+        auto it = std::find_if(_tdomain->begin(), _tdomain->end(),
+                    [&](TSlice& t){ return &t == ptr.get(); });
+        return slice(it);
+      }
 
       inline bool is_empty() const
       {
@@ -156,30 +188,6 @@ namespace codac2
         return x;
       }
       
-      inline std::shared_ptr<Slice<T>> operator()(const std::list<TSlice>::iterator& it)
-      {
-        return std::const_pointer_cast<Slice<T>>(
-          static_cast<const SlicedTube&>(*this).operator()(it));
-      }
-      
-      inline std::shared_ptr<const Slice<T>> operator()(const std::list<TSlice>::const_iterator& it) const
-      {
-        return std::static_pointer_cast<const Slice<T>>(
-          it->slices().at(this));
-      }
-      
-      inline std::shared_ptr<Slice<T>> operator()(const std::list<TSlice>::reverse_iterator& it)
-      {
-        return std::const_pointer_cast<Slice<T>>(
-          static_cast<const SlicedTube&>(*this).operator()(it));
-      }
-      
-      inline std::shared_ptr<const Slice<T>> operator()(const std::list<TSlice>::const_reverse_iterator& it) const
-      {
-        return std::static_pointer_cast<const Slice<T>>(
-          it->slices().at(this));
-      }
-      
       inline T operator()(double t) const
       {
         if(!tdomain()->t0_tf().contains(t))
@@ -187,9 +195,9 @@ namespace codac2
 
         auto it_t = _tdomain->tslice(t);
         assert(it_t != _tdomain->end());
-        T x = (*this)(it_t)->codomain();
+        T x = slice(it_t)->codomain();
         if(!it_t->is_gate() && t==it_t->lb() && it_t!=_tdomain->begin())
-          x &= (*this)(--it_t)->codomain();
+          x &= slice(--it_t)->codomain();
         return x;
       }
       
@@ -204,12 +212,12 @@ namespace codac2
         auto t_ = t & _tdomain->t0_tf();
         
         auto it = _tdomain->tslice(t_.lb());
-        T codomain = (*this)(it)->codomain();
+        T codomain = slice(it)->codomain();
 
         while(it != std::next(_tdomain->tslice(t_.ub())))
         {
           if(it->lb() == t_.ub()) break;
-          codomain |= (*this)(it)->codomain();
+          codomain |= slice(it)->codomain();
           it++;
         }
 
@@ -230,7 +238,7 @@ namespace codac2
         }
 
         Interval t_inter = t & _tdomain->t0_tf();
-        auto si = (*this)(_tdomain->tslice(t_inter.lb()));
+        auto si = slice(_tdomain->tslice(t_inter.lb()));
 
         while(si && si->t0_tf().lb() <= t_inter.ub())
         {
@@ -259,7 +267,7 @@ namespace codac2
       inline void set(const T& codomain, double t)
       {
         assert_release(codomain.size() == this->size());
-        (*this)(_tdomain->sample(t,true))->set(codomain);
+        slice(_tdomain->sample(t,true))->set(codomain);
       }
 
       inline void set(const T& codomain, const Interval& t)
@@ -283,7 +291,7 @@ namespace codac2
 
         do
         {
-          (*this)(it_lb)->set(codomain);
+          slice(it_lb)->set(codomain);
         } while(it_lb != it_ub && (++it_lb) != _tdomain->end());
       }
 
@@ -318,7 +326,7 @@ namespace codac2
         assert_release(i >= 0 && i < size());
         SlicedTube<Interval> xi(tdomain(), Interval());
         for(auto it = tdomain()->begin() ; it != tdomain()->end() ; it++)
-          xi(it)->codomain() = (*this)(it)->codomain()[i];
+          xi.slice(it)->codomain() = slice(it)->codomain()[i];
         return xi;
       }
 
@@ -327,7 +335,7 @@ namespace codac2
         assert_release(i >= 0 && i <= j && j < size());
         SlicedTube<IntervalVector> xij(tdomain(), IntervalVector(j-i+1));
         for(auto it = tdomain()->begin() ; it != tdomain()->end() ; it++)
-          xij(it)->codomain() = (*this)(it)->codomain().subvector(i,j);
+          xij.slice(it)->codomain() = slice(it)->codomain().subvector(i,j);
         return xij;
       }
 
@@ -340,7 +348,7 @@ namespace codac2
         auto it_x = x.tdomain()->cbegin();
 
         while(it_this != _tdomain->end())
-          if(*(*this)(it_this++) != *x(it_x++))
+          if(*slice(it_this++) != *x.slice(it_x++))
             return false;
 
         return true;
@@ -354,8 +362,8 @@ namespace codac2
 
         while(it_this != _tdomain->end())
         {
-          auto s = (*this)(it_this);
-          s->set(s->codomain() & x(it_x)->codomain());
+          auto s = slice(it_this);
+          s->set(s->codomain() & x.slice(it_x)->codomain());
           it_this++; it_x++;
         }
 
@@ -381,6 +389,148 @@ namespace codac2
             std::make_shared<AnalyticOperationExpr<
               TubeOp<SlicedTube<T>>,typename ExprType<T>::Type,ScalarType>>(*this,t))
         };
+      }
+
+      template<typename Func>
+      Interval invert_common(const T& y, const Interval& t, const Func& apply_invert) const
+      {
+        assert_release(y.size() == this->size());
+
+        if(t.is_empty() || y.is_empty())
+          return Interval::empty();
+
+        else if(!t.is_subset(_tdomain->t0_tf()))
+          return Interval();
+
+        Interval invert = Interval::empty();
+        Interval t_ = t & _tdomain->t0_tf();
+
+        assert(!t_.is_empty() && !t_.is_unbounded());
+        for(auto it = _tdomain->tslice(t_.lb()) ;
+          it != _tdomain->end() && it->lb() < t_.ub() ; it++)
+        {
+          if(it->is_gate())
+            continue;
+          
+          assert(it != _tdomain->end());
+          invert |= apply_invert(it, t & *it);
+        }
+
+        return invert;
+      }
+
+      template<typename Func>
+      void invert_common_subsets(const T& y, std::vector<Interval> &v_t,
+        const Interval& t, const Func& apply_invert) const
+      {
+        assert_release(y.size() == this->size());
+        v_t.clear();
+
+        if(t.is_empty() || y.is_empty())
+          return;
+
+        else if(!t.is_subset(_tdomain->t0_tf()))
+        {
+          v_t.push_back(Interval());
+          return;
+        }
+
+        Interval invert = Interval::empty();
+        Interval t_ = t & _tdomain->t0_tf();
+
+        assert(!t_.is_empty() && !t_.is_unbounded());
+        for(auto it = _tdomain->tslice(t_.lb()) ;
+          it != _tdomain->end() && it->lb() < t_.ub() ; it++)
+        {
+          if(it->is_gate())
+            continue;
+
+          assert(it != _tdomain->end());
+          Interval local_invert = apply_invert(it, t & *it);
+
+          if(local_invert.is_empty() && !invert.is_empty())
+          {
+            v_t.push_back(invert);
+            invert.set_empty();
+          }
+
+          else
+            invert |= local_invert;
+        }
+
+        if(!invert.is_empty())
+          v_t.push_back(invert);
+      }
+
+      /**
+       * \brief Returns the interval inversion \f$[x]^{-1}([y])\f$
+       *
+       * \note If the inversion results in several pre-images, their union is returned
+       *
+       * \param y interval codomain
+       * \param t optional temporal domain on which the inversion will be performed
+       * \return the hull of \f$[x]^{-1}([y])\f$
+       */
+      Interval invert(const T& y, const Interval& t = Interval()) const
+      {
+        return invert_common(y, t,
+          [this,&y](auto it, const Interval& t_) {
+            return slice(it)->invert(y, t_);
+          });
+      }
+
+      /**
+       * \brief Computes the set of continuous values of the inversion \f$[x]^{-1}([y])\f$
+       *
+       * \param y interval codomain
+       * \param v_t vector of the sub-tdomains \f$[t_k]\f$ for which
+       *            \f$\forall t\in[t_k] \mid x(t)\in[y], x(\cdot)\in[x](\cdot)\f$
+       * \param t optional temporal domain on which the inversion will be performed
+       */
+      void invert(const T& y, std::vector<Interval> &v_t, const Interval& t = Interval()) const
+      {
+        return invert_common_subsets(y, v_t, t,
+          [this,&y](auto it, const Interval& t_) {
+            return slice(it)->invert(y, t_);
+          });
+      }
+
+      /**
+       * \brief Returns the optimal interval inversion \f$[x]^{-1}([y])\f$
+       *
+       * \note The knowledge of the derivative tube \f$[v](\cdot)\f$ allows a finer inversion
+       * \note If the inversion results in several pre-images, their union is returned
+       *
+       * \param y interval codomain
+       * \param v derivative tube such that \f$\dot{x}(\cdot)\in[v](\cdot)\f$
+       * \param t optional temporal domain on which the inversion will be performed
+       * \return hull of \f$[x]^{-1}([y])\f$
+       */
+      Interval invert(const T& y, const SlicedTube<T>& v, const Interval& t = Interval()) const
+      {
+        return invert_common(y, t,
+          [this,&v,&y](auto it, const Interval& t_) {
+            return slice(it)->invert(y, *v.slice(it), t_);
+          });
+      }
+
+      /**
+       * \brief Computes the set of continuous values of the optimal inversion \f$[x]^{-1}([y])\f$
+       *
+       * \note The knowledge of the derivative tube \f$[v](\cdot)\f$ allows finer inversions
+       *
+       * \param y interval codomain
+       * \param v_t vector of the sub-tdomains \f$[t_k]\f$ for which
+       *            \f$\exists t\in[t_k] \mid x(t)\in[y], x(\cdot)\in[x](\cdot), \dot{x}(\cdot)\in[v](\cdot)\f$
+       * \param v derivative tube such that \f$\dot{x}(\cdot)\in[v](\cdot)\f$
+       * \param t optional temporal domain on which the inversion will be performed
+       */
+      void invert(const T& y, std::vector<Interval> &v_t, const SlicedTube<T>& v, const Interval& t = Interval()) const
+      {
+        return invert_common_subsets(y, v_t, t,
+          [this,&v,&y](auto it, const Interval& t_) {
+            return slice(it)->invert(y, *v.slice(it), t_);
+          });
       }
 
       // Integral related methods
@@ -421,7 +571,7 @@ namespace codac2
 
           std::shared_ptr<Slice<T>> operator->()
           {
-            return _x(*this);
+            return _x.slice(*this);
           }
 
           Slice<T>& operator*()
@@ -446,7 +596,7 @@ namespace codac2
 
           std::shared_ptr<Slice<T>> operator->()
           {
-            return _x(*this);
+            return _x.slice(*this);
           }
 
           Slice<T>& operator*()
@@ -471,7 +621,7 @@ namespace codac2
 
           std::shared_ptr<const Slice<T>> operator->()
           {
-            return _x(*this);
+            return _x.slice(*this);
           }
 
           const Slice<T>& operator*()
@@ -496,7 +646,7 @@ namespace codac2
 
           std::shared_ptr<const Slice<T>> operator->()
           {
-            return _x(*this);
+            return _x.slice(*this);
           }
 
           const Slice<T>& operator*()
@@ -548,7 +698,7 @@ namespace codac2
   {
     auto tdomain = std::get<0>(std::make_tuple(x...));
     for(auto it = tdomain.begin() ; it != tdomain.end() ; it++)
-      contract((x(it)->codomain())...);
+      contract((x.slice(it)->codomain())...);
   }
 }
 
