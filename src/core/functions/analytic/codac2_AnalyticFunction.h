@@ -190,7 +190,7 @@ namespace codac2
         );
 
         for(auto it = tdomain->begin() ; it != tdomain->end() ; it++)
-          y(it)->codomain() = this->eval(x(it)->codomain()...);
+          y.slice(it)->codomain() = this->eval(x.slice(it)->codomain()...);
 
         return y;
       }

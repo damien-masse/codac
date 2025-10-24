@@ -74,6 +74,14 @@ void export_SlicedTube(py::module& m, const std::string& name)
       py::return_value_policy::reference,
       SHARED_PTR_SLICE_T_SLICEDTUBE_T_LAST_SLICE)
     
+    .def("slice", [](SlicedTube<T>& x, std::shared_ptr<TSlice> it) -> Slice<T>&
+        {
+          return *x.slice(it);
+        },
+      py::return_value_policy::reference,
+      SHARED_PTR_SLICE_T_SLICEDTUBE_T_SLICE_SHARED_PTR_TSLICE,
+      "it"_a)
+    
     .def("is_empty", &SlicedTube<T>::is_empty,
       BOOL_SLICEDTUBE_T_IS_EMPTY_CONST)
     
@@ -174,7 +182,42 @@ void export_SlicedTube(py::module& m, const std::string& name)
       .def("primitive", (SlicedTube<T> (SlicedTube<T>::*)(const T&) const) &SlicedTube<T>::primitive,
         SLICEDTUBE_T_SLICEDTUBE_T_PRIMITIVE_CONST_T_REF_CONST,
         "x0"_a)
-      
+
+      .def("invert", (Interval (SlicedTube<T>::*)(const T&,const Interval&) const) &SlicedTube<T>::invert,
+        INTERVAL_SLICEDTUBE_T_INVERT_CONST_T_REF_CONST_INTERVAL_REF_CONST,
+        "y"_a, "t"_a=Interval())
+
+      .def("invert", [](const SlicedTube<T>& x, const T& y, py::list& v_t, const Interval& t)
+          {
+            vector<Interval> vector_t;
+            x.invert(y, vector_t, t);
+            v_t.clear();
+            for(const auto& ti : vector_t)
+              v_t.append(ti);
+          },
+        INTERVAL_SLICEDTUBE_T_INVERT_CONST_T_REF_CONST_SLICEDTUBE_T_REF_CONST_INTERVAL_REF_CONST,
+        "y"_a, "v_t"_a, "t"_a=Interval())
+
+      .def("invert", [](const SlicedTube<T>& x, const T& y, const py::object& v, const Interval& t)
+          {
+            assert_release(is_instance<SlicedTube<T>>(v));
+            return x.invert(y, cast<SlicedTube<T>>(v), t);
+          },
+        INTERVAL_SLICEDTUBE_T_INVERT_CONST_T_REF_CONST_SLICEDTUBE_T_REF_CONST_INTERVAL_REF_CONST,
+        "y"_a, "v"_a, "t"_a=Interval())
+
+      .def("invert", [](const SlicedTube<T>& x, const T& y, py::list& v_t, const py::object& v, const Interval& t)
+          {
+            assert_release(is_instance<SlicedTube<T>>(v));
+            vector<Interval> vector_t;
+            x.invert(y, vector_t, cast<SlicedTube<T>>(v), t);
+            v_t.clear();
+            for(const auto& ti : vector_t)
+              v_t.append(ti);
+          },
+        INTERVAL_SLICEDTUBE_T_INVERT_CONST_T_REF_CONST_SLICEDTUBE_T_REF_CONST_INTERVAL_REF_CONST,
+        "y"_a, "v_t"_a, "v"_a, "t"_a=Interval())
+
     ;
   }
 

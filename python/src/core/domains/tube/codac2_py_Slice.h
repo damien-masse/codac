@@ -82,10 +82,6 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
     .def(py::self != py::self,
       "x"_a)
 
-    .def("invert", (Interval (Slice<T>::*)(const T&,const Interval&) const) &Slice<T>::invert,
-      INTERVAL_SLICE_T_INVERT_CONST_T_REF_CONST_INTERVAL_REF_CONST,
-      "y"_a, "t"_a=Interval())
-
     .def("__repr__", [](const Slice<T>& x) {
           std::ostringstream stream;
           stream << x;
@@ -97,6 +93,10 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
   if constexpr(std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
   {
     exported_slice_class
+
+    .def("invert", (Interval (Slice<T>::*)(const T&,const Interval&) const) &Slice<T>::invert,
+      INTERVAL_SLICE_T_INVERT_CONST_T_REF_CONST_INTERVAL_REF_CONST,
+      "y"_a, "t"_a=Interval())
 
     .def("invert", (Interval (Slice<T>::*)(const T&,const Slice<T>&,const Interval&) const) &Slice<T>::invert,
       INTERVAL_SLICE_T_INVERT_CONST_T_REF_CONST_SLICE_T_REF_CONST_INTERVAL_REF_CONST,
