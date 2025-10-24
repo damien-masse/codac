@@ -62,15 +62,24 @@ namespace codac2
   {
     vector<IntervalVector> inter;
 
+    if(p1.is_empty() || p2.is_empty())
+      return ConvexPolygon::empty();
+
     auto v1 = p1.sorted_vertices();
     for(const auto& vi : v1)
+    {
+      assert(!vi.is_empty());
       if(p2.contains(vi) == BoolInterval::TRUE) // strictly contained
         inter.push_back(vi);
+    }
 
     auto v2 = p2.sorted_vertices();
     for(const auto& vi : p2.unsorted_vertices())
+    {
+      assert(!vi.is_empty());
       if(p1.contains(vi) == BoolInterval::TRUE) // strictly contained
         inter.push_back(vi);
+    }
 
     if(v1.size() > 1 && v2.size() > 1)
       for(const auto& e1 : p1)
