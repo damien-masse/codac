@@ -245,5 +245,17 @@ class TestConvexPolygon(unittest.TestCase):
       [-1,-1],
     ]))
 
+    p1 = ConvexPolygon([[4,3.5],[5,4],[4,4.5]])
+    p2 = ConvexPolygon([[4,3.5],[5,3.5],[5,4.25],[4.5,4.25],[4,4]])
+    self.assertTrue(Approx(p1 & p2) == ConvexPolygon([[4,4],[4,3.5],[5,4],[4.5,4.25]]))
+
+    p1 = ConvexPolygon([[4,4],[4,3.5],[5,4],[4.5,4.25]])
+    p2 = ConvexPolygon(IntervalVector([[4,5],[4.1]]))
+    self.assertTrue(Approx(p1 & p2, 1e-10) == ConvexPolygon(IntervalVector([[4.2,4.8],[4.1]])))
+
+    p1 = ConvexPolygon([[4,4],[4,3.5],[5,4],[4.5,4.25]])
+    p2 = ConvexPolygon(IntervalVector([[4,5],Interval(41)/10]))
+    self.assertTrue(Approx(p1 & p2, 1e-10) == ConvexPolygon(IntervalVector([[4.2,4.8],Interval(41)/10])))
+
 if __name__ ==  '__main__':
   unittest.main()
