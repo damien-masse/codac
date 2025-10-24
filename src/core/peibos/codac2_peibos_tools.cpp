@@ -116,9 +116,9 @@ namespace codac2
     
     IntervalMatrix Y2 = IntervalMatrix::zero(n,n);
 
-    Interval factor = sqrt(1.0 + eps * condY);
+    Interval factor = sqrt(1.0 + eps * cond_Y);
     for (int i = 0; i < n; i++)
-      if (condY>1e10)
+      if (cond_Y>1e10)
         Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i))*factor); // sufficient to keep the guarantee ?
       else
         Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
