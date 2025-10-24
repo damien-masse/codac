@@ -213,7 +213,7 @@ namespace codac2
         Matrix A = this->diff(((typename Wrapper<Args>::Domain)(x)).mid()...).mid();
 
         // Maximum error computation
-        double rho = error(Y, z, this->diff(x...), A, cart_prod(x...));
+        double rho = error_peibos(Y, z, this->diff(x...), A, cart_prod(x...));
 
         // Inflation of the parallelepiped
         Matrix A_inf = inflate_flat_parallelepiped(A, (cart_prod(x...).template cast<Interval>()).rad(), rho);

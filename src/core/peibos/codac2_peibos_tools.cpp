@@ -35,7 +35,7 @@ namespace codac2
     }
   }
 
-  double error(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X)
+  double error_peibos(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X)
   {
     Vector xc = X.mid();
 
@@ -93,12 +93,7 @@ namespace codac2
 
     // The initial parallelepiped is <y> = Y*[-1,1]^n
     Matrix Y = A_inf.smig();
-
-    IntervalMatrix M = Y.transpose() * Y;
-
-    if (conditionNumber(Y)>1e10)
-      M += IntervalMatrix::Identity(n,n)*(1e-10)*M.norm().ub(); // if Y is ill-conditioned, we add a small term to M to make it invertible
-
+    
     // The following is similar to the previous operations. The difference is that here the Matrix Y is square and not interval
 
     // rho2 is the sum of the radiuses of the circle enclosing each interval generator
@@ -107,13 +102,27 @@ namespace codac2
     for (int i = 0; i < n; i++)
       rho2 += A_inf.col(i).rad().norm();
 
+    IntervalMatrix M = Y.transpose() * Y;
+
+    double eps = 1e-10 * M.norm().ub();
+    double condY = conditionNumber(Y);
+    Interval factor = sqrt(1.0 + eps * condY);
+
+    if (condY>1e10)
+    {
+      cerr << "Warning: ill-conditioned matrix in the inflate process. The result may not be guaranteed " << endl;
+      M += IntervalMatrix::Identity(n,n)*eps; // if Y is ill-conditioned, we add a small term to M to make it invertible
+    }
+
     IntervalMatrix Q2 = inverse_enclosure(M);
     
-
     IntervalMatrix Y2 = IntervalMatrix::zero(n,n);
 
     for (int i = 0; i < n; i++)
-      Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
+      if (condY>1e10)
+        Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i))*factor); // sufficient to keep the guarantee ?
+      else
+        Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
     
     return Y2.smag();
   }

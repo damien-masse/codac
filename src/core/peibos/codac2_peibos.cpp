@@ -26,7 +26,7 @@ namespace codac2
     Matrix A = (Jf_tild * sigma.permutation_matrix() * (psi_0.diff(X.mid()).mid()));
 
     // Maximum error computation
-    double rho = error(Y, z, Jg, A, X);
+    double rho = error_peibos(Y, z, Jg, A, X);
 
     // Inflation of the parallelepiped
     Matrix A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);

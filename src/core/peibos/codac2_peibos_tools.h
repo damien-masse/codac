@@ -35,7 +35,7 @@ namespace codac2
    * \param A Any Matrix with the same dimension as Jf. Usually we pick an approximation of \f$\frac{d\mathbf{f}}{d\mathbf{x}}(\bar{\mathbf{x}})\f$
    * \param X The box \f$[\mathbf{x}]\f$
    */
-  double error(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X);
+  double error_peibos(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X);
 
   /**
    * \brief Inflate the flat parallelepiped \f$\mathbf{A}\cdot e_{vec}\f$ by \f$\rho\f$.
