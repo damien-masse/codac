@@ -13,6 +13,7 @@
 #include "codac2_ConvexPolygon.h"
 #include "codac2_CtcDeriv.h"
 #include "codac2_cart_prod.h"
+#include "codac2_trunc.h"
 
 namespace codac2
 {
@@ -187,29 +188,39 @@ namespace codac2
       {
         const Interval& t = this->t0_tf();
         Interval input = this->input_gate(), output = this->output_gate();
-        Interval proj_output =  input + t.diam() * v;
-        Interval proj_input  = output - t.diam() * v;
+
+        // /!\ .diam() method is not reliable (floating point result)
+        // -> We need to compute the diameter with intervals
+        Interval d = Interval(t.ub())-Interval(t.lb());
+
+        Interval proj_output =  input + d * v;
+        Interval proj_input  = output - d * v;
 
         return CtcDeriv::polygon_slice(
-          t, this->codomain(),
+          t, *this,
           input, proj_input,
           output, proj_output,
-          v.codomain());
+          v);
       }
 
       inline ConvexPolygon polygon_slice_i(const Slice<T>& v, Index i) const
         requires std::is_same_v<T,IntervalVector>
       {
         const Interval& t = this->t0_tf();
+
+        // /!\ .diam() method is not reliable (floating point result)
+        // -> We need to compute the diameter with intervals
+        Interval d = Interval(t.ub())-Interval(t.lb());
+
         Interval input = this->input_gate()[i], output = this->output_gate()[i];
-        Interval proj_output =  input + t.diam() * v[i];
-        Interval proj_input  = output - t.diam() * v[i];
+        Interval proj_output =  input + d * v[i];
+        Interval proj_input  = output - d * v[i];
 
         return CtcDeriv::polygon_slice(
-          t, this->codomain()[i],
+          t, (*this)[i],
           input, proj_input,
           output, proj_output,
-          v.codomain()[i]);
+          v[i]);
       }
 
       /**
@@ -296,23 +307,23 @@ namespace codac2
       inline Interval invert(const T& y, const Slice<T>& v, const Interval& t = Interval()) const
         requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
       {
-        if(t.is_empty())
+        if(t.is_empty() || y.is_empty())
           return Interval::empty();
 
-        else if(t.is_strict_superset(t0_tf()))
+        else if(!t.is_subset(t0_tf()))
           return Interval();
 
         else
         {
           if constexpr(std::is_same_v<T,Interval>)
-            return (polygon_slice(v) & ConvexPolygon(cart_prod(t,y))).box()[0];
+            return untrunc((polygon_slice(v) & ConvexPolygon(cart_prod(t,trunc(y)))).box()[0]);
 
           else if constexpr(std::is_same_v<T,IntervalVector>)
           {
-            Interval t_ = t;
+            Interval t_(t);
             for(Index i = 0 ; i < size() ; i++)
               if(!t_.is_empty())
-                t_ &= (polygon_slice_i(v,i) & ConvexPolygon(cart_prod(t_,y))).box()[0];
+                t_ &= untrunc((polygon_slice_i(v,i) & ConvexPolygon(cart_prod(t_,trunc(y[i])))).box()[0]);
             return t_;
           }
         }

@@ -45,7 +45,7 @@ ConvexPolygon CtcDeriv::polygon_slice(
     {t.ub(), trunc(output.ub())}
   }), !false); // false: avoid costly computation of convex hull (vertices are already ordered)
   p &= p_bwd;
-
+    
   return p;
 }
 
@@ -57,11 +57,15 @@ void CtcDeriv::contract(
   Interval proj_input;
   Interval proj_output;
 
+  // /!\ .diam() method is not reliable (floating point result)
+  // -> We need to compute the diameter with intervals
+  Interval d = Interval(t.ub())-Interval(t.lb());
+
   if((time_propag & TimePropag::FWD) == TimePropag::FWD)
-    proj_output &= input + t.diam() * v;
+    proj_output &= input + d * v;
 
   if((time_propag & TimePropag::BWD) == TimePropag::BWD)
-    proj_input &= output - t.diam() * v;
+    proj_input &= output - d * v;
 
   if(time_propag == TimePropag::FWD_BWD
     && (proj_output.is_superset(output) || proj_input.is_superset(input)))
@@ -78,10 +82,10 @@ void CtcDeriv::contract(
   else
   {
     if((time_propag & TimePropag::FWD) == TimePropag::FWD)
-      envelope &= input + Interval(0,t.diam()) * v;
+      envelope &= input + Interval(0,d.ub()) * v;
 
     if((time_propag & TimePropag::BWD) == TimePropag::BWD)
-      envelope &= output - Interval(0,t.diam()) * v;
+      envelope &= output - Interval(0,d.ub()) * v;
   }
 
   input &= proj_input;
