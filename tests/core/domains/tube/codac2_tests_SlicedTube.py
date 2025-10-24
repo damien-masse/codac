@@ -524,53 +524,38 @@ class TestSlicedTube(unittest.TestCase):
     self.assertTrue(x.invert(0., x.tdomain().t0_tf()) == x.tdomain().t0_tf())
 
 
-#  def test_inversion_vector_tube(self):
-#
-#    x0 = tube_test_1()
-#    SlicedTube<IntervalVector> x(x0.tdomain(), IntervalVector(2))
-#
-#    auto xi = x.begin() auto x0i = x0.begin()
-#    while(xi != x.end())
-#    [
-#      assert(x0i != x0.end())
-#      xi.set(cart_prod(x0i.codomain(),x0i.codomain()-3), false) # shift
-#      xi++ x0i++
-#    ]
-#    assert(x0i == x0.end())
-#
-#    IntervalVector inv_val = IntervalVector.constant(2,[0.5,0.5])
-#    vector<Interval> v_t
-#    x.invert(inv_val, v_t, x.tdomain().t0_tf())
-#
-#    self.assertTrue(v_t.size() == 5)
-#    self.assertTrue(v_t[0] == Interval(3,4))
-#    self.assertTrue(v_t[1] == Interval(15,17))
-#    self.assertTrue(v_t[2] == Interval(37,38))
-#    self.assertTrue(v_t[3] == Interval(40,42))
-#    self.assertTrue(v_t[4] == Interval(43,45))
-#
-#    # Union inversion:
-#    Interval inv = x.invert(inv_val, x.tdomain().t0_tf())
-#    self.assertTrue(inv == Interval(3,45))
-#
-#    # Restricted domain
-#
-#    Interval restricted(15.2,39)
-#    x.invert(inv_val, v_t, restricted)
-#
-#    #for(const auto& sx : x)
-#    #  DefaultFigure.draw_box(cart_prod(sx.t0_tf(),sx.codomain()))
-#    #DefaultFigure.draw_box(cart_prod(Interval(15.2,39),inv_val[0]), Color.blue())
-#    #DefaultFigure.set_axes(axis(0,x.tdomain().t0_tf()), axis(1,x.codomain()[0]))
-#
-#    self.assertTrue(v_t.size() == 2)
-#    self.assertTrue(v_t[0] == Interval(15.2,17))
-#    self.assertTrue(v_t[1] == Interval(37,38))
-#
-#    inv = x.invert(inv_val, restricted)
-#    self.assertTrue(inv == Interval(15.2,38))
-#  ]
+  def test_inversion_vector_tube(self):
 
+    x0 = predef.tube_test_1()
+    x = SlicedTube(x0.tdomain(), IntervalVector(2))
+
+    for xi, x0i in zip(x, x0):
+      xi.set(cart_prod(x0i.codomain(), x0i.codomain() - 3), False)
+
+    inv_val = IntervalVector.constant(2,[0.5,0.5])
+    v_t = []
+    x.invert(inv_val, v_t, x.tdomain().t0_tf())
+
+    self.assertTrue(len(v_t) == 5)
+    self.assertTrue(v_t[0] == Interval(3,4))
+    self.assertTrue(v_t[1] == Interval(15,17))
+    self.assertTrue(v_t[2] == Interval(37,38))
+    self.assertTrue(v_t[3] == Interval(40,42))
+    self.assertTrue(v_t[4] == Interval(43,45))
+
+    # Union inversion:
+    inv = x.invert(inv_val, x.tdomain().t0_tf())
+    self.assertTrue(inv == Interval(3,45))
+
+    # Restricted domain
+    restricted = Interval(15.2,39)
+    x.invert(inv_val, v_t, restricted)
+    self.assertTrue(len(v_t) == 2)
+    self.assertTrue(v_t[0] == Interval(15.2,17))
+    self.assertTrue(v_t[1] == Interval(37,38))
+
+    inv = x.invert(inv_val, restricted)
+    self.assertTrue(inv == Interval(15.2,38))
 
 
 if __name__ ==  '__main__':
