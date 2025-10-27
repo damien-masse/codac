@@ -190,7 +190,7 @@ namespace codac2
       inline T eval_common(const Interval& t, const Func& apply_eval) const
       {
         if(!tdomain()->t0_tf().is_superset(t))
-          return all_reals_codomain();
+          return all_reals_value();
 
         auto it = _tdomain->tslice(t.lb());
         assert(it != _tdomain->end());
@@ -225,7 +225,7 @@ namespace codac2
 
       std::pair<T,T> enclosed_bounds(const Interval& t) const
       {
-        auto x = this->empty_codomain();
+        auto x = this->empty_value();
         auto bounds = std::make_pair(x,x);
 
         if(t.lb() < _tdomain->t0_tf().lb() || t.ub() > _tdomain->t0_tf().ub())
@@ -543,19 +543,33 @@ namespace codac2
 
       inline SlicedTube<T> primitive() const
       {
-        auto x0 = all_reals_codomain();
+        auto x0 = all_reals_value();
         x0.init(0.);
         return primitive(x0);
       }
 
       inline SlicedTube<T> primitive(const T& x0) const
       {
-        auto x = all_reals_codomain();
+        auto x = all_reals_value();
         auto p = SlicedTube<T>(this->tdomain(), x);
         p.set(x0, this->tdomain()->t0_tf().lb()); // may create an unwanted gate
         CtcDeriv c;
         c.contract(p,*this);
         return p;
+      }
+
+      inline T all_reals_value() const
+      {
+        T x = first_slice()->codomain();
+        x.init();
+        return x;
+      }
+
+      inline T empty_value() const
+      {
+        T x = first_slice()->codomain();
+        x.set_empty();
+        return x;
       }
 
 
@@ -662,22 +676,6 @@ namespace codac2
 
       const_reverse_iterator rbegin() const { return { *this, _tdomain->crbegin() }; }
       const_reverse_iterator rend() const   { return { *this, _tdomain->crend() }; }
-
-    protected:
-
-      inline T all_reals_codomain() const
-      {
-        T x = first_slice()->codomain();
-        x.init();
-        return x;
-      }
-
-      inline T empty_codomain() const
-      {
-        T x = first_slice()->codomain();
-        x.set_empty();
-        return x;
-      }
   };
 
 

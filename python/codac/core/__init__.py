@@ -545,6 +545,12 @@ class SlicedTube:
   def invert(self,*args):
     return self.tube.invert(*args)
 
+  def all_reals_value(self):
+    return self.tube.all_reals_value()
+
+  def empty_value(self):
+    return self.tube.empty_value()
+
 
 def fixpoint(contract, *x):
   vol = -1.0

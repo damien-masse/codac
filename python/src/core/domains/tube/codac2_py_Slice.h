@@ -90,6 +90,12 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
     .def(py::self != py::self,
       "x"_a)
 
+    .def("all_reals_value", &Slice<T>::all_reals_value,
+      T_SLICE_T_ALL_REALS_VALUE_CONST)
+
+    .def("empty_value", &Slice<T>::empty_value,
+      T_SLICE_T_EMPTY_VALUE_CONST)
+
     .def("__repr__", [](const Slice<T>& x) {
           std::ostringstream stream;
           stream << x;

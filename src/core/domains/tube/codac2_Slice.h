@@ -238,7 +238,7 @@ namespace codac2
           return codomain();
 
         else
-          return all_reals_codomain();
+          return all_reals_value();
       }
 
       /**
@@ -256,7 +256,7 @@ namespace codac2
           return codomain();
 
         else
-          return all_reals_codomain();
+          return all_reals_value();
       }
 
       /**
@@ -289,7 +289,7 @@ namespace codac2
 
         else if constexpr(std::is_same_v<T,IntervalVector>)
         {
-          T y = all_reals_codomain();
+          T y = all_reals_value();
           for(Index i = 0 ; i < size() ; i++)
             y[i] &= untrunc((polygon_slice_i(v,i) & ConvexPolygon(cart_prod(t,codomain()))).box()[1]);
           return y;
@@ -382,6 +382,21 @@ namespace codac2
         return os;
       }
 
+      inline T all_reals_value() const
+      {
+        T x = codomain();
+        x.init();
+        return x;
+      }
+
+      inline T empty_value() const
+      {
+        T x = codomain();
+        x.set_empty();
+        return x;
+      }
+      
+
     protected:
 
       template<typename T_>
@@ -413,20 +428,6 @@ namespace codac2
           else if(next_slice()->is_gate())
             next_slice()->codomain() &= codomain();
         }
-      }
-
-      inline T all_reals_codomain() const
-      {
-        T x = codomain();
-        x.init();
-        return x;
-      }
-
-      inline T empty_codomain() const
-      {
-        T x = codomain();
-        x.set_empty();
-        return x;
       }
   };
 }
