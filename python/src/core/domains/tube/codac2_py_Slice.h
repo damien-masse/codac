@@ -61,6 +61,14 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
     .def("output_gate", &Slice<T>::output_gate,
       T_SLICE_T_OUTPUT_GATE_CONST)
 
+    .def("__call__", (T (Slice<T>::*)(double) const) &Slice<T>::operator(),
+      T_SLICE_T_OPERATORCALL_DOUBLE_CONST,
+      "t"_a)
+
+    .def("__call__", (T (Slice<T>::*)(const Interval&) const) &Slice<T>::operator(),
+      T_SLICE_T_OPERATORCALL_CONST_INTERVAL_REF_CONST,
+      "t"_a)
+
     .def("enclosed_bounds", &Slice<T>::enclosed_bounds,
       PAIR_TT_SLICE_T_ENCLOSED_BOUNDS_CONST_INTERVAL_REF_CONST,
       "t"_a)
@@ -90,21 +98,6 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
       OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_SLICE_REF)
   ;
 
-  if constexpr(std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
-  {
-    exported_slice_class
-
-    .def("invert", (Interval (Slice<T>::*)(const T&,const Interval&) const) &Slice<T>::invert,
-      INTERVAL_SLICE_T_INVERT_CONST_T_REF_CONST_INTERVAL_REF_CONST,
-      "y"_a, "t"_a=Interval())
-
-    .def("invert", (Interval (Slice<T>::*)(const T&,const Slice<T>&,const Interval&) const) &Slice<T>::invert,
-      INTERVAL_SLICE_T_INVERT_CONST_T_REF_CONST_SLICE_T_REF_CONST_INTERVAL_REF_CONST,
-      "y"_a, "v"_a, "t"_a=Interval())
-
-    ;
-  }
-
   if constexpr(std::is_same_v<T,Interval>)
   {
     exported_slice_class
@@ -113,6 +106,24 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
         CONVEXPOLYGON_SLICE_T_POLYGON_SLICE_CONST_SLICE_T_REF_CONST,
         "v"_a)
 
+    ;
+  }
+
+  else if constexpr(std::is_same_v<T,IntervalVector>)
+  {
+    exported_slice_class
+
+      .def("polygon_slice_i", &Slice<IntervalVector>::polygon_slice_i,
+        CONVEXPOLYGON_SLICE_T_POLYGON_SLICE_I_CONST_SLICE_T_REF_INDEX_CONST,
+        "v"_a, "i"_a)
+
+    ;
+  }
+
+  if constexpr(std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
+  {
+    exported_slice_class
+
       .def("__call__", (T (Slice<T>::*)(double,const Slice<T>&) const) &Slice<T>::operator(),
         T_SLICE_T_OPERATORCALL_DOUBLE_CONST_SLICE_T_REF_CONST,
         "t"_a, "v"_a)
@@ -120,6 +131,14 @@ py::class_<Slice<T>> export_Slice(py::module& m, const std::string& name)
       .def("__call__", (T (Slice<T>::*)(const Interval&,const Slice<T>&) const) &Slice<T>::operator(),
         T_SLICE_T_OPERATORCALL_CONST_INTERVAL_REF_CONST_SLICE_T_REF_CONST,
         "t"_a, "v"_a)
+
+      .def("invert", (Interval (Slice<T>::*)(const T&,const Interval&) const) &Slice<T>::invert,
+        INTERVAL_SLICE_T_INVERT_CONST_T_REF_CONST_INTERVAL_REF_CONST,
+        "y"_a, "t"_a=Interval())
+
+      .def("invert", (Interval (Slice<T>::*)(const T&,const Slice<T>&,const Interval&) const) &Slice<T>::invert,
+        INTERVAL_SLICE_T_INVERT_CONST_T_REF_CONST_SLICE_T_REF_CONST_INTERVAL_REF_CONST,
+        "y"_a, "v"_a, "t"_a=Interval())
 
     ;
   }

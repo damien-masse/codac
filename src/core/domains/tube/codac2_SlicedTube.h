@@ -215,6 +215,7 @@ namespace codac2
       }
 
       T operator()(const Interval& t, const SlicedTube<T>& v) const
+        requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
       {
         return eval_common(t,
           [this,&v](auto it, const Interval& t_) {
@@ -505,6 +506,7 @@ namespace codac2
        * \return hull of \f$[x]^{-1}([y])\f$
        */
       Interval invert(const T& y, const SlicedTube<T>& v, const Interval& t = Interval()) const
+        requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
       {
         return invert_common(y, t,
           [this,&v,&y](auto it, const Interval& t_) {
@@ -524,6 +526,7 @@ namespace codac2
        * \param t optional temporal domain on which the inversion will be performed
        */
       void invert(const T& y, std::vector<Interval> &v_t, const SlicedTube<T>& v, const Interval& t = Interval()) const
+        requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
       {
         return invert_common_subsets(y, v_t, t,
           [this,&v,&y](auto it, const Interval& t_) {
