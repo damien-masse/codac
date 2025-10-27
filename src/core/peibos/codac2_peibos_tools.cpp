@@ -11,6 +11,8 @@
 #include "codac2_inversion.h"
 #include "codac2_IntvFullPivLU.h"
 
+#include <iostream>
+
 using namespace std;
 using namespace codac2;
 
@@ -32,7 +34,7 @@ namespace codac2
     }
   }
 
-  double error(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X)
+  double error_peibos(const IntervalVector& Y, const Vector& z, const IntervalMatrix& Jf, const Matrix& A, const IntervalVector& X)
   {
     Vector xc = X.mid();
 
@@ -41,6 +43,14 @@ namespace codac2
     IntervalVector E = (Y - z) + (Jf - A)*dX;
 
     return E.norm().ub();
+  }
+
+  double condition_number(const Matrix& A) 
+  {
+    Eigen::JacobiSVD<Matrix> svd(A);
+    double sigma_max = svd.singularValues()(0);
+    double sigma_min = svd.singularValues()(svd.singularValues().size() - 1);
+    return sigma_max / sigma_min;
   }
 
   Matrix inflate_flat_parallelepiped(const Matrix& A, const Vector& e_vec, double rho)
@@ -53,8 +63,6 @@ namespace codac2
     IntvFullPivLU LUdec((IntervalMatrix) A_int.transpose());
     IntervalMatrix N = LUdec.kernel();
 
-    
-
     vector<int> col_indices;
 
     for (int i = 0; i < m; i++)
@@ -64,7 +72,7 @@ namespace codac2
     // A_reduced is composed of the non empty vectors of A_int
     IntervalMatrix A_reduced (n, col_indices.size());
     for (int i = 0; i < (int) col_indices.size(); i++)
-      A_reduced.col(i) = A_int.col(col_indices[i]);    
+      A_reduced.col(i) = A_int.col(col_indices[i]);
 
     // Construct the new matrix A_tild = [A_reduced | N]
     IntervalMatrix A_tild (n,n);
@@ -72,7 +80,7 @@ namespace codac2
 
     IntervalMatrix Q = inverse_enclosure(A_tild.transpose() * A_tild);
 
-    IntervalMatrix mult = IntervalMatrix::Zero(n,n);
+    IntervalMatrix mult = IntervalMatrix::zero(n,n);
     for (int i = 0; i < n; i++)
       mult(i,i) = rho*sqrt(Q(i,i));
 
@@ -84,7 +92,7 @@ namespace codac2
 
     // The initial parallelepiped is <y> = Y*[-1,1]^n
     Matrix Y = A_inf.smig();
-
+    
     // The following is similar to the previous operations. The difference is that here the Matrix Y is square and not interval
 
     // rho2 is the sum of the radiuses of the circle enclosing each interval generator
@@ -93,12 +101,27 @@ namespace codac2
     for (int i = 0; i < n; i++)
       rho2 += A_inf.col(i).rad().norm();
 
-    IntervalMatrix Q2 = inverse_enclosure(Y.transpose() * Y);
+    IntervalMatrix M = Y.transpose() * Y;
 
-    IntervalMatrix Y2 = IntervalMatrix::Zero(n,n);
+    double eps = 1e-10 * M.norm().ub();
+    double cond_Y = condition_number(Y);
 
+    if (cond_Y>1e10)
+    {
+      cerr << "Warning: ill-conditioned matrix in the inflate process. The result may not be guaranteed " << endl;
+      M += IntervalMatrix::Identity(n,n)*eps; // if Y is ill-conditioned, we add a small term to M to make it invertible
+    }
+
+    IntervalMatrix Q2 = inverse_enclosure(M);
+    
+    IntervalMatrix Y2 = IntervalMatrix::zero(n,n);
+
+    Interval factor = sqrt(1.0 + eps * cond_Y);
     for (int i = 0; i < n; i++)
-      Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
+      if (cond_Y>1e10)
+        Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i))*factor); // sufficient to keep the guarantee ?
+      else
+        Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
     
     return Y2.smag();
   }
