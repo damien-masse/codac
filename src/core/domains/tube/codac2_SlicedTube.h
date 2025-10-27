@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "codac2_TDomain.h"
-#include "codac2_Slice.h"
 #include "codac2_SlicedTubeBase.h"
 #include "codac2_AnalyticFunction.h"
 #include "codac2_Tube_operator.h"
@@ -188,40 +186,40 @@ namespace codac2
         return x;
       }
       
-      inline T operator()(double t) const
-      {
-        if(!tdomain()->t0_tf().contains(t))
-          return all_reals_codomain();
-
-        auto it_t = _tdomain->tslice(t);
-        assert(it_t != _tdomain->end());
-        T x = slice(it_t)->codomain();
-        if(!it_t->is_gate() && t==it_t->lb() && it_t!=_tdomain->begin())
-          x &= slice(--it_t)->codomain();
-        return x;
-      }
-      
-      inline T operator()(const Interval& t) const
+      template<typename Func>
+      inline T eval_common(const Interval& t, const Func& apply_eval) const
       {
         if(!tdomain()->t0_tf().is_superset(t))
           return all_reals_codomain();
 
-        if(t.is_degenerated())
-          return (*this)(t.lb());
+        auto it = _tdomain->tslice(t.lb());
+        assert(it != _tdomain->end());
+        T codomain = apply_eval(it, t & *it);
 
-        auto t_ = t & _tdomain->t0_tf();
-        
-        auto it = _tdomain->tslice(t_.lb());
-        T codomain = slice(it)->codomain();
-
-        while(it != std::next(_tdomain->tslice(t_.ub())))
+        while(it != std::next(_tdomain->tslice(t.ub())))
         {
-          if(it->lb() == t_.ub()) break;
-          codomain |= slice(it)->codomain();
+          if(it->lb() == t.ub()) break;
+          codomain |= apply_eval(it, t & *it);
           it++;
         }
 
         return codomain;
+      }
+
+      T operator()(const Interval& t) const
+      {
+        return eval_common(t,
+          [this](auto it, const Interval& t_) {
+            return slice(it)->operator()(t_);
+          });
+      }
+
+      T operator()(const Interval& t, const SlicedTube<T>& v) const
+      {
+        return eval_common(t,
+          [this,&v](auto it, const Interval& t_) {
+            return slice(it)->operator()(t_, *v.slice(it));
+          });
       }
 
       std::pair<T,T> enclosed_bounds(const Interval& t) const
