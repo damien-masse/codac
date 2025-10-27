@@ -26,7 +26,7 @@ namespace codac2
     Matrix A = (Jf_tild * sigma.permutation_matrix() * (psi_0.diff(X.mid()).mid()));
 
     // Maximum error computation
-    double rho = error(Y, z, Jg, A, X);
+    double rho = error_peibos(Y, z, Jg, A, X);
 
     // Inflation of the parallelepiped
     Matrix A_inf = inflate_flat_parallelepiped(A, X.rad(), rho);
@@ -36,7 +36,7 @@ namespace codac2
 
   vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, bool verbose)
   {
-    return PEIBOS(f, psi_0, Sigma, epsilon, Vector::Zero(psi_0.output_size()), verbose);
+    return PEIBOS(f, psi_0, Sigma, epsilon, Vector::zero(psi_0.output_size()), verbose);
   }
 
   vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose)
