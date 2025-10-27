@@ -27,7 +27,7 @@ namespace codac2 {
 /** \brief Potential inclusion relation between sets 
  * INCLUDES : A is included in B
  * MAYINCLUDE : A may be included in B
- * NOTINCLUDE : A\B is not empty
+ * NOTINCLUDE : A\\B is not empty
  * INTERSECTS : A inter B is non empty
  * MAYINTERSECT : A inter B may be non empty
  * DISJOINT : A inter B is empty

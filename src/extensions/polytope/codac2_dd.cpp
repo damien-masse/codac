@@ -17,13 +17,15 @@
 #include <bitset>
 #include <memory>
 #include <list>
+#include <queue>
+#include <utility>
 
 #include "codac2_Index.h"
 #include "codac2_Vector.h"
 #include "codac2_Row.h"
 #include "codac2_Facet.h" 
 #include "codac2_dd.h"
-#include "codac2_IntvFulPivLU.h"
+#include "codac2_IntvFullPivLU.h"
 
 #define DEBUG_CODAC2_DD
 
@@ -33,7 +35,7 @@ namespace codac2 {
 /****** PairMaxSet *******/
 /*************************/
 template <typename T>
-struct PairMaxSets<T> {
+struct PairMaxSets {
    T a,b;
    std::vector<Index> elems;
 
@@ -44,6 +46,18 @@ struct PairMaxSets<T> {
        while(i<(Index)e1.size() && j<(Index)e2.size()) {
          if (e1[i]==e2[j]) { 
            elems.push_back(e1[i]);
+           i++; j++;
+         } else if (e1[i]<e2[j]) i++;
+         else j++;
+       }
+   }
+
+   PairMaxSets(T a, T b, const std::vector<Index> e1, const std::vector<Index> e2, const Index rejectF) : a(a), b(b) {
+       Index i=0,j=0;
+       while(i<(Index)e1.size() && j<(Index)e2.size()) {
+         if (e1[i]==e2[j]) { 
+           if (e1[i]!=rejectF) 
+             elems.push_back(e1[i]);
            i++; j++;
          } else if (e1[i]<e2[j]) i++;
          else j++;
@@ -97,7 +111,7 @@ DDbuildF2V::DDbuildF2V(Index dim, const IntervalVector &box,
 	const std::vector<Facet> &eqconstraints, bool include_box) : dim(dim),
 		fdim(dim), 
 		bbox(box), empty(false), flat(false),
-		nbInVertex(0), nbInLinks(0) {
+		nbIn(0) {
    int nb_eq_dim= eqconstraints.size();
    if (include_box) {
       for (int i=0;i<dim;i++) {
@@ -115,12 +129,12 @@ DDbuildF2V::DDbuildF2V(Index dim, const IntervalVector &box,
       if (include_box) {
         for (int i=0;i<dim;i++) {
            if (!bbox[i].is_degenerated()) continue;
-           MatEQ[base][i]=1.0;
-           RhsRQ[base]=box[i];
+           MatEQ(base,i)=1.0;
+           RhsEQ[base]=box[i];
            base++;
         }
       }
-      for (Index i=0;i<eqconstraints.size();i++) {
+      for (Index i=0;i<(Index)eqconstraints.size();i++) {
           MatEQ.row(base+i) = eqconstraints[i].row;
           RhsEQ[base+i] = eqconstraints[i].rhs;
       }
@@ -160,17 +174,42 @@ DDbuildF2V::DDbuildF2V(Index dim, const IntervalVector &box,
 //   if (include_box) this->add_constraint_box(bbox);
 }
 
-std::list<DDvertex>::iterator DDbuildF2V::addDDvertex(const IntervalVector &v) {
+std::forward_list<DDvertex>::iterator DDbuildF2V::addDDvertex(const IntervalVector &v) {
     nbIn++;
     vertices.emplace_front(DDvertex(v,nbIn));
     return vertices.begin();
 }
-std::list<DDvertex>::iterator  DDbuildF2V::addDDvertex(IntervalVector &&v) {
+std::forward_list<DDvertex>::iterator  DDbuildF2V::addDDvertex(IntervalVector &&v) {
     nbIn++;
     vertices.emplace_front(DDvertex(v,nbIn));
     return vertices.begin();
 }
 
+inline std::vector<Index> fctSon(Index fct,const std::vector<Index> fcts1,
+		const std::vector<Index> fcts2) {
+    std::vector<Index> nfcts;
+    Index a1=0; Index a2=0;
+    bool idFacetAdded=(fct<0);
+    while (a1<(Index)fcts1.size() && a2<(Index)fcts2.size()) {
+       if (fcts1[a1]<fcts2[a2]) {
+          a1++; if (a1==(Index)fcts1.size()) break;
+       } else if (fcts2[a2]<fcts1[a1]) {
+          a2++; if (a2==(Index)fcts2.size()) break;
+       } else {
+         if (fcts1[a1]>fct && !idFacetAdded) {
+            nfcts.push_back(fct);
+            idFacetAdded=true;
+         }
+         nfcts.push_back(fcts1[a1]);
+         a1++; a2++;
+       }
+    }
+    if (!idFacetAdded) nfcts.push_back(fct);
+
+    return nfcts;
+}
+
+#if 0
 /* p1 has lambda>rhs, p2 has lambda<rhs ;
    p1 is outside the new constraint, p2 is inside.
    For inequalities, we need to get "as much" p1 as possible, 
@@ -212,8 +251,31 @@ Index DDbuildF2V::addVertexSon(const DDvertex &p1, DDvertex &p2, double rhs,
     p2.replaceLnks(p1.Id,newId);
     return newId;
 }
+#endif
+
+IntervalVector DDbuildF2V::compute_vertex(const IntervalVector &vect) const {
+   if (!flat) {
+     if (vect[0]==0.0) return vect.tail(this->fdim);
+     return vect.tail(this->fdim)/vect[0];
+   }
+   if (vect[0]==0.0) return this->M_EQ*vect;
+   return this->M_EQ*(vect/vect[0]);
+}
 
 
+struct CmpDD {
+   bool operator()(const std::forward_list<DDvertex>::iterator &a,
+		const std::forward_list<DDvertex>::iterator &b) {
+       return (b->vertex[0].lb()*a->lambda.lb()<=a->vertex[0].lb()*b->lambda.lb());
+   }
+};
+
+bool DDbuildF2V::addDDlink(const std::forward_list<DDvertex>::iterator& V1,
+                      const std::forward_list<DDvertex>::iterator& V2) {
+      if (V1->addLnk(V2,true)) return V2->addLnk(V1,false);
+      return false;
+//    return (V1->addLnk(V2,true) && V2->addLnk(V1,false));
+}
 
 int DDbuildF2V::add_facet(Index idFacet, const Facet& fct) {
    if (empty) return 0;
@@ -228,7 +290,7 @@ int DDbuildF2V::add_facet(Index idFacet, const Facet& fct) {
    /* then consider lines */
    Index bestline=-1;
    double maxmig=0.0;
-   for (Index i=0;i<lines.size();i++) {
+   for (Index i=0;i<(Index)lines.size();i++) {
       Interval u = facet.dot(lines[i]);
       if (u.contains(0.0)) continue;
       double mg=u.mig();
@@ -240,13 +302,13 @@ int DDbuildF2V::add_facet(Index idFacet, const Facet& fct) {
    if (bestline!=-1) {
       Index codeFacet = reffacets.size();
       reffacets.push_back(idFacet);
-      if (bestline!=lines.size()-1) {
+      if (bestline!=(Index)lines.size()-1) {
 	lines[bestline].swap(lines.back());
       }
       IntervalVector& bstline = lines.back();
       Interval ubest = facet.dot(bstline);
       /* traitement des lines */
-      for (Index i=0;i<lines.size()-1;i++) {
+      for (Index i=0;i<(Index)lines.size()-1;i++) {
          Interval u = facet.dot(lines[i]);
          lines[i] = ubest*lines[i] - u*bstline;
       }
@@ -264,6 +326,7 @@ int DDbuildF2V::add_facet(Index idFacet, const Facet& fct) {
             else
 	      v.vertex = -ubest.ub()*v.vertex + lower*bstline;
          }
+	 v.reduce_vector();
          v.addFct(codeFacet);
       }
       /* ajout du nouveau sommet et des liens */
@@ -276,162 +339,212 @@ int DDbuildF2V::add_facet(Index idFacet, const Facet& fct) {
       for (Index a=0;a<codeFacet;a++) {
           newVertex->addFct(a);
       }
+      /* ce nouveau sommet a une face spéciale, "négation" de la contrainte,
+         de code 0 */
+      newVertex->addFct(reffacets.size());
+      reffacets.push_back(0);
+      /* suppression de la ligne */
+      this->lines.pop_back();
       return 1;
    }
    /* end of line treatments , the following 
       is when no line is available */
+   int nbGT=0;
+   bool notempty=false;
+   for (DDvertex &vt : vertices) {
+      vt.lambda = facet.dot(vt.vertex);
+      notempty |= (vt.lambda.lb()<=0.0);
+      if (vt.lambda.ub()<0.0) {
+         vt.status = DDvertex::VERTEXLT;
+         continue;
+      }
+      if (vt.lambda.lb()<0.0) {
+         vt.status = DDvertex::VERTEXON;
+         continue;
+      }
+      if (vt.lambda.lb()<this->tolerance) {
+         vt.status = DDvertex::VERTEXGE;
+         continue;
+      }
+      nbGT++;
+      vt.status=DDvertex::VERTEXGT;
+   }
+   if (!notempty) { this->empty=true; vertices.clear(); return -1; }
+   if (nbGT==0) return 0;
 
    std::forward_list<DDvertex>::iterator itVertex = vertices.begin();
-   std::vector<std::forward_list<DDvertex>::iterator> stack;
+   std::priority_queue<std::forward_list<DDvertex>::iterator,
+		std::vector<std::forward_list<DDvertex>::iterator>,
+		CmpDD> stack;
    Index refFacet=-1;
    while (itVertex!=vertices.end()) {
+//       bool inBoundary;
        std::forward_list<DDvertex>::iterator actVertex;
        if (stack.size()>0) {
-          actVertex = stack.back();
-          stack.pop_back();
-          if (actVertex->status!=VERTEXGT) continue;
+          actVertex = stack.top();
+          stack.pop();
+          if (actVertex->status!=DDvertex::VERTEXSTACK) continue;
+//          inBoundary=true;
        } else {
           actVertex=itVertex;
           ++itVertex;
-          if (actVertex->status!=VERTEXTODO) continue;
-          actVertex->lambda = facet.dot(actVertex->vertex);
-          if (actVertex->lambda.ub()<0.0) {
-             actVertex->status = VERTEXLT;
-             continue;
-          }
-          if (actVertex->lambda.lb()<0.0) {
-             actVertex->status = VERTEXON;
-             continue;
-          }
-          if (actVertex->lambda.lb()<this->tolerance) {
-             actVertex->status = VERTEXGE;
-             continue;
-          }
-          retFacet = reffacets.size(); /* new facet identification */
+          if (actVertex->status!=DDvertex::VERTEXGT) continue;
+          refFacet = reffacets.size(); /* new facet identification */
           reffacets.push_back(idFacet);
+//          inBoundary=false;
        }
-       actVertex->status = VERTEXREM;
+#ifdef DEBUG_CODAC2_DD
+       std::cout << " elimination sommet : " << actVertex->Id << ", " << actVertex->links.size() << "liens \n";
+#endif
+       actVertex->status = DDvertex::VERTEXREM;
+       std::vector<std::pair<std::forward_list<DDvertex>::iterator,
+			std::vector<Index>>>
+		adjacentVertices;
+       for (std::forward_list<DDvertex>::iterator lnk : actVertex->links) {
+           DDvertex &destlink = *lnk;
+#ifdef DEBUG_CODAC2_DD
+       std::cout << " lien : " << destlink.Id << "\n";
+#endif
+           if (destlink.status==DDvertex::VERTEXGT) {
+               destlink.status=DDvertex::VERTEXSTACK;
+               stack.push(lnk);
+           }
+           if (destlink.status==DDvertex::VERTEXGE ||
+               destlink.status==DDvertex::VERTEXSTACK) {
+	       std::cout << " GE ou STACK " << destlink.lambda << "\n";
+               /* add the facet to the vertex, if it does not already exists */
+	       adjacentVertices.push_back(std::pair(lnk,fctSon(-1,lnk->fcts,actVertex->fcts)));
+               destlink.addFct(refFacet);
+	       destlink.removeLnk(actVertex);
+	       continue;
+           }
+           assert(destlink.status!=DDvertex::VERTEXREM);
+			 /* should not happen */
+           IntervalVector partV=destlink.vertex;
+           if (destlink.status==DDvertex::VERTEXON) {
+             IntervalRow x1(facet);
+             MulOp::bwd(Interval(-oo,0.0),x1,partV);
+             if (partV.is_empty()) {
+	       std::cout << " Sommet conserve " << facet << " " << destlink.vertex << " " << destlink.lambda << "\n";
+#if 0
+              IntervalVector partV2=destlink.vertex;
+              IntervalRow x2(facet);
+              MulOp::bwd(Interval(0.0,+oo),x2,partV2);
+	       std::cout << " reste " << partV2 << "\n";
+#endif
+	       adjacentVertices.push_back(std::pair(lnk,fctSon(-1,lnk->fcts,actVertex->fcts)));
+               destlink.addFct(refFacet);
+	       destlink.removeLnk(actVertex);
+	       continue;
+             }
+           }
+           if (-destlink.lambda.lb()/actVertex->lambda.lb()<tolerance) {
+	       std::cout << " Extension sommet " << -destlink.lambda.lb()/actVertex->lambda.lb() << "\n";
+	      /* extend the vertex, and add fct */
+	      adjacentVertices.push_back(std::pair(lnk,fctSon(-1,lnk->fcts,actVertex->fcts)));
+              destlink.vertex |=
+                 (partV - 
+		(destlink.lambda.lb()/actVertex->lambda)*actVertex->vertex);
+              destlink.addFct(refFacet);
+	      destlink.removeLnk(actVertex);
+	      continue;
+           }
+	   /* creation of a new vertex */
+	   IntervalVector newV = -destlink.lambda.lb()*actVertex->vertex
+		      + actVertex->lambda.lb()*partV;
+           assert(!newV.is_empty());
+#if 0
+           if (newV.is_empty()) {
+	      std::cout << "  newV : " << newV << "\n";
+              std::cout << destlink.lambda << " " << actVertex->vertex << " " << actVertex->lambda << " " << partV << "\n";
+	   }
+#endif
+           std::forward_list<DDvertex>::iterator newVx = 
+		     this->addDDvertex(newV);
+#ifdef DEBUG_CODAC2_DD
+       std::cout << " creation new V " << newV << "id : " << newVx->Id << "\n";
+#endif
+	   newVx->lambda=0.0;
+	   destlink.changeLnk(actVertex,newVx);
+	   newVx->addLnk(lnk,false);
+	   newVx->fcts = fctSon(-1,destlink.fcts,actVertex->fcts);
+	   adjacentVertices.push_back(std::pair(newVx,newVx->fcts));
+           newVx->addFct(refFacet);
+           newVx->status=DDvertex::VERTEXGE;
+       }
+#ifdef DEBUG_CODAC2_DD
+       std::cout << " fin traitement liens : " << adjacentVertices.size() << "\n";
+#endif
+       std::vector<PairMaxSets<std::forward_list<DDvertex>::iterator>> maxset;
+       for (Index i=0;i<=(Index)adjacentVertices.size()-1;i++) {
+#ifdef DEBUG_CODAC2_DD
+         std::cout << " sommet : " << adjacentVertices[i].first->Id << " : ";
+         for (Index u : adjacentVertices[i].second) {
+            std::cout << u << ",";
+         }        
+         std::cout << std::endl;
+#endif
+         for (Index j=i+1;j<(Index)adjacentVertices.size();j++) {
+              PairMaxSets<std::forward_list<DDvertex>::iterator> 
+			actuel(adjacentVertices[i].first,
+			       adjacentVertices[j].first,
+			       adjacentVertices[i].second,
+			       adjacentVertices[j].second,refFacet);
+	      if (actuel.elems.size()<fdim-3-lines.size()) continue;
+	      bool placed=false;
+              unsigned long int k=0,l=0;
+	      while (k<maxset.size()) {
+                 int u=actuel.comp(maxset[k]);
+                 if (u==2) { 
+                    if (k!=l) maxset[k].swap(maxset[l]);
+                    k++; l++;
+                    continue;
+                 }
+                 if (u==-1 || u==0) { placed=true; break;  }
+                        /* note : if u==-1 or 0, 
+                           placed should be false so k==l */
+                 if (u==1) {
+                    if (!placed) { 
+                       maxset[k]=actuel; 
+                       placed=true;
+                       l++;
+                    }
+                    k++;
+                 } 
+	      }
+              if (l<k) maxset.resize(l);
+              else if (!placed) {
+                  maxset.push_back(actuel);
+              }
+          }
+       }
+#ifdef DEBUG_CODAC2_DD
+       std::cout << " boucle maxset : " << actVertex->Id << "\n";
+#endif
+       for (const PairMaxSets<std::forward_list<DDvertex>::iterator>
+			 &pm : maxset) {
+#ifdef DEBUG_CODAC2_DD
+	      if (pm.elems.size()<fdim-3-lines.size()) {
+           std::cout << " maxset strange : " << pm.a->Id << " " << pm.b->Id << " " << pm.elems.size() <<  std::endl;
+            }
+		std::cout << pm.a->Id << " " << pm.b->Id << "\n";
+#endif
+	    bool res = this->addDDlink(pm.a,pm.b);
+#ifdef DEBUG_CODAC2_DD
+            std::cout << (res ? "   added " : "   already here ") << "\n";
+#endif
 
+       }
    }
-   
-   
-   for (std::pair<const Index, DDvertex> &v : vertices) {
-      DDvertex &d = v.second;
-      d.lambda = rowI*d.vertex;
-      if (d.lambda.ub()<rhs) { d.status=DDvertex::VERTEXLT; }
-      else if (d.lambda.lb()<rhs) { d.status=DDvertex::VERTEXON; }
-      else if (d.lambda.lb()<=rhs+tolerance) { d.status=DDvertex::VERTEXGE; }
-      else { d.status=DDvertex::VERTEXGT;  }
-   }
-   for (std::map<Index,DDvertex>::iterator it = vertices.rbegin();
-                  it!=vertices.rend();++it) {
-     DDvertex &d = it->second;
-     std::cout << "     vertex: " << d.Id << " " << d.status << "\n";
-     if (d.status==DDvertex::VERTEXLT || 
-	 d.status==DDvertex::VERTEXON ||
-         d.status==DDvertex::VERTEXNEW)
-	 continue;
-     /* check the links towards LT and ON, if the facet is a valid
-        intersection */
-     if (d.status==DDvertex::VERTEXGT) {
-        bool oktoremove=true;
-        for (auto &l : d.links) {
-            if (l==total_links.end()) continue;
-            auto &u = l->second.otherVertex(it);
-            if (u==vertices.end()) {
-               total_links.remove(l);
-               l=total_links.end();
-               continue;
-            }
-            if (u->second.status!=VERTEXON 
-		&& u->second.status!=VERTEXLT) continue;
-        }
-     }
-     if (d.status==DDvertex::VERTEXGE) {
-        d.addFct(idFacet);
-        continue;
-     }
-     for (auto &l : d.links) {
-        if (l==total_links.end()) continue;
-        auto &u = l->second.otherVertex(it);
-        auto &d2 = u->second;
-        if (d2.status==DDvertex::VERTEXGE || d2.status==DDvertex::VERTEXGT) {
-           l->second.remove(it);
-           continue;
-        }
-        if (d2.status!=DDvertex::VERTEXLT && d2.status!=DDvertex::VERTEXON) { 
-	   continue; /* do nothing */
-        }
-#ifdef DEBUG_CODAC2_DD
-        std::cout << "    addVertex " << d.Id << " " << d2.Id << " " << d.status << " " << d2.status << std::endl;
-        std::cout << "    (" << d.lambda << " " << d2.lambda << ")    " << std::endl;
-#endif
-#ifdef DEBUG_CODAC2_DD
-        Index newId = this->addVertexSon(d,d2,rhs,idFacet);
-        std::cout << " ... done " << newId <<std::endl;
-#else
-        this->addVertexSon(d,d2,idFacet);
-#endif
-        cnt++;
-     }
-     this->removeVertex(d.Id,false);
-   }
-   /*construction of new links for the eq vertices */
-#ifdef DEBUG_CODAC2_DD
-        std::cout << "   (" << idFacet << ")" << "    construction of PairMaxSet  " << cnt << std::endl;
-#endif
-   std::vector<PairMaxSets> maxset;
-   for (std::map<Index,DDvertex>::iterator it = vertices.begin();
-                  it!=vertices.end();++it) {
-      DDvertex &d = it->second;
-      if (d.status==DDvertex::VERTEXGE || d.status==DDvertex::VERTEXNEW) {
-         for (std::map<Index,DDvertex>::iterator it2 = next(it);
-                it2!=vertices.end(); ++it2) {
-            DDvertex &d2 = it2->second;
-            if (d2.status==DDvertex::VERTEXGE 
-		|| d2.status==DDvertex::VERTEXNEW) {
-               PairMaxSets actuel(d.Id,d2.Id,d.fcts,d2.fcts);
-//               if (actuel.elems.size()<fct.row.size()-2) continue;
-               bool placed=false;
-               unsigned long int k=0, l=0;
-               while (k<maxset.size()) {
-                  int u=actuel.comp(maxset[k]);
-                  if (u==2) { 
-		    if (k!=l) maxset[k].swap(maxset[l]);
-	    	    k++; l++;
-		    continue;
-		  }
-                  if (u==-1 || u==0) { placed=true; break;  }
-			/* note : if u==-1 or 0, 
-			   placed should be false so k==l */
-                  if (u==1) {
-                     if (!placed) { 
-			maxset[k]=actuel; 
-			placed=true;
-			l++;
-                     }
-                     k++;
-                  } 
-               }
-               if (l<k) maxset.resize(l);
-	       else if (!placed) {
-                   maxset.push_back(actuel);
-               }
-            }
-         }
-      }
-   }
-   for (const PairMaxSets &pm : maxset) {
-#ifdef DEBUG_CODAC2_DD
-      std::cout << " maxset : " << pm.a << " " << pm.b << " " << pm.elems.size() <<  std::endl;
-#endif
-      vertices.at(pm.a).addLnk(pm.b);
-      vertices.at(pm.b).addLnk(pm.a);
-   }
-   return cnt;
+       
+   vertices.remove_if([](const DDvertex &v) 
+			{ return v.status==DDvertex::VERTEXREM; });
+   return 1;
 }
+   
 
 /* TODO : make a specific computation */
+#if 0
 bool DDbuildF2V::vertex_compatible(const std::vector<Index> &fcts,
                 const IntervalVector &v) {
    IntervalMatrix M = IntervalMatrix::zero(fcts.size(), v.size());
@@ -463,24 +576,36 @@ IntervalVector DDbuildF2V::recompute_vertex(const IntervalVector &vect) const {
    }
    return v;
 }
+#endif
+
+IntervalVector normalise(const IntervalVector &v) {
+   IntervalVector res(v);
+   if (res[0].lb()<=0.0) return res;
+   return res/res[0].lb();
+}
 
 std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build) {
-   os << "DDbuildF2V (" << build.vertices.size() << " vtx) : " << std::endl;
-   for (const auto &ivt : build.vertices) {
-      auto &vt = ivt.second;
-      os << vt.Id << " : " << vt.vertex << std::endl;
-      os << " fct: (";
-      for (Index a : vt.fcts) {
-         os << a << ",";
+   os << "DDbuildF2V (" << /*build.vertices.size() <<*/ " vtx) : " << std::endl;
+   os << "   " << build.lines.size() << " lines : " << std::endl;
+   for (const auto &l : build.lines) {
+     os << " " << l << std::endl;
+   }
+   Index nbvx=0, nbrays=0;
+   for (const auto &vt : build.vertices) {
+      if (vt.vertex[0]!=0) nbvx++; else nbrays++;
+      os << " " << vt.Id << " : " << normalise(vt.vertex) << std::endl;
+      os << " fct : (";
+      for (const auto &a : vt.fcts) {
+         os << a << ":" << build.reffacets[a] << ",";
       }
       os << ")" << std::endl;
       os << " lnks: (";
-      for (Index a : vt.links) {
-         os << a << ",";
+      for (const auto &a : vt.links) {
+         os << a->Id << ",";
       }
       os << ")" << std::endl;
    }
-   os << "endDDbuildF2V" << std::endl;
+   os << "endDDbuildF2V ( "<< nbrays << " rays, " << nbvx << " vertices, " << (nbrays+nbvx) << " total)" << std::endl;
    return os;
 }
 
@@ -488,6 +613,7 @@ std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build) {
 /*** DDbuildF2V::EqFacet *****/
 /*****************************/
 /* management of the equality constraints for DDbuildF2V */
+#if 0
 void DDbuildF2V::EqFacet::adapt_eqconstraint(const IntervalVector &bbox,
                                 Row &cst, Interval &rhs) const {
            Interval alpha(cst[dim]); cst[dim]=0.0;
@@ -531,7 +657,7 @@ void DDbuildF2V::EqFacet::adapt_box(IntervalVector &bbox) const {
     }
     bbox[this->dim]=0;
 }
-
+#endif
 
 /*****************************/
 /*** DDbuildV2F::EqFacet *****/
@@ -721,7 +847,7 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
      
    }
    /*construction of new links for the eq facets */
-   std::vector<PairMaxSets> maxset;
+   std::vector<PairMaxSets<Index>> maxset;
    for (std::map<Index,DDfacet>::iterator it = facets.begin();
                   it!=facets.end();++it) {
       DDfacet &d = it->second;
@@ -760,7 +886,7 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
          }
       }
    }
-   for (const PairMaxSets &pm : maxset) {
+   for (const PairMaxSets<Index> &pm : maxset) {
 //      std::cout << " maxset : " << pm.a << " " << pm.b << std::endl;
       facets.at(pm.a).addLnk(pm.b);
       facets.at(pm.b).addLnk(pm.a);

@@ -32,7 +32,10 @@
 
 namespace codac2 {
 
+
+#if 0
 struct DDlink; /* link between two vertices */
+#endif
 
 struct DDvertex {
    Index Id;
@@ -44,46 +47,89 @@ struct DDvertex {
    
    enum ddvertexstatus {
      VERTEXNEW, /* created */
-     VERTEXTODO, /* unknown status */
      VERTEXLT, /* < (GT,LT) => new vertex */
      VERTEXON, /* <,=,> (GT,LE) => for now, equivalent to LT */
      VERTEXGE, /* = and possible small >
 		  keep the vertex. no change with (GT,GE) */
-     VERTEXGT, /* vertex in stack for later treatment */
+     VERTEXGT, /* vertex GT, untreated and not in stack */
+     VERTEXSTACK, /* vertex in stack for later treatment */
      VERTEXREM /* vertex GT treated, to be removed */
    };
    ddvertexstatus status;
 
-   std::vector<std::map<Index,DDlink>::iterator> links;
+   std::vector<std::forward_list<DDvertex>::iterator> links;
  
    DDvertex(const IntervalVector &v, Index Id) : Id(Id), 
 	 vertex(v), status(VERTEXNEW) {
+	reduce_vector();
    }
 
    DDvertex(IntervalVector &&v, Index Id, 
-		std::vector<std::map<Index,DDlink>::iterator> &nlinks) :
+		std::vector<std::forward_list<DDvertex>::iterator> &nlinks) :
 	 Id(Id), 
 	 vertex(v), status(VERTEXNEW) {
          this->links.swap(nlinks);
+	 reduce_vector();
    }
 
-   void addLnk(const std::map<Index,DDlink>::iterator &a) {
+   bool addLnk(const std::forward_list<DDvertex>::iterator &a,
+		 bool check=false) {
+      if (check) {
+         for (auto b : links) {
+            if (a==b) return false;
+         } 
+      }
       this->links.push_back(a);
+      return true;
    }
 
-   void addLnkVertex(const std::map<Index,DDvertex>::iterator &V1,
-		 const std::vector<Index> &fcts);
+//   void addLnkVertex(const std::forward_list<DDvertex>::iterator &V1);
 
-   void removeLnk(const std::map<Index,DDlink>::iterator &a);
+   void removeLnk(const std::forward_list<DDvertex>::iterator &a) {
+      for (Index i=0;i<(Index)links.size();i++) {
+         if (links[i]==a) { 
+	    links[i]=links[links.size()-1]; 
+	    links.pop_back();
+            return;
+         }
+      }
+      std::cout << "not found !!???\n";
+   }
 
-   void addFct(Index a) {
+   void changeLnk(const std::forward_list<DDvertex>::iterator &a,
+		const std::forward_list<DDvertex>::iterator &b) {
+      for (Index i=0;i<(Index)links.size();i++) {
+         if (links[i]==a) { links[i]=b; return; }
+      }
+      /* should not happel */
+      links.push_back(b);
+   }
+
+   bool addFct(Index a) {
       auto rev_it = this->fcts.rbegin();
-      while (rev_it != this->fcts.rend() && (*rev_it)>a) it++;
-      if (rev_it!=this->fcts.rend() && (*rev_it)==a) return;
+      while (rev_it != this->fcts.rend() && (*rev_it)>a) rev_it++;
+      if (rev_it!=this->fcts.rend() && (*rev_it)==a) return false;
       this->fcts.insert(rev_it.base(),a);
+      return true;
+   }
+ 
+   inline void reduce_vector() {
+      int fx;
+      frexp(vertex[0].mid(),&fx);
+      for (Index i=1;i<vertex.size();i++) {
+         int fx2;
+         frexp(vertex[i].mid(),&fx2);
+         if (fx2>fx) fx=fx2;
+      }
+      if (std::abs(fx)<10) return;
+      double mult=exp2(-fx);
+      for (Index i=0;i<vertex.size();i++) {
+         vertex[i] *= mult;
+      }
    }
 };
 
+#if 0
 struct DDlink {
    std::forward_list<DDvertex>::iterator V1;
    std::forward_list<DDvertex>::iterator V2;
@@ -113,6 +159,7 @@ struct DDlink {
    }
 #endif
 };
+#endif
 
 class DDbuildF2V {
   public:
@@ -123,18 +170,28 @@ class DDbuildF2V {
    
      int add_facet(Index idFacet, const Facet& fct);
 
+     IntervalVector compute_vertex(const IntervalVector &vect) const;
+     Index get_dim() const;
+     Index get_fdim() const;
+
+     bool is_empty() const;
+     const IntervalMatrix &get_M_EQ() const;
+
+     const std::vector<IntervalVector> &get_lines() const;
+     const std::forward_list<DDvertex> &get_vertices() const;
+     const std::vector<Index> &get_reffacets() const;
+
      friend std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build);
 
   private:
-     Index initDDlinks(const std::map<Index,DDvertex>::iterator& V1,
-   		      const std::map<Index,DDvertex>::iterator& V2,
-   		      std::vector<Index> &fct);
+     bool addDDlink(const std::forward_list<DDvertex>::iterator& V1,
+   		      const std::forward_list<DDvertex>::iterator& V2);
 
      std::forward_list<DDvertex>::iterator addDDvertex(const IntervalVector &v);
-     std::map<Index,DDvertex>::iterator addDDvertex(IntervalVector &&v);
-     std::map<Index,DDvertex>::iterator addVertexSon(const DDvertex &p1,
-		 DDvertex &p2, double rhs, Index idFacet); 
-     void removeVertex(Index Id, bool removeLnks);
+     std::forward_list<DDvertex>::iterator addDDvertex(IntervalVector &&v);
+/*     std::map<Index,DDvertex>::iterator addVertexSon(const DDvertex &p1,
+		 DDvertex &p2, double rhs, Index idFacet);  */
+/*     void removeVertex(Index Id, bool removeLnks); */
 
 #if 0
      /* x_dim = eqcst x + rhs */
@@ -173,28 +230,43 @@ class DDbuildF2V {
      };
 #endif
 
-     IntervalVector recompute_vertex(const IntervalVector &vect) const; 
-
      Index dim;
      Index fdim; /* dimension - nb independant equalities constraints */
+     IntervalVector bbox;
 
      /* if fdim<dim :
         constraint a X <= b becomes (-b 0) + (a M_EQ) 
-        vertex : (c Y) becomes X = M_EQ (1 Y/c) */
+        vertex : (c Y) becomes X = M_EQ (1 Y/c) 
+        ray : (0 Y) becomes a ray X = M_EQ (0 Y) ?
+        lines : (0 Y) becomes a line X = M_EQ (0 Y) ?
+     */
      IntervalMatrix M_EQ;
 
      std::vector<IntervalVector> lines; /* lines (for unbounded polyhedron) */
                /* rays can be handled as classical vertices */
 
      std::forward_list<DDvertex> vertices;
+#if 0
      std::forward_list<DDlink> total_links;
+#endif
      std::vector<Index> reffacets; /* indirection for facets */
 
      bool empty, flat;
-     Index nbIdVertex;
-     Index nbIdLinks;
+     Index nbIn;
      double tolerance = 1e-9;
 };
+
+inline Index DDbuildF2V::get_dim() const { return this->dim; }
+inline Index DDbuildF2V::get_fdim() const { return this->fdim; }
+inline bool DDbuildF2V::is_empty() const { return this->empty; }
+inline const IntervalMatrix &DDbuildF2V::get_M_EQ() const { return this->M_EQ; }
+inline const std::vector<IntervalVector> &DDbuildF2V::get_lines() const 
+	{ return this->lines; }
+inline const std::forward_list<DDvertex> &DDbuildF2V::get_vertices() const 
+	{ return this->vertices; }
+inline const std::vector<Index> &DDbuildF2V::get_reffacets() const 
+	{ return this->reffacets; }
+
 
 struct DDfacet {
    Index Id;

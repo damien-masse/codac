@@ -12,6 +12,8 @@ list(APPEND CODAC_POLYTOPE_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/codac2_dd.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Polytope.h
   ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Polytope.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Polytope_util.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/codac2_Polytope_util.cpp
 )
 
 ################################################################################
