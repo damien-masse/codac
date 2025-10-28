@@ -285,13 +285,13 @@ namespace codac2
         requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
       {
         if constexpr(std::is_same_v<T,Interval>)
-          return (polygon_slice(v) & ConvexPolygon(cart_prod(t,codomain()))).box()[1];
+          return untrunc((polygon_slice(v) & ConvexPolygon(cart_prod(t,trunc(codomain())))).box()[1]);
 
         else if constexpr(std::is_same_v<T,IntervalVector>)
         {
           T y = all_reals_value();
           for(Index i = 0 ; i < size() ; i++)
-            y[i] &= untrunc((polygon_slice_i(v,i) & ConvexPolygon(cart_prod(t,codomain()))).box()[1]);
+            y[i] &= untrunc((polygon_slice_i(v,i) & ConvexPolygon(cart_prod(t,trunc(codomain())))).box()[1]);
           return y;
         }
       }

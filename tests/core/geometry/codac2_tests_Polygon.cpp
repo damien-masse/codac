@@ -38,8 +38,7 @@ TEST_CASE("Empty polygon")
   CHECK(p1.contains(IntervalVector(2)) == BoolInterval::FALSE);
   CHECK(p1.is_empty());
   CHECK(p1.edges().size() == 0);
-  CHECK(p1.unsorted_vertices().size() == 0);
-  CHECK(p1.sorted_vertices().size() == 0);
+  CHECK(p1.vertices().size() == 0);
 }
 
 TEST_CASE("Polygon contains")
@@ -131,6 +130,6 @@ TEST_CASE("Polygon contains - limit cases")
     ConvexPolygon p2({{4,4.25},{5,4.25}});
     auto i = p1 & p2;
     CHECK(i == ConvexPolygon(IntervalVector({4.5,4.25})));
-    CHECK(i.unsorted_vertices().size() == 1);
+    CHECK(i.vertices().size() == 1);
   }
 }
