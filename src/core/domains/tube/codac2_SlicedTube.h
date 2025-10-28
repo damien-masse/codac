@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "codac2_TDomain.h"
-#include "codac2_Slice.h"
 #include "codac2_SlicedTubeBase.h"
 #include "codac2_AnalyticFunction.h"
 #include "codac2_Tube_operator.h"
@@ -188,45 +186,46 @@ namespace codac2
         return x;
       }
       
-      inline T operator()(double t) const
-      {
-        if(!tdomain()->t0_tf().contains(t))
-          return all_reals_codomain();
-
-        auto it_t = _tdomain->tslice(t);
-        assert(it_t != _tdomain->end());
-        T x = slice(it_t)->codomain();
-        if(!it_t->is_gate() && t==it_t->lb() && it_t!=_tdomain->begin())
-          x &= slice(--it_t)->codomain();
-        return x;
-      }
-      
-      inline T operator()(const Interval& t) const
+      template<typename Func>
+      inline T eval_common(const Interval& t, const Func& apply_eval) const
       {
         if(!tdomain()->t0_tf().is_superset(t))
-          return all_reals_codomain();
+          return all_reals_value();
 
-        if(t.is_degenerated())
-          return (*this)(t.lb());
+        auto it = _tdomain->tslice(t.lb());
+        assert(it != _tdomain->end());
+        T codomain = apply_eval(it, t & *it);
 
-        auto t_ = t & _tdomain->t0_tf();
-        
-        auto it = _tdomain->tslice(t_.lb());
-        T codomain = slice(it)->codomain();
-
-        while(it != std::next(_tdomain->tslice(t_.ub())))
+        while(it != std::next(_tdomain->tslice(t.ub())))
         {
-          if(it->lb() == t_.ub()) break;
-          codomain |= slice(it)->codomain();
+          if(it->lb() == t.ub()) break;
+          codomain |= apply_eval(it, t & *it);
           it++;
         }
 
         return codomain;
       }
 
+      T operator()(const Interval& t) const
+      {
+        return eval_common(t,
+          [this](auto it, const Interval& t_) {
+            return slice(it)->operator()(t_);
+          });
+      }
+
+      T operator()(const Interval& t, const SlicedTube<T>& v) const
+        requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
+      {
+        return eval_common(t,
+          [this,&v](auto it, const Interval& t_) {
+            return slice(it)->operator()(t_, *v.slice(it));
+          });
+      }
+
       std::pair<T,T> enclosed_bounds(const Interval& t) const
       {
-        auto x = this->empty_codomain();
+        auto x = this->empty_value();
         auto bounds = std::make_pair(x,x);
 
         if(t.lb() < _tdomain->t0_tf().lb() || t.ub() > _tdomain->t0_tf().ub())
@@ -507,6 +506,7 @@ namespace codac2
        * \return hull of \f$[x]^{-1}([y])\f$
        */
       Interval invert(const T& y, const SlicedTube<T>& v, const Interval& t = Interval()) const
+        requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
       {
         return invert_common(y, t,
           [this,&v,&y](auto it, const Interval& t_) {
@@ -526,6 +526,7 @@ namespace codac2
        * \param t optional temporal domain on which the inversion will be performed
        */
       void invert(const T& y, std::vector<Interval> &v_t, const SlicedTube<T>& v, const Interval& t = Interval()) const
+        requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
       {
         return invert_common_subsets(y, v_t, t,
           [this,&v,&y](auto it, const Interval& t_) {
@@ -542,19 +543,33 @@ namespace codac2
 
       inline SlicedTube<T> primitive() const
       {
-        auto x0 = all_reals_codomain();
+        auto x0 = all_reals_value();
         x0.init(0.);
         return primitive(x0);
       }
 
       inline SlicedTube<T> primitive(const T& x0) const
       {
-        auto x = all_reals_codomain();
+        auto x = all_reals_value();
         auto p = SlicedTube<T>(this->tdomain(), x);
         p.set(x0, this->tdomain()->t0_tf().lb()); // may create an unwanted gate
         CtcDeriv c;
         c.contract(p,*this);
         return p;
+      }
+
+      inline T all_reals_value() const
+      {
+        T x = first_slice()->codomain();
+        x.init();
+        return x;
+      }
+
+      inline T empty_value() const
+      {
+        T x = first_slice()->codomain();
+        x.set_empty();
+        return x;
       }
 
 
@@ -661,22 +676,6 @@ namespace codac2
 
       const_reverse_iterator rbegin() const { return { *this, _tdomain->crbegin() }; }
       const_reverse_iterator rend() const   { return { *this, _tdomain->crend() }; }
-
-    protected:
-
-      inline T all_reals_codomain() const
-      {
-        T x = first_slice()->codomain();
-        x.init();
-        return x;
-      }
-
-      inline T empty_codomain() const
-      {
-        T x = first_slice()->codomain();
-        x.set_empty();
-        return x;
-      }
   };
 
 

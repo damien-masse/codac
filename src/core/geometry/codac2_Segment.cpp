@@ -97,7 +97,11 @@ namespace codac2
       }
     }
 
-    return BoolInterval::FALSE;
+    else if(box().intersects(p))
+      return BoolInterval::UNKNOWN;
+
+    else
+      return BoolInterval::FALSE;
   }
 
   bool Segment::operator==(const Segment& p) const

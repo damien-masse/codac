@@ -24,7 +24,7 @@ namespace codac2
    * 
    * \return The maximum diameter of the resulting boxes (lower or equal to eps)
    */
-  double split (const IntervalVector& X, double eps, vector<IntervalVector>& boxes);
+  double split(const IntervalVector& X, double eps, std::vector<IntervalVector>& boxes);
 
   /**
    * \brief Compute the error term for the parallelepiped inclusion. The error is later used to inflate the flat parallelepiped \f$\mathbf{z}+\mathbf{A}\cdot(\left[\mathbf{x}\right]-\bar{\mathbf{x}})\f$
@@ -46,6 +46,6 @@ namespace codac2
    * 
    * \return The shape matrix of the inflated parallelepiped (n x n matrix)
    */
-  Matrix inflate_flat_parallelepiped (const Matrix& A, const Vector& e_vec, double rho);
+  Matrix inflate_flat_parallelepiped(const Matrix& A, const Vector& e_vec, double rho);
 
 }

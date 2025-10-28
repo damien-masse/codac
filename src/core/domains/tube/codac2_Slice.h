@@ -18,9 +18,6 @@
 namespace codac2
 {
   template<class T>
-  class SlicedTube;
-
-  template<class T>
   class Slice : public SliceBase,
     protected T
     // T class inheritance is protected, because modifying a
@@ -224,15 +221,54 @@ namespace codac2
       }
 
       /**
+       * \brief Returns the evaluation of this slice at \f$t\f$
+       *
+       * \param t temporal input (outside ``Slice``'s tdomain, result is unbounded)
+       * \return value of \f$\llbracket x\rrbracket(t)\f$
+       */
+      inline T operator()(double t) const
+      {
+        if(t == t0_tf().lb())
+          return input_gate();
+
+        else if(t == t0_tf().ub())
+          return output_gate();
+
+        else if(t0_tf().contains(t))
+          return codomain();
+
+        else
+          return all_reals_value();
+      }
+
+      /**
+       * \brief Returns the evaluation of this slice over \f$[t]\f$
+       *
+       * \param t ``Interval`` temporal input (outside ``Slice``'s tdomain, result is unbounded)
+       * \return value of \f$\llbracket x\rrbracket([t])\f$
+       */
+      inline T operator()(const Interval& t) const
+      {
+        if(t.is_degenerated())
+          return operator()(t.lb());
+
+        else if(t.is_subset(t0_tf()))
+          return codomain();
+
+        else
+          return all_reals_value();
+      }
+
+      /**
        * \brief Returns the optimal evaluation of this slice at \f$t\f$,
        *        based on the derivative information \f$\llbracket v\rrbracket(\cdot)\f$
        *
-       * \param t temporal input (``double``, must belong to the ``Slice``'s tdomain)
+       * \param t temporal input (outside ``Slice``'s tdomain, result is unbounded)
        * \param v derivative slice such that \f$\dot{x}(\cdot)\in\llbracket v\rrbracket(\cdot)\f$
        * \return ``Interval`` value of \f$\llbracket x\rrbracket(t)\f$
        */
       inline T operator()(double t, const Slice<T>& v) const
-        requires std::is_same_v<T,Interval>
+        requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
       {
         return operator()(Interval(t),v);
       }
@@ -241,14 +277,23 @@ namespace codac2
        * \brief Returns the optimal evaluation of this slice over \f$[t]\f$,
        *        based on the derivative information \f$\llbracket v\rrbracket(\cdot)\f$
        *
-       * \param t temporal input (``Interval``, must be a subset of ``Slice``'s tdomain)
+       * \param t ``Interval`` temporal input (outside ``Slice``'s tdomain, result is unbounded)
        * \param v derivative slice such that \f$\dot{x}(\cdot)\in\llbracket v\rrbracket(\cdot)\f$
-       * \return ``Interval`` value of \f$[x]([t])\f$
+       * \return ``Interval`` value of \f$\llbracket x\rrbracket([t])\f$
        */
       inline T operator()(const Interval& t, const Slice<T>& v) const
-        requires std::is_same_v<T,Interval>
+        requires (std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>)
       {
-        return (polygon_slice(v) & ConvexPolygon(cart_prod(t,codomain()))).box()[1];
+        if constexpr(std::is_same_v<T,Interval>)
+          return untrunc((polygon_slice(v) & ConvexPolygon(cart_prod(t,trunc(codomain())))).box()[1]);
+
+        else if constexpr(std::is_same_v<T,IntervalVector>)
+        {
+          T y = all_reals_value();
+          for(Index i = 0 ; i < size() ; i++)
+            y[i] &= untrunc((polygon_slice_i(v,i) & ConvexPolygon(cart_prod(t,trunc(codomain())))).box()[1]);
+          return y;
+        }
       }
 
       /**
@@ -336,6 +381,21 @@ namespace codac2
            << std::flush;
         return os;
       }
+
+      inline T all_reals_value() const
+      {
+        T x = codomain();
+        x.init();
+        return x;
+      }
+
+      inline T empty_value() const
+      {
+        T x = codomain();
+        x.set_empty();
+        return x;
+      }
+      
 
     protected:
 

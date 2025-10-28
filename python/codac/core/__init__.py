@@ -494,8 +494,8 @@ class SlicedTube:
   def codomain(self):
     return self.tube.codomain()
 
-  def __call__(self,t):
-    return self.tube.__call__(t)
+  def __call__(self,*args):
+    return self.tube.__call__(*args)
 
   def enclosed_bounds(self,t):
     return self.tube.enclosed_bounds(t)
@@ -544,6 +544,12 @@ class SlicedTube:
 
   def invert(self,*args):
     return self.tube.invert(*args)
+
+  def all_reals_value(self):
+    return self.tube.all_reals_value()
+
+  def empty_value(self):
+    return self.tube.empty_value()
 
 
 def fixpoint(contract, *x):
