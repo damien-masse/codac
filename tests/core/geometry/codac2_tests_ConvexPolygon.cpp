@@ -145,6 +145,8 @@ TEST_CASE("ConvexPolygon - intersection")
     ConvexPolygon p1({{4000,200}});
     ConvexPolygon p2(IntervalVector({4000,200}));
 
+    CHECK(p1.box() == IntervalVector({4000,200}));
+    CHECK(p2.box() == IntervalVector({4000,200}));
     CHECK((p1 & p2) == p1); // same polygon
   }
 
@@ -372,5 +374,26 @@ TEST_CASE("ConvexPolygon - intersection")
     })));
 
     p1 &= p2;
+  }
+
+  {
+    IntervalVector m({6.5,1});
+    ConvexPolygon p1(m);
+    ConvexPolygon p2(std::vector<IntervalVector>({
+      {{6.49999, 6.50001},{0.759358, 0.759359}},
+      {{6.49999, 6.50001},{1.19382, 1.19383}},
+      {{6.4, 6.40001},{1.20537, 1.20538}},
+      {{6.4, 6.40001},{0.78097, 0.780971}},
+    }));
+
+    Segment s(IntervalVector({{6.49999, 6.50001},{0.759358, 0.759359}}), IntervalVector({{6.49999, 6.50001},{1.19382, 1.19383}}));
+    CHECK(s.contains(m) == BoolInterval::UNKNOWN);
+
+    //DefaultFigure::draw_polygon(p1, StyleProperties({Color::black(),Color::none()},"1e-2"));
+    //DefaultFigure::draw_point(p1.box().mid(), StyleProperties({Color::black(),Color::none()},"1e-2"));
+    //DefaultFigure::draw_polygon(p2, {Color::red(),Color::none()});
+    //DefaultFigure::draw_polygon(p1 & p2, {Color::none(),Color::blue(0.3)});
+
+    CHECK((p1 & p2) == ConvexPolygon(std::vector<IntervalVector>({m})));
   }
 }

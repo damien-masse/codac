@@ -167,6 +167,10 @@ namespace codac2
   {
     assert_release(p.size() == 2);
 
+    IntervalVector box_hull = box();
+    if(!p.intersects(box_hull))
+      return BoolInterval::FALSE;
+
     for(const auto& e : *this)
     {
       auto b = e.contains(p);
@@ -180,9 +184,8 @@ namespace codac2
       return BoolInterval::FALSE;
 
     bool retry;
-    double eps = 0.;
     Segment transect(IntervalVector(2),IntervalVector(2));
-    // ^ selected transect (horizontal ray) for crossing the polygon.
+    // ^ selected transect (e.g. horizontal ray) for crossing the polygon.
     // Odd number of crossing => point is inside
     // Even number of crossing => point is outside
 
@@ -191,18 +194,33 @@ namespace codac2
     // transect crosses exactly one vertex of the polygon, and/or 
     // when the point to be tested is this very vertex. Below, we
     // generate a convenient transect avoiding such configuration.
+
     do
     {
       retry = false;
 
-      // Horizontal ray candidate:
-      Segment try_transect { {next_float(-oo),p[1]+eps}, p };
+      // Creating a ray candidate:
+      Segment try_transect = [i,&p]() -> Segment {
+        switch(i)
+        {
+          case 0:
+            return { {next_float(-oo),p[1]}, p };
+          case 1:
+            return { {prev_float(oo),p[1]}, p };
+          case 2:
+            return { {p[0],next_float(-oo)}, p };
+          case 3:
+            return { {p[0],prev_float(oo)}, p };
+          default:
+            assert_release(false &&
+              "failed to test if the point is contained in polygon");
+        }
+      }();
 
       // The ray may pass through the vertices, we must double counting
       for(const auto& pi : vertices())
         if(try_transect.contains(pi) != BoolInterval::FALSE)
         {
-          eps = Interval(0,1).rand();
           retry = true;
           break;
         }
@@ -210,7 +228,8 @@ namespace codac2
       if(!retry)
         transect = try_transect;
 
-      assert((i++) < 10);
+      i++;
+      assert(i < 10);
     } while(retry);
 
     // Now the number i of crossing can be computed.

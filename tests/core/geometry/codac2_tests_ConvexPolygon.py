@@ -97,6 +97,8 @@ class TestConvexPolygon(unittest.TestCase):
     # Degenerate case
     p1 = ConvexPolygon([[4000,200]])
     p2 = ConvexPolygon(IntervalVector([4000,200]))
+    self.assertTrue(p1.box() == IntervalVector([4000,200]))
+    self.assertTrue(p2.box() == IntervalVector([4000,200]))
     self.assertTrue((p1 & p2) == p1) # same polygon
 
     p1 = ConvexPolygon([[1,1],[2,4],[7,5],[6,2]])
@@ -196,7 +198,8 @@ class TestConvexPolygon(unittest.TestCase):
     # Other test with inflated points
     p1 = ConvexPolygon(IntervalVector([[-4,4],[-3,3]]))
     a1,a2 = IntervalVector([-4,-6]), IntervalVector([-4,6])
-    a1.inflate(1e-10); a2.inflate(1e-10)
+    a1.inflate(1e-10)
+    a2.inflate(1e-10)
     p2 = ConvexPolygon([Segment(a1,a2)])
     q = p1 & p2
     self.assertTrue(len(q.edges()) == 1)
@@ -278,6 +281,20 @@ class TestConvexPolygon(unittest.TestCase):
     ]))
 
     p1 &= p2
+
+    m = IntervalVector([6.5,1])
+    p1 = ConvexPolygon(m)
+    p2 = ConvexPolygon([
+      [[6.49999, 6.50001],[0.759358, 0.759359]],
+      [[6.49999, 6.50001],[1.19382, 1.19383]],
+      [[6.4, 6.40001],[1.20537, 1.20538]],
+      [[6.4, 6.40001],[0.78097, 0.780971]],
+    ])
+
+    s = Segment(IntervalVector([[6.49999, 6.50001],[0.759358, 0.759359]]), IntervalVector([[6.49999, 6.50001],[1.19382, 1.19383]]))
+    self.assertTrue(s.contains(m) == BoolInterval.UNKNOWN)
+    self.assertTrue((p1 & p2) == ConvexPolygon([m]))
+
 
 if __name__ ==  '__main__':
   unittest.main()
