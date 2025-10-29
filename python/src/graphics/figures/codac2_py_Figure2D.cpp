@@ -253,6 +253,17 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_PLOT_TUBE_CONST_SLICEDTUBE_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
+    .def("plot_tube", [](Figure2D& fig, const py::object& x, const py::object& v, const StyleProperties& s)
+        {
+          if(!is_instance<SlicedTube<Interval>>(x) || !is_instance<SlicedTube<Interval>>(v)) {
+            assert_release("plot_tube: invalid function type");
+          }
+
+          fig.plot_tube(cast<SlicedTube<Interval>>(x), cast<SlicedTube<Interval>>(v), s);
+        },
+      VOID_FIGURE2D_PLOT_TUBE_CONST_SLICEDTUBE_INTERVAL_REF_CONST_SLICEDTUBE_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "v"_a, "s"_a=StyleProperties())
+
     // Robots
 
     .def("draw_tank", &Figure2D::draw_tank,
@@ -476,6 +487,17 @@ void export_Figure2D(py::module& m)
         },
       STATIC_VOID_DEFAULTFIGURE_PLOT_TUBE_CONST_SLICEDTUBE_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
+
+    .def_static("plot_tube", [](const py::object& x, const py::object& v, const StyleProperties& s)
+        {
+          if(!is_instance<SlicedTube<Interval>>(x) || !is_instance<SlicedTube<Interval>>(v)) {
+            assert_release("plot_tube: invalid function type");
+          }
+
+          DefaultFigure::plot_tube(cast<SlicedTube<Interval>>(x), cast<SlicedTube<Interval>>(v), s);
+        },
+      STATIC_VOID_DEFAULTFIGURE_PLOT_TUBE_CONST_SLICEDTUBE_INTERVAL_REF_CONST_SLICEDTUBE_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "v"_a, "s"_a=StyleProperties())
 
     // Robots
 

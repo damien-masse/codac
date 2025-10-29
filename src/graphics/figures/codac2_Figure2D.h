@@ -93,6 +93,13 @@ namespace codac2
       Figure2D(const std::string& name, GraphicOutput o, bool set_as_default = false);
 
       /**
+       * \brief Returns ``OutputFigure2D`` objects rendering the current figure.
+       * 
+       * \return vector of pointers to the ``OutputFigure2D`` objects
+       */
+      std::vector<std::shared_ptr<OutputFigure2D>> output_figures();
+
+      /**
        * \brief Getter for the name of the figure
        * 
        * \return The name of the figure
@@ -404,6 +411,16 @@ namespace codac2
        * \param s Style of the tube (edge color)
        */
       void plot_tube(const SlicedTube<Interval>& x, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Plots a tube on the figure (x-axis is the time), with derivative information: 
+       *        slices are displayed as polygons.
+       * 
+       * \param x SlicedTube to plot
+       * \param v derivative tube of the SlicedTube to plot
+       * \param s Style of the tube (edge color)
+       */
+      void plot_tube(const SlicedTube<Interval>& x, const SlicedTube<Interval>& v, const StyleProperties& s = StyleProperties());
 
       // Robots
 
@@ -930,6 +947,20 @@ namespace codac2
       {
         auto_init();
         selected_fig()->plot_tube(x,s);
+      }
+
+      /**
+       * \brief Plots a tube on the figure (x-axis is the time), with derivative information: 
+       *        slices are displayed as polygons.
+       * 
+       * \param x SlicedTube to plot
+       * \param v derivative tube of the SlicedTube to plot
+       * \param s Style of the tube (edge color)
+       */
+      static void plot_tube(const SlicedTube<Interval>& x, const SlicedTube<Interval>& v, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->plot_tube(x,v,s);
       }
 
       // Robots
