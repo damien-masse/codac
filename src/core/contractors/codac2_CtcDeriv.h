@@ -68,12 +68,12 @@ namespace codac2
       {
         assert_release(TDomain::are_same(x.tdomain(), v.tdomain()));
         Interval t = x.tdomain()->t0_tf() & _tdomain;
-        auto it_beg = x.tdomain()->sample(t.lb(),false);
-        auto it_end = x.tdomain()->sample(t.ub(),false);
+        auto it_beg = x.tdomain()->sample(t.lb(),true);
+        auto it_end = x.tdomain()->sample(t.ub(),true);
 
         if((_time_propag & TimePropag::FWD) == TimePropag::FWD)
         {
-          for(auto it = it_beg ; it != it_end ; it++)
+          for(auto it = it_beg ; it != std::next(it_end) ; it++)
           {
             auto sx = x.slice(it);
             if(!sx->is_gate())
@@ -83,7 +83,7 @@ namespace codac2
 
         if((_time_propag & TimePropag::BWD) == TimePropag::BWD)
         {
-          for(auto it = std::prev(it_end) ; it != std::prev(it_beg) ; it--)
+          for(auto it = it_end ; it != std::prev(it_beg) ; it--)
           {
             auto sx = x.slice(it);
             if(!sx->is_gate())

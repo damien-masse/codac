@@ -494,10 +494,10 @@ void export_Figure2D(py::module& m)
             assert_release("plot_tube: invalid function type");
           }
 
-          DefaultFigure::plot_tube(cast<SlicedTube<Interval>>(x), cast<SlicedTube<Interval>>(v), s);
+          DefaultFigure::plot_tube(cast<const SlicedTube<Interval>&>(x), cast<const SlicedTube<Interval>&>(v), s);
         },
       STATIC_VOID_DEFAULTFIGURE_PLOT_TUBE_CONST_SLICEDTUBE_INTERVAL_REF_CONST_SLICEDTUBE_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
-      "x"_a, "v"_a, "s"_a=StyleProperties())
+      "x"_a, "v"_a, "s"_a) // dot not specify default value =StyleProperties(), because of overloading
 
     // Robots
 

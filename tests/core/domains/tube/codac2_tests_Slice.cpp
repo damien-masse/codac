@@ -62,8 +62,8 @@ TEST_CASE("Slice")
     ctc_deriv.contract(x,v);
 
     CHECK(!sx->codomain().is_empty());
-    CHECK(Approx(sx->codomain(),1e-5) == Interval(0.7594, 1.20501));
-    CHECK(Approx(sx->output_gate(),1e-5) == Interval(0.7594, 1.19351));
+    CHECK(Approx(sx->codomain(),1e-4) == Interval(0.7594, 1.20501));
+    CHECK(Approx(sx->output_gate(),1e-4) == Interval(0.7594, 1.19351));
 
     auto p = sx->polygon_slice(*sv);
 

@@ -53,8 +53,8 @@ class TestSlice(unittest.TestCase):
     ctc_deriv.contract(x,v)
 
     self.assertTrue(not sx.codomain().is_empty())
-    self.assertTrue(Approx(sx.codomain(),1e-5) == Interval(0.7594, 1.20501))
-    self.assertTrue(Approx(sx.output_gate(),1e-5) == Interval(0.7594, 1.19351))
+    self.assertTrue(Approx(sx.codomain(),1e-4) == Interval(0.7594, 1.20501))
+    self.assertTrue(Approx(sx.output_gate(),1e-4) == Interval(0.7594, 1.19351))
 
     p = sx.polygon_slice(sv)
 

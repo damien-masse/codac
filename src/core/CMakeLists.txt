@@ -26,6 +26,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEllipse.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEmpty.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEmpty.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEval.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcFixpoint.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcFixpoint.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcIdentity.cpp
