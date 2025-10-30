@@ -265,6 +265,26 @@ namespace codac2
               TrajectoryOp<SampledTraj<T>>,Type,ScalarType>>(*this,t))
         };
       }
+
+      using TrajBase<T>::primitive;
+      SampledTraj<T> primitive() const
+      {
+        T s = [this]() {
+          if constexpr(std::is_same_v<T,double>)
+            return 0.;
+          else
+            return T(this->begin()->second).init(0.);
+        }();
+        SampledTraj<T> p;
+
+        for(auto it = std::next(this->begin()) ; it != this->end() ; it++)
+        {
+          s += (prev(it)->second + it->second) * (it->first - prev(it)->first) / 2.;
+          p.set(s, it->first);
+        }
+
+        return p;
+      }
   };
   
   template<typename T>
