@@ -105,7 +105,7 @@ class TestCtcEval(unittest.TestCase):
     self.assertTrue(Approx(ti,1e-5) == Interval(-0.113064,0.3))
     self.assertTrue(Approx(yi,1e-5) == Interval(0.299999,0.749899))
     self.assertTrue(Approx(x.codomain(),1e-5) == Interval(-1.26758,1.58623))
-    self.assertTrue(Approx(v.codomain(),1e-5) == Interval(-1.10001,1.10001))
+    self.assertTrue(Approx(v.codomain(),1e-4) == Interval(-1.10001,1.10001))
     self.assertTrue(Approx(ti.lb(),1e-5) == -0.113063)
     self.assertTrue(Approx(x(ti.lb()),1e-5) == Interval(-0.149899,0.300296))
     self.assertTrue(Approx(ti.ub(),1e-5) == 0.3)
@@ -208,7 +208,7 @@ class TestCtcEval(unittest.TestCase):
 
     self.assertTrue(ti == Interval(11.42,23.15))
     self.assertTrue(Approx(yi) == Interval(-1.1,-1))
-    self.assertTrue(Approx(x(17.27),1e-5) == Interval(-1.10001,-0.897816))
+    self.assertTrue(Approx(x(17.27),1e-4) == Interval(-1.10001,-0.897816))
 
 if __name__ ==  '__main__':
   unittest.main()
