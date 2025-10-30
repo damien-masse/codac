@@ -215,10 +215,8 @@ void Figure2D::draw_polyline(const vector<Vector>& x, float tip_length, const St
 
 void Figure2D::draw_polygon(const Polygon& x, const StyleProperties& s)
 {
-  assert_release(x.size() >= 1);
-
   vector<Vector> w;
-  for(const auto& xi : x.sorted_vertices())
+  for(const auto& xi : x.vertices())
   {
     assert_release(this->size() <= xi.size());
     if(!xi.is_degenerated())
@@ -447,6 +445,17 @@ void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cm
     auto c = cmap.color((it->t0_tf().mid()-tube_t0tf.lb())/tube_t0tf.diam());
     draw_box(it->codomain(), {c,c});
   }
+}
+
+void Figure2D::plot_tube(const SlicedTube<Interval>& x, const StyleProperties& s)
+{
+  _axes[0].limits = x.tdomain()->t0_tf();
+  _axes[1].limits = x.codomain();
+  for(const auto& output_fig : _output_figures)
+    output_fig->update_axes();
+
+  for(const auto& xi : x)
+    draw_box(cart_prod(xi.t0_tf(),xi.codomain()), s);
 }
 
 void Figure2D::draw_tank(const Vector& x, float size, const StyleProperties& s)

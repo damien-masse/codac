@@ -12,6 +12,7 @@
 #include "codac2_Ctc.h"
 #include "codac2_TimePropag.h"
 #include "codac2_ConvexPolygon.h"
+#include "codac2_TDomain.h"
 
 namespace codac2
 {
@@ -58,9 +59,9 @@ namespace codac2
 
       template<typename T>
       inline void contract(SlicedTube<T>& x, const SlicedTube<T>& v) const
+        requires std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>
       {
-        assert_release(x.tdomain()->all_gates_defined() && "not available without gates");
-        assert_release(x.tdomain() == v.tdomain());
+        assert_release(TDomain::are_same(x.tdomain(), v.tdomain()));
 
         if((_time_propag & TimePropag::FWD) == TimePropag::FWD)
         {

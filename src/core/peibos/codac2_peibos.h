@@ -14,7 +14,7 @@
 
 namespace codac2
 {
-    /**
+  /**
    * \brief Used in PEIBOS. Compute a parallelepiped enclosing of \f$\mathbf{g}([\mathbf{x}])\f$ where \f$\mathbf{g} = \mathbf{f}\circ \sigma \circ \psi_0\f$.
    * 
    * \param Y The box enclosing \f$\mathbf{f}(\sigma(\psi_0(\bar{\mathbf{x}})))\f$.

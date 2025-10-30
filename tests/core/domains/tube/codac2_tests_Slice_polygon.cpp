@@ -222,4 +222,29 @@ TEST_CASE("polygon_slice")
 
     CHECK(Approx(p1,1e-10) == p2);
   }
+
+  SECTION("Polygons from Slice, test from tubint paper")
+  {
+    auto tdomain = create_tdomain({4,5});
+    SlicedTube<Interval> x(tdomain, (Interval(7)/2)|(Interval(17)/4));
+    SlicedTube<Interval> v(tdomain, (-Interval(1)/2)|(Interval(1)/2));
+
+    auto sx = x.first_slice();
+    auto sv = v.first_slice();
+    x.set((Interval(7)/2)|4,4);
+    x.set({4},5);
+
+    auto p = sx->polygon_slice(*sv);
+    CHECK(p == ConvexPolygon({{4,4},{4,3.5},{5,4},{4.5,4.25}}));
+    //DefaultFigure::draw_box({{4,5},{3.5,4.25}});
+    //DefaultFigure::draw_polygon(p, {Color::blue(),Color::blue(0.2)});
+
+    CtcDeriv ctc_deriv;
+    ctc_deriv.contract(*sx, *sv);
+    p = sx->polygon_slice(*sv);
+    CHECK(p == ConvexPolygon({{4,4},{4,3.5},{5,4},{4.5,4.25}}));
+
+    Interval y = Interval(41)/10;
+    CHECK(Approx(x.invert(y, v, x.tdomain()->t0_tf()),1e-10) == ((Interval(21)/5)|(Interval(24)/5)));
+  }
 }

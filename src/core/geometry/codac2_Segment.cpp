@@ -12,6 +12,7 @@
 #include "codac2_geometry.h"
 #include "codac2_hull.h"
 #include "codac2_ConvexPolygon.h"
+#include "codac2_CtcSegment.h"
 
 using namespace std;
 using namespace codac2;
@@ -96,7 +97,11 @@ namespace codac2
       }
     }
 
-    return BoolInterval::FALSE;
+    else if(box().intersects(p))
+      return BoolInterval::UNKNOWN;
+
+    else
+      return BoolInterval::FALSE;
   }
 
   bool Segment::operator==(const Segment& p) const
@@ -107,7 +112,27 @@ namespace codac2
   
   IntervalVector operator&(const Segment& e1, const Segment& e2)
   {
-    return e1.box() & e2.box() & proj_intersection(e1,e2);
+    IntervalVector b1 = e1.box(), b2 = e2.box();
+
+    // Ill-conditioned cases
+    // For tiny boxes, proj_intersection returns an overly pessimistic enclosure.
+    {
+      if(b1.max_diam() < 1e-10)
+      {
+        CtcSegment c2(e2);
+        c2.contract(b1);
+        return b1;
+      }
+
+      if(b2.max_diam() < 1e-10)
+      {
+        CtcSegment c1(e1);
+        c1.contract(b2);
+        return b2;
+      }
+    }
+
+    return b1 & b2 & proj_intersection(e1,e2);
   }
   
   Segment operator&(const Segment& e1, const ConvexPolygon& p2)
