@@ -397,6 +397,14 @@ namespace codac2
        */
       void draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap = ColorMap::blue_tube());
 
+      /**
+       * \brief Plots a tube on the figure (x-axis is the time)
+       * 
+       * \param x SlicedTube to plot
+       * \param s Style of the tube (edge color)
+       */
+      void plot_tube(const SlicedTube<Interval>& x, const StyleProperties& s = StyleProperties());
+
       // Robots
 
       /**
@@ -910,6 +918,18 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_tube(x,cmap);
+      }
+
+      /**
+       * \brief Plots a tube on the figure (x-axis is the time)
+       * 
+       * \param x SlicedTube to plot
+       * \param s Style of the tube (edge color)
+       */
+      static void plot_tube(const SlicedTube<Interval>& x, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->plot_tube(x,s);
       }
 
       // Robots

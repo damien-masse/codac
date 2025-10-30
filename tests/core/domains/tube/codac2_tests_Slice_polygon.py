@@ -180,6 +180,29 @@ class TestPolygonSlice(unittest.TestCase):
     p2 = ConvexPolygon([ [12,1],[14,5.5] ])
     self.assertTrue(Approx(p1,1e-10) == p2)
 
+  def test_polygon_from_tubint_paper(self):
+
+    tdomain = create_tdomain([4,5])
+    x = SlicedTube(tdomain, (Interval(7)/2)|(Interval(17)/4))
+    v = SlicedTube(tdomain, (-Interval(1)/2)|(Interval(1)/2))
+
+    sx = x.first_slice()
+    sv = v.first_slice()
+
+    x.set((Interval(7)/2)|4,4)
+    x.set([4],5)
+
+    p = sx.polygon_slice(sv);
+    self.assertTrue(p == ConvexPolygon([[4,4],[4,3.5],[5,4],[4.5,4.25]]))
+
+    ctc_deriv = CtcDeriv()
+    ctc_deriv.contract(sx,sv)
+    p = sx.polygon_slice(sv);
+    self.assertTrue(p == ConvexPolygon([[4,4],[4,3.5],[5,4],[4.5,4.25]]))
+
+    y = Interval(41)/10
+    self.assertTrue(Approx(x.invert(y, v, x.tdomain().t0_tf()),1e-10) == ((Interval(21)/5)|(Interval(24)/5)))
+
 
 if __name__ ==  '__main__':
   unittest.main()

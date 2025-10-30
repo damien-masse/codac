@@ -41,4 +41,14 @@ namespace codac2
   {
     return { untrunc(x.lb()), untrunc(x.ub()) };
   }
+
+  double graphic_trunc(double x)
+  {
+    double max = 9e15;
+    if(x < -max)
+      return -max;
+    else if(x > max)
+      return max;
+    return x;
+  }
 }

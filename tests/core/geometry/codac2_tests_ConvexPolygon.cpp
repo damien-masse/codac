@@ -21,48 +21,48 @@ TEST_CASE("ConvexPolygon - base")
 {
   {
     ConvexPolygon p(vector<IntervalVector>({{1,2},{1,2}}));
-    CHECK(p.unsorted_vertices().size() == 1);
+    CHECK(p.vertices().size() == 1);
   }
 
   {
     ConvexPolygon p(vector<IntervalVector>({{1,3},{1,2},{1,2}}));
-    CHECK(p.unsorted_vertices().size() == 2);
+    CHECK(p.vertices().size() == 2);
   }
 
   {
     ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,2},{1,2}}));
-    CHECK(p.unsorted_vertices().size() == 2);
+    CHECK(p.vertices().size() == 2);
   }
 
   {
     ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,3},{1,2},{1,2}}));
-    CHECK(p.unsorted_vertices().size() == 2);
+    CHECK(p.vertices().size() == 2);
   }
 
   {
     CHECK(convex_hull(vector<IntervalVector>({{1,2},{1,2},{1,2}})).size() == 1);
     ConvexPolygon p(vector<IntervalVector>({{1,2},{1,2},{1,2}}));
-    CHECK(p.unsorted_vertices().size() == 1);
+    CHECK(p.vertices().size() == 1);
   }
 
   {
     ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3}}));
-    CHECK(p.unsorted_vertices().size() == 2);
+    CHECK(p.vertices().size() == 2);
   }
 
   {
     ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,2}}));
-    CHECK(p.unsorted_vertices().size() == 2);
+    CHECK(p.vertices().size() == 2);
   }
 
   {
     ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,2},{1,2}}));
-    CHECK(p.unsorted_vertices().size() == 2);
+    CHECK(p.vertices().size() == 2);
   }
 
   {
     ConvexPolygon p(vector<IntervalVector>({{1,2},{1,3},{1,3},{1,2}}));
-    CHECK(p.unsorted_vertices().size() == 2);
+    CHECK(p.vertices().size() == 2);
   }
 }
 
@@ -155,7 +155,7 @@ TEST_CASE("ConvexPolygon - intersection")
     auto q = p1 & p2;
     CHECK(Approx<Polygon>(q) == Polygon({{2,1.2},{6,2},{6,4.8},{2,4}}));
     CHECK(q.edges().size() == 4);
-    CHECK(q.unsorted_vertices().size() == 4);
+    CHECK(q.vertices().size() == 4);
   }
 
   {
@@ -165,7 +165,7 @@ TEST_CASE("ConvexPolygon - intersection")
     auto q = p1 & p2;
     CHECK(Approx<Polygon>(q) == Polygon({{3,1.4},{5,1.8},{5,4.6},{3,4.2}}));
     CHECK(q.edges().size() == 4);
-    CHECK(q.unsorted_vertices().size() == 4);
+    CHECK(q.vertices().size() == 4);
   }
 
   { // Degenerated box
@@ -188,7 +188,7 @@ TEST_CASE("ConvexPolygon - intersection")
 
     auto q = p1 & p2;
     CHECK(Approx<Polygon>(q) == Polygon({{4,4.4},{4,1.6}}));
-    CHECK(q.unsorted_vertices().size() == 2);
+    CHECK(q.vertices().size() == 2);
   }
 
   { // Degenerated polygon
@@ -198,7 +198,7 @@ TEST_CASE("ConvexPolygon - intersection")
     auto q = p1 & p2;
     
     CHECK(Approx<Polygon>(q) == Polygon({{4,4.4},{4,1.6}}));
-    CHECK(q.unsorted_vertices().size() == 2);
+    CHECK(q.vertices().size() == 2);
   }
 
   { // Point intersection
@@ -208,7 +208,7 @@ TEST_CASE("ConvexPolygon - intersection")
     auto q = p1 & p2;
     
     CHECK(q == Polygon({{2,4}}));
-    CHECK(q.unsorted_vertices().size() == 1);
+    CHECK(q.vertices().size() == 1);
   }
 
   { // Point intersection, line polygon
@@ -218,7 +218,7 @@ TEST_CASE("ConvexPolygon - intersection")
     auto q = p1 & p2;
     
     CHECK(q == Polygon({{2,4}}));
-    CHECK(q.unsorted_vertices().size() == 1);
+    CHECK(q.vertices().size() == 1);
   }
 
   { // Empty intersection
@@ -228,7 +228,7 @@ TEST_CASE("ConvexPolygon - intersection")
     auto q = p1 & p2;
     
     CHECK(q == Polygon::empty());
-    CHECK(q.unsorted_vertices().size() == 0);
+    CHECK(q.vertices().size() == 0);
     CHECK(q.is_empty());
   }
 
@@ -239,7 +239,7 @@ TEST_CASE("ConvexPolygon - intersection")
     auto q = p1 & p2;
     
     CHECK(q == Polygon::empty());
-    CHECK(q.unsorted_vertices().size() == 0);
+    CHECK(q.vertices().size() == 0);
     CHECK(q.is_empty());
   }
 
@@ -321,5 +321,56 @@ TEST_CASE("ConvexPolygon - intersection")
       {-1,6},
       {-1,-1},
     }));
+  }
+
+  {
+    ConvexPolygon p1({{4,3.5},{5,4},{4,4.5}});
+    ConvexPolygon p2({{4,3.5},{5,3.5},{5,4.25},{4.5,4.25},{4,4}});
+    //DefaultFigure::draw_polygon(p1, StyleProperties({Color::black(),Color::none()},"1e-2"));
+    //DefaultFigure::draw_polygon(p2, {Color::red(),Color::none()});
+    //DefaultFigure::draw_polygon(p1 & p2, {Color::none(),Color::blue(0.3)});
+    CHECK(Approx(p1 & p2) == ConvexPolygon({{4,4},{4,3.5},{5,4},{4.5,4.25}}));
+  }
+
+  {
+    ConvexPolygon p1({{4,4},{4,3.5},{5,4},{4.5,4.25}});
+    ConvexPolygon p2(IntervalVector({{4,5},{4.1}}));
+    //DefaultFigure::draw_polygon(p1, StyleProperties({Color::black(),Color::none()},"1e-2"));
+    //DefaultFigure::draw_polygon(p2, {Color::red(),Color::none()});
+    //DefaultFigure::draw_polygon(p1 & p2, {Color::none(),Color::blue(0.3)});
+    CHECK(Approx(p1 & p2, 1e-10) == ConvexPolygon(IntervalVector({{4.2,4.8},{4.1}})));
+  }
+
+  {
+    ConvexPolygon p1({{4,4},{4,3.5},{5,4},{4.5,4.25}});
+    ConvexPolygon p2(IntervalVector({{4,5},Interval(41)/10}));
+    //DefaultFigure::draw_polygon(p1, StyleProperties({Color::black(),Color::none()},"1e-2"));
+    //DefaultFigure::draw_polygon(p2, {Color::red(),Color::none()});
+    //DefaultFigure::draw_polygon(p1 & p2, {Color::none(),Color::blue(0.3)});
+    CHECK(Approx(p1 & p2, 1e-10) == ConvexPolygon(IntervalVector({{4.2,4.8},Interval(41)/10})));
+  }
+
+  {
+    ConvexPolygon p1(std::vector<IntervalVector>({
+      IntervalVector({{0.0999999, 0.100001},{0.989016, 0.989017}}),
+      IntervalVector({{0.0999999, 0.100001},{1.0015, 1.00151}}),
+      IntervalVector({{0, 0},{0.999999, 1}}),
+      IntervalVector({{0, 0},{1, 1.00001}})
+    }));
+
+    ConvexPolygon p2(std::vector<IntervalVector>({
+      IntervalVector({{0, 0},{0.987514, 0.987515}}),
+      IntervalVector({{0.1, 0.100001},{0.989016, 0.989017}}),
+      IntervalVector({{0.1, 0.100001},{1.0015, 1.00151}}),
+      IntervalVector({{0, 0},{1.01248, 1.01249}}),
+    }));
+
+    CHECK(Approx(p1 & p2, 1e-5) == ConvexPolygon(std::vector<IntervalVector>({
+      {{0.0997289, 0.100002},{0.989016, 0.989938}},
+      {{0.0995829, 0.100002},{1.00059, 1.00151}},
+      {{0, 0},{0.999547, 1.00047}}
+    })));
+
+    p1 &= p2;
   }
 }
