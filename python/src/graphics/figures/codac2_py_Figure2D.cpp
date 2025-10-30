@@ -216,9 +216,13 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_PLOT_TRAJECTORY_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
+    .def("plot_trajectories", (void(Figure2D::*)(const SampledTraj<Vector>&))&Figure2D::plot_trajectories,
+      VOID_FIGURE2D_PLOT_TRAJECTORIES_CONST_SAMPLEDTRAJ_VECTOR_REF,
+      "x"_a)
+
     .def("plot_trajectories", (void(Figure2D::*)(const SampledTraj<Vector>&,const StyleProperties&))&Figure2D::plot_trajectories,
       VOID_FIGURE2D_PLOT_TRAJECTORIES_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
-      "x"_a, "s"_a=StyleProperties())
+      "x"_a, "s"_a)
 
     .def("draw_tube", [](Figure2D& fig, const py::object& x, const StyleProperties& s)
         {

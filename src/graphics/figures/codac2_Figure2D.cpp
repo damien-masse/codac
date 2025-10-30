@@ -430,6 +430,12 @@ void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperti
   display_and_clear();
 }
 
+void Figure2D::plot_trajectories(const SampledTraj<Vector>& x)
+{
+  for(const auto& xi : as_scalar_trajs(x))
+    plot_trajectory(xi,Color::random());
+}
+
 void Figure2D::plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s)
 {
   for(const auto& xi : as_scalar_trajs(x))

@@ -381,12 +381,19 @@ namespace codac2
       void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties());
 
       /**
-       * \brief Plots a set of trajectories on the figure (x-axis is the time)
+       * \brief Plots a set of trajectories on the figure (x-axis is the time) with random colors
        * 
        * \param x SampledTraj<Vector> set of trajectories to plot
-       * \param s Style of the trajectory (edge color)
        */
-      void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties());
+      void plot_trajectories(const SampledTraj<Vector>& x);
+
+      /**
+       * \brief Plots a set of trajectories on the figure (x-axis is the time) with custom common color
+       * 
+       * \param x SampledTraj<Vector> set of trajectories to plot
+       * \param s Style shared by all the trajectories (edge color)
+       */
+      void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s);
 
       /**
        * \brief Draws a tube of `IntervalVector` on the figure
