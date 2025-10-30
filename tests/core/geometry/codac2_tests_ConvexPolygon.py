@@ -15,32 +15,32 @@ class TestConvexPolygon(unittest.TestCase):
   def test_ConvexPolygon_degenerate_base(self):
 
     p = ConvexPolygon([[1,2],[1,2]])
-    self.assertTrue(len(p.unsorted_vertices()) == 1)
+    self.assertTrue(len(p.vertices()) == 1)
 
     p = ConvexPolygon([[1,3],[1,2],[1,2]])
-    self.assertTrue(len(p.unsorted_vertices()) == 2)
+    self.assertTrue(len(p.vertices()) == 2)
 
     p = ConvexPolygon([[1,2],[1,3],[1,2],[1,2]])
-    self.assertTrue(len(p.unsorted_vertices()) == 2)
+    self.assertTrue(len(p.vertices()) == 2)
 
     p = ConvexPolygon([[1,2],[1,3],[1,3],[1,2],[1,2]])
-    self.assertTrue(len(p.unsorted_vertices()) == 2)
+    self.assertTrue(len(p.vertices()) == 2)
 
     self.assertTrue(len(convex_hull([[1,2],[1,2],[1,2]])) == 1)
     p = ConvexPolygon([[1,2],[1,2],[1,2]])
-    self.assertTrue(len(p.unsorted_vertices()) == 1)
+    self.assertTrue(len(p.vertices()) == 1)
 
     p = ConvexPolygon([[1,2],[1,3]])
-    self.assertTrue(len(p.unsorted_vertices()) == 2)
+    self.assertTrue(len(p.vertices()) == 2)
 
     p = ConvexPolygon([[1,2],[1,3],[1,2]])
-    self.assertTrue(len(p.unsorted_vertices()) == 2)
+    self.assertTrue(len(p.vertices()) == 2)
 
     p = ConvexPolygon([[1,2],[1,3],[1,2],[1,2]])
-    self.assertTrue(len(p.unsorted_vertices()) == 2)
+    self.assertTrue(len(p.vertices()) == 2)
 
     p = ConvexPolygon([[1,2],[1,3],[1,3],[1,2]])
-    self.assertTrue(len(p.unsorted_vertices()) == 2)
+    self.assertTrue(len(p.vertices()) == 2)
 
   def test_ConvexPolygon_degenerate_cases(self):
 
@@ -104,14 +104,14 @@ class TestConvexPolygon(unittest.TestCase):
     q = p1 & p2
     self.assertTrue(Approx(q) == Polygon([[2,1.2],[6,2],[6,4.8],[2,4]]))
     self.assertTrue(len(q.edges()) == 4)
-    self.assertTrue(len(q.unsorted_vertices()) == 4)
+    self.assertTrue(len(q.vertices()) == 4)
 
     p1 = ConvexPolygon([[1,1],[2,4],[7,5],[6,2]])
     p2 = ConvexPolygon(IntervalVector([[3,5],[1,5]]))
     q = p1 & p2
     self.assertTrue(Approx(q) == Polygon([[3,1.4],[5,1.8],[5,4.6],[3,4.2]]))
     self.assertTrue(len(q.edges()) == 4)
-    self.assertTrue(len(q.unsorted_vertices()) == 4)
+    self.assertTrue(len(q.vertices()) == 4)
 
     # Degenerated box
     p1 = ConvexPolygon([[1,1],[2,4],[7,5],[6,2]])
@@ -133,35 +133,35 @@ class TestConvexPolygon(unittest.TestCase):
 
     q = p1 & p2
     self.assertTrue(Approx(q) == Polygon([[4,4.4],[4,1.6]]))
-    self.assertTrue(len(q.unsorted_vertices()) == 2)
+    self.assertTrue(len(q.vertices()) == 2)
 
     # Degenerated polygon
     p1 = ConvexPolygon([[1,1],[2,4],[7,5],[6,2]])
     p2 = ConvexPolygon([[4,1],[4,5]])
     q = p1 & p2
     self.assertTrue(Approx(q) == Polygon([[4,4.4],[4,1.6]]))
-    self.assertTrue(len(q.unsorted_vertices()) == 2)
+    self.assertTrue(len(q.vertices()) == 2)
 
     # Point intersection
     p1 = ConvexPolygon([[1,1],[2,4],[7,5],[6,2]])
     p2 = ConvexPolygon([[2,4],[-4,4],[0,8]])
     q = p1 & p2
     self.assertTrue(q == Polygon([[2,4]]))
-    self.assertTrue(len(q.unsorted_vertices()) == 1)
+    self.assertTrue(len(q.vertices()) == 1)
 
     # Point intersection, line polygon
     p1 = ConvexPolygon([[1,1],[2,4],[7,5],[6,2]])
     p2 = ConvexPolygon([[2,4],[-4,4]])
     q = p1 & p2
     self.assertTrue(q == Polygon([[2,4]]))
-    self.assertTrue(len(q.unsorted_vertices()) == 1)
+    self.assertTrue(len(q.vertices()) == 1)
 
     # Empty intersection
     p1 = ConvexPolygon([[1,1],[2,4],[7,5],[6,2]])
     p2 = ConvexPolygon([[5,1.5],[8,2],[8,0],[5,0]])
     q = p1 & p2
     self.assertTrue(q == Polygon.empty())
-    self.assertTrue(len(q.unsorted_vertices()) == 0)
+    self.assertTrue(len(q.vertices()) == 0)
     self.assertTrue(q.is_empty())
 
     # Empty intersection, degenerate case
@@ -169,7 +169,7 @@ class TestConvexPolygon(unittest.TestCase):
     p2 = ConvexPolygon([[5,1.5],[80,2]])
     q = p1 & p2
     self.assertTrue(q == Polygon.empty())
-    self.assertTrue(len(q.unsorted_vertices()) == 0)
+    self.assertTrue(len(q.vertices()) == 0)
     self.assertTrue(q.is_empty())
 
     # Intersection of empty polygons
@@ -244,6 +244,40 @@ class TestConvexPolygon(unittest.TestCase):
       [-1,6],
       [-1,-1],
     ]))
+
+    p1 = ConvexPolygon([[4,3.5],[5,4],[4,4.5]])
+    p2 = ConvexPolygon([[4,3.5],[5,3.5],[5,4.25],[4.5,4.25],[4,4]])
+    self.assertTrue(Approx(p1 & p2) == ConvexPolygon([[4,4],[4,3.5],[5,4],[4.5,4.25]]))
+
+    p1 = ConvexPolygon([[4,4],[4,3.5],[5,4],[4.5,4.25]])
+    p2 = ConvexPolygon(IntervalVector([[4,5],[4.1]]))
+    self.assertTrue(Approx(p1 & p2, 1e-10) == ConvexPolygon(IntervalVector([[4.2,4.8],[4.1]])))
+
+    p1 = ConvexPolygon([[4,4],[4,3.5],[5,4],[4.5,4.25]])
+    p2 = ConvexPolygon(IntervalVector([[4,5],Interval(41)/10]))
+    self.assertTrue(Approx(p1 & p2, 1e-10) == ConvexPolygon(IntervalVector([[4.2,4.8],Interval(41)/10])))
+
+    p1 = ConvexPolygon([
+      IntervalVector([[0.0999999, 0.100001],[0.989016, 0.989017]]),
+      IntervalVector([[0.0999999, 0.100001],[1.0015, 1.00151]]),
+      IntervalVector([[0, 0],[0.999999, 1]]),
+      IntervalVector([[0, 0],[1, 1.00001]])
+    ])
+
+    p2 = ConvexPolygon([
+      IntervalVector([[0, 0],[0.987514, 0.987515]]),
+      IntervalVector([[0.1, 0.100001],[0.989016, 0.989017]]),
+      IntervalVector([[0.1, 0.100001],[1.0015, 1.00151]]),
+      IntervalVector([[0, 0],[1.01248, 1.01249]]),
+    ])
+
+    self.assertTrue(Approx(p1 & p2, 1e-5) == ConvexPolygon([
+      [[0.0997289, 0.100002],[0.989016, 0.989938]],
+      [[0.0995829, 0.100002],[1.00059, 1.00151]],
+      [[0, 0],[0.999547, 1.00047]]
+    ]))
+
+    p1 &= p2
 
 if __name__ ==  '__main__':
   unittest.main()

@@ -111,6 +111,7 @@
     tools/codac2_py_RobotSimulator.cpp
     tools/codac2_py_serialization.cpp
     tools/codac2_py_transformations.cpp
+    tools/codac2_py_trunc.cpp
 
     trajectory/codac2_py_AnalyticTraj.cpp
     trajectory/codac2_py_SampledTraj.cpp
