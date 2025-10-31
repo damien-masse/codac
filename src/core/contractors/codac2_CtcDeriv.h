@@ -28,6 +28,11 @@ namespace codac2
 
       CtcDeriv(const TimePropag& time_propag = TimePropag::FWD_BWD);
 
+      void restrict_tdomain(const Interval& tdomain)
+      {
+        _tdomain = tdomain;
+      }
+
       template<typename T>
       inline void contract(Slice<T>& x, const Slice<T>& v) const
         requires std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>
@@ -62,31 +67,28 @@ namespace codac2
         requires std::is_same_v<T,Interval> || std::is_same_v<T,IntervalVector>
       {
         assert_release(TDomain::are_same(x.tdomain(), v.tdomain()));
+        Interval t = x.tdomain()->t0_tf() & _tdomain;
+        auto it_beg = x.tdomain()->sample(t.lb(),true);
+        auto it_end = x.tdomain()->sample(t.ub(),true);
 
         if((_time_propag & TimePropag::FWD) == TimePropag::FWD)
         {
-          auto xi = x.begin(); auto vi = v.begin();
-          while(xi != x.end())
+          for(auto it = it_beg ; it != std::next(it_end) ; it++)
           {
-            assert(vi != v.end());
-            if(!xi->is_gate())
-              this->contract(*xi,*vi);
-            xi++; vi++;
+            auto sx = x.slice(it);
+            if(!sx->is_gate())
+              this->contract(*sx, *v.slice(it));
           }
-          assert(vi == v.end());
         }
 
         if((_time_propag & TimePropag::BWD) == TimePropag::BWD)
         {
-          auto rxi = x.rbegin(); auto rvi = v.rbegin();
-          while(rxi != x.rend())
+          for(auto it = it_end ; it != std::prev(it_beg) ; it--)
           {
-            assert(rvi != v.rend());
-            if(!rxi->is_gate())
-              this->contract(*rxi,*rvi);
-            rxi++; rvi++;
+            auto sx = x.slice(it);
+            if(!sx->is_gate())
+              this->contract(*sx, *v.slice(it));
           }
-          assert(rvi == v.rend());
         }
       }
 
@@ -104,5 +106,6 @@ namespace codac2
         const Interval& v, const TimePropag& time_propag);
 
       const TimePropag _time_propag;
+      Interval _tdomain;
   };
 }

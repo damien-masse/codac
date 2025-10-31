@@ -81,27 +81,26 @@ namespace codac2
         inter.push_back(vi);
     }
 
-    if(v1.size() > 1 && v2.size() > 1)
-      for(const auto& e1 : p1)
-        for(const auto& e2 : p2)
+    for(const auto& e1 : p1)
+      for(const auto& e2 : p2)
+      {
+        auto x = e1 & e2;
+        if(!x.is_empty())
         {
-          auto x = e1 & e2;
-          if(!x.is_empty())
+          // In case of colinear edges, the intersection would result in
+          // a large box (infinite solutions): end points are kept.
+          if((colinear(e1,e2) & BoolInterval::TRUE) == BoolInterval::TRUE)
           {
-            // In case of colinear edges, the intersection would result in
-            // a large box (infinite solutions): end points are kept.
-            if((colinear(e1,e2) & BoolInterval::TRUE) == BoolInterval::TRUE)
-            {
-              if(e1[0].intersects(x)) inter.push_back(e1[0]);
-              if(e1[1].intersects(x)) inter.push_back(e1[1]);
-              if(e2[0].intersects(x)) inter.push_back(e2[0]);
-              if(e2[1].intersects(x)) inter.push_back(e2[1]);
-            }
-
-            else
-              inter.push_back(x);
+            if(e1[0].intersects(x)) inter.push_back(e1[0]);
+            if(e1[1].intersects(x)) inter.push_back(e1[1]);
+            if(e2[0].intersects(x)) inter.push_back(e2[0]);
+            if(e2[1].intersects(x)) inter.push_back(e2[1]);
           }
+
+          else
+            inter.push_back(x);
         }
+      }
 
     return ConvexPolygon(inter);
   }

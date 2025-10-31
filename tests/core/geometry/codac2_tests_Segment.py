@@ -16,10 +16,20 @@ def hull(x):
   if x == oo:
     return Interval(prev_float(oo), oo)
   else:
-    return INterval(x)
+    return Interval(x)
 
 
 class TestSegment(unittest.TestCase):
+
+  def test_contains(self):
+
+    p1 = Vector([0,-10])
+    p2 = Vector([-10,-10])
+    p3 = Vector([-11,-10])
+    e1 = Segment(Vector([-10,-10]), Vector([10,-10]))
+    self.assertTrue(e1.contains(p1) == BoolInterval.TRUE)
+    self.assertTrue(e1.contains(p2) == BoolInterval.TRUE)
+    self.assertTrue(e1.contains(p3) == BoolInterval.FALSE)
 
   def test_intersects(self):
 
