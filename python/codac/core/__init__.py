@@ -416,8 +416,8 @@ class AnalyticTraj:
   def sampled(self, dt):
     return self.traj.sampled(dt)
     
-  def primitive(self, y0, t):
-    return self.traj.primitive(y0, t)
+  def primitive(self,*args):
+    return self.traj.primitive(*args)
     
   def as_function(self):
     return AnalyticFunction(self.traj.as_function())

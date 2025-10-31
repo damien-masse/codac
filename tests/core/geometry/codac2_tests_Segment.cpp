@@ -26,6 +26,15 @@ Interval hull(double x)
 
 TEST_CASE("Segment")
 {
+  SECTION("contains")
+  {
+    Vector p1({0,-10}), p2({-10,-10}), p3({-11,-10});
+    Segment e1(Vector({-10,-10}), Vector({10,-10}));
+    CHECK(e1.contains(p1) == BoolInterval::TRUE);
+    CHECK(e1.contains(p2) == BoolInterval::TRUE);
+    CHECK(e1.contains(p3) == BoolInterval::FALSE);
+  }
+
   SECTION("intersects")
   {
     CHECK(Segment({{0,0},{10,0}}).intersects(Segment({{4,0},{6,0}})) == BoolInterval::TRUE);

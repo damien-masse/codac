@@ -12,7 +12,7 @@ from codac import *
 
 class TestCtcDeriv(unittest.TestCase):
   
-  def test_CtcAction(self):
+  def test_CtcDeriv(self):
     
     # Test slice, envelope contraction
 
