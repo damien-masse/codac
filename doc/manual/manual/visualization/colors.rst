@@ -197,6 +197,20 @@ These five color maps are displayed below:
 
 .. figure:: img/colormaps.png
 
+A paramater ``alpha`` can be passed to the predefined color maps to set the opacity of the colors (between 0 and 1). The default value is 1 (full opacity).
+
+.. tabs::
+
+  .. code-tab:: py
+
+    # Create a haxby color map with 50% opacity
+    cmap = ColorMap.haxby(alpha=0.5)
+
+  .. code-tab:: c++
+
+    // Create a haxby color map with 50% opacity
+    ColorMap cmap = ColorMap::haxby(0.5);
+
 The method ``color()`` is used to get the color corresponding to a scalar value. The argument is a float between 0 and 1.
 
 As for the Color class, the ColorMap also has a Model (RGB or HSV) and an associated getter model(). The default Model is RGB.

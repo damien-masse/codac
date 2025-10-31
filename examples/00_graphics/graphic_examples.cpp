@@ -61,7 +61,7 @@ int main(){
 	{{Color::red(),Color::yellow(0.4)},"zonotope", "0.05"});
 
   Parallelepiped p_3d ({1.2,3.5,2.2},Matrix({{0.5,0.4,0},{0,0.2,0.1},{0,0,0.3}}));
-  fig2->draw_zonotope(p_3d.project({0,1}), {{Color::green(),Color::yellow(0.4)}, "zonotope"});
+  fig2->draw_zonotope(p_3d.proj({0,1}), {{Color::green(),Color::yellow(0.4)}, "zonotope"});
 
   // Colors
   // predefined colors without and with opacity
