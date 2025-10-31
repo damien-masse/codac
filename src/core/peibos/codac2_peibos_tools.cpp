@@ -8,17 +8,15 @@
  */
 
 #include "codac2_peibos_tools.h"
+#include "codac2_template_tools.h"
 #include "codac2_inversion.h"
 #include "codac2_IntvFullPivLU.h"
 
-#include <iostream>
-
-using namespace std;
 using namespace codac2;
 
 namespace codac2
 {
-  double split (const IntervalVector& X, double eps, vector<IntervalVector>& boxes)
+  double split (const IntervalVector& X, double eps, std::vector<IntervalVector>& boxes)
   {
     if (X.max_diam()<=eps)
     {
@@ -58,25 +56,24 @@ namespace codac2
     Index m = A.cols();
     Index n = A.rows();
 
-    IntervalMatrix A_int (A);
-
-    IntvFullPivLU LUdec((IntervalMatrix) A_int.transpose());
+    IntvFullPivLU LUdec((Matrix) A.transpose());
     IntervalMatrix N = LUdec.kernel();
 
-    vector<int> col_indices;
+    std::vector<int> col_indices;
 
     for (int i = 0; i < m; i++)
       if (! (A.col(i).isZero()) )
         col_indices.push_back(i);
 
-    // A_reduced is composed of the non empty vectors of A_int
-    IntervalMatrix A_reduced (n, col_indices.size());
+    // A_reduced is composed of the non empty vectors of A
+
+    Matrix A_reduced (n, col_indices.size());
     for (int i = 0; i < (int) col_indices.size(); i++)
-      A_reduced.col(i) = A_int.col(col_indices[i]);
+      A_reduced.col(i) = A.col(col_indices[i]);
 
     // Construct the new matrix A_tild = [A_reduced | N]
-    IntervalMatrix A_tild (n,n);
-    A_tild << A_reduced,N;
+    Matrix A_tild (n,n);
+    A_tild << A_reduced,N.mid();
 
     IntervalMatrix Q = inverse_enclosure(A_tild.transpose() * A_tild);
 
@@ -87,42 +84,7 @@ namespace codac2
     for (int i = 0; i < m; i++)
       mult(i,i) += e_vec(i);
 
-    // From here we have an IntervalMatrix A_inf, meaning that each generator is an interval vector
-    IntervalMatrix A_inf = A_tild * mult;
-
-    // The initial parallelepiped is <y> = Y*[-1,1]^n
-    Matrix Y = A_inf.smig();
-    
-    // The following is similar to the previous operations. The difference is that here the Matrix Y is square and not interval
-
-    // rho2 is the sum of the radiuses of the circle enclosing each interval generator
-    Interval rho2 (0.);
-
-    for (int i = 0; i < n; i++)
-      rho2 += A_inf.col(i).rad().norm();
-
-    IntervalMatrix M = Y.transpose() * Y;
-
-    double eps = 1e-10 * M.norm().ub();
-    double cond_Y = condition_number(Y);
-
-    if (cond_Y>1e10)
-    {
-      cerr << "Warning: ill-conditioned matrix in the inflate process. The result may not be guaranteed " << endl;
-      M += IntervalMatrix::Identity(n,n)*eps; // if Y is ill-conditioned, we add a small term to M to make it invertible
-    }
-
-    IntervalMatrix Q2 = inverse_enclosure(M);
-    
-    IntervalMatrix Y2 = IntervalMatrix::zero(n,n);
-
-    Interval factor = sqrt(1.0 + eps * cond_Y);
-    for (int i = 0; i < n; i++)
-      if (cond_Y>1e10)
-        Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i))*factor); // sufficient to keep the guarantee ?
-      else
-        Y2.col(i) = Y.col(i)*(1+rho2*sqrt(Q2(i,i)));
-    
-    return Y2.smag();
+    return ((A_tild.template cast<Interval>()) * mult).smag();
   }
+
 }
