@@ -119,9 +119,9 @@ namespace codac2
           if constexpr(std::is_same_v<T,double>)
             return Interval::empty();
           else if constexpr(std::is_same_v<T,Vector>)
-            return IntervalVector::empty(0);
+              return IntervalVector::empty(0);
           else
-            return T::empty(0,0);
+            return IntervalMatrix::empty(0,0);
         }
 
         typename Wrapper<T>::Domain hull(this->begin()->second);
