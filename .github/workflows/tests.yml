@@ -102,6 +102,7 @@ jobs:
         cd ../../
         
         python ../tests/core/domains/codac2_tests_BoolInterval.py
+        python ../tests/core/trajectory/codac2_tests_SampledTraj.py
 
         ./tests/codac2_tests_core_contractors_CtcInverse
         ./tests/codac2_tests_core_contractors_CtcPolygon
