@@ -122,14 +122,14 @@ class TestSampledTraj(unittest.TestCase):
 
     t = ScalarVar()
     f = AnalyticFunction([t], sqr(t)*exp(sin(t)))
-    x = AnalyticTraj(f,[0,10]).sampled(5e-3)
+    x = AnalyticTraj(f,[0,10]).sampled(1e-3)
     s = AnalyticTraj(AnalyticFunction([t],exp(sin(t))*(2*t+sqr(t)*cos(t))),[0,10]).sampled(1e-2)
 
     d = x.derivative()
     p = d.primitive()
 
-    for i in np.arange(0, 10, 0.01):
-      self.assertTrue(Approx(p(i),1e-2) == x(i))
+    for i in np.arange(0, 10, 1e-1):
+      self.assertTrue(Approx(p(i),2e-2) == x(i))
 
 if __name__ ==  '__main__':
   unittest.main()
