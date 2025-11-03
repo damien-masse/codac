@@ -129,7 +129,7 @@ class TestSampledTraj(unittest.TestCase):
     p = d.primitive()
 
     for i in np.arange(0, 10, 1e-1):
-      self.assertTrue(Approx(p(i),2e-2) == x(i))
+      self.assertTrue(Approx(p(i),1e-2) == x(i))
 
 if __name__ ==  '__main__':
   unittest.main()

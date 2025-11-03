@@ -148,5 +148,5 @@ TEST_CASE("SampledTraj: derivative")
   auto p = d.primitive();
 
   for(double i = 0 ; i < 10 ; i+=1e-1)
-    CHECK(Approx(p(i),2e-2) == x(i));
+    CHECK(Approx(p(i),1e-2) == x(i));
 }
