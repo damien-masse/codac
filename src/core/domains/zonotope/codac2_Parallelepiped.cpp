@@ -10,7 +10,6 @@
 #include "codac2_Parallelepiped.h"
 #include "codac2_inversion.h"
 
-using namespace std;
 using namespace codac2;
 
 Parallelepiped::Parallelepiped(const Vector& z_, const Matrix& A_)
@@ -19,7 +18,7 @@ Parallelepiped::Parallelepiped(const Vector& z_, const Matrix& A_)
   assert_release(A.cols() <= z.size() && "too many vectors, you are describing a zonotope");
 }
 
-void generate_vertices(Index i, Index n, const Vector& z, const Matrix& A, vector<Vector>& L_v)
+void generate_vertices(Index i, Index n, const Vector& z, const Matrix& A, std::vector<Vector>& L_v)
 {
   if (i == n)
   {
@@ -34,7 +33,7 @@ void generate_vertices(Index i, Index n, const Vector& z, const Matrix& A, vecto
 
 std::vector<Vector> Parallelepiped::vertices() const
 {
-  vector<Vector> L_v;
+  std::vector<Vector> L_v;
   generate_vertices(0, z.size(),z,A,L_v);
   return L_v;
 }
