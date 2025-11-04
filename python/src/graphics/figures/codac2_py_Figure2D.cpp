@@ -31,7 +31,7 @@ void export_Figure2D(py::module& m)
       .def(py::init<>())
       .def_static("VIBES", [](){ return GraphicOutput::VIBES; })
       .def_static("IPE", [](){ return GraphicOutput::IPE; })
-      .def(py::self | py::self, GRAPHICOUTPUT_OPERATOROR_GRAPHICOUTPUT_GRAPHICOUTPUT)
+      .def(py::self | py::self, GRAPHICOUTPUT_OPERATORUNION_GRAPHICOUTPUT_GRAPHICOUTPUT)
     ;
   }
 
@@ -41,7 +41,7 @@ void export_Figure2D(py::module& m)
       .value("VIBES", GraphicOutput::VIBES)
       .value("IPE", GraphicOutput::IPE)
       .export_values()
-      .def(py::self | py::self, GRAPHICOUTPUT_OPERATOROR_GRAPHICOUTPUT_GRAPHICOUTPUT)
+      .def(py::self | py::self, GRAPHICOUTPUT_OPERATORUNION_GRAPHICOUTPUT_GRAPHICOUTPUT)
     ;
   }
 

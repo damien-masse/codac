@@ -249,7 +249,7 @@ PYBIND11_MODULE(_core, m)
     .value("NATURAL", EvalMode::NATURAL)
     .value("CENTERED", EvalMode::CENTERED)
     .value("DEFAULT", EvalMode::DEFAULT)
-    .def(py::self | py::self, EVALMODE_OPERATOROR_EVALMODE_EVALMODE)
+    .def(py::self | py::self, EVALMODE_OPERATORUNION_EVALMODE_EVALMODE)
   ;
 
   #if FOR_MATLAB // Python enums do not seem to be callable in matlab
