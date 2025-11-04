@@ -28,15 +28,18 @@
 #include "codac2_IntervalMatrix.h"
 #include "codac2_BoolInterval.h"
 #include "codac2_clp.h"
+#include "codac2_Polytope_util.h"
+#include "codac2_Facet.h"
+#include "codac2_Polytope_dd.h"
 
+#if 0
 
 namespace codac2 {
 
   /**
    * \class Polytope
    * \brief Represents a bounded convex polytope as a set of constraints
-   * and a bounding box (the bounding box may be, or not, inside
-   * the constraints) */
+   * and a bounding box (the bounding box is part of the constraints)  */
   class Polytope 
   {
     public:
@@ -279,6 +282,14 @@ namespace codac2 {
       bool  _empty; 		       /* is empty */
       IntervalVector _box;             /* bounding box */
       mutable std::unique_ptr<LPclp> _clpForm; /* LPclp formulation */
+      mutable std::unique_ptr<DDbuildF2V> _DDbuildF2V; 
+					/* DDbuildF2V formulation */
+      mutable std::unique_ptr<DDbuildV2F> _DDbuildV2F; 
+					/* DDbuildV2F formulation */
+      bool _box_updated;
+      bool _clpFrom_updated;
+      bool _buildF2V_updated;
+      bool _buildV2F_updated;
       void build_clpForm_from_box();
       void minimize_constraints();
 };
@@ -291,5 +302,7 @@ inline bool Polytope::is_flat() const { return _nbEqcsts!=0; }
 inline Index Polytope::nbFacets() const { return _nbEqcsts!=0; }
 
 
+
 }
 
+#endif

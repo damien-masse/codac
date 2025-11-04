@@ -28,16 +28,22 @@
 #include "codac2_Vector.h"
 #include "codac2_Row.h"
 #include "codac2_Facet.h"
-#include "codac2_dd.h"
+#include "codac2_Polytope_dd.h"
 
 
 namespace codac2 {
 
 /** read a .ine file and return a list of facets
  *  this is a very crude function, which assumes the format of the 
- *  file is correct 
+ *  file is correct. Equalities are not treated for now.
  *  @param filename name of the file */
-std::vector<Facet> read_ineFile(const char *filename);
+CollectFacets read_ineFile(const char *filename);
+
+/** read a .ext file and return a list of vertices
+ *  this is a very crude function, which assumes the format of the 
+ *  file is correct. Rays are not treated for now.
+ *  @param filename name of the file */
+std::vector<Vector> read_extFile(const char *filename);
 
 /** construct the list of facets of a 3D-polyhedron from the buildF2V 
  * structure 

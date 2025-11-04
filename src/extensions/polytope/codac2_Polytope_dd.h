@@ -1,5 +1,5 @@
 /**
- * \file codac2_dd.h implementation of the dd algorithm
+ * \file codac2_Polytope_dd.h implementation of the dd algorithm
  * ----------------------------------------------------------------------------
  *  \date       2025
  *  \author     Damien Massé
@@ -93,7 +93,6 @@ struct DDvertex {
             return;
          }
       }
-      std::cout << "not found !!???\n";
    }
 
    void changeLnk(const std::forward_list<DDvertex>::iterator &a,
@@ -101,7 +100,7 @@ struct DDvertex {
       for (Index i=0;i<(Index)links.size();i++) {
          if (links[i]==a) { links[i]=b; return; }
       }
-      /* should not happel */
+      /* should not happen */
       links.push_back(b);
    }
 
@@ -163,12 +162,17 @@ struct DDlink {
 
 class DDbuildF2V {
   public:
+     /* create the build with a collection of facet, but
+        use only the equality facets */
      DDbuildF2V(Index dim, const IntervalVector &box,
-		const std::vector<Facet> &eqconstraints, bool include_box=true);
+ 		std::shared_ptr<CollectFacets> facetsptr,
+		bool include_box=true);
      
 //     void add_constraint_box(const IntervalVector &box);
    
-     int add_facet(Index idFacet, const Facet& fct);
+     /* add an inequality facet in the build */
+     int add_facet(Index id);
+     int add_facet(CollectFacets::mapCIterator itFacet);
 
      IntervalVector compute_vertex(const IntervalVector &vect) const;
      Index get_dim() const;
@@ -234,6 +238,8 @@ class DDbuildF2V {
      Index fdim; /* dimension - nb independant equalities constraints */
      IntervalVector bbox;
 
+     std::shared_ptr<CollectFacets> facetsptr;
+
      /* if fdim<dim :
         constraint a X <= b becomes (-b 0) + (a M_EQ) 
         vertex : (c Y) becomes X = M_EQ (1 Y/c) 
@@ -269,41 +275,55 @@ inline const std::vector<Index> &DDbuildF2V::get_reffacets() const
 
 
 struct DDfacet {
-   Index Id;
-   Facet facet;
+   CollectFacets::mapIterator facetIt;
    double lambda;
    
    enum ddfacetstatus {
      FACETNEW,
      FACETIN,
      FACETON,
-     FACETOUT
+     FACETOUT,
+     FACETREM
    };
    ddfacetstatus status;
 
-   std::set<Index> links;
+   std::vector<std::forward_list<DDfacet>::iterator> links;
    std::vector<Index> vtx;
  
-   DDfacet(const Facet &v, Index Id, 
-		std::set<Index> &nlinks,
-		std::vector<Index> &nvtx) : Id(Id), facet(v), status(FACETNEW) {
-         this->links.swap(nlinks);
-         this->vtx.swap(nvtx);
-   }
-   DDfacet(Facet &&v, Index Id, 
-		std::set<Index> &nlinks,
-		std::vector<Index> &nvtx) : Id(Id), facet(v), status(FACETNEW) {
+   DDfacet(CollectFacets::mapIterator facetIt,
+		std::vector<std::forward_list<DDfacet>::iterator> &nlinks,
+		std::vector<Index> &nvtx) : facetIt(facetIt), status(FACETNEW) {
          this->links.swap(nlinks);
          this->vtx.swap(nvtx);
    }
 
-   void replaceLnks(Index old, Index nw) {
-      this->links.erase(old);
-      this->links.insert(nw);
+   bool addLnk(std::forward_list<DDfacet>::iterator a, bool check=false) {
+      if (check) {
+         for (auto b : links) {
+            if (a==b) return false;
+         } 
+      }
+      this->links.push_back(a);
+      return true;
    }
 
-   void addLnk(Index a) {
-      this->links.insert(a);
+   void removeLnk(const std::forward_list<DDfacet>::iterator &a) {
+      for (Index i=0;i<(Index)links.size();i++) {
+         if (links[i]==a) { 
+	    links[i]=links[links.size()-1]; 
+	    links.pop_back();
+            return;
+         }
+      }
+   }
+
+   void changeLnk(const std::forward_list<DDfacet>::iterator &a,
+		const std::forward_list<DDfacet>::iterator &b) {
+      for (Index i=0;i<(Index)links.size();i++) {
+         if (links[i]==a) { links[i]=b; return; }
+      }
+      /* should not happen */
+      links.push_back(b);
    }
 
    void addVtx(Index a) {
@@ -313,9 +333,6 @@ struct DDfacet {
       this->vtx.insert(it,a);
    }
 
-   void removeLnk(Index a) {
-      this->links.erase(a);
-   }
 };
 
 class DDbuildV2F {
@@ -328,15 +345,43 @@ class DDbuildV2F {
      friend std::ostream& operator<<(std::ostream& os, const DDbuildV2F& build);
 
   private:
-     Index addDDfacet(const Facet &f, std::set<Index> &links,
+     /* can NOT return facets.end() */
+     std::forward_list<DDfacet>::iterator addDDfacet(
+		const CollectFacets::mapIterator &it,
+		std::vector<std::forward_list<DDfacet>::iterator> &links,
 		std::vector<Index> &vtx);
-     Index addDDfacet(Facet &&f, std::set<Index> &links,
+     /* can return facets.end() if insertion failed */
+     std::forward_list<DDfacet>::iterator addDDfacet(
+		std::pair<Row,double> &&row_rhs,
+		std::vector<std::forward_list<DDfacet>::iterator> &links,
 		std::vector<Index> &vtx);
-     Index addFacetSon(const DDfacet &p1, DDfacet &p2, Index idVertex); 
-     void removeFacet(Index Id, bool removeLnks);
+     /* can return facets.end() if insertion failed */
+     std::forward_list<DDfacet>::iterator addDDfacet(
+ 		const std::pair<Row,double> &row_rhs,
+		std::vector<std::forward_list<DDfacet>::iterator> &links,
+		std::vector<Index> &vtx);
+     /* can return facets.end() if insertion failed */
+     std::forward_list<DDfacet>::iterator
+	 addFacetSon(const std::forward_list<DDfacet>::iterator &It1, 
+		std::forward_list<DDfacet>::iterator &It2, Index idVertex); 
+     void removeFacet(std::forward_list<DDfacet>::iterator It,
+			 bool removeLnks);
+
+     inline std::pair<Row,double> reduce_facet(const Row &row, double rhs) {
+        int fx;
+        frexp(row[0],&fx);
+        for (Index i=1;i<row.size();i++) {
+            int fx2;
+            frexp(row[i],&fx2);
+            if (fx2>fx) fx=fx2;
+         }
+         if (std::abs(fx)<10) return std::pair(row,rhs);
+         double mult=exp2(-fx);
+         return std::pair(row*mult,rhs*mult);
+     }
      
-     std::map<Index,DDfacet> facets;
-     std::vector<Facet> eqfacets; /* no need to 'link' eqfacets */
+     std::shared_ptr<CollectFacets> facetsptr;
+     std::forward_list<DDfacet> facets;
      std::vector<Index> idVertices; /* list of vertices entered, useful as
                 long as there are eqfacets */
      Index nbIn=0;

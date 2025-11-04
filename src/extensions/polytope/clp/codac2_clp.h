@@ -41,35 +41,35 @@ namespace codac2 {
  */
 class LPclp {
     public:
-      /** \brief Constructor with the set of facets 
+      /** \brief Constructor with the collection of facets 
        *
        * LP problem : max objvect X s.t. mat X <= rhsvect  
        *
        * \param dim dimension of the space
        * \param facets the facets 
        * \param objvect the objective */
-      LPclp (Index dim, const std::vector<Facet> &facets,
+      LPclp (Index dim, std::shared_ptr<CollectFacets> &facets,
 	const Row &objvect);
 
-      /** \brief Constructor with the set of facets, no objective 
+      /** \brief Constructor with the collection of facets, no objective 
        *
        * LP problem : max objvect X s.t. mat X <= rhsvect  
        *
        * \param dim dimension of the space
        * \param facets the facets */
-      LPclp (Index dim, const std::vector<Facet> &facets);
+      LPclp (Index dim, std::shared_ptr<CollectFacets> &facets);
 
-      /** \brief Constructor with the set of facets, bbox, no objective 
+      /** \brief Constructor with the collection of facets, bbox, no objective 
        *
        * LP problem : max objvect X s.t. mat X <= rhsvect  
        *
        * \param dim dimension of the space
        * \param facets the facets
        * \param box the bounding box for Neumaier's approx */
-      LPclp (Index dim, const std::vector<Facet> &facets,
+      LPclp (Index dim, std::shared_ptr<CollectFacets> &facets,
 		const IntervalVector &box);
 
-      /** \brief Constructor from a matrix
+      /** \brief Constructor from a matrix : create a new CollectFacets
        *   
        *  LP problem : max objvect X s.t. mat X <= rhsvect  
        *
@@ -115,15 +115,17 @@ class LPclp {
        */
       void set_bbox(const IntervalVector &box);
 
-      /** \brief Add a constraint
+      /** \brief Add a constraint (warning : only for "local" CollectFacets)
        *  \param facet the facet
-       *  \return the row number of the constraint */
+       *  \return the row number of the constraint, or -1 if the
+       *  insertion failed (an constraint with the same base exists) */
       Index addConstraint(const Facet &facet);
-      /** \brief Add a constraint
+      /** \brief Add a constraint (warning : only for "local" CollectFacets)
        *  \param vst the (row) vector 
        *  \param rhs its RHS 
        *  \param isEq true if it is an equality
-       *  \return the row number of the constraint */
+       *  \return the row number of the constraint, or the number of the
+       *  existing constraint if a constraint with the same base was modified */
       Index addConstraint(const Row &vst, double rhs, bool isEq=false);
       /** \brief Set the objvective
        *  \param objvect the new objective
@@ -151,7 +153,11 @@ class LPclp {
       /** \brief Get the set of facets 
          \return the facets
       */
-      const std::vector<Facet> &getFacets() const;
+      const CollectFacets &getFacets() const;
+      /** \brief Get the collections of facets as pointer
+         \return the facets
+      */
+      std::shared_ptr<CollectFacets> getFacetsPtr() ;
       /** \brief Get the objective row
        *  \return the objective 
        */
@@ -167,7 +173,7 @@ class LPclp {
       /** \brief Get a single constraint, as an facet
        *  \return the rhs vector
        */
-      const Facet &getCst(Index i) const;
+      CollectFacets::mapCIterator getCst(Index i) const;
 
       /** \brief Status a constraint (internal)
        *  \arg \c REMOVED Constraint removed or never added
@@ -295,7 +301,7 @@ class LPclp {
    private:
       /* initial problem */
       Index nbRows, nbCols;  /* dimension of the matrix */
-      std::vector<Facet> Afacets; /* the facets */
+      std::shared_ptr<CollectFacets> Afacets; /* the facets */
       Row objvect;  /* objective vector */
       std::vector<lp_cststatus> cststat;
 
@@ -345,7 +351,8 @@ std::ostream& print_lp_stat(std::ostream& os, const LPclp::lp_result_stat x);
 // inline const Matrix &LPclp::getMat() const { return Amat; } /* TODO */
 inline const Row &LPclp::getObjvect() const { return objvect; } 
 // inline const Vector &LPclp::getRhsvect() const { return rhsvect; } /* TODO */
-inline const Facet &LPclp::getCst(Index i) const { return Afacets[i]; }
+inline CollectFacets::mapCIterator 
+	LPclp::getCst(Index i) const { return (*Afacets)[i]; }
 inline const Interval &LPclp::getValobj() const { return Valobj; }
 inline bool LPclp::isRedundant(Index cst) const { return cststat[cst][REDUNDANT]; }
  inline const IntervalVector &LPclp::getFeasiblePoint() const { return this->primalSol; }

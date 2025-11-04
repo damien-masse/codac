@@ -28,7 +28,7 @@
 #include "codac2_Vector.h"
 #include "codac2_Row.h"
 #include "codac2_Facet.h"
-#include "codac2_dd.h"
+#include "codac2_Polytope_dd.h"
 #include "codac2_Polytope_util.h"
 
 
@@ -36,8 +36,8 @@ namespace codac2 {
 
 /** read a .ine file and return a list of facets
  *  this is a very crude function, which assumes the format of the 
- *  file is correct, and no real check is done */
-std::vector<Facet> read_ineFile(const char *filename) {
+ *  file is correct, and no real check is done. Linearities are not treated. */
+CollectFacets read_ineFile(const char *filename) {
    std::ifstream fichier(filename);
    assert(!fichier.fail());
    /* skip everything until begin */
@@ -52,8 +52,7 @@ std::vector<Facet> read_ineFile(const char *filename) {
    fichier >> nbfacets >> dim >> dummy;
    std::cout << nbfacets << " facettes " << dim << " dimensions" << std::endl;
    dim = dim-1; /* non-normalised dimension */
-   std::vector<Facet> result;
-   result.reserve(nbfacets);
+   CollectFacets result;
    for (Index i=0;i<nbfacets;i++) {
      double rhs=0.0;
      Row row = Row::zero(dim);
@@ -62,7 +61,40 @@ std::vector<Facet> read_ineFile(const char *filename) {
         fichier >> row[j];
      }
      row = -row;
-     result.push_back(Facet(row,rhs,false));
+     result.insert_facet(row,rhs,false);
+   }
+   fichier.close();
+   return result;
+}
+
+/** read a .ext file and return a list of vertices
+ *  this is a very crude function, which assumes the format of the 
+ *  file is correct, and no real check is done. Rays (or lines)
+ *  are not treated for now. */
+std::vector<Vector> read_extFile(const char *filename) {
+   std::ifstream fichier(filename);
+   assert(!fichier.fail());
+   /* skip everything until begin */
+   std::string line;
+   while (getline(fichier,line)) {
+      std::cout << line << std::endl;
+      if (line.compare("begin")==0) break;
+   }
+   assert(fichier.good());
+   Index nbvertices, dim;
+   char dummy[50];
+   fichier >> nbvertices >> dim >> dummy;
+   std::cout << nbvertices << " sommets " << (dim-1) << " dimensions" << std::endl;
+   dim = dim-1; /* non-normalised dimension */
+   std::vector<Vector> result;
+   for (Index i=0;i<nbvertices;i++) {
+     double rhs=0.0;
+     Vector vrt = Vector::zero(dim);
+     fichier >> rhs; /* 'rhs' is supposed to be 1 */
+     for (Index j=0;j<dim;j++) {
+        fichier >> vrt[j];
+     }
+     result.push_back(vrt);
    }
    fichier.close();
    return result;

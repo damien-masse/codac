@@ -32,6 +32,7 @@
 using namespace codac2;
 
 
+#if 0
 namespace codac2 {
 
 Polytope::Polytope() : _dim(-1), _nbEqcsts(0), _nbineqCsts(0), _empty(true)
@@ -272,4 +273,5 @@ void Polytope::clear() {
 }
 
 }
+#endif
 
