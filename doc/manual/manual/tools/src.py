@@ -33,6 +33,8 @@ class TestToolsManual(unittest.TestCase):
     # [tools-1-end]
     test.assertTrue(x1 == x2)
 
+  def tests_tools_manual_peibos(test):
+
     # [peibos-1-beg]
     # Definition of f
     y_2d = VectorVar(2)
