@@ -204,7 +204,7 @@ A paramater ``alpha`` can be passed to the predefined color maps to set the opac
   .. code-tab:: py
 
     # Create a haxby color map with 50% opacity
-    cmap = ColorMap.haxby(alpha=0.5)
+    cmap = ColorMap.haxby(0.5)
 
   .. code-tab:: c++
 
