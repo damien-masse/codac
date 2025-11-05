@@ -12,6 +12,9 @@
 
   if(WITH_CAPD)
     add_subdirectory(extensions/capd)
+    if(WITH_PEIBOS_CAPD)
+      add_subdirectory(extensions/peibos-capd)
+    endif()
   endif()
 
   #if(WITH_PYTHON)
@@ -111,6 +114,22 @@
                  PATH_SUFFIXES lib)
                  
     set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_CAPD_LIBRARY} capd::capd)
+    ")
+
+  endif()
+
+  if(WITH_PEIBOS_CAPD AND WITH_CAPD)
+
+    file(APPEND ${CODAC_CMAKE_CONFIG_FILE} "
+
+    find_path(CODAC_PEIBOS_CAPD_INCLUDE_DIR ${PROJECT_NAME}-peibos-capd.h
+            PATH_SUFFIXES include/${PROJECT_NAME}-peibos-capd)
+    set(CODAC_INCLUDE_DIRS \${CODAC_INCLUDE_DIRS} \${CODAC_PEIBOS_CAPD_INCLUDE_DIR})
+
+    find_library(CODAC_PEIBOS_CAPD_LIBRARY NAMES ${PROJECT_NAME}-peibos-capd
+                 PATH_SUFFIXES lib)
+                 
+    set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_PEIBOS_CAPD_LIBRARY} \${CAPD_LIBRARIES})
     ")
 
   endif()
