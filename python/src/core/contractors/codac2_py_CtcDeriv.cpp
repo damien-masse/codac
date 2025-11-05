@@ -27,9 +27,9 @@ void export_CtcDeriv(py::module& m)
   py::class_<CtcDeriv> exported(m, "CtcDeriv", CTCDERIV_MAIN);
   exported
 
-    .def(py::init<const TimePropag&>(),
-      CTCDERIV_CTCDERIV_CONST_TIMEPROPAG_REF,
-      "time_propag"_a=TimePropag::FWD_BWD)
+    .def(py::init<const TimePropag&,bool>(),
+      CTCDERIV_CTCDERIV_CONST_TIMEPROPAG_REF_BOOL,
+      "time_propag"_a=TimePropag::FWD_BWD, "fast_mode"_a=true)
 
     .def("restrict_tdomain", &CtcDeriv::restrict_tdomain,
       VOID_CTCDERIV_RESTRICT_TDOMAIN_CONST_INTERVAL_REF,
