@@ -831,6 +831,7 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
    }
    /* no equalities removed */
    for (DDfacet &d : facets) {
+       if (d.status==DDfacet::FACETREM) continue;
        Interval calc = d.facetIt->first.row.dot(vertex)-d.facetIt->second.rhs;
        d.lambda = calc.lb();
        if (calc.mig()<this->tolerance) { d.status=DDfacet::FACETON; }
@@ -854,7 +855,7 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
         continue;
      }
      for (std::forward_list<DDfacet>::iterator idL : d.links) {
-        if (idL==facets.end()) continue; /* ? */
+        if (idL==facets.end()) continue; /* can it happen ? */
         DDfacet &d2 = (*idL);
         if (d2.status==DDfacet::FACETON) {
            d2.removeLnk(it);
@@ -877,6 +878,7 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
 #endif
         cnt++;
      }
+     facetsptr->removeFacetById(it->facetIt->second.Id);
      this->removeFacet(it,false);
    }
    /*construction of new links for the eq facets */
@@ -926,6 +928,7 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
    }
    facets.remove_if([](const DDfacet &v) 
 			{ return v.status==DDfacet::FACETREM; });
+   facetsptr->renumber();
    return cnt;
 }
 
@@ -971,6 +974,7 @@ void DDbuildV2F::removeFacet(std::forward_list<DDfacet>::iterator It,
          it->removeLnk(It);
       }
    }
+   d.facetIt=facetsptr->endFacet();
    d.status=DDfacet::FACETREM;
 }
 

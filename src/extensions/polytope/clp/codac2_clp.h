@@ -310,6 +310,7 @@ class LPclp {
       bool built;
       bool built_emptytest;
       ClpSimplex *model=nullptr;
+      Index offset; /* offset between Id of Afacets and row in the model */
       Interval Valobj;
       IntervalVector primalSol;
       IntervalRow dualSol;

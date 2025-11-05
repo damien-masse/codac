@@ -59,17 +59,32 @@ struct FacetBase {
       std::swap(this->bdim,fb.bdim);
       std::swap(this->bdim,fb.bdim);
    }
+
+   /** return true if the Row is zero */
+   inline bool isNull() const { return (bdim==-1); }
+
+   /** return true if the Row is zero outside the greatest dimension */
+   inline bool isCoord() const {
+      if (row.size()==0) return false;
+      return (bdim%(2*row.size())==0);
+   }
+
+   /** return the greatest dimension (between 0 and dim-1) */
+   inline Index gtDim () const {
+      if (row.size()==0) return -1; 
+      return (bdim/(2*row.size()))%row.size();
+   }
    
-   void change_row(Row &&row) {
+   inline void change_row(Row &&row) {
       this->row=row; this->bdim=-1; this->vdim=0.0;
       this->compute_key();
    }
-   void change_row(const Row &row) {
+   inline void change_row(const Row &row) {
       this->row=row; this->bdim=-1; this->vdim=0.0;
       this->compute_key();
    }
 
-   void negate_row() {
+   inline void negate_row() {
       this->row=-row;
       Index u = 2*row.size()*row.size();
       if (this->bdim>=u) this->bdim-=u; else this->bdim+=u;
@@ -98,7 +113,7 @@ struct FacetBase {
           }
       }
       if (valabs==0.0) return; /* bdim=-1 */
-      if (b2dim==-1) b2dim=bdim;
+      if (b2dim==-1) { bdim = 2*row.size()*bdim; vdim=0.0; return; }
       if (b2dim>bdim) 
           bdim = bdim * (2*row.size()+1) + 2*row.size() - b2dim;
       else
@@ -143,7 +158,9 @@ namespace Facet_ {
   inline Facet make(Row &&row, double rhs, bool eqcst) {
      return std::make_pair(FacetBase(row),FacetRhs(rhs,eqcst,0));
   }
-
+  inline Facet make(const FacetBase &base, double rhs, bool eqcst) {
+     return std::make_pair(base,FacetRhs(rhs,eqcst,0));
+  }
 
   inline void swap_Facet(Facet &f1,Facet &f2) {
      f1.first.swap(f2.first);
@@ -213,8 +230,12 @@ class CollectFacets {
      using mapIterator = mapType::iterator;
      using mapCIterator = mapType::const_iterator;
 
-     /** generate an empty collection */
-     CollectFacets() {};
+     /** generate an empty collection, without dimension */
+     CollectFacets() : dim(-1) {};
+     /** generate an empty collection, with dimension
+      *  @param dim the dimension
+      */
+     CollectFacets(Index dim) : dim(dim) {};
      /** generate the set of facets from a matrix and a vector, i.e.
       *  mat X <= rhs (eqSet states which rows of mat are equalities)
       *  @param mat the matrix
@@ -222,7 +243,12 @@ class CollectFacets {
       *  @eqSet the set of equalities */
      CollectFacets(const Matrix &mat, const Vector &rhsvect, 
 			const std::vector<Index> &eqSet);
+
+     /** create a copy of the CollectFacets */
+     CollectFacets(const CollectFacets& cf);
   
+     /** return the dimension of the facets */
+     Index getDim() const;
      /** return the number of facets, as the size of _allfacets */
      Index nbfcts() const;
      /** return the number of equality facets, as the size of _eqfacets */
@@ -327,7 +353,32 @@ class CollectFacets {
      mapIterator dissociate_eqFacet(Index eqId , double nbound,
 		ACTION_DUPLICATE act=KEEP_RHS);
 
+     /** remove a facet by its Id
+      *  @param id Id of the facet (starting from 1)
+      *  @return true if the facet existed and has been removed */
+     bool removeFacetById(Index id);
+
+     /** extract the constraints corresponding to the bounding box,
+      *  or a possible "emptiness constraint".
+      *  remove some contraints, may put endFacet() for some Id */
+     IntervalVector extractBox();
+   
+     /** renumber the set, removing spurious Id.
+      *  do not modify the iterators, but modify the indices of the 
+      *  facets and equality facets. */
+     void renumber();
+
+     /** modify the rhs such that the polyhedron contains a list
+      *  of intervalVector. Also adapt the bbox.
+      *  if tight=true, may tighten the bound, and not only increase them.
+      *  may add facets if needed to dissociate equality facets. */
+     void include_vertices(const std::vector<IntervalVector> &vertices,
+		IntervalVector &bbox, bool tight);
+     void include_vertices(const std::vector<Vector> &vertices,
+		IntervalVector &bbox, bool tight);
+
    private:
+      mutable Index dim;
       mapType _map;
       std::vector<mapIterator> _allFacets;
       std::vector<Index> _eqFacets;   /* index in _allFacets */
@@ -340,6 +391,19 @@ class CollectFacets {
 		 double rhs, bool eqcst, ACTION_DUPLICATE act);
 };
 
+inline CollectFacets::CollectFacets(const CollectFacets& cf)  :
+    dim(cf.getDim()), _map(cf._map), _allFacets(cf._allFacets),
+    _eqFacets(cf._eqFacets)
+{
+}
+
+inline Index CollectFacets::getDim() const {
+   if (this->dim!=-1) return this->dim;
+   if (_map.size()==0) return -1;
+   this->dim=(_map.begin()->first.row.size());
+   return this->dim;
+} 
+
 inline const CollectFacets::mapType &CollectFacets::get_map() const
    { return _map; }
 
@@ -349,7 +413,7 @@ inline CollectFacets::mapIterator CollectFacets::get_eqFacet(Index id)
    { return this->_allFacets[this->_eqFacets[id]]; }
 
 inline Index CollectFacets::nbfcts() const {
-   return this->_allFacets.size(); 
+   return this->_map.size(); 
 }
 
 inline Index CollectFacets::nbeqfcts() const {

@@ -32,10 +32,9 @@
 using namespace codac2;
 
 
-#if 0
 namespace codac2 {
 
-Polytope::Polytope() : _dim(-1), _nbEqcsts(0), _nbineqCsts(0), _empty(true)
+Polytope::Polytope() : _dim(-1), _empty(true)
 {
 }
 
@@ -43,10 +42,14 @@ Polytope::Polytope(Index dim) : Polytope(dim,false)
 {
 }
 
-Polytope::Polytope(Index dim, bool empty) : _dim(dim), _nbEqcsts(0), _nbineqCsts(0), _empty(empty)
+Polytope::Polytope(Index dim, bool empty) : _dim(dim), _empty(empty),
+		_box(dim, empty ? Interval::empty() : Interval()),
+		_facets(std::make_shared<CollectFacets>(dim)),
+		_box_updated(true)
 {
 }
 
+#if 0
 void Polytope::build_clpForm_from_box() {
   _nbEqcsts=0;
   _nbineqCsts=0;
@@ -72,64 +75,116 @@ void Polytope::build_clpForm_from_box() {
   }
   _clpForm=std::make_unique<LPclp>(_box.size(),built);
 }
+#endif
 
-Polytope::Polytope(const IntervalVector &box) : Polytope(box.size())
+Polytope::Polytope(const IntervalVector &box) : _dim(box.size()),
+		_empty(box.is_empty()), _box(box), 
+		_facets(std::make_shared<CollectFacets>(dim)), 
+		_box_updated(true)
 {
-  if (box.is_empty()) { _empty=true; return; }
-  _box=box;
-  this->build_clpForm_from_box();
 }
 
-Polytope::Polytope(const Polytope &P) : _dim(P._dim), _nbEqcsts(P._nbEqcsts),
-	_nbineqCsts(P._nbineqCsts), _empty(P._empty),
-        _box(P._box) {
-   if (P._clpForm) this->_clpForm = std::make_unique<LPclp>(*P._clpForm);
-
+Polytope::Polytope(const Polytope &P) : _dim(P._dim), _empty(P._empty),
+        _box(P._box),
+	_facets(P._empty ? std::make_shared<CollectFacets>(dim) :
+		           std::make_shared<CollectFacets>(P._facets)),
+	_box_updated(P._box_updated) 
+{
 }
 
 Polytope::Polytope(const std::vector<Vector> &vertices) : 
   Polytope()
 {
-  /* note : for now we just take the bounding box of the vertices,
-     so that's definitely not good */
-  if (vertices.empty()) return;
-  _empty= false;
-  _box = *(vertices.begin());
-  for (auto v : vertices) {
-     _box |= v;
-  }
-  this->build_clpForm_from_box();
+   if (vertices.empty()) return;
+   _dim=vertices[0].size();
+   _empty= false;
+   /* build the V2F form */
+   _DDbuildV2F = std::make_unique<DDbuildV2F>(1,vertices[0]);
+   for (Index i=1;i<(Index)vertices.size();i++) {
+       _DDbuildV2F->add_vertex(i+1,vertices[i]);
+   }
+   /* get the CollectFacets */
+   _facets=_DDbuildV2F->getFacets();
+   _box = _facets->extractBox();
+   _facets->include_vertices(vertices,_box,true);
+   _box_updated=true;
+   _buildV2F_updated=true; /* keep buildV2F ? */
 }   
 
-Polytope::Polytope(const std::vector<Vector> &vertices,
-		const std::vector<Row> &facetforms) 
-		: _dim(facetforms[0].size()),
-	_nbEqcsts(0), _nbineqCsts(facetforms.size()),
-         _empty(vertices.empty()) {
-  if (vertices.empty()) { _nbineqCsts=0; return; }
-  _box = *(vertices.begin());
-  for (auto v : vertices) {
-     _box |= v;
+Polytope::Polytope(const std::vector<IntervalVector> &vertices,
+		const CollectFacets &facetsform) :  Polytope()
+{
+  _dim = facetsform.getDim();
+  if (_dim==-1) return;
+  _facets=std::make_shared<CollectFacets>(facetsform);
+  if (vertices.empty()) {
+     _box = InvervalVector::constant(_dim,Interval::empty());
+     _empty=true;
+     return;
   }
-  std::vector<Facet> facets;
-  for (const auto &row : facetforms) {
-      IntervalRow rI(row); /* use intervals to ensure upward bound */
-      double bnd = -oo;
-      for (const auto &vtx : vertices) {
-          bnd = std::max(bnd,rI.dot(vtx).ub());
-      }     
-      facets.emplace_back(row,bnd,false);
-  }
-  _clpForm=std::make_unique<LPclp>(_dim,facets,_box);
+  _facets=_DDbuildV2F->getFacets();
+  _box = _facets->extractBox();
+  _facets->include_vertices(vertices,_box,true);
+  _box_updated=true;
 }
 
 
-Polytope::Polytope(const IntervalVector &box,
-	const std::vector<Facet> &facets, bool minimize) : Polytope(box.size()) {
-   _box=box;
-   _clpForm = std::make_unique<LPclp>(_box.size(), facets);
+Polytope::Polytope(const IntervalVector &box, 
+		const std::vector<std::pair<Row,double>> &facets,
+		bool minimize) : Polytope(box) {
+   for (const std::pair<Row,double> &cst : facets) {
+      this->add_constraint(cst);
+   }
    if (minimize) this->minimize_constraints();
 }
+
+
+Interval Polytope::fast_bound(const FacetBase &base) const {
+   if (base.isNull()) return Interval::zero();
+   Index gdim = base.gtDim();
+   Interval res;
+   if (base.row[gdim]>0.0) {
+      res= Interval(_box[gdim].ub())*base.row[gdim];
+   } else {
+      res= Interval(-_box[gdim].lb())*base.row[gdim];
+   }
+   if (!base.isCoord()) {
+      Row bcopy = base.row;
+      bcopy[gdim]=0.0;
+      res += bcopy.dot(_box);
+      std::pair<CollectFacets::mapIterator,CollectFacets::mapIterator>
+         pIt = _facets->equal_range(base);
+      if (pIt.first!=pIt.end) { /* we found an exact key */
+         return Interval(pIt.first->second.rhs);
+      } else {
+         if (pIt.first!=_facets->get_map().begin()) --pIt.first;
+         Interval a1 = bound_linear_form(*(pIt.first), base.row, _box);
+         if (pIt.second!=_facets->endFacet()) {
+             Interval a2 = bound_linear_form(*(pIt.second), base.row, _box);
+             if (a2.ub()<a1.ub()) a1=a2;
+         }
+         if (a1.ub()<res.ub()) res=a1;
+      }
+      /* check the equalities ? */
+      for (Index i=0;i<_facets->nbeqfcts();i++) {
+         CollectFacets::mapIterator it = _facets.get_eqFacet(i);
+         Interval a = bound_linear_form(*(pIt.first), base.row, _box);
+         if (a.ub()<res.ub()) res=a;
+      }
+   }
+   /* check the vertices if _buildF2V is up-to-date */
+   if (_DDbuildF2V && _buildF2V_updated) {
+       const std::forward_list<DDvertex> &vertices=_DDbuildF2V->get_vertices();
+       for (const DDvertex &vt : vertices) {
+            IntervalVector vtB = _DDbuildF2V->compute_vertex(vt);
+            Interval a = base.row.dot(vtB);
+            if (a.ub()<res.ub()) res=a;
+       }
+   }
+   return res;
+}
+
+#if 0
 
 Polytope::Polytope(const IntervalMatrix &M, const IntervalMatrix &rM,
 	const IntervalVector &V) :
@@ -270,6 +325,43 @@ void Polytope::clear() {
    _empty=false;
    _box = IntervalVector::Zero(_dim);
    this->build_clpForm_from_box();
+}
+
+#endif
+
+bool Polytope::add_constraint(const std::pair<Row,double>& facet, 
+	double tolerance) {
+   if (_empty) return false;
+   FacetBase base = FacetBase(facet.first);
+   if (base.isNull()) {
+      if (facet.second>=tolerance) return false;
+      this->set_empty(); return true;
+   }
+   Interval act = this->fast_bound(base);
+   if (act.ub()<=facet.second.tolerance) return false;
+   if (base.isCoord()) {
+      Index gdim = base.gtDim();
+      Interval val = Interval(facet.second)/row[gdim];
+      if (row[gdim]>0.0) {
+         _box[gdim] &= Interval(-oo,val.ub());
+         if (_box[gdim].is_empty()) { 
+	   this->set_empty(); 
+           return true;
+	 }
+      } else {
+         _box[gdim] &= Interval(-val.ub(),+oo);
+         if (_box[gdim].is_empty()) { 
+	   this->set_empty(); 
+           return true;
+	 }
+      }
+      /////////////// update ?
+      return true; 
+   }
+   auto res= _facets->insert_facet(facet.first, facet.second, 
+		false, CollectFacets::MIN_RHS);
+   //////// update ?
+   return res.second;
 }
 
 }

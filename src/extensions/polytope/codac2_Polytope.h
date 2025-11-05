@@ -32,8 +32,6 @@
 #include "codac2_Facet.h"
 #include "codac2_Polytope_dd.h"
 
-#if 0
-
 namespace codac2 {
 
   /**
@@ -76,14 +74,13 @@ namespace codac2 {
         Polytope(const std::vector<Vector> &vertices);
 
         /** 
-         * \brief Constructs a polytope from a set of vertices
-         * and a set of linear forms, i.e. the minimal polytope 
-         * built on the linear forms that includes the vertices.
+         * \brief Constructs a polytope from a set of vertices (intervalVector)
+         * and a set of linear forms, described as a CollectFacets
          * \param vertices the vertices
-         * \param facetforms the facets description (must NOT be empty)
+         * \param facetforms the facets description (the CollectFacets)
          */
-        Polytope(const std::vector<Vector> &vertices, 
-		const std::vector<Row> &facetforms);
+        Polytope(const std::vector<IntervalVector> &vertices, 
+		const CollectFacets &facetsform);
 
         /**
          * \brief from a slanted box (M.V with reverse known)
@@ -106,7 +103,7 @@ namespace codac2 {
          * a set of constraints 
          */
         Polytope(const IntervalVector &box, 
-                 const std::vector<Facet> &facets, 
+                 const std::vector<std::pair<Row,double>> &facets, 
 	         bool minimize=false);
 
         /**
@@ -165,13 +162,23 @@ namespace codac2 {
          */
         Vector mid() const;
 
+        /** 
+         * \brief bound a constraint (fast), either by a "close" one (+box)
+         * or by the vertices if they are computed.
+         * no update or LP are done 
+         * return an interval I : row X is guaranteed to be less than I.ub()
+         * and I.lb gives an indication of the precision of the computation
+         * (i.e. if diam(I) is low, a constraint close to row was used
+         * \param fbase the constraint, expressed as a FacetBase
+         * \return the interval I */
+        Interval fast_bound(const FacetBase &base) const;
+
         /** \brief ``distance'' from the satisfaction of a constraint 
          *  ie the inflation of the rhs needed to satisfy the constraint
          *  \param fc the constraint
-         *  \return the distance
+         *  \return an interval
          */
         double distance_cst (const Facet &fc) const;
-
 
         /**
          * \brief relationships with a box (fast check)
@@ -217,8 +224,8 @@ namespace codac2 {
          *
          * \return the updated hull box
          */
-        const IntervalVector &update_box();
-
+        const IntervalVector &update_box() const;
+ 
         /**
          * \brief test if bounding box is included
          * (mainly useful if current bounding box is tight)
@@ -234,6 +241,14 @@ namespace codac2 {
 
         /** \brief set to (singleton) 0 */
         void clear();
+
+        /** \brief add a inequality (pair row X <= rhs)
+         *  do basic checks, but do not minimize the system
+         *  \param cst the constraint
+         *  \return false if the (basic) checks showed the constraint to
+         *  be redundant (or inside tolerance), true if added */
+        bool add_constraint(const std::pair<Row,double>& facet,
+		double tolerance=0.0);
 
         /** \brief inflation by a cube
          *  this <- this + [-rad,rad]^d
@@ -265,31 +280,27 @@ namespace codac2 {
 
 
         /**
-         * \brief Computes the sets of vertices of the polytope
+         * \brief Computes a set of vertices enclosing the polytope
          * 
-         * WARNING: the results is unsafe: no guarantee is given
-         * that the convex hull of the result fully encloses the polytope
-         * works only for bounded polyhedron, suppose _box exists and is bounded
-         *
          * \return set of vertices, as Vectors
          */
         std::vector<Vector> vertices() const;
 
    private:
       Index _dim;                      /* dimension */
-      Index _nbEqcsts;                 /* nb of equality constraints */
-      Index _nbineqCsts;               /* nb of inequality constraints */
-      bool  _empty; 		       /* is empty */
-      IntervalVector _box;             /* bounding box */
-      mutable std::unique_ptr<LPclp> _clpForm; /* LPclp formulation */
+      mutable bool  _empty; 	       /* is empty */
+      mutable IntervalVector _box;     /* bounding box */
+      mutable std::share_ptr<CollectFacets> _facets; 
+	/* "native" formulation , may be shared by other formulations */
+      mutable std::unique_ptr<LPclp> _clpForm; /* LPclp formulation, if used */
       mutable std::unique_ptr<DDbuildF2V> _DDbuildF2V; 
-					/* DDbuildF2V formulation */
+		/* DDbuildF2V formulation, if used */
       mutable std::unique_ptr<DDbuildV2F> _DDbuildV2F; 
-					/* DDbuildV2F formulation */
-      bool _box_updated;
-      bool _clpFrom_updated;
-      bool _buildF2V_updated;
-      bool _buildV2F_updated;
+		/* DDbuildV2F formulation, generally not used */
+      mutable bool _box_updated;
+      mutable bool _clpFrom_updated;
+      mutable bool _buildF2V_updated;
+      mutable bool _buildV2F_updated;
       void build_clpForm_from_box();
       void minimize_constraints();
 };
