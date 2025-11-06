@@ -224,27 +224,27 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_PLOT_TRAJECTORIES_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a)
 
-    .def("draw_tube", [](Figure2D& fig, const py::object& x, const StyleProperties& s)
+    .def("draw_tube", [](Figure2D& fig, const py::object& x, const StyleProperties& s, int max_nb_slices_to_display)
         {
           if(!is_instance<SlicedTube<IntervalVector>>(x)) {
             assert_release("draw_tube: invalid function type");
           }
 
-          fig.draw_tube(cast<SlicedTube<IntervalVector>>(x), s);
+          fig.draw_tube(cast<SlicedTube<IntervalVector>>(x), s, max_nb_slices_to_display);
         },
-      VOID_FIGURE2D_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_STYLEPROPERTIES_REF,
-      "x"_a, "s"_a=StyleProperties())
+      VOID_FIGURE2D_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_STYLEPROPERTIES_REF_INT,
+      "x"_a, "s"_a=StyleProperties(), "max_nb_slices_to_display"_a=5000)
 
-    .def("draw_tube", [](Figure2D& fig, const py::object& x, const ColorMap& cmap)
+    .def("draw_tube", [](Figure2D& fig, const py::object& x, const ColorMap& cmap, int max_nb_slices_to_display)
         {
           if(!is_instance<SlicedTube<IntervalVector>>(x)) {
             assert_release("draw_tube: invalid function type");
           }
 
-          fig.draw_tube(cast<SlicedTube<IntervalVector>>(x), cmap);
+          fig.draw_tube(cast<SlicedTube<IntervalVector>>(x), cmap, max_nb_slices_to_display);
         },
-      VOID_FIGURE2D_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_COLORMAP_REF,
-      "x"_a, "cmap"_a=ColorMap::blue_tube())
+      VOID_FIGURE2D_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_COLORMAP_REF_INT,
+      "x"_a, "cmap"_a=ColorMap::blue_tube(), "max_nb_slices_to_display"_a=5000)
 
     .def("plot_tube", [](Figure2D& fig, const py::object& x, const StyleProperties& s)
         {

@@ -396,20 +396,34 @@ namespace codac2
       void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s);
 
       /**
-       * \brief Draws a tube of `IntervalVector` on the figure
-       * 
-       * \param x SlicedTube to draw
-       * \param s Style of the tube
+       * \brief Draws a tube of ``IntervalVector`` on the figure with some ``StyleProperties``.
+       *
+       * This function renders the slices (boxes) that compose a ``SlicedTube``.  
+       * If the number of slices exceeds ``max_nb_slices_to_display``, consecutive 
+       * rectangular slices are merged by groups into convex polygons.  
+       * This reduces visual clutter and improves rendering efficiency while 
+       * preserving the overall shape of the tube.
+       *
+       * \param x SlicedTube to draw.
+       * \param s Style properties used for drawing the tube.
+       * \param max_nb_slices_to_display Maximum number of slices to display before merging them into convex polygons.
        */
-      void draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s);
+      void draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s, int max_nb_slices_to_display = 5000);
 
       /**
-       * \brief Draws a tube of `IntervalVector` on the figure with a colormap
-       * 
-       * \param x SlicedTube to draw
+       * \brief Draws a tube of ``IntervalVector`` on the figure with a colormap.
+       *
+       * This function renders the slices (boxes) that compose a ``SlicedTube``.  
+       * If the number of slices exceeds ``max_nb_slices_to_display``, consecutive 
+       * rectangular slices are merged by groups into convex polygons.  
+       * This reduces visual clutter and improves rendering efficiency while 
+       * preserving the overall shape of the tube.
+       *
+       * \param x SlicedTube to draw.
        * \param cmap Colormap to use
+       * \param max_nb_slices_to_display Maximum number of slices to display before merging them into convex polygons.
        */
-      void draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap = ColorMap::blue_tube());
+      void draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap = ColorMap::blue_tube(), int max_nb_slices_to_display = 5000);
 
       /**
        * \brief Plots a tube on the figure (x-axis is the time)
