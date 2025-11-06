@@ -53,7 +53,7 @@ fig2.draw_zonotope(Zonotope([4,1.5],Matrix([[-0.2,-0.06,0.2,0.06,0.01,0.08,0],
                                             [0.1,0.04,0.04,-0.04,-0.03,0.18,0]])),StyleProperties([Color.red(),Color.yellow(0.4)],"zonotope","0.05"))
 
 p_3d = Parallelepiped([1.2,3.5,2.2],Matrix([[0.5,0.4,0],[0,0.2,0.1],[0,0,0.3]]))
-fig2.draw_zonotope(p_3d.project([0,1]), StyleProperties([Color.green(),Color.yellow(0.4)],"zonotope"))
+fig2.draw_zonotope(p_3d.proj([0,1]), StyleProperties([Color.green(),Color.yellow(0.4)],"zonotope"))
 
 # Colors
 # predefined colors without and with opacity
