@@ -31,7 +31,7 @@ namespace codac2
   /**
    * \brief Compute a set of parallelepipeds enclosing \f$\mathbf{f}(\sigma(\psi_0([-1,1]^m)))\f$ for each symmetry \f$\sigma\f$ in the set of symmetries \f$\Sigma\f$. Note that \f$\left\{\psi_0,\Sigma\right\}\f$ form a gnomonic atlas.
    * 
-   * \param f The analytic function \f$\mathbf{f}:\mathbb{R}^n\rightarrow\mathbb{R}^n\f$ 
+   * \param f The analytic function \f$\mathbf{f}:\mathbb{R}^n\rightarrow\mathbb{R}^p,p\geq n\f$ 
    * \param psi_0 The transformation function \f$\psi_0:\mathbb{R}^m\rightarrow\mathbb{R}^n\f$ to construct the atlas
    * \param Sigma The set of symmetry operators \f$\sigma\f$ to construct the atlas
    * \param epsilon The maximum diameter of the boxes to split \f$[-1,1]^m\f$ before computing the parallelepiped inclusions
@@ -43,7 +43,7 @@ namespace codac2
 
   /**
    * \brief Compute a set of parallelepipeds enclosing \f$\mathbf{f}(\sigma(\psi_0([-1,1]^m)) + offset) \f$ for each symmetry \f$\sigma\f$ in the set of symmetries \f$\Sigma\f$. Note that \f$\left\{\psi_0,\Sigma\right\}\f$ form a gnomonic atlas.
-   * \param f The analytic function \f$\mathbf{f}:\mathbb{R}^n\rightarrow\mathbb{R}^n\f$ 
+   * \param f The analytic function \f$\mathbf{f}:\mathbb{R}^n\rightarrow\mathbb{R}^p,p\geq n\f$ 
    * \param psi_0 The transformation function \f$\psi_0:\mathbb{R}^m\rightarrow\mathbb{R}^n\f$ to construct the atlas
    * \param Sigma The set of symmetry operators \f$\sigma\f$ to construct the atlas
    * \param epsilon The maximum diameter of the boxes to split \f$[-1,1]^m\f$ before computing the parallelepiped inclusions

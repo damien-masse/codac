@@ -329,6 +329,7 @@ User manual
    * :ref:`sec-graphics-3d`
 
 * :ref:`sec-tools`
+   * :ref:`sec-tools-peibos`
    * :ref:`sec-tools-serialization`
    * :ref:`sec-tools-registration`
 
