@@ -50,7 +50,7 @@ jobs:
     - run: echo "VERBOSE=1" >> $GITHUB_ENV
       shell: bash
     - run: |
-        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}; (New-Object System.Net.WebClient).DownloadFile("http://www.ensta-bretagne.fr/lebars/Share/windows_extra_tools.zip", "C:\Windows\Temp\windows_extra_tools.zip") 
+        wget.exe --no-check-certificate "http://www.ensta-bretagne.fr/lebars/Share/windows_extra_tools.zip" -OutFile "C:\Windows\Temp\windows_extra_tools.zip"
         7z x C:\Windows\Temp\windows_extra_tools.zip -o"C:\Windows" -y
       shell: pwsh
       if: runner.os=='Windows'
