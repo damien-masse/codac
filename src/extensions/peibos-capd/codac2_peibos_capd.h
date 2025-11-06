@@ -10,13 +10,22 @@
 #pragma once
 
 #include "codac2_peibos.h"
-#include <capd/capdlib.h>
 #include "codac2_capd.h"
-// #include <capd/poincare/lib.h>
+#include <capd/poincare/lib.h>
 #include <vector>
 
 namespace codac2
 {
-  std::vector<Parallelepiped> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, bool verbose = false);
-  std::vector<Parallelepiped> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose = false);
+  struct PEIBOS_CAPD_Key
+  {
+    IntervalVector box;
+    AnalyticFunction<VectorType> psi_0;
+    OctaSym sigma;
+    Vector offset;
+  };
+
+  std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, bool verbose = false);
+  std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose = false);
+
+  std::vector<Parallelepiped> reach_set(const std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>>& peibos_output, double t);
 }

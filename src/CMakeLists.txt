@@ -129,7 +129,7 @@
     find_library(CODAC_PEIBOS_CAPD_LIBRARY NAMES ${PROJECT_NAME}-peibos-capd
                  PATH_SUFFIXES lib)
                  
-    set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_PEIBOS_CAPD_LIBRARY} \${CAPD_LIBRARIES})
+    set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_PEIBOS_CAPD_LIBRARY} capd::capd)
     ")
 
   endif()

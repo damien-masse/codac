@@ -14,12 +14,12 @@ using namespace std;
 
 namespace codac2
 {
-  std::vector<Parallelepiped> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, bool verbose)
+  std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, bool verbose)
   {
     return PEIBOS(i_map, tf, psi_0, Sigma, epsilon, Vector::zero(psi_0.output_size()), verbose);
   }
 
-  std::vector<Parallelepiped> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose)
+  std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose)
   {
     int m = psi_0.input_size();
     int n = psi_0.output_size();
@@ -30,14 +30,11 @@ namespace codac2
 
     clock_t t_start = clock();
 
-    std::vector<Parallelepiped> output;
+    std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> output;
     
     // CAPD solver setup
     capd::IMap g (i_map);
     capd::IOdeSolver solver(g, 30);
-    
-    solver.setAbsoluteTolerance(1e-20);
-    solver.setRelativeTolerance(1e-20);
 
     capd::ITimeMap timeMap(solver);
     capd::ITimeMap timeMap_punct(solver);
@@ -53,6 +50,8 @@ namespace codac2
       for (const auto& X : boxes)
       {
 
+        PEIBOS_CAPD_Key key {X, psi_0, sigma, offset};
+
         // To get the flow function and its Jacobian (monodromy matrix) for [x]
         IntervalVector Y = sigma(psi_0.eval(X)) + offset;
 
@@ -62,8 +61,6 @@ namespace codac2
 
         capd::C1Rect2Set s(c);
         timeMap(finalTime, s, solution);
-        capd::IVector result = timeMap(finalTime, s, monodromyMatrix);
-        IntervalVector Jf = to_codac(monodromyMatrix);
 
         // To get the flow function and its Jacobian (monodromy matrix) for x_hat
         auto xc = X.mid();
@@ -75,15 +72,8 @@ namespace codac2
 
         capd::C1Rect2Set s_punct(c_punct);
         timeMap_punct(finalTime, s_punct, solution_punct);      
-        capd::IVector result_punct = timeMap_punct(finalTime, s_punct, monodromyMatrix_punct);
-        Vector Jf_tild = to_codac(monodromyMatrix_punct).mid();
 
-        // Center of the parallelepiped
-        IntervalVector z = to_codac(result);
-        
-        auto p = parallelepiped_inclusion(z, Jf, Jf_tild, psi_0, sigma, X);
-
-        output.push_back(p);
+        output.push_back(std::make_pair(key, std::make_pair(solution, solution_punct)));
 
       }
     }
@@ -98,4 +88,29 @@ namespace codac2
 
     return output;
   }
+
+  std::vector<Parallelepiped> reach_set(const std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>>& peibos_output, double t)
+  {
+    std::vector<Parallelepiped> output;
+
+    for (const auto& item : peibos_output)
+    {
+      const PEIBOS_CAPD_Key& key = item.first;
+      const auto& flow_pair = item.second;
+
+      const capd::ITimeMap::SolutionCurve& flow = flow_pair.first;
+      const capd::ITimeMap::SolutionCurve& flow_punct = flow_pair.second;
+
+      IntervalVector z = to_codac(flow_punct(t));
+      auto Jf_tild = (to_codac(flow_punct.derivative(t))).mid();
+      auto Jf = to_codac(flow.derivative(t));
+
+      auto p = parallelepiped_inclusion(z, Jf, Jf_tild, key.psi_0, key.sigma, key.box);
+
+      output.push_back(p);
+    }
+
+    return output;
+  }
+
 }
