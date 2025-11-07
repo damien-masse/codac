@@ -114,6 +114,16 @@ namespace codac2
 
       virtual typename Wrapper<T>::Domain codomain() const
       {
+        if(is_empty())
+        {
+          if constexpr(std::is_same_v<T,double>)
+            return Interval::empty();
+          else if constexpr(std::is_same_v<T,Vector>)
+              return IntervalVector::empty(0);
+          else
+            return IntervalMatrix::empty(0,0);
+        }
+
         typename Wrapper<T>::Domain hull(this->begin()->second);
         for(const auto& [t,v] : *this)
           hull |= v;
@@ -265,6 +275,43 @@ namespace codac2
               TrajectoryOp<SampledTraj<T>>,Type,ScalarType>>(*this,t))
         };
       }
+
+      using TrajBase<T>::primitive;
+      SampledTraj<T> primitive() const
+      {
+        T s = [this]() {
+          if constexpr(std::is_same_v<T,double>)
+            return 0.;
+          else
+            return T(this->begin()->second).init(0.);
+        }();
+        SampledTraj<T> p;
+        p.set(s, this->begin()->first);
+
+        for(auto it = std::next(this->begin()) ; it != this->end() ; it++)
+        {
+          s += (prev(it)->second + it->second) * (it->first - prev(it)->first) / 2.;
+          p.set(s, it->first);
+        }
+
+        return p;
+      }
+
+      template<typename X1, typename X2>
+      static bool same_sampling(const SampledTraj<X1>& x1, const SampledTraj<X2>& x2)
+      {
+        auto it1 = x1.cbegin();
+        auto it2 = x2.cbegin();
+
+        while(it1 != x1.cend() && it2 != x2.cend())
+        {
+          if(it1->first != it2->first)
+            return false;
+          it1++; it2++;
+        }
+
+        return it1 == x1.cend() && it2 == x2.cend();
+      }
   };
   
   template<typename T>
@@ -305,5 +352,17 @@ namespace codac2
       for(Index i = 0 ; i < x.size() ; i++)
         v[i].set(xi[i],ti);
     return v;
+  }
+
+  template<typename... X>
+    requires ((std::is_same_v<SampledTraj<double>,X> || std::is_same_v<SampledTraj<Vector>,X>) && ...)
+  inline SampledTraj<Vector> cart_prod(const X&... x)
+  {
+    auto&& x0 = std::get<0>(std::forward_as_tuple(x...));
+    assert_release((SampledTraj<Vector>::same_sampling(x0, x) && ...));
+    SampledTraj<Vector> y;
+    for(auto it = x0.begin() ; it != x0.end() ; it++)
+      y.set(cart_prod(x.at(it->first)...), it->first);
+    return y;
   }
 }
