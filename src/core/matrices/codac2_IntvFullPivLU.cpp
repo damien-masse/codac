@@ -13,6 +13,7 @@
 #include "codac2_Interval.h"
 #include "codac2_IntervalMatrix.h"
 #include "codac2_IntervalVector.h"
+#include "codac2_IntervalRow.h"
 #include "codac2_BoolInterval.h"
 #include "codac2_IntvFullPivLU.h"
 #include "codac2_arith_mul.h"
@@ -52,18 +53,44 @@ IntervalMatrix IntvFullPivLU::build_LU_bounds(const IntervalMatrix &E) {
 /** constructor from Matrix of double 
  */
 IntvFullPivLU::IntvFullPivLU(const Matrix &M) :
-   _LU(M), 
+   _LU(M), transform(Row::Constant(M.cols(),1.0)), 
    matrixLU_(M.rows(), M.cols())
 {
-   this->compute_matrix_LU(IntervalMatrix(M), _LU.maxPivot()*_LU.threshold());
+   this->compute_matrix_LU(IntervalMatrix(M),
+		 _LU.maxPivot()*_LU.threshold());
 }
   
 /** constructor from Matrix of Intervals
  */
 IntvFullPivLU::IntvFullPivLU(const IntervalMatrix &M) :
-   _LU(M.mid()), 
    matrixLU_(M.rows(), M.cols())
 {
+   Matrix middle = M.mid();
+#if 0
+   double norm = std::max(middle.lpNorm<Eigen::Infinity>(),1e-8);
+		 /* to avoid zero norm */
+   /* first transform middle to homogeneise the diameters */
+   transform = M.diam().colwise().sum();
+   double mx = transform.maxCoeff();
+   double mn = std::max(transform.minCoeff(),1e-8*norm); /* epsilon value */
+   if (mx<1e-6*norm || mn==mx) {
+		 /* quasi-punctual matrix relative to its norm  */
+#endif
+      transform = Row::Constant(M.cols(),1.0);
+#if 0
+   } else {
+      double ratio = std::sqrt(mn*mx);
+      for (Index i=0;i<M.cols();i++) {
+          double a = ratio/std::max(transform[i],1e-8*norm);
+          int b;
+          frexp(a,&b);
+          transform[i] = exp2(b);
+          middle.col(i) *= transform[i];
+      }
+   }
+#endif
+   _LU = Eigen::FullPivLU<Matrix>(middle);
+   /* compute the colmax of diam */
    this->compute_matrix_LU(M,_LU.maxPivot()*_LU.threshold());
 }
 
@@ -82,6 +109,17 @@ void IntvFullPivLU::compute_matrix_LU(const IntervalMatrix &M, double nonzero) {
     int nCols=M.cols();
     int dim = std::min(nRows,nCols);
     Matrix mLU = _LU.matrixLU();
+#if 0
+    /* (de-)transformation of mLU :
+       we have P-1 LU Q-1 = M D_R   (D diag from R = transform)
+       P-1 LU Q-1 D_R-1 = A
+       and U Q-1 D_R-1 = U D_R'-1 Q-1 where R' = R Q */
+    Row Tprime = transform * _LU.permutationQ();
+    for (int c=0;c<nCols;c++) 
+      for (int l=std::min(c,nRows-1);l>=0;l--) {
+         mLU(l,c) /= Tprime[c];
+      }
+#endif
     /* modification of mLU if not full rank (check this) */
     for (int i=0;i<dim;i++) {
         if (std::fabs(mLU(i,i))<nonzero) {
@@ -140,7 +178,9 @@ void IntvFullPivLU::compute_matrix_LU(const IntervalMatrix &M, double nonzero) {
        InvL * (_LU.permutationP() * M * 
        _LU.permutationQ()) * InvU;
 
+//    std::cout << "error matrix : " << error << "\n";
     IntervalMatrix eps = IntvFullPivLU::build_LU_bounds(error);
+//    std::cout << "eps matrix : " << eps << "\n";
     
     /* product */
     for (Index c=0;c<nCols;c++) 

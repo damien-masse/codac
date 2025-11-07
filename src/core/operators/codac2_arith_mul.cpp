@@ -9,6 +9,7 @@
 
 #include "codac2_arith_mul.h"
 
+
 using namespace std;
 using namespace codac2;
 
@@ -55,8 +56,12 @@ namespace codac2
       ctc_gep.contract(x1,x2,y_);
     }*/
 
+       
+
+
     if(x1.rows() > x1.cols())
     {
+#if 0
       Index last_row = 0;
       Index i = 0;
 
@@ -79,14 +84,41 @@ namespace codac2
           last_row = i;
         i = (i+1)%y.size();
       } while(i != last_row);
+#endif
+      /* interval FullPiv attempt, could be used for any possibility */
+      /* only contract x2 */
+      IntvFullPivLU LUdec(x1);
+      IntervalMatrix copy_x2(x2);
+      LUdec.solve(y,copy_x2);
+      x2 = copy_x2.col(0);
     }
-
     else
     {
-      IntervalMatrix Q = gauss_jordan(x1.mid());
-      IntervalVector b_tilde = Q*y;
-      IntervalMatrix A_tilde = Q*x1; // should be a tree matrix
+#if 0
+      IntvFullPivLU LUdec(x1);
+      IntervalMatrix copy_x2(x2);
+      LUdec.solve(y,copy_x2);
+      x2 = copy_x2.col(0);
+#else
+      /* "tree matrix" attempt, works well in example */
+      /* only contract x2 */
+      IntervalMatrix P = gauss_jordan(x1.mid());
+      IntervalVector b_tilde = P*y;
+      IntervalMatrix A_tilde = P*x1;
+			 // should be a tree matrix
       
+#if 1
+      for (Index i=b_tilde.size()-1;i>=0;i--) {
+         IntervalRow R = A_tilde.row(i);
+         MulOp::bwd(b_tilde[i], R, x2);
+         if (x2.is_empty()) { x1.set_empty(); x2.set_empty(); return; }
+      }
+      for (Index i=0;i<b_tilde.size();i++) {
+         IntervalRow R = A_tilde.row(i);
+         MulOp::bwd(b_tilde[i], R, x2);
+         if (x2.is_empty()) { x1.set_empty(); x2.set_empty(); return; }
+      }
+#else
       bool contraction;
       do
       {
@@ -109,6 +141,15 @@ namespace codac2
         }
 
       } while(contraction);
+#endif
+#endif
+    }
+    /* basic contraction on x1 */
+    for (Index i=0;i<x1.rows();i++) {
+       IntervalRow R = x1.row(i);
+       MulOp::bwd(y[i], R, x2);
+       if (R.is_empty()) { x1.set_empty(); return; }
+       x1.row(i)=R;
     }
   }
 }

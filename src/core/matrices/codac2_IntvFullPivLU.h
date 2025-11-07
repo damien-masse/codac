@@ -11,6 +11,7 @@
 
 #include <ostream>
 #include "codac2_Matrix.h"
+#include "codac2_Row.h"
 #include "codac2_IntervalMatrix.h"
 #include "codac2_BoolInterval.h"
 
@@ -192,6 +193,12 @@ namespace codac2
       */
      const Eigen::FullPivLU<Matrix> &eigen_LU() const;
 
+     /** \brief return the column-wise transformation done on M.mid()
+      *  before the Eigen LU decomposition, as a Row
+      * \return the transformation
+      */ 
+     const Row &transformation() const;
+
      /** \brief returns the matrix storing [L] and [U]
       *  ([L] for strictly lower part, [U] for upper part)
       *
@@ -202,10 +209,12 @@ namespace codac2
 
      private:
         Eigen::FullPivLU<Matrix> _LU;
-
+        Row transform; /* column-wise transformation done on M.mid() to
+			  homogeneise the diameters */
         IntervalMatrix matrixLU_;   /* LU matrix */
      
-        void compute_matrix_LU(const IntervalMatrix &M, double nonzero);
+        void compute_matrix_LU(const IntervalMatrix &M,
+			double nonzero);
         static IntervalMatrix build_LU_bounds(const IntervalMatrix &E);
   };
 
@@ -222,6 +231,9 @@ inline const Eigen::FullPivLU<Matrix>::PermutationQType
 }
 inline const Eigen::FullPivLU<Matrix> &IntvFullPivLU::eigen_LU() const {
     return this->_LU;
+}
+inline const Row &IntvFullPivLU::transformation() const {
+     return this->transform;
 }
 
 template<typename Derived>
