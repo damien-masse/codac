@@ -12,9 +12,6 @@
 
   if(WITH_CAPD)
     add_subdirectory(extensions/capd)
-    if(WITH_PEIBOS_CAPD)
-      add_subdirectory(extensions/peibos-capd)
-    endif()
   endif()
 
   #if(WITH_PYTHON)
