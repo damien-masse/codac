@@ -156,18 +156,6 @@
   endif()
 
 ################################################################################
-# Looking for PEIBOS-CAPD (if needed)
-################################################################################
-
-option(WITH_PEIBOS_CAPD "Using PEIBOS-CAPD" OFF)
-
-if(WITH_PEIBOS_CAPD)
-  if(NOT WITH_CAPD)
-    message("${COLOR_RED}Option PEIBOS_CAPD requires option WITH_CAPD to be enabled.")
-  endif()
-endif()
-
-################################################################################
 # Compile sources
 ################################################################################
   

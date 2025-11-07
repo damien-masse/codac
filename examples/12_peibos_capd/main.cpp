@@ -1,5 +1,5 @@
 #include <codac>
-#include <codac-peibos-capd.h>
+#include <codac-capd.h>
 
 using namespace std;
 using namespace codac2;
