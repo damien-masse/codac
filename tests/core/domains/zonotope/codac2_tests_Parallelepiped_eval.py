@@ -38,7 +38,7 @@ class TestParallelepipedEval(unittest.TestCase):
     self.assertTrue(Approx(pa.z,1e-6)==Vector([0,0,0]))
     self.assertTrue(Approx(pa.A,1e-6)==Matrix([[0.14,0,0],[0,0.14,0],[0,0,0.04]]))
     self.assertTrue(Approx(pb.z,1e-6)==Vector([1,0,1]))
-    self.assertTrue(Approx(pb.A,1e-5)==Matrix([[0.894428,0,1.78886],[0,3.00001,0],[1.78886,0,-0.894427]]))
+    self.assertTrue(Approx(pb.A,1e-5)==Matrix([[0.894428,0,1.78886],[0,3,0],[1.78886,0,-0.894427]]))
 
 
     dx = 0.4

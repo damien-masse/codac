@@ -11,7 +11,6 @@
 #include "codac2_peibos_tools.h"
 #include "codac2_OctaSym_operator.h"
 
-using namespace std;
 using namespace codac2;
 
 namespace codac2
@@ -34,25 +33,26 @@ namespace codac2
     return Parallelepiped(z, A_inf);
   }
 
-  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, bool verbose)
+  std::vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, bool verbose)
   {
     return PEIBOS(f, psi_0, Sigma, epsilon, Vector::zero(psi_0.output_size()), verbose);
   }
 
-  vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose)
+  std::vector<Parallelepiped> PEIBOS(const AnalyticFunction<VectorType>& f, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose)
   {
     Index m = psi_0.input_size();
 
     assert_release (f.input_size() == psi_0.output_size() && "output size of psi_0 must match input size of f");
     assert_release (offset.size() == psi_0.output_size() && "offset size must match output size of psi_0");
+    assert_release (f.output_size() >= f.input_size() && "output size of f must be greater than input size of f");
     assert_release (m < psi_0.output_size());
     assert_release (Sigma.size() > 0 && (int) Sigma[0].size() == psi_0.output_size() && "no generator given or wrong dimension of generator (must match output size of psi_0)");
 
     clock_t t_start = clock();
 
-    vector<Parallelepiped> output;
+    std::vector<Parallelepiped> output;
 
-    vector<IntervalVector> boxes;
+    std::vector<IntervalVector> boxes;
     double true_eps = split(IntervalVector::constant(m,{-1,1}), epsilon, boxes);
 
     for (const auto& sigma : Sigma)

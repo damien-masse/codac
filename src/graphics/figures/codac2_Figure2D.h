@@ -93,6 +93,13 @@ namespace codac2
       Figure2D(const std::string& name, GraphicOutput o, bool set_as_default = false);
 
       /**
+       * \brief Returns ``OutputFigure2D`` objects rendering the current figure.
+       * 
+       * \return vector of pointers to the ``OutputFigure2D`` objects
+       */
+      std::vector<std::shared_ptr<OutputFigure2D>> output_figures();
+
+      /**
        * \brief Getter for the name of the figure
        * 
        * \return The name of the figure
@@ -374,12 +381,19 @@ namespace codac2
       void plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s = StyleProperties());
 
       /**
-       * \brief Plots a set of trajectories on the figure (x-axis is the time)
+       * \brief Plots a set of trajectories on the figure (x-axis is the time) with random colors
        * 
        * \param x SampledTraj<Vector> set of trajectories to plot
-       * \param s Style of the trajectory (edge color)
        */
-      void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s = StyleProperties());
+      void plot_trajectories(const SampledTraj<Vector>& x);
+
+      /**
+       * \brief Plots a set of trajectories on the figure (x-axis is the time) with custom common color
+       * 
+       * \param x SampledTraj<Vector> set of trajectories to plot
+       * \param s Style shared by all the trajectories (edge color)
+       */
+      void plot_trajectories(const SampledTraj<Vector>& x, const StyleProperties& s);
 
       /**
        * \brief Draws a tube of `IntervalVector` on the figure
@@ -404,6 +418,16 @@ namespace codac2
        * \param s Style of the tube (edge color)
        */
       void plot_tube(const SlicedTube<Interval>& x, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Plots a tube on the figure (x-axis is the time), with derivative information: 
+       *        slices are displayed as polygons.
+       * 
+       * \param x SlicedTube to plot
+       * \param v derivative tube of the SlicedTube to plot
+       * \param s Style of the tube (edge color)
+       */
+      void plot_tube(const SlicedTube<Interval>& x, const SlicedTube<Interval>& v, const StyleProperties& s = StyleProperties());
 
       // Robots
 
@@ -930,6 +954,20 @@ namespace codac2
       {
         auto_init();
         selected_fig()->plot_tube(x,s);
+      }
+
+      /**
+       * \brief Plots a tube on the figure (x-axis is the time), with derivative information: 
+       *        slices are displayed as polygons.
+       * 
+       * \param x SlicedTube to plot
+       * \param v derivative tube of the SlicedTube to plot
+       * \param s Style of the tube (edge color)
+       */
+      static void plot_tube(const SlicedTube<Interval>& x, const SlicedTube<Interval>& v, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->plot_tube(x,v,s);
       }
 
       // Robots

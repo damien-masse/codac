@@ -36,11 +36,10 @@ TEST_CASE("Parallelepiped_eval")
   auto pa = f2.parallelepiped_eval(Interval(-0.1,0.1), Interval(-0.1,0.1));
   auto pb = f2.parallelepiped_eval(1.0, Interval(-1,1));
 
-  
   CHECK(Approx(pa.z,1e-6) == Vector({0,0,0}));
   CHECK(Approx(pa.A,1e-6) == Matrix({{0.14,0,0},{0,0.14,0},{0,0,0.04}}));
   CHECK(Approx(pb.z,1e-6) == Vector({1,0,1}));
-  CHECK(Approx(pb.A,1e-5) == Matrix({{0.894428,0,1.78886},{0,3.00001,0},{1.78886,0,-0.894427}}));
+  CHECK(Approx(pb.A,1e-5) == Matrix({{0.894428,0,1.78886},{0,3,0},{1.78886,0,-0.894427}}));
 
 
   double dx = 0.4;
