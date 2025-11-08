@@ -207,6 +207,7 @@ User manual
       * The class SetMembershipFunction
       * Extension to custom expressions
    * :ref:`sec-functions-parallelepiped-eval`
+   * :ref:`sec-functions-peibos`
 
 * Tubes
    * What is a tube?
@@ -329,7 +330,6 @@ User manual
    * :ref:`sec-graphics-3d`
 
 * :ref:`sec-tools`
-   * :ref:`sec-tools-peibos`
    * :ref:`sec-tools-serialization`
    * :ref:`sec-tools-registration`
 
