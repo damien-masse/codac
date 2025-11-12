@@ -244,7 +244,8 @@ void Figure2D_IPE::begin_path(const StyleProperties& style, bool tip)
     opacity=\"" << ipe_opacity(style.fill_color) << "%\" \n \
     stroke-opacity=\"" << ipe_opacity(style.stroke_color) << "%\" \n \
     dash=\"" << to_ipe_linestyle(style.line_style) << "\" \n \
-    pen=\"" << to_ipe_linewidth(style.line_width, _ratio[0])<< "\"";
+    pen=\"" << to_ipe_linewidth(style.line_width, _ratio[0]) << "%\" \n \
+    join=\"2\"";
   if (tip)
     _f_temp_content << "\n \
     arrow=\"normal/normal\"";
@@ -268,6 +269,7 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
     stroke-opacity=\"" << ipe_opacity(style.stroke_color) << "%\" \n \
     dash=\"" << to_ipe_linestyle(style.line_style) << "\" \n \
     pen=\"" << to_ipe_linewidth(style.line_width, _ratio[0]) << "\" \n \
+    join=\"2\" \n \
     matrix=";
 
   // Matrix is composed of the 4 components of the 2D transformation matrix and the translation vector
@@ -391,7 +393,7 @@ void Figure2D_IPE::draw_polygon(const std::vector<Vector>& x, const StylePropert
 {
   assert(x.size() > 1);
 
-  begin_path(style, false);
+  begin_path(style);
   for(size_t k = 0 ; k < x.size() ; k++)
   {
     assert(_fig.size() <= x[k].size());
