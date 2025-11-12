@@ -235,8 +235,10 @@ void Figure2D_IPE::begin_path(const StyleProperties& style, bool tip)
   _colors.emplace(ipe_str(style.fill_color), style.fill_color);
 
   if (std::find(_layers.begin(), _layers.end(), style.layer) == _layers.end() && style.layer != "")
-      _layers.push_back(style.layer); 
+      _layers.push_back(style.layer);
 
+  std::string line_width = (style.line_width != 0) ? to_ipe_linewidth(style.line_width, _ratio[0])+"%" : "0.5";
+  
   _f_temp_content << "\n \
     <path layer=\"" << style.layer << "\" \n \
     stroke=\"codac_color_" << ipe_str(style.stroke_color) << "\" \n \
@@ -244,7 +246,7 @@ void Figure2D_IPE::begin_path(const StyleProperties& style, bool tip)
     opacity=\"" << ipe_opacity(style.fill_color) << "%\" \n \
     stroke-opacity=\"" << ipe_opacity(style.stroke_color) << "%\" \n \
     dash=\"" << to_ipe_linestyle(style.line_style) << "\" \n \
-    pen=\"" << to_ipe_linewidth(style.line_width, _ratio[0]) << "%\" \n \
+    pen=\"" << line_width << "\" \n \
     join=\"2\"";
   if (tip)
     _f_temp_content << "\n \
@@ -260,6 +262,8 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
 
   if ((std::find(_layers.begin(), _layers.end(), style.layer) == _layers.end()) && style.layer != "")
       _layers.push_back(style.layer); 
+
+  std::string line_width = (style.line_width != 0) ? to_ipe_linewidth(style.line_width, _ratio[0]) : "0.5";
   
   _f_temp_content << "\n \
     <path layer=\"" << style.layer << "\" \n \
@@ -268,7 +272,7 @@ void Figure2D_IPE::begin_path_with_matrix(const Vector& x, float length, const S
     opacity=\"" << ipe_opacity(style.fill_color) << "%\" \n \
     stroke-opacity=\"" << ipe_opacity(style.stroke_color) << "%\" \n \
     dash=\"" << to_ipe_linestyle(style.line_style) << "\" \n \
-    pen=\"" << to_ipe_linewidth(style.line_width, _ratio[0]) << "\" \n \
+    pen=\"" << line_width << "\" \n \
     join=\"2\" \n \
     matrix=";
 
