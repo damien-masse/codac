@@ -300,8 +300,7 @@ namespace codac2
       SampledTraj<T> derivative() const
       {
         SampledTraj<T> d;
-        const size_t n = this->nb_samples();
-        assert_release(n >= 3);
+        assert_release(this->nb_samples() >= 3);
 
         auto it1 = this->begin();
         auto it2 = std::next(it1);

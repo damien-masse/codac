@@ -148,10 +148,10 @@ Trajectories can be drawn with a ColorMap instead of the classic StyleProperties
 .. doxygenfunction:: codac2::Figure2D::draw_trajectory(const AnalyticTraj<VectorType>&, const ColorMap&)
   :project: codac
 
-.. doxygenfunction:: codac2::Figure2D::draw_tube(const SlicedTube<IntervalVector>&, const StyleProperties&)
+.. doxygenfunction:: codac2::Figure2D::draw_tube(const SlicedTube<IntervalVector>&, const StyleProperties&, int)
   :project: codac
 
-.. doxygenfunction:: codac2::Figure2D::draw_tube(const SlicedTube<IntervalVector>&, const ColorMap&)
+.. doxygenfunction:: codac2::Figure2D::draw_tube(const SlicedTube<IntervalVector>&, const ColorMap&, int)
   :project: codac
 
 .. doxygenfunction:: codac2::Figure2D::plot_tube(const SlicedTube<Interval>&, const StyleProperties&)
