@@ -152,7 +152,7 @@ namespace codac2
        * \param scale Scaling of the text (VIBes only)
        * \param style Style of the text (color, layer)
        */
-      virtual void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws a raster on the figure
@@ -161,6 +161,6 @@ namespace codac2
        * \param bbox The bounding box of the image
        * \param style Style of the raster (only the layer is used)
        */
-      virtual void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& style = StyleProperties()) = 0;
   };
 }

@@ -241,7 +241,7 @@ namespace codac2
        * 
        * \param filename The name of the file
        * \param bbox The bounding box of the image
-       * \param s Style of the raster (only the layer is used)
+       * \param style Style of the raster (only the layer is used)
        */
       void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& style = StyleProperties());
 
