@@ -472,6 +472,27 @@ namespace codac2
        */
       void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties());
 
+      // Miscellaneous
+
+      /**
+       * \brief Draws text on the figure
+       * 
+       * \param text Text to display
+       * \param pos Position of the top-left corner of the text
+       * \param scale Scaling of the text (VIBes only)
+       * \param style Style of the text (color, layer)
+       */
+      void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& s = StyleProperties());
+
+      /**
+       * \brief Draws a raster on the figure
+       * 
+       * \param filename The name of the file
+       * \param bbox The bounding box of the image
+       * \param style Style of the raster (only the layer is used)
+       */
+      void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& s = StyleProperties());
+
       // Pavings
 
       /**
@@ -1023,6 +1044,34 @@ namespace codac2
       {
         auto_init();
         selected_fig()->draw_motor_boat(x,size,s);
+      }
+
+      // Miscellaneous
+
+      /**
+       * \brief Draws text on the figure
+       * 
+       * \param text Text to display
+       * \param pos Position of the top-left corner of the text
+       * \param scale Scaling of the text (VIBes only)
+       * \param style Style of the text (color, layer)
+       */
+      static void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& s = StyleProperties())
+      {
+        auto_init();
+        selected_fig()->draw_text(text,pos,scale,s);
+      }
+
+      /**
+       * \brief Draws a raster on the figure
+       * 
+       * \param filename The name of the file
+       * \param bbox The bounding box of the image
+       */
+      static void draw_raster(const std::string& filename, const IntervalVector& bbox)
+      {
+        auto_init();
+        selected_fig()->draw_raster(filename,bbox);
       }
 
       // Pavings

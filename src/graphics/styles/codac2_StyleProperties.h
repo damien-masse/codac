@@ -38,7 +38,14 @@ namespace codac2
     StyleProperties();
 
     /**
-     * \brief Constructor from a stroke color, and two optional parameters
+     * \brief Constructor from a layer name
+     * 
+     * \param layer_name layer name
+     */
+    StyleProperties(const std::string& layer_name);
+
+    /**
+     * \brief Constructor from a stroke color, and three optional parameters
      * 
      * \param stroke_color Stroke color
      * \param param1 Optional parameter, can be layer name or line style
@@ -48,7 +55,7 @@ namespace codac2
     StyleProperties(const Color& stroke_color, const std::string& param1 = "", const std::string& param2 = "", const std::string& param3 = "");
 
     /**
-     * \brief Constructor from a stroke and eventually a fill color, and two optional parameters
+     * \brief Constructor from a stroke and eventually a fill color, and three optional parameters
      * 
      * \param colors list of colors (stroke color and eventually fill color)
      * \param param1 Optional parameter, can be layer name or line style

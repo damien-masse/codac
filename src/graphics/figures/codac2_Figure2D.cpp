@@ -571,6 +571,22 @@ void Figure2D::draw_motor_boat(const Vector& x, float size, const StylePropertie
   }
 }
 
+void Figure2D::draw_text(const std::string& text, const Vector& p, double scale, const StyleProperties& s)
+{
+  assert_release(p.size() == 2);
+
+  for(const auto& output_fig : _output_figures)
+    output_fig->draw_text(text,p,scale,s);
+}
+
+void Figure2D::draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& s)
+{
+  assert_release(bbox.size() == 2);
+
+  for(const auto& output_fig : _output_figures)
+    output_fig->draw_raster(filename,bbox,s);
+}
+
 void Figure2D::draw_paving(const PavingOut& p, const PavingStyle& style)
 {
   draw_paving(p, cartesian_drawing(), style);
