@@ -117,7 +117,7 @@ Index fill_3Dfacet(const DDbuildF2V &build,
     
     std::vector<std::forward_list<DDvertex>::const_iterator> used;
     used.push_back(it);
-    std::cout << "add vert : " << it->Id << "\n";
+//    std::cout << "add vert : " << it->Id << "\n";
     Vector vt = build.compute_vertex(it->vertex).mid();
     tofill.push_back(vt);
     while (it != vertices.end()) {
@@ -140,7 +140,7 @@ Index fill_3Dfacet(const DDbuildF2V &build,
        }
        tofill.push_back(vt);
        used.push_back(it);
-       std::cout << "add vert : " << it->Id << "\n";
+//       std::cout << "add vert : " << it->Id << "\n";
     }
     return (Index)tofill.size();
 }
@@ -166,7 +166,7 @@ std::vector<std::vector<Vector>> build_3Dfacets(const DDbuildF2V &build, double 
       if (build.get_reffacets()[i]==0) continue;
       std::vector<Vector> nfac;
       Index nbV = fill_3Dfacet(build, nfac, i, bound);
-      std::cout << "facet build, " << nbV << " vertices.\n";
+//      std::cout << "facet build, " << nbV << " vertices.\n";
       if (nbV<3) continue;
       result.push_back(nfac);
    }

@@ -32,8 +32,8 @@
 #include "codac2_Facet.h"
 #include "codac2_Polytope_dd.h"
 
-namespace codac2 {
 
+namespace codac2 {
   /**
    * \class Polytope
    * \brief Represents a bounded convex polytope as a set of constraints
@@ -83,20 +83,16 @@ namespace codac2 {
 		const CollectFacets &facetsform);
 
         /**
-         * \brief from a slanted box (M.V with reverse known)
-	 * \param M matrix
-         * \param rM inverse matrix
-         * \param V vector
+         * \brief from a parallelepiped
+         * \param par the parallelepiped
          */
-        Polytope(const IntervalMatrix& M, const IntervalMatrix &rM,
-		const IntervalVector &V);
+        Polytope(const Parallelepiped &par);
 
         /**
-         * \brief from a slanted box (M.V, reverse computed)
-         * \param M matrix
-         * \param V vector
+         * \brief from a zonotope
+         * \param zon the zonotope
          */
-        Polytope(const IntervalMatrix& M, const IntervalVector &V);
+        Polytope(const Zonotope &zon);
 
         /**
          * \brief Constructs a polytope from a bounding box and 
@@ -105,6 +101,15 @@ namespace codac2 {
         Polytope(const IntervalVector &box, 
                  const std::vector<std::pair<Row,double>> &facets, 
 	         bool minimize=false);
+
+        /** 
+         * \brief build a polytope from an ine File (cddlib format)
+         * \param filename the file */
+	static Polytope from_ineFile(const char *filename);
+        /** 
+         * \brief build a polytope from an ext File (cddlib format)
+         * \param filename the file */
+	static Polytope from_extFile(const char *filename);
 
         /**
          * \brief Destructor
@@ -184,7 +189,7 @@ namespace codac2 {
          * \brief relationships with a box (fast check)
          * \param p the box
          * \return polytope_inclrel checking inclusion and intersection */
-        polytope_inclrel relation_Box(const IntervalVector& p) const;
+        Facet_::polytope_inclrel relation_Box(const IntervalVector& p) const;
 
         /**
          * \brief Checks whether the polytope contains a given point, or
@@ -244,11 +249,30 @@ namespace codac2 {
 
         /** \brief add a inequality (pair row X <= rhs)
          *  do basic checks, but do not minimize the system
-         *  \param cst the constraint
+         *  \param facet the constraint
          *  \return false if the (basic) checks showed the constraint to
          *  be redundant (or inside tolerance), true if added */
         bool add_constraint(const std::pair<Row,double>& facet,
 		double tolerance=0.0);
+
+        /** \brief add a inequality with intervalVector (cst X <= rhs)
+         *  using the bounding box
+         *  do basic checks, but do not minimize the system
+         *  \param cst the row constraint
+         *  \param x the rhs
+         *  \return false if the (basic) checks showed the constraint to
+         *  be redundant (or inside tolerance), true if added */
+        bool add_constraint(const IntervalRow &cst, double rhs,
+		double tolerance=0.0);
+
+        /** \brief two inequalities with intervalVector (cst X in rhs)
+         *  using the bounding box
+         *  do basic checks, but do not minimize the system
+         *  \param cst the row constraint
+         *  \param x the rhs
+         *  \return pair of booleans (one for each constraints possibly added */
+        std::pair<bool,bool> add_constraint_band(const IntervalRow &cst,
+		 const Interval &rhs, double tolerance=0.0);
 
         /** \brief inflation by a cube
          *  this <- this + [-rad,rad]^d
@@ -279,41 +303,53 @@ namespace codac2 {
         Polytope homothety(IntervalVector c, double delta);
 
 
+        /*********** Printing and other ``global access'' *********/
         /**
          * \brief Computes a set of vertices enclosing the polytope
          * 
-         * \return set of vertices, as Vectors
+         * \return set of vertices, as IntervalVectors
          */
-        std::vector<Vector> vertices() const;
+        std::vector<IntervalVector> compute_vertices() const;
+
+        /**
+         * \brief Computes the set of 3D facets
+         * 
+         * \return set of set of vertices, as Vectors
+         */
+        std::vector<std::vector<Vector>> compute_3Dfacets() const;
 
    private:
       Index _dim;                      /* dimension */
       mutable bool  _empty; 	       /* is empty */
       mutable IntervalVector _box;     /* bounding box */
-      mutable std::share_ptr<CollectFacets> _facets; 
+      mutable std::shared_ptr<CollectFacets> _facets; 
 	/* "native" formulation , may be shared by other formulations */
       mutable std::unique_ptr<LPclp> _clpForm; /* LPclp formulation, if used */
       mutable std::unique_ptr<DDbuildF2V> _DDbuildF2V; 
 		/* DDbuildF2V formulation, if used */
       mutable std::unique_ptr<DDbuildV2F> _DDbuildV2F; 
 		/* DDbuildV2F formulation, generally not used */
-      mutable bool _box_updated;
-      mutable bool _clpFrom_updated;
-      mutable bool _buildF2V_updated;
-      mutable bool _buildV2F_updated;
-      void build_clpForm_from_box();
-      void minimize_constraints();
+      mutable bool _minimized=true;
+      mutable bool _clpForm_updated=false;
+      mutable bool _buildF2V_updated=false;
+      mutable bool _buildV2F_updated=false;
+      void minimize_constraints_clp(const Interval &tolerance=Interval(0.0)) const;
+      void build_DDbuildF2V() const;
+      void build_clpForm() const;
+      void set_empty() const;
 };
+
 
 inline const IntervalVector &Polytope::box() const { return _box; }
 inline Index Polytope::dim() const { return _dim; }
 inline Index Polytope::size() const { return _dim; }
 inline bool Polytope::is_empty() const { return _empty; }
-inline bool Polytope::is_flat() const { return _nbEqcsts!=0; }
-inline Index Polytope::nbFacets() const { return _nbEqcsts!=0; }
-
-
+inline bool Polytope::is_flat() const { return _empty ||
+		_box.is_degenerated() || (_facets && _facets->nbeqfcts()>0); }
+inline Index Polytope::nbFacets() const { 
+ 	if (_empty) return -1;
+        if (!_facets) return (2*_dim);
+        return (2*_dim + _facets->nbfcts());
+     }
 
 }
-
-#endif

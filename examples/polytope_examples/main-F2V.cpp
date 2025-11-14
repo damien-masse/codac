@@ -13,13 +13,19 @@ using namespace codac2;
 int main(int argc, char *argv[])
 {
    std::cout << std::scientific << std::setprecision(9);
-  
 
    const char *namefile = "cross12.ine";
    if (argc>1) namefile= argv[1];
-   std::shared_ptr<CollectFacets> fc = 
-		std::make_shared<CollectFacets>(read_ineFile(namefile));
-   std::cout << "fichier lu avec " << fc->nbfcts() << " facettes.\n";
+   Polytope pol = Polytope::from_ineFile(namefile);
+   
+   std::cout << " Polytope lu." << std::endl;
+   std::vector<IntervalVector> 
+      lvect = pol.compute_vertices();
+   std::cout << lvect.size() << " vertices" << std::endl;
+   for (IntervalVector a : lvect) 
+      std::cout << a << std::endl;
+
+#if 0
    IntervalVector box = IntervalVector::constant((*fc)[0]->first.row.size(),
 		Interval(-10,10));
    DDbuildF2V build2(box.size(),box,fc,false);
@@ -30,5 +36,6 @@ int main(int argc, char *argv[])
 //      std::cout << build2;
    }
       std::cout << build2;
+#endif
    return 0;
 }

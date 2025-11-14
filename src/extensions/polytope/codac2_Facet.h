@@ -21,6 +21,7 @@
 #include "codac2_Interval.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_IntervalRow.h"
+#include "codac2_Zonotope.h"
 #include "codac2_BoolInterval.h"
 #include "codac2_operators.h"
 
@@ -368,14 +369,33 @@ class CollectFacets {
       *  facets and equality facets. */
      void renumber();
 
-     /** modify the rhs such that the polyhedron contains a list
+     /** \brief modify the rhs such that the polyhedron encompasses a list
       *  of intervalVector. Also adapt the bbox.
       *  if tight=true, may tighten the bound, and not only increase them.
-      *  may add facets if needed to dissociate equality facets. */
-     void include_vertices(const std::vector<IntervalVector> &vertices,
+      *  may add facets if needed to dissociate equality facets. 
+      * \brief vertices the list of vertices
+      * \brief bbox the bbox (to be updated)
+      * \brief tight if false, the rhs are only increased */
+     void encompass_vertices(const std::vector<IntervalVector> &vertices,
 		IntervalVector &bbox, bool tight);
-     void include_vertices(const std::vector<Vector> &vertices,
+     void encompass_vertices(const std::vector<Vector> &vertices,
 		IntervalVector &bbox, bool tight);
+
+     /** \brief modify the rhs such that the polyhedron encompasses an
+      *  "interval zonotope" z+A v. 
+      *  if tight=true, may tighten the bound, and not only increase them.
+      *  may add facets if needed to dissociate equality facets. 
+      * \brief z center of the interval zonotope
+      * \brief A matrix of the interval zonotope
+      * \brief v interval vector for the interval zonotope
+      * \brief tight if false, the rhs are only increased */
+     void encompass_zonotope(const IntervalVector &z, const IntervalMatrix &A,
+		const IntervalVector &range, bool tight);
+
+     /** \brief dump the set of facets, for debugging purposes */
+     friend std::ostream& operator<<(std::ostream& os, 
+			const CollectFacets& cf); 
+
 
    private:
       mutable Index dim;

@@ -36,6 +36,41 @@ namespace codac2 {
 #if 0
 struct DDlink; /* link between two vertices */
 #endif
+inline double reduce_vector_without_rounding(IntervalVector &vec) {
+      int fx;
+      if (frexp(vec[0].mag(),&fx)==0.0) fx=INT_MIN;
+      for (Index i=1;i<vec.size();i++) {
+         int fx2;
+         if (frexp(vec[i].mag(),&fx2)==0.0) continue;
+         if (fx2>fx) fx=fx2;
+      }
+      assert_release (fx!=INT_MIN);
+      if (std::abs(fx)<10) return 1.0;
+      double mult=exp2(-fx);
+      for (Index i=0;i<vec.size();i++) {
+//           vec[i] = Interval(ldexp(vec[i].lb(),-fx),ldexp(vec[i].ub(),-fx));
+         vec[i] *= mult;
+      }
+      return mult;
+}
+inline double reduce_row_without_rounding(Row &vec) {
+      int fx;
+      if (frexp(vec[0],&fx)==0.0) fx=INT_MIN;
+      for (Index i=1;i<vec.size();i++) {
+         int fx2;
+         if (frexp(vec[i],&fx2)==0.0) continue;
+         if (fx2>fx) fx=fx2;
+      }
+      assert_release (fx!=INT_MIN);
+      if (std::abs(fx)<10) return 1.0;
+      double mult=exp2(-fx);
+      for (Index i=0;i<vec.size();i++) {
+//           vec[i] = ldexp(vec[i],-fx);
+         vec[i] *= mult;
+      }
+      return mult;
+}
+
 
 struct DDvertex {
    Index Id;
@@ -70,6 +105,10 @@ struct DDvertex {
 	 vertex(v), status(VERTEXNEW) {
          this->links.swap(nlinks);
 	 reduce_vector();
+   }
+
+   inline void reduce_vector() {
+      reduce_vector_without_rounding(vertex);
    }
 
    bool addLnk(const std::forward_list<DDvertex>::iterator &a,
@@ -112,20 +151,6 @@ struct DDvertex {
       return true;
    }
  
-   inline void reduce_vector() {
-      int fx;
-      frexp(vertex[0].mid(),&fx);
-      for (Index i=1;i<vertex.size();i++) {
-         int fx2;
-         frexp(vertex[i].mid(),&fx2);
-         if (fx2>fx) fx=fx2;
-      }
-      if (std::abs(fx)<10) return;
-      double mult=exp2(-fx);
-      for (Index i=0;i<vertex.size();i++) {
-         vertex[i] *= mult;
-      }
-   }
 };
 
 #if 0
@@ -174,6 +199,9 @@ class DDbuildF2V {
      int add_facet(Index id);
      int add_facet(CollectFacets::mapCIterator itFacet);
 
+     void add_constraint_box(const IntervalVector &box);
+     void add_bound_var(Index c, bool mx, double rhs);
+
      IntervalVector compute_vertex(const IntervalVector &vect) const;
      Index get_dim() const;
      Index get_fdim() const;
@@ -188,6 +216,7 @@ class DDbuildF2V {
      friend std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build);
 
   private:
+     int add_facet(Index idFacet, const IntervalRow &facet);
      bool addDDlink(const std::forward_list<DDvertex>::iterator& V1,
    		      const std::forward_list<DDvertex>::iterator& V2);
 
@@ -342,7 +371,10 @@ class DDbuildV2F {
      int add_vertex(Index idVertex, const Vector& vertex);
      int add_vertex(Index idVertex, const IntervalVector& vertex);
 
+     std::shared_ptr<CollectFacets> getFacets();
+
      friend std::ostream& operator<<(std::ostream& os, const DDbuildV2F& build);
+
 
   private:
      /* can NOT return facets.end() */
@@ -368,16 +400,10 @@ class DDbuildV2F {
 			 bool removeLnks);
 
      inline std::pair<Row,double> reduce_facet(const Row &row, double rhs) {
-        int fx;
-        frexp(row[0],&fx);
-        for (Index i=1;i<row.size();i++) {
-            int fx2;
-            frexp(row[i],&fx2);
-            if (fx2>fx) fx=fx2;
-         }
-         if (std::abs(fx)<10) return std::pair(row,rhs);
-         double mult=exp2(-fx);
-         return std::pair(row*mult,rhs*mult);
+        std::pair<Row,double> ret(row,rhs);
+        double mult = reduce_row_without_rounding(ret.first);
+        ret.second *= mult;
+        return ret;
      }
      
      std::shared_ptr<CollectFacets> facetsptr;
@@ -385,8 +411,11 @@ class DDbuildV2F {
      std::vector<Index> idVertices; /* list of vertices entered, useful as
                 long as there are eqfacets */
      Index nbIn=0;
-     double tolerance =1e-9;
+     double tolerance =1e-8;
+     
 };
+
+inline std::shared_ptr<CollectFacets> DDbuildV2F::getFacets() { return facetsptr; }
 
 }
 

@@ -65,7 +65,7 @@ class LPclp {
        *
        * \param dim dimension of the space
        * \param facets the facets
-       * \param box the bounding box for Neumaier's approx */
+       * \param box the bounding box for Neumaier's approx and constraints */
       LPclp (Index dim, std::shared_ptr<CollectFacets> &facets,
 		const IntervalVector &box);
 
@@ -115,6 +115,11 @@ class LPclp {
        */
       void set_bbox(const IntervalVector &box);
 
+      /** \brief get bbox (after minimization)
+       *  \return the bbox
+       */
+      IntervalVector get_bbox();
+
       /** \brief Add a constraint (warning : only for "local" CollectFacets)
        *  \param facet the facet
        *  \return the row number of the constraint, or -1 if the
@@ -127,6 +132,10 @@ class LPclp {
        *  \return the row number of the constraint, or the number of the
        *  existing constraint if a constraint with the same base was modified */
       Index addConstraint(const Row &vst, double rhs, bool isEq=false);
+      /** \brief Update or add a facet (for "external" CollectFacets) 
+       *  \param id the index of the facet
+       *  \return id if ok, or -1 if failure */
+      Index updateConstraint(Index id);
       /** \brief Set the objvective
        *  \param objvect the new objective
        *  \param rhs its RHS */
@@ -203,7 +212,7 @@ class LPclp {
        *  \arg \c EMPTY Polytope is empty 
        *  \arg \c EMPTY_APPROX LP-coin says empty, but the verification
        *          was not conclusive
-       *  \arg \c EMPTY_BBOX Emptiness was proved thanks to the bbox
+       *  \arg \c EMPTY_BBOX Emptiness was proved thanks to Neumaier's approach
        *  \arg \c NOTEMPTY The analysis gave a guaranteed point
        *  \arg \c NOTEMPTY_APPROX LP-coin says non-empty, but the 
        *          verification of its result is not clear
@@ -306,16 +315,15 @@ class LPclp {
       std::vector<lp_cststatus> cststat;
 
       lp_result_stat status;
-      std::vector<bool> rowBasis;  /* limited to the rows */
+      std::vector<bool> rowBasis;  /* rows + columns */
       bool built;
       bool built_emptytest;
       ClpSimplex *model=nullptr;
-      Index offset; /* offset between Id of Afacets and row in the model */
       Interval Valobj;
-      IntervalVector primalSol;
-      IntervalRow dualSol;
-      IntervalVector primalRay;
-      IntervalRow dualRay;
+      IntervalVector primalSol; /* primal solution , size nbCols */
+      IntervalRow dualSol;  /* dual solution, size nbRows + nbCols */
+      IntervalVector primalRay; /* infinite ray, size nbCols */
+      IntervalRow dualRay; /* emptiness solution, size nbRows + nbCols */
       
       IntervalVector bbox;
       double timeout=4.0;
@@ -328,6 +336,7 @@ class LPclp {
 
       void buildModel(bool emptytest); 
       void setModel(bool emptytest); 
+      void update_model_bbox();
 
       void correctBasisInverse(IntervalMatrix &basisInverse,
            const IntervalMatrix &basis) const;
@@ -360,7 +369,13 @@ inline bool LPclp::isRedundant(Index cst) const { return cststat[cst][REDUNDANT]
 inline const IntervalRow &LPclp::getBoundedRow() const { return this->dualSol; }
 inline const IntervalRow &LPclp::getEmptyRow() const { return this->dualRay; }
 inline const IntervalVector &LPclp::getUnboundedVect() const { return this->primalRay; }
-inline void LPclp::set_bbox(const IntervalVector &box) { this->bbox=box; }
+inline void LPclp::set_bbox(const IntervalVector &box) { 
+   this->bbox=box; 
+   if (this->built) this->update_model_bbox();
+}
+inline IntervalVector LPclp::get_bbox() { 
+   return this->bbox;
+}
 
 }
 

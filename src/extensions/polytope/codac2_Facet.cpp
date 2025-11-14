@@ -88,14 +88,13 @@ void contract_out_Box(const Facet &f, IntervalVector &b) {
 }
 
 Interval bound_linear_form(const Facet &f,
-		Row &row2, const IntervalVector &b) {
+		const Row &row2, const IntervalVector &b) {
+   if (f.first.isNull()) return Interval();
    const Row &row = f.first.row;
    const double &rhs = f.second.rhs;
-   const Index &bdim = f.first.bdim;
    const bool &eqcst = f.second.eqcst;
-   if (bdim==-1) return Interval();
-   Index abdim = base.gtDim();
-   bool neg = (f.row[abdim]<0.0);
+   const Index abdim = f.first.gtDim();
+   bool neg = (row[abdim]<0.0);
    if (!eqcst && 
        ((!neg && row2[abdim]<=0.0) || (neg && row2[abdim]>=0))) 
 	return Interval();
@@ -109,7 +108,21 @@ Interval bound_linear_form(const Facet &f,
 } /* end of namespace Facet_ */
 
 std::ostream& operator<<(std::ostream& os, const Facet& f) {
-   os << f.first.row << (f.second.eqcst ? "=" : "<=" ) << f.second.rhs;
+   os << f.second.Id << " : " << f.first.row << (f.second.eqcst ? "=" : "<=" ) << f.second.rhs;
+   return os;
+}
+
+void output_normalised_facet(std::ostream& os, const Facet& f) {
+   os << f.second.Id << " : " << (f.first.row/std::abs(f.first.row[f.first.gtDim()])) << (f.second.eqcst ? "=" : "<=" ) << (f.second.rhs/std::abs(f.first.row[f.first.gtDim()]));
+}
+
+std::ostream& operator<<(std::ostream& os, const CollectFacets& cf) {
+   os << " Collectfacets : " << cf._map.size() << " facets" << std::endl;
+   for (const auto &f : cf._map) {
+     output_normalised_facet(os,f);
+     os << std::endl;
+   }
+   os << " end Collectfacets" << std::endl;
    return os;
 }
 
@@ -373,52 +386,71 @@ void CollectFacets::renumber() {
      _eqFacets.resize(seq);
 }
 
-void include_vertices(const std::vector<IntervalVector> &vertices, 
-	IntervalVector &bbox, bool tight) {
+void CollectFacets::encompass_vertices(const 
+		std::vector<IntervalVector> &vertices, 
+	IntervalVector &bbox, bool tight) {
    assert_release(this->getDim()!=-1);
-   if (tight) bbox=IntervalVector(this->getDim(),Interval::empty());
+   if (tight) bbox=IntervalVector::constant(this->getDim(),Interval::empty());
    if (vertices.size()==0) return;
    for (mapIterator it = _map.begin(); it!=_map.end(); ++it) {
       IntervalRow row = it->first.row;
       Interval a = (tight ? Interval::empty() : Interval(it->second.rhs));
-      for (IntervalVector &v : vertices) {
+      for (const IntervalVector &v : vertices) {
           a |= row.dot(v);
       }
       it->second.rhs=a.ub(); 
       if (it->second.eqcst && !a.is_degenerated()) {
          this->remove_in_eqFacets(it->second.Id-1);
          it->second.eqcst=false;
-         this->insert_facet(-row,-a.lb(),false); 
+         this->insert_facet(-it->first.row,-a.lb(),false); 
 		/* note : possible that the new facet will be visited
 		   later, but that should not be a real problem */
       }
    }
-   for (IntervalVector &v : vertices) {
+   for (const IntervalVector &v : vertices) {
        bbox |= v;
    }
 }
-void include_vertices(const std::vector<Vector> &vertices, 
-	IntervalVector &bbox, bool tight) {
+void CollectFacets::encompass_vertices(const std::vector<Vector> &vertices, 
+	IntervalVector &bbox, bool tight) {
    assert_release(this->getDim()!=-1);
-   if (tight) bbox=IntervalVector(this->getDim(),Interval::empty());
+   if (tight) bbox=IntervalVector::constant(this->getDim(),Interval::empty());
    if (vertices.size()==0) return;
    for (mapIterator it = _map.begin(); it!=_map.end(); ++it) {
       IntervalRow row = it->first.row;
       Interval a = (tight ? Interval::empty() : Interval(it->second.rhs));
-      for (Vector &v : vertices) {
+      for (const Vector &v : vertices) {
           a |= row.dot(v);
       }
       it->second.rhs=a.ub(); 
       if (it->second.eqcst && !a.is_degenerated()) {
          this->remove_in_eqFacets(it->second.Id-1);
          it->second.eqcst=false;
-         this->insert_facet(-row,-a.lb(),false); 
+         this->insert_facet(-it->first.row,-a.lb(),false); 
 		/* note : possible that the new facet will be visited
 		   later, but that should not be a real problem */
       }
    }
-   for (Vector &v : vertices) {
+   for (const Vector &v : vertices) {
        bbox |= IntervalVector(v);
+   }
+}
+
+void CollectFacets::encompass_zonotope(const IntervalVector &z, 
+		const IntervalMatrix &A,
+                const IntervalVector &range, bool tight) {
+   assert_release(this->getDim()!=-1);
+   for (mapIterator it = _map.begin(); it!=_map.end(); ++it) {
+      Interval a = (tight ? Interval::empty() : Interval(it->second.rhs));
+      a |= ((z.dot(it->first.row)) + (it->first.row * A).dot(range));
+      it->second.rhs=a.ub(); 
+      if (it->second.eqcst && !a.is_degenerated()) {
+         this->remove_in_eqFacets(it->second.Id-1);
+         it->second.eqcst=false;
+         this->insert_facet(-it->first.row,-a.lb(),false); 
+		/* note : possible that the new facet will be visited
+		   later, but that should not be a real problem */
+      }
    }
 }
 

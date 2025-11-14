@@ -175,7 +175,33 @@ DDbuildF2V::DDbuildF2V(Index dim, const IntervalVector &box,
        line[i+1]=1.0;
        lines.push_back(line);
    }
-//   if (include_box) this->add_constraint_box(bbox);
+   if (include_box) this->add_constraint_box(bbox);
+}
+
+void DDbuildF2V::add_bound_var(Index c, bool mx, double rhs) {
+   if (empty) return;
+   if (rhs==+oo) return;
+   IntervalRow facet = IntervalRow::Zero(this->fdim+1);
+   facet[0] = -rhs;
+   if (flat) {
+      facet += this->M_EQ.row(c);
+   } else {
+      facet[c+1] = 1.0;
+   }
+   if (!mx) facet=-facet;
+   Index idFacet = -c-1-(mx ? 0 : this->dim);
+   this->add_facet(idFacet,facet);
+}
+
+void DDbuildF2V::add_constraint_box(const IntervalVector &box) {
+   for (Index i=0;i<box.size();i++) {
+      if (box[i].is_degenerated()) continue;
+      this->add_bound_var(i,true,box[i].ub());
+   }
+   for (Index i=0;i<box.size();i++) {
+      if (box[i].is_degenerated()) continue;
+      this->add_bound_var(i,false,box[i].lb());
+   }
 }
 
 std::forward_list<DDvertex>::iterator DDbuildF2V::addDDvertex(const IntervalVector &v) {
@@ -281,24 +307,8 @@ bool DDbuildF2V::addDDlink(const std::forward_list<DDvertex>::iterator& V1,
 //    return (V1->addLnk(V2,true) && V2->addLnk(V1,false));
 }
 
-int DDbuildF2V::add_facet(Index id) {
-   return this->add_facet((*facetsptr)[id]);
-}
-
-int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
-   Index idFacet = itFacet->second.Id;
-   if (empty) return 0;
-   if (itFacet->second.eqcst)
-	throw std::domain_error("add_facet with an equality facet.");
-   /* the first step is to take the equalities constraints into account */
-   IntervalRow facet = IntervalRow::Zero(this->fdim+1);
-   facet[0] = -itFacet->second.rhs;
-   if (flat) {
-      facet += itFacet->first.row * this->M_EQ;
-   } else {
-      facet.tail(this->fdim) = itFacet->first.row;
-   }
-   /* then consider lines */
+int DDbuildF2V::add_facet(Index idFacet, const IntervalRow &facet) {
+   /*  consider lines */
    Index bestline=-1;
    double maxmig=0.0;
    for (Index i=0;i<(Index)lines.size();i++) {
@@ -322,6 +332,7 @@ int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
       for (Index i=0;i<(Index)lines.size()-1;i++) {
          Interval u = facet.dot(lines[i]);
          lines[i] = ubest*lines[i] - u*bstline;
+         reduce_vector_without_rounding(lines[i]);
       }
       /* traitement des sommets */
       for (DDvertex &v : vertices) {
@@ -361,10 +372,13 @@ int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
    /* end of line treatments , the following 
       is when no line is available */
    int nbGT=0;
+   int nbGE=0;
+   int nbTot=0;
    bool notempty=false;
    for (DDvertex &vt : vertices) {
       vt.lambda = facet.dot(vt.vertex);
       notempty |= (vt.lambda.lb()<=0.0);
+      nbTot++;
       if (vt.lambda.ub()<0.0) {
          vt.status = DDvertex::VERTEXLT;
          continue;
@@ -373,6 +387,7 @@ int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
          vt.status = DDvertex::VERTEXON;
          continue;
       }
+      nbGE++;
       if (vt.lambda.lb()<this->tolerance) {
          vt.status = DDvertex::VERTEXGE;
          continue;
@@ -467,7 +482,7 @@ int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
            std::forward_list<DDvertex>::iterator newVx = 
 		     this->addDDvertex(newV);
 #ifdef DEBUG_CODAC2_DD
-       std::cout << " creation new V " << newV << "id : " << newVx->Id << "\n";
+       std::cout << " creation new V " << newV << "id : " << newVx->Id << " coef " << (-destlink.lambda.lb()/actVertex->lambda.lb()) << "\n";
 #endif
 	   newVx->lambda=0.0;
 	   destlink.changeLnk(actVertex,newVx);
@@ -495,7 +510,7 @@ int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
 			       adjacentVertices[j].first,
 			       adjacentVertices[i].second,
 			       adjacentVertices[j].second,refFacet);
-	      if (actuel.elems.size()<fdim-3-lines.size()) continue;
+	      if (actuel.elems.size()<fdim-2-lines.size()) continue;
 	      bool placed=false;
               unsigned long int k=0,l=0;
 	      while (k<maxset.size()) {
@@ -529,7 +544,7 @@ int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
        for (const PairMaxSets<std::forward_list<DDvertex>::iterator>
 			 &pm : maxset) {
 #ifdef DEBUG_CODAC2_DD
-	      if (pm.elems.size()<fdim-3-lines.size()) {
+	      if (pm.elems.size()<fdim-2-lines.size()) {
            std::cout << " maxset strange : " << pm.a->Id << " " << pm.b->Id << " " << pm.elems.size() <<  std::endl;
             }
 		std::cout << pm.a->Id << " " << pm.b->Id << "\n";
@@ -546,7 +561,28 @@ int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
 			{ return v.status==DDvertex::VERTEXREM; });
    return 1;
 }
-   
+
+
+int DDbuildF2V::add_facet(Index id) {
+   return this->add_facet((*facetsptr)[id]);
+}
+
+
+int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
+   Index idFacet = itFacet->second.Id;
+   if (empty) return 0;
+   if (itFacet->second.eqcst)
+	throw std::domain_error("add_facet with an equality facet.");
+   /* the first step is to take the equalities constraints into account */
+   IntervalRow facet = IntervalRow::Zero(this->fdim+1);
+   facet[0] = -itFacet->second.rhs;
+   if (flat) {
+      facet += itFacet->first.row * this->M_EQ;
+   } else {
+      facet.tail(this->fdim) = itFacet->first.row;
+   }
+   return this->add_facet(idFacet,facet);
+}
 
 /* TODO : make a specific computation */
 #if 0
@@ -790,8 +826,8 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
 	   CollectFacets::mapIterator nIt =
 		facetsptr->dissociate_eqFacet(eqViolated,
 			(delta.lb()>0.0 ? +oo : -oo));
-	   std::cout << "dissociated : " << (delta.lb()>0.0 ? +oo : -oo) <<
-                  " : " << (nIt == facetsptr->endFacet()) << "\n";
+//	   std::cout << "dissociated : " << (delta.lb()>0.0 ? +oo : -oo) <<
+//                  " : " << (nIt == facetsptr->endFacet()) << "\n";
            eqViolatedIt=nIt; /* in the following, the case nIt==facets.end()
 			        is not treated, as it should not happen */
            std::vector<Index> vtx = idVertices;
@@ -865,7 +901,7 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
 	   continue; /* do nothing for out */
         }
 #ifdef DEBUG_CODAC2_DD
-        std::cout << "    addFacet " << d.Id << " " << d2.Id << " " << d.status << " " << d2.status << std::endl;
+        std::cout << "    addFacet " << d.facetIt->second.Id << " " << d2.facetIt->second.Id << " " << d.status << " " << d2.status << std::endl;
         std::cout << "    (" << d.lambda << " " << d2.lambda << ")    " << std::endl;
 #endif
         [[maybe_unused]]  std::forward_list<DDfacet>::iterator 
@@ -874,7 +910,7 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
         if (newIt==facets.end()) 
 	  std::cout << " ... FAILED! " << std::endl;
         else 
-          std::cout << " ... done " << newIt->Id << std::endl;
+          std::cout << " ... done " << newIt->facetIt->second.Id << std::endl;
 #endif
         cnt++;
      }
