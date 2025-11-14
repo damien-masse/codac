@@ -68,7 +68,7 @@ int main(){
   fig2->draw_text("Hello, World!",{-0.5,4.5},0.2, Color::blue());
 
   std::filesystem::path p = __FILE__;
-  fig2->draw_raster(p.parent_path().string()+"/logo_codac.png", IntervalVector({{2.5,5},{-1,-0.4}}),StyleProperties("raster"));
+  fig2->draw_raster(p.parent_path().string()+"/logo_codac.png", IntervalVector({{2.5,5},{-1,-0.4}}), StyleProperties("raster"));
 
   // Colors
   // predefined colors without and with opacity

@@ -1,8 +1,8 @@
 /** 
  *  Codac binding (graphics)
  * ----------------------------------------------------------------------------
- *  \date       2024
- *  \author     Simon Rohou
+ *  \date       2025
+ *  \author     Simon Rohou, Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -33,9 +33,6 @@ void export_StyleGradientProperties(py::module& m)
     .def(py::init<const ColorMap&, const std::string&, const std::string&, const std::string&>(),
       STYLEGRADIENTPROPERTIES_STYLEGRADIENTPROPERTIES_CONST_COLORMAP_REF_CONST_STRING_REF_CONST_STRING_REF_CONST_STRING_REF,
       "cmap"_a, "param1"_a="", "param2"_a="", "param3"_a="")
-
-    .def_static("available_line_styles", &StyleGradientProperties::available_line_styles,
-      STATIC_SET_STRING_STYLEGRADIENTPROPERTIES_AVAILABLE_LINE_STYLES)
 
   ;
   

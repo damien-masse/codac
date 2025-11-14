@@ -11,6 +11,7 @@
 
 #include <string>
 #include <set>
+#include "codac2_StylePropertiesBase.h"
 #include "codac2_ColorMap.h"
 
 namespace codac2
@@ -20,14 +21,11 @@ namespace codac2
    * \struct StyleGradientProperties
    * \brief Style properties structure, to specify the style of a shape
    * 
-   * This class is used to specify the style of a shape, including the stroke color, fill color, line style and layer.
+   * This class is used to specify the style of a shape, including the color map, line style, line width and layer.
    */
-  struct StyleGradientProperties
+  struct StyleGradientProperties : public StylePropertiesBase
   {
     ColorMap cmap = ColorMap::basic();
-    std::string line_style = "-";
-    double line_width = 0.;
-    std::string layer = "alpha";
 
     /**
      * \brief Default constructor
@@ -54,22 +52,6 @@ namespace codac2
      * \param param3 Optional parameter, can be layer name, line width or line style
      */
     StyleGradientProperties(const ColorMap& cmap, const std::string& param1 = "", const std::string& param2 = "", const std::string& param3 = "");
-
-    /**
-     * \brief Parse a parameter and update the style properties accordingly
-     * 
-     * \param param Parameter to parse, can be a line style, line width or layer name
-     */
-    void parse_parameter(const std::string& param);
-
-    /**
-     * \brief Set of available line styles
-     */
-    static std::set<std::string> available_line_styles()
-    {
-      std::set<std::string> line_styles={"-", "--", "..", "-.", "-.."};
-      return line_styles;
-    };
 
   };
 }

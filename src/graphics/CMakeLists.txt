@@ -32,6 +32,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_StyleGradientProperties.h
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_StyleProperties.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_StyleProperties.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_StylePropertiesBase.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/styles/codac2_StylePropertiesBase.h
   )
 
 ################################################################################

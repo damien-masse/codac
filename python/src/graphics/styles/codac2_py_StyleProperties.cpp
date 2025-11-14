@@ -60,9 +60,6 @@ void export_StyleProperties(py::module& m)
     .def_static("boundary", &StyleProperties::boundary,
       STATIC_STYLEPROPERTIES_STYLEPROPERTIES_BOUNDARY)
 
-    .def_static("available_line_styles", &StyleProperties::available_line_styles,
-      STATIC_SET_STRING_STYLEPROPERTIES_AVAILABLE_LINE_STYLES)
-
   ;
   
   py::implicitly_convertible<py::list,StyleProperties>();

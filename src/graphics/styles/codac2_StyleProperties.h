@@ -11,6 +11,7 @@
 
 #include <string>
 #include <set>
+#include "codac2_StylePropertiesBase.h"
 #include "codac2_Color.h"
 
 namespace codac2
@@ -20,15 +21,12 @@ namespace codac2
    * \struct StyleProperties
    * \brief Style properties structure, to specify the style of a shape
    * 
-   * This class is used to specify the style of a shape, including the stroke color, fill color, line style and layer.
+   * This class is used to specify the style of a shape, including the stroke color, fill color,  line style, line width and layer.
    */
-  struct StyleProperties
+  struct StyleProperties : public StylePropertiesBase
   {
     Color stroke_color = Color::black();
     Color fill_color = Color::none();
-    std::string line_style = "-";
-    double line_width = 0.;
-    std::string layer = "alpha";
 
     /**
      * \brief Default constructor
@@ -67,13 +65,6 @@ namespace codac2
     StyleProperties(std::initializer_list<Color> colors, const std::string& param1 = "", const std::string& param2 = "", const std::string& param3 = "");
 
     /**
-     * \brief Parse a parameter and update the style properties accordingly
-     * 
-     * \param param Parameter to parse, can be a line style, line width or layer name
-     */
-    void parse_parameter(const std::string& param);
-
-    /**
      * \brief Predefined "inside" style, dark gray edge and green fill
      */
     static StyleProperties inside();
@@ -87,15 +78,6 @@ namespace codac2
      * \brief Predefined "boundary" style, dark gray edge and yellow fill
      */
     static StyleProperties boundary();
-
-    /**
-     * \brief Set of available line styles
-     */
-    static std::set<std::string> available_line_styles()
-    {
-      std::set<std::string> line_styles={"-", "--", "..", "-.", "-.."};
-      return line_styles;
-    };
 
   };
 }

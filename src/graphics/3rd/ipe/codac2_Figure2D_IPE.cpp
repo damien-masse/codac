@@ -529,7 +529,7 @@ void Figure2D_IPE::draw_motor_boat(const Vector& x, float size, const StylePrope
   _f_temp_content << "</group>";
 }
 
-void Figure2D_IPE::draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& style)
+void Figure2D_IPE::draw_text(const std::string& text, const Vector& pos, [[maybe_unused]] double scale, const StyleProperties& style)
 {
   assert(_fig.size() <= c.size());
   _colors.emplace(ipe_str(style.stroke_color), style.stroke_color);
@@ -547,16 +547,14 @@ void Figure2D_IPE::draw_text(const std::string& text, const Vector& pos, double 
     type=\"label\" \n \
     depth=\"0\" \n \
     valign=\"top\">" << text << "</text>";
-
-    scale=scale; // to avoid warnings
 }
 
 void Figure2D_IPE::draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& style)
 {
   draw_box(bbox, style);
 
+  // underscore "_" need to be replaced by "\_" for ipe (LateX style)
   auto fname = filename;
-
   size_t pos = 0;
   while ((pos = fname.find("_", pos)) != std::string::npos) 
   {
