@@ -379,7 +379,7 @@ void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const StylePro
   draw_trajectory(x.sampled(x.tdomain().diam()/1e4), style);
 }
 
-void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap)
+void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const StyleGradientProperties& style)
 {
   assert_release(this->size() <= x.size());
 
@@ -389,12 +389,12 @@ void Figure2D::draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cma
     if(_tdomain.contains(it->first))
       draw_polyline(
         { it->second, next(it)->second },
-        cmap.color((it->first - x.begin()->first) / range));
+        {style.cmap.color((it->first - x.begin()->first) / range), style.layer, style.line_style, to_string(style.line_width)});
 }
 
-void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap)
+void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleGradientProperties& style)
 {
-  draw_trajectory(x.sampled(x.tdomain().diam()/1e4), cmap);
+  draw_trajectory(x.sampled(x.tdomain().diam()/1e4), style);
 }
 
 void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperties& style)
@@ -482,12 +482,12 @@ void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const StylePropert
     });
 }
 
-void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap, int max_nb_slices_to_display)
+void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const StyleGradientProperties& style, int max_nb_slices_to_display)
 {
   draw_tube_common(*this, x, max_nb_slices_to_display,
-    [&cmap](const Interval& tube_t0tf, std::list<TSlice>::reverse_iterator it) {
-      auto c = cmap.color((it->mid()-tube_t0tf.lb())/tube_t0tf.diam());
-      return StyleProperties({c,c});
+    [&style](const Interval& tube_t0tf, std::list<TSlice>::reverse_iterator it) {
+      auto c = style.cmap.color((it->mid()-tube_t0tf.lb())/tube_t0tf.diam());
+      return StyleProperties({c,c}, style.layer, style.line_style, to_string(style.line_width));
     });
 }
 

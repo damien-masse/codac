@@ -18,7 +18,6 @@
 #include "codac2_Paving.h"
 #include "codac2_Parallelepiped.h"
 #include "codac2_Zonotope.h"
-#include "codac2_ColorMap.h"
 #include "codac2_PavingStyle.h"
 #include "codac2_Ellipsoid.h"
 #include "codac2_Polygon.h"
@@ -360,17 +359,17 @@ namespace codac2
        * \brief Draws a trajectory on the figure with a colormap
        * 
        * \param x SampledTraj to plot
-       * \param cmap Colormap to use
+       * \param style StyleGradientProperties to use
        */
-      void draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap);
+      void draw_trajectory(const SampledTraj<Vector>& x, const StyleGradientProperties& style);
 
       /**
        * \brief Draws a trajectory on the figure with a colormap
        * 
        * \param x AnalyticTraj to plot
-       * \param cmap Colormap to use
+       * \param style StyleGradientProperties to use
        */
-      void draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap);
+      void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleGradientProperties& style);
 
       /**
        * \brief Plots a trajectory on the figure (x-axis is the time)
@@ -420,10 +419,10 @@ namespace codac2
        * preserving the overall shape of the tube.
        *
        * \param x SlicedTube to draw.
-       * \param cmap Colormap to use
+       * \param style StyleGradientProperties to use
        * \param max_nb_slices_to_display Maximum number of slices to display before merging them into convex polygons.
        */
-      void draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap = ColorMap::blue_tube(), int max_nb_slices_to_display = 5000);
+      void draw_tube(const SlicedTube<IntervalVector>& x, const StyleGradientProperties& style = StyleGradientProperties(ColorMap::blue_tube()), int max_nb_slices_to_display = 5000);
 
       /**
        * \brief Plots a tube on the figure (x-axis is the time)
@@ -911,24 +910,24 @@ namespace codac2
        * \brief Draws a trajectory on the figure with a colormap
        * 
        * \param x SampledTraj to draw
-       * \param cmap Colormap to use
+       * \param style StyleGradientProperties to use
        */
-      static void draw_trajectory(const SampledTraj<Vector>& x, const ColorMap& cmap)
+      static void draw_trajectory(const SampledTraj<Vector>& x, const StyleGradientProperties& style)
       {
         auto_init();
-        selected_fig()->draw_trajectory(x,cmap);
+        selected_fig()->draw_trajectory(x,style);
       }
 
       /**
        * \brief Draws a trajectory on the figure with a colormap
        * 
        * \param x AnalyticTraj to draw
-       * \param cmap Colormap to use
+       * \param style StyleGradientProperties to use
        */
-      static void draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap& cmap)
+      static void draw_trajectory(const AnalyticTraj<VectorType>& x, const StyleGradientProperties& style)
       {
         auto_init();
-        selected_fig()->draw_trajectory(x,cmap);
+        selected_fig()->draw_trajectory(x,style);
       }
 
       /**
@@ -971,12 +970,12 @@ namespace codac2
        * \brief Draws a tube of `IntervalVector` on the figure with a colormap
        * 
        * \param x SlicedTube to draw
-       * \param cmap Colormap to use
+       * \param style StyleGradientProperties to use
        */
-      static void draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap = ColorMap::blue_tube())
+      static void draw_tube(const SlicedTube<IntervalVector>& x, const StyleGradientProperties& style = StyleGradientProperties(ColorMap::blue_tube()))
       {
         auto_init();
-        selected_fig()->draw_tube(x,cmap);
+        selected_fig()->draw_tube(x,style);
       }
 
       /**

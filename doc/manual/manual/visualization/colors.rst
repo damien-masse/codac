@@ -5,76 +5,6 @@ Styles, colors and color maps
 
   Main author: `Maël Godard <https://godardma.github.io>`_
 
-Style
------
-
-By default, the drawn shapes will have a black edge and no fill. a StyleProperties object can be passed as an additionnal argument to change it.
-
-Predefined styles are available in the StyleProperties class:
-
-- inside() : black edge, green fill
-- outside() : black edge, cyan fill
-- boundary() : black edge, yellow fill
-
-A StyleProperties object is composed of two Color objects, one for the edge and one for the fill. Three constructors are available:
-
-.. tabs::
-
-  .. code-tab:: py
-
-    default_style = StyleProperties() # default
-    edge_style = StyleProperties(Color.red()) # edge only
-    edge_fill_style = StyleProperties([Color.blue(),Color.green()]) # edge and fill
-
-  .. code-tab:: c++
-
-    StyleProperties default_style;
-    StyleProperties edge_style(Color::red()); // edge only
-    StyleProperties edge_fill_style({Color::blue(),Color::green()}); // edge and fill
-
-
-It can also be deduced from one or two Color objects.
-
-.. tabs::
-
-  .. code-tab:: py
-
-    fig.draw_box([[2.2,2.5],[2.2,2.5]]) # Default style
-    fig.draw_box([[2.2,2.5],[2.2,2.5]],StyleProperties.inside()) # black edge, green fill
-    fig.draw_box([[2.2,2.5],[2.2,2.5]],Color.red()) # red edge, no fill
-    fig.draw_box([[2.2,2.5],[2.2,2.5]],[Color.blue(),Color.green()]) # blue edge, green fill
-
-  .. code-tab:: c++
-
-    fig.draw_box({{2.2,2.5},{2.2,2.5}}); // Default style
-    fig.draw_box({{2.2,2.5},{2.2,2.5}},StyleProperties::inside()); // black edge, green fill
-    fig.draw_box({{2.2,2.5},{2.2,2.5}},Color::red()); // red edge, no fill
-    fig.draw_box({{2.2,2.5},{2.2,2.5}},{Color::blue(),Color::green()}); // blue edge, green fill
-
-In addition, a line style, a line width and/or a layer can be added to the StyleProperties object. The line style is defined by a string, and the layer is defined by its name (string).
-
-Available line styles are:
-  - "\-" (solid)
-  - "\-\-" (dashed)
-  - "\.\." (dotted)
-  - "\-\." (dash-dotted)
-  - "\-\.\." (dash-dot-dotted)
-
-**These three arguments are optional, only one can be added and they can be added in any order.** 
-
-**Note that by convention a parameter starting with a number is interpreted as a line width**
-
-.. tabs::
-
-  .. code-tab:: py
-    
-    fig.draw_box([[2.2,2.5],[2.2,2.5]], StyleProperties(Color.red(), "..", "layer1","0.1")) # Red edge, dotted line, line width of 0.1 and layer1
-
-  .. code-tab:: c++
-
-    fig.draw_box({{2.2,2.5},{2.2,2.5}}, StyleProperties(Color::red(), "..", "layer1")); // Red edge, dotted line, line width of 0.1 and layer1
-    // fig.draw_box({{2.2,2.5},{2.2,2.5}}, {Color::red(), "..", "layer1", "0.1"}); //equivalent
-
 Colors
 ------
 
@@ -170,6 +100,76 @@ Color creation example :
     // HSV color without and with opacity
     fig2.draw_box({{2.6,3.1},{2.6,3.1}},{Color({108,90,78},Model::HSV),Color({108,90,78,20},Model::HSV)});
 
+StyleProperties
+---------------
+
+By default, the drawn shapes will have a black edge and no fill. a StyleProperties object can be passed as an additionnal argument to change it.
+
+Predefined styles are available in the StyleProperties class:
+
+- inside() : black edge, green fill
+- outside() : black edge, cyan fill
+- boundary() : black edge, yellow fill
+
+A StyleProperties object is composed of two Color objects, one for the edge and one for the fill. Three constructors are available:
+
+.. tabs::
+
+  .. code-tab:: py
+
+    default_style = StyleProperties() # default
+    edge_style = StyleProperties(Color.red()) # edge only
+    edge_fill_style = StyleProperties([Color.blue(),Color.green()]) # edge and fill
+
+  .. code-tab:: c++
+
+    StyleProperties default_style;
+    StyleProperties edge_style(Color::red()); // edge only
+    StyleProperties edge_fill_style({Color::blue(),Color::green()}); // edge and fill
+
+
+It can also be deduced from one or two Color objects.
+
+.. tabs::
+
+  .. code-tab:: py
+
+    fig.draw_box([[2.2,2.5],[2.2,2.5]]) # Default style
+    fig.draw_box([[2.2,2.5],[2.2,2.5]],StyleProperties.inside()) # black edge, green fill
+    fig.draw_box([[2.2,2.5],[2.2,2.5]],Color.red()) # red edge, no fill
+    fig.draw_box([[2.2,2.5],[2.2,2.5]],[Color.blue(),Color.green()]) # blue edge, green fill
+
+  .. code-tab:: c++
+
+    fig.draw_box({{2.2,2.5},{2.2,2.5}}); // Default style
+    fig.draw_box({{2.2,2.5},{2.2,2.5}},StyleProperties::inside()); // black edge, green fill
+    fig.draw_box({{2.2,2.5},{2.2,2.5}},Color::red()); // red edge, no fill
+    fig.draw_box({{2.2,2.5},{2.2,2.5}},{Color::blue(),Color::green()}); // blue edge, green fill
+
+In addition, a line style, a line width and/or a layer can be added to the StyleProperties object. The line style is defined by a string, and the layer is defined by its name (string).
+
+Available line styles are:
+  - "\-" (solid)
+  - "\-\-" (dashed)
+  - "\.\." (dotted)
+  - "\-\." (dash-dotted)
+  - "\-\.\." (dash-dot-dotted)
+
+**These three arguments are optional, only one can be added and they can be added in any order.** 
+
+**Note that by convention a parameter starting with a number is interpreted as a line width**
+
+.. tabs::
+
+  .. code-tab:: py
+    
+    fig.draw_box([[2.2,2.5],[2.2,2.5]], StyleProperties(Color.red(), "..", "layer1","0.1")) # Red edge, dotted line, line width of 0.1 and layer1
+
+  .. code-tab:: c++
+
+    fig.draw_box({{2.2,2.5},{2.2,2.5}}, StyleProperties(Color::red(), "..", "layer1")); // Red edge, dotted line, line width of 0.1 and layer1
+    // fig.draw_box({{2.2,2.5},{2.2,2.5}}, {Color::red(), "..", "layer1", "0.1"}); //equivalent
+
 Color maps
 ----------
 
@@ -236,3 +236,62 @@ You can also create your own color map :
     custom_map[1] = Color({0,0,255});
 
 Note that you can add RGB and HSV colors to the same color map. The model of the color map will define the interpolation space.
+
+StyleGradientProperties
+-----------------------
+
+Some shapes can be drawn with a color map (trajectories, tubes ...). By default, the drawn shapes will use the basic color map. 
+A StyleGradientProperties object can be passed as an additionnal argument to change it.
+
+A StyleGradientProperties object is composed of a ColorMap. Two constructors are available:
+
+.. tabs::
+
+  .. code-tab:: py
+
+    default_style = StyleGradientProperties() # default
+    edge_fill_style = StyleGradientProperties(ColorMap.haxby()) # haxby color map
+
+  .. code-tab:: c++
+
+    StyleGradientProperties default_style; // default
+    StyleGradientProperties edge_style(ColorMap::haxby()); // haxby color map
+
+
+It can also be deduced from a ColorMap object.
+
+.. tabs::
+
+  .. code-tab:: py
+
+    fig.draw_trajectory(traj) # Default style
+    fig.draw_trajectory(traj,ColorMap.haxby()) # haxby color map
+
+  .. code-tab:: c++
+
+    fig.draw_trajectory(traj); // Default style
+    fig.draw_trajectory(traj,ColorMap::haxby()); // haxby color map
+
+In addition, a line style, a line width and/or a layer can be added to the StyleGradientProperties object. The line style is defined by a string, and the layer is defined by its name (string).
+
+Available line styles are:
+  - "\-" (solid)
+  - "\-\-" (dashed)
+  - "\.\." (dotted)
+  - "\-\." (dash-dotted)
+  - "\-\.\." (dash-dot-dotted)
+
+**These three arguments are optional, only one can be added and they can be added in any order.** 
+
+**Note that by convention a parameter starting with a number is interpreted as a line width**
+
+.. tabs::
+
+  .. code-tab:: py
+    
+    fig.draw_trajectory(traj, StyleGradientProperties(ColorMap.haxby(), "..", "layer1", "0.1")) # haxby color map, dotted line, line width of 0.1 and layer1
+
+  .. code-tab:: c++
+
+    fig.draw_trajectory(traj, StyleGradientProperties(ColorMap::haxby(), "..", "layer1")); // haxby color map, dotted line, line width of 0.1 and layer1
+    // fig.draw_trajectory(traj, {ColorMap::haxby(), "..", "layer1", "0.1"}); //equivalent

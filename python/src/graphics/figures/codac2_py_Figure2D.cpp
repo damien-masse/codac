@@ -197,20 +197,20 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "style"_a=StyleProperties())
 
-    .def("draw_trajectory", (void(Figure2D::*)(const SampledTraj<Vector>&,const ColorMap&))&Figure2D::draw_trajectory,
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_COLORMAP_REF,
-      "x"_a, "cmap"_a)
+    .def("draw_trajectory", (void(Figure2D::*)(const SampledTraj<Vector>&,const StyleGradientProperties&))&Figure2D::draw_trajectory,
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEGRADIENTPROPERTIES_REF,
+      "x"_a, "style"_a)
 
-    .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const ColorMap& cmap)
+    .def("draw_trajectory", [](Figure2D& fig, const py::object& x, const StyleGradientProperties& style)
         {
           if(!is_instance<AnalyticTraj<VectorType>>(x)) {
             assert_release("draw_trajectory: invalid function type");
           }
 
-          fig.draw_trajectory(cast<AnalyticTraj<VectorType>>(x), cmap);
+          fig.draw_trajectory(cast<AnalyticTraj<VectorType>>(x), style);
         },
-      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
-      "x"_a, "cmap"_a)
+      VOID_FIGURE2D_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEGRADIENTPROPERTIES_REF,
+      "x"_a, "style"_a)
 
     .def("plot_trajectory", (void(Figure2D::*)(const SampledTraj<double>&,const StyleProperties&))&Figure2D::plot_trajectory,
       VOID_FIGURE2D_PLOT_TRAJECTORY_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_STYLEPROPERTIES_REF,
@@ -235,16 +235,16 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_STYLEPROPERTIES_REF_INT,
       "x"_a, "style"_a=StyleProperties(), "max_nb_slices_to_display"_a=5000)
 
-    .def("draw_tube", [](Figure2D& fig, const py::object& x, const ColorMap& cmap, int max_nb_slices_to_display)
+    .def("draw_tube", [](Figure2D& fig, const py::object& x, const StyleGradientProperties& style, int max_nb_slices_to_display)
         {
           if(!is_instance<SlicedTube<IntervalVector>>(x)) {
             assert_release("draw_tube: invalid function type");
           }
 
-          fig.draw_tube(cast<SlicedTube<IntervalVector>>(x), cmap, max_nb_slices_to_display);
+          fig.draw_tube(cast<SlicedTube<IntervalVector>>(x), style, max_nb_slices_to_display);
         },
-      VOID_FIGURE2D_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_COLORMAP_REF_INT,
-      "x"_a, "cmap"_a=ColorMap::blue_tube(), "max_nb_slices_to_display"_a=5000)
+      VOID_FIGURE2D_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_STYLEGRADIENTPROPERTIES_REF_INT,
+      "x"_a, "style"_a=StyleGradientProperties(ColorMap::blue_tube()), "max_nb_slices_to_display"_a=5000)
 
     .def("plot_tube", [](Figure2D& fig, const py::object& x, const StyleProperties& s)
         {
@@ -446,20 +446,20 @@ void export_Figure2D(py::module& m)
       STATIC_VOID_DEFAULTFIGURE_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "style"_a=StyleProperties())
 
-    .def_static("draw_trajectory", (void(*)(const SampledTraj<Vector>&,const ColorMap&))&DefaultFigure::draw_trajectory,
-      STATIC_VOID_DEFAULTFIGURE_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_COLORMAP_REF,
-      "x"_a, "cmap"_a)
+    .def_static("draw_trajectory", (void(*)(const SampledTraj<Vector>&,const StyleGradientProperties&))&DefaultFigure::draw_trajectory,
+      STATIC_VOID_DEFAULTFIGURE_DRAW_TRAJECTORY_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEGRADIENTPROPERTIES_REF,
+      "x"_a, "style"_a)
 
-    .def_static("draw_trajectory", [](const py::object& x, const ColorMap& cmap)
+    .def_static("draw_trajectory", [](const py::object& x, const StyleGradientProperties& style)
         {
           if(!is_instance<AnalyticTraj<VectorType>>(x)) {
             assert_release("draw_trajectory: invalid function type");
           }
 
-          DefaultFigure::draw_trajectory(cast<AnalyticTraj<VectorType>>(x), cmap);
+          DefaultFigure::draw_trajectory(cast<AnalyticTraj<VectorType>>(x), style);
         },
-      STATIC_VOID_DEFAULTFIGURE_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_COLORMAP_REF,
-      "x"_a, "cmap"_a)
+      STATIC_VOID_DEFAULTFIGURE_DRAW_TRAJECTORY_CONST_ANALYTICTRAJ_VECTORTYPE_REF_CONST_STYLEGRADIENTPROPERTIES_REF,
+      "x"_a, "style"_a)
 
     .def_static("plot_trajectory", (void(*)(const SampledTraj<double>&,const StyleProperties&))&DefaultFigure::plot_trajectory,
       STATIC_VOID_DEFAULTFIGURE_PLOT_TRAJECTORY_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_STYLEPROPERTIES_REF,
@@ -480,16 +480,16 @@ void export_Figure2D(py::module& m)
       STATIC_VOID_DEFAULTFIGURE_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "style"_a=StyleProperties())
 
-    .def_static("draw_tube", [](const py::object& x, const ColorMap& cmap)
+    .def_static("draw_tube", [](const py::object& x, const StyleGradientProperties& style)
         {
           if(!is_instance<SlicedTube<IntervalVector>>(x)) {
             assert_release("draw_tube: invalid function type");
           }
 
-          DefaultFigure::draw_tube(cast<SlicedTube<IntervalVector>>(x), cmap);
+          DefaultFigure::draw_tube(cast<SlicedTube<IntervalVector>>(x), style);
         },
-      STATIC_VOID_DEFAULTFIGURE_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_COLORMAP_REF,
-      "x"_a, "cmap"_a=ColorMap::blue_tube())
+      STATIC_VOID_DEFAULTFIGURE_DRAW_TUBE_CONST_SLICEDTUBE_INTERVALVECTOR_REF_CONST_STYLEGRADIENTPROPERTIES_REF,
+      "x"_a, "style"_a=StyleGradientProperties(ColorMap::blue_tube()))
 
     .def_static("plot_tube", [](const py::object& x, const StyleProperties& s)
         {

@@ -115,5 +115,5 @@ int main(){
   // Fermat's spiral
   AnalyticFunction f1 ({t},{a*sqrt(t)*cos(t),a*sqrt(t)*sin(t)});
   AnalyticTraj traj4 (f1,{0,100});
-  fig4.draw_trajectory(traj4,ColorMap::rainbow());
+  fig4.draw_trajectory(traj4,{ColorMap::rainbow(), ".."});
 }
