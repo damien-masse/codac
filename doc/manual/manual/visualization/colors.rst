@@ -250,12 +250,12 @@ A StyleGradientProperties object is composed of a ColorMap. Two constructors are
   .. code-tab:: py
 
     default_style = StyleGradientProperties() # default
-    edge_fill_style = StyleGradientProperties(ColorMap.haxby()) # haxby color map
+    custom_style = StyleGradientProperties(ColorMap.haxby()) # haxby color map
 
   .. code-tab:: c++
 
     StyleGradientProperties default_style; // default
-    StyleGradientProperties edge_style(ColorMap::haxby()); // haxby color map
+    StyleGradientProperties custom_style(ColorMap::haxby()); // haxby color map
 
 
 It can also be deduced from a ColorMap object.
