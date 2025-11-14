@@ -237,10 +237,10 @@ namespace codac2
       void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& style = StyleProperties());
 
       /**
-       * \brief Draws a raster on the figure
+       * \brief Draws a the bounding box and the name of the raster on the figure
        * 
        * \param filename The name of the file
-       * \param bbox The bounding box of the image
+       * \param bbox The bounding box of the raster
        * \param style Style of the raster (only the layer is used)
        */
       void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& style = StyleProperties());

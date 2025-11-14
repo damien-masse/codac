@@ -183,8 +183,8 @@ namespace codac2
       /**
        * \brief Draws a raster on the figure
        * 
-       * \param filename The name of the file
-       * \param bbox The bounding box of the image
+       * \param filename The name of the file, the path is relative to the VIBes' server folder
+       * \param bbox The bounding box of the raster
        * \param style Style of the raster (only the layer is used)
        */
       void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& style = StyleProperties());

@@ -484,11 +484,11 @@ namespace codac2
        */
       void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& style = StyleProperties());
 
-      /**
-       * \brief Draws a raster on the figure
+/**
+       * \brief Draws a raster on the figure in VIBes only, only the bounding box is drawn in IPE
        * 
-       * \param filename The name of the file
-       * \param bbox The bounding box of the image
+       * \param filename The name of the file, the path is relative to the VIBes' server folder
+       * \param bbox The bounding box of the raster
        * \param style Style of the raster (only the layer is used)
        */
       void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& style = StyleProperties());
@@ -1054,7 +1054,7 @@ namespace codac2
        * \param text Text to display
        * \param pos Position of the top-left corner of the text
        * \param scale Scaling of the text (VIBes only)
-       * \param style Style of the text (color, layer)
+       * \param style Style of the text (edge color, layer)
        */
       static void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& style = StyleProperties())
       {
@@ -1063,15 +1063,16 @@ namespace codac2
       }
 
       /**
-       * \brief Draws a raster on the figure
+       * \brief Draws a raster on the figure in VIBes only, only the bounding box is drawn in IPE
        * 
-       * \param filename The name of the file
-       * \param bbox The bounding box of the image
+       * \param filename The name of the file, the path is relative to the VIBes' server folder
+       * \param bbox The bounding box of the raster
+       * \param style Style of the raster (only the layer is used)
        */
-      static void draw_raster(const std::string& filename, const IntervalVector& bbox)
+      static void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& style = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_raster(filename,bbox);
+        selected_fig()->draw_raster(filename,bbox,style);
       }
 
       // Pavings

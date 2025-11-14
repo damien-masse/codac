@@ -172,6 +172,15 @@ Vehicles
 .. doxygenfunction:: codac2::Figure2D::draw_motor_boat(const Vector&, float, const StyleProperties&)
   :project: codac
 
+Miscellaneous
+-------------
+
+.. doxygenfunction:: codac2::Figure2D::draw_text(const std::string&, const Vector&, double, const StyleProperties&)
+  :project: codac
+
+.. doxygenfunction:: codac2::Figure2D::draw_raster(const std::string&, const IntervalVector&, const StyleProperties&)
+  :project: codac
+
 Paving
 ------
 

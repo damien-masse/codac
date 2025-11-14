@@ -21,10 +21,10 @@ StyleProperties::StyleProperties(const Color& stroke_color_, const std::string& 
   parse_parameter(param1); parse_parameter(param2); parse_parameter(param3);
 }
 
-StyleProperties::StyleProperties(const std::string& layer_name)
+StyleProperties::StyleProperties(const std::string& param1, const std::string& param2, const std::string& param3)
   : stroke_color(Color::black()), fill_color(Color::none())
 {
-  parse_parameter(layer_name);
+  parse_parameter(param1); parse_parameter(param2); parse_parameter(param3);
 }
 
 StyleProperties::StyleProperties(std::initializer_list<Color> colors, const std::string& param1, const std::string& param2, const std::string& param3)

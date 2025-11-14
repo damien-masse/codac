@@ -158,7 +158,7 @@ namespace codac2
        * \brief Draws a raster on the figure
        * 
        * \param filename The name of the file
-       * \param bbox The bounding box of the image
+       * \param bbox The bounding box of the raster
        * \param style Style of the raster (only the layer is used)
        */
       virtual void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& style = StyleProperties()) = 0;

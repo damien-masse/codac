@@ -557,9 +557,11 @@ void Figure2D_IPE::draw_raster(const std::string& filename, const IntervalVector
 
   auto fname = filename;
 
-  std::erase_if(fname, [](char c) {
-        return c == '.' || c == '-' || c == '_';
-    });
+  size_t pos = 0;
+    while ((pos = fname.find("_", pos)) != std::string::npos) {
+        fname.replace(pos, 1, "\\_");   // replace "_" by "\_"
+        pos += 2;                   // skip over the inserted "\_"
+    }
 
   draw_text("Add "+ fname + " here", {bbox[0].lb(),bbox[1].ub()}, 1., StyleProperties(Color::black(), "replacement_text"));
 }
