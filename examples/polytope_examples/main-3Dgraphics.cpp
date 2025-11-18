@@ -25,24 +25,36 @@ int main(int argc, char *argv[])
    /* box */
    IntervalVector box1 { { 1, 3 }, { 1, 2 }, { 2, 2.5 } };
    Polytope pbox1(box1);
+   std::cout << "Box : " << pbox1 << "\n";
    draw_polytope(fig,pbox1,StyleProperties(Color::dark_green(),"box"));
 
    /* flat box */
    IntervalVector box2 { { 1, 3 }, { -1, -1 }, { 2, 2.5 } };
    Polytope pbox2(box2);
+   std::cout << "Flat box : " << pbox2 << "\n";
    draw_polytope(fig,pbox2,StyleProperties(Color::dark_red(),"flat box"));
 
    /* parallelepiped */
    Polytope paral(Parallelepiped({-1,1,1}, {{ 0.5,0.6,0.0 },
 					  { -0.3,0.0,0.4 },
 					  { 0.0, -0.6, 0.8 }}));
+   std::cout << "Parallelotop : " << paral << "\n";
    draw_polytope(fig,paral,StyleProperties(Color::dark_blue(),"parallelepiped"));
 
    /* zonotope */
    Polytope zono(Zonotope({-4,1,1}, {{ 0.5,0.6,0.0,0.4,0.0,1.1 },
 					  { -0.3,0.0,0.4,-0.5,0.3,-0.3 },
 					  { -0.2,0.0,0.3,-0.4,-0.2,-0.2 }}));
+   std::cout << "Zonotope : " << zono << "\n";
    draw_polytope(fig,zono,StyleProperties(Color::dark_yellow(),"zonotope"));
+
+   /* intersection */
+   zono.meet_with_polytope(paral);
+
+   std::cout << "Intersection : " << zono << "\n";
+   draw_polytope(fig,zono,StyleProperties(Color::dark_gray(),"intersection"));
+   zono.minimize_constraints();
+   std::cout << "Intersection (minimized) : " << zono << "\n";
 
    return 0;
 }

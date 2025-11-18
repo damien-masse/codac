@@ -267,13 +267,22 @@ class LPclp {
        *      b) if not, and all coefficients are exactly 0, returns empty
        *      c) if bounding box, use it to try to prove emptiness, if not
        *         possible keep the row (and hope for emptiness later?)
+       *  \return -1 if the polytope is empty, else the nb of irredudant
+       *  equality constraints (box not included)
        */
       int minimize_eqpolytope();
 
+      /** \brief check emptiness
+       *  \return -1 if the polytope is empty, else 0
+       */
+      int check_emptiness();
+
+      /** \brief minimize the box
+       *  \return -1 if the polytope is empty, else 0
+       */
+      int minimize_box();
+
       /** \brief detect redundant constraints, with a tolerance.
-       * return the number of remaining constraints, -1 if the polytope
-       * is empty.
-       * if checkempty=true, we check emptiness first will all constraints.
        * tolerance works as follows : 
        *   max is the interval computed by maximizing without the constraint
        *   rhs the rhs of the constraint
@@ -281,8 +290,14 @@ class LPclp {
        *       max_l <= rhs <= max_u => redundant if rhs + tol_up >= max_u
        *       rhs <= max_l <= max_u => redundant if 
        *		rhs+tol_up >= max_u AND rhs+tol_down >= max_l
+       * \param tolerance tolerance for redundant constraints
+       * \param checkempty check if the polytope is empty
+       * \param checkbox minimize the box
+       * \return -1 if the polytope is empty, else the nb of irredundant
+       * contraints (box not included)
        */
-      int minimize_polytope(const Interval &tolerance, bool checkempty=true);
+      int minimize_polytope(const Interval &tolerance, bool checkempty=true,
+				bool checkbox=true);
 
       /** \brief Returns the value of the objective after
        *  solving. The value is guaranteed as an overapproximation.

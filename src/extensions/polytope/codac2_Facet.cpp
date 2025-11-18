@@ -141,25 +141,55 @@ CollectFacets::CollectFacets(const Matrix &mat, const Vector &rhsvect,
 }
 
 std::pair<Index,bool> CollectFacets::result_insertion
-	(Index id, std::pair<mapIterator,bool> res,
+	(std::pair<mapIterator,bool> res,
 	double rhs, bool eqcst, ACTION_DUPLICATE act) {
    if (res.second) {
+     Index id = _allFacets.size()+1;
+     res.first->second.Id=id;
      _allFacets.push_back(res.first);
      if (eqcst) _eqFacets.push_back(id-1);
      return { id, true };
    } else {
+      if (act==KEEP_RHS) return { 0, false };
       double old_rhs=res.first->second.rhs;
-      if (act==CHANGE_RHS ||
-	   (act==MAX_RHS && old_rhs<rhs) || (act==MIN_RHS && old_rhs>rhs)) {
-           bool old_eqcst = res.first->second.eqcst;
-           res.first->second.rhs=rhs;
-           res.first->second.eqcst=eqcst;
-           if (eqcst && !old_eqcst) 
-		_eqFacets.push_back(res.first->second.Id-1);
-           else if (!eqcst && old_eqcst) 
-		remove_in_eqFacets(res.first->second.Id-1);
-           return { res.first->second.Id, false };
+      bool old_eqcst = res.first->second.eqcst;
+      double new_rhs;
+      bool new_eqcst;
+      if (act==CHANGE_RHS) { new_eqcst = eqcst; new_rhs = rhs; }
+      else if (act==MAX_RHS) {
+              if (old_eqcst && eqcst) {
+                 if (old_rhs==rhs) return { 0, false };
+                 /* complex case */
+                 res.first->second.rhs=std::max(old_rhs,rhs);
+                 res.first->second.eqcst=false;
+                 remove_in_eqFacets(res.first->second.Id-1);
+                 std::pair<Index,bool> rinsert =
+			this->insert_facet(-res.first->first.row,
+				-std::min(old_rhs,rhs),false,MAX_RHS);
+                          /* can't loop, as we insert an inequality */
+                 return rinsert; 
+              } else {
+                 if (old_rhs>=rhs && !old_eqcst) return { 0, false };
+                 new_eqcst=false;
+                 new_rhs=std::max(old_rhs,rhs);
+              }
+      } else { /* MIN_RHS */
+              if (old_rhs<=rhs) {
+                 if (!eqcst) return {0, false};
+                 if (old_rhs<rhs) return {-1, true}; /* empty */
+              } else {
+                 if (old_eqcst) return {-1,true}; /*empty */
+              }
+              new_eqcst=eqcst;
+              new_rhs=rhs;
       }
+      res.first->second.rhs=new_rhs;
+      res.first->second.eqcst=new_eqcst;
+      if (new_eqcst && !old_eqcst) 
+	_eqFacets.push_back(res.first->second.Id-1);
+      else if (!new_eqcst && old_eqcst) 
+ 	 remove_in_eqFacets(res.first->second.Id-1);
+      return { res.first->second.Id, false };
    }
    return { 0, false };
 }
@@ -176,22 +206,18 @@ void CollectFacets::remove_in_eqFacets(Index id) {
 
 std::pair<Index,bool> CollectFacets::insert_facet(const Row &row, 
 		double rhs, bool eqcst, ACTION_DUPLICATE act) {
-   Index id = _allFacets.size()+1;
    std::pair<mapIterator,bool> res =
-	_map.emplace(std::move(Facet_::make(row,rhs,eqcst,id)));
-   return result_insertion(id,res,rhs,eqcst,act);
+	_map.emplace(std::move(Facet_::make(row,rhs,eqcst,0)));
+   return result_insertion(res,rhs,eqcst,act);
 }
 std::pair<Index,bool> CollectFacets::insert_facet(Row &&row, double rhs, bool eqcst, ACTION_DUPLICATE act) {
-   Index id = _allFacets.size()+1;
    std::pair<mapIterator,bool> res =
-	_map.emplace(std::move(Facet_::make(row,rhs,eqcst,id)));
-   return result_insertion(id, res,rhs,eqcst,act);
+	_map.emplace(std::move(Facet_::make(row,rhs,eqcst,0)));
+   return result_insertion(res,rhs,eqcst,act);
 }
 std::pair<Index,bool> CollectFacets::insert_facet(const Facet &fct, ACTION_DUPLICATE act) {
-   Index id = _allFacets.size()+1;
-   std::pair<mapIterator,bool> res =
-	_map.emplace(std::pair(fct.first, FacetRhs(fct.second,id)));
-   return result_insertion(id, res,fct.second.rhs,fct.second.eqcst,act);
+   std::pair<mapIterator,bool> res = _map.insert(fct);
+   return result_insertion(res,fct.second.rhs,fct.second.eqcst,act);
 }
 
 std::pair<CollectFacets::mapIterator,bool>
@@ -295,6 +321,7 @@ CollectFacets::mapIterator
           const auto result_insert = _map.insert(std::move(nde));
           if (!result_insert.inserted) {
              double old_rhs=result_insert.position->second.rhs;
+	     /* CHECKME : not the best idea ? */
              if (act==CHANGE_RHS ||
 	        (act==MAX_RHS && old_rhs<nrhs) || 
 		(act==MIN_RHS && old_rhs>nrhs)) {
@@ -367,8 +394,9 @@ IntervalVector CollectFacets::extractBox() {
    return ret;
 }
 
-void CollectFacets::renumber() {
+std::vector<Index> CollectFacets::renumber() {
    /* renumber the constraints */
+   std::vector<Index> ret(_allFacets.size(),-1);
    Index sineq=0, seq=0;
    _allFacets.resize(_map.size());
    for (mapIterator it = _map.begin(); it!=_map.end(); ++it) {
@@ -380,10 +408,12 @@ void CollectFacets::renumber() {
 	  ++seq;
        }
        _allFacets[sineq++]=it;
+       ret[it->second.Id-1]=sineq;
        it->second.Id = sineq;
    }
    if (seq<(Index)_eqFacets.size())
      _eqFacets.resize(seq);
+   return ret;
 }
 
 void CollectFacets::encompass_vertices(const 
@@ -452,6 +482,17 @@ void CollectFacets::encompass_zonotope(const IntervalVector &z,
 		   later, but that should not be a real problem */
       }
    }
+}
+
+int CollectFacets::merge_CollectFacets(const CollectFacets &collect, 
+		ACTION_DUPLICATE act) {
+  int count=0;
+  for (const auto &fct : collect._map) {
+     std::pair<Index,bool> r = this->insert_facet(fct,act);
+     if (r.first==-1) return -1;
+     if (r.second) count++;
+  }
+  return count;
 }
 
 }

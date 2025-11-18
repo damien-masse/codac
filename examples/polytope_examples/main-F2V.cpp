@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
    const char *namefile = "cross12.ine";
    if (argc>1) namefile= argv[1];
    Polytope pol = Polytope::from_ineFile(namefile);
+   std::cout << pol << std::endl;
    
-   std::cout << " Polytope lu." << std::endl;
    std::vector<IntervalVector> 
       lvect = pol.compute_vertices();
    std::cout << lvect.size() << " vertices" << std::endl;

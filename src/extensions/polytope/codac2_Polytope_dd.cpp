@@ -27,82 +27,11 @@
 #include "codac2_Facet.h" 
 #include "codac2_Polytope_dd.h"
 #include "codac2_IntvFullPivLU.h"
+#include "codac2_PosetMax.h"
 
 #undef DEBUG_CODAC2_DD
 
 namespace codac2 {
-
-/*************************/
-/****** PairMaxSet *******/
-/*************************/
-template <typename T>
-struct PairMaxSets {
-   T a,b;
-   std::vector<Index> elems;
-
-   PairMaxSets() {}
-
-   PairMaxSets(T a, T b, const std::vector<Index> e1, const std::vector<Index> e2) : a(a), b(b) {
-       Index i=0,j=0;
-       while(i<(Index)e1.size() && j<(Index)e2.size()) {
-         if (e1[i]==e2[j]) { 
-           elems.push_back(e1[i]);
-           i++; j++;
-         } else if (e1[i]<e2[j]) i++;
-         else j++;
-       }
-   }
-
-   PairMaxSets(T a, T b, const std::vector<Index> e1, const std::vector<Index> e2, const Index rejectF) : a(a), b(b) {
-       Index i=0,j=0;
-       while(i<(Index)e1.size() && j<(Index)e2.size()) {
-         if (e1[i]==e2[j]) { 
-           if (e1[i]!=rejectF) 
-             elems.push_back(e1[i]);
-           i++; j++;
-         } else if (e1[i]<e2[j]) i++;
-         else j++;
-       }
-   }
-
-   void swap(PairMaxSets &p2) {
-      std::swap(this->a,p2.a);
-      std::swap(this->b,p2.b);
-      this->elems.swap(p2.elems);
-   }
-
-   int comp(const PairMaxSets &pm) const { 
-		/* -1 if elems included in pm.elems; 0 if ==,
-		   +1 elems includes pm.elems, +2 if not comparable */
-       const std::vector<Index> &e1=elems;
-       const std::vector<Index> &e2=pm.elems;
-       std::vector<long int>::size_type i=0,j=0;
-       bool leq=(e1.size()<=e2.size()), geq=(e1.size()>=e2.size()); 
-       bool same_length = (e1.size()==e2.size());
-			/* leq=F,geq=T => +1
-                           leq=F,geq=F => 2
-                           leq=T,geq=F => -1
-                           leq=T,geq=T => 0 */
-       while(i<e1.size() && j<e2.size()) {
-         if (e1[i]<e2[j]) { 
-            if (!geq || same_length) return 2;
-            leq=false; i++;
-         } else if (e1[i]>e2[j]) {
-            if (!leq || same_length) return 2;
-            geq=false; j++;
-         } else { i++; j++; }
-       }
-       if (i<e1.size()) {
-          if (!geq) return 2;
-          leq=false;
-       } 
-       if (j<e2.size() || !geq) {
-          if (!leq) return 2;
-          return -1;
-       } 
-       return (leq ? 0 : 1);
-   }
-};
 
 
 /********************/
@@ -178,9 +107,10 @@ DDbuildF2V::DDbuildF2V(Index dim, const IntervalVector &box,
    if (include_box) this->add_constraint_box(bbox);
 }
 
-void DDbuildF2V::add_bound_var(Index c, bool mx, double rhs) {
-   if (empty) return;
-   if (rhs==+oo) return;
+int DDbuildF2V::add_bound_var(Index c, bool mx, double rhs) {
+   if (empty) return -1;
+   if (mx && rhs==+oo) return 0;
+   if (!mx && rhs==-oo) return 0;
    IntervalRow facet = IntervalRow::Zero(this->fdim+1);
    facet[0] = -rhs;
    if (flat) {
@@ -190,18 +120,24 @@ void DDbuildF2V::add_bound_var(Index c, bool mx, double rhs) {
    }
    if (!mx) facet=-facet;
    Index idFacet = -c-1-(mx ? 0 : this->dim);
-   this->add_facet(idFacet,facet);
+   return this->add_facet(idFacet,facet);
 }
 
-void DDbuildF2V::add_constraint_box(const IntervalVector &box) {
+int DDbuildF2V::add_constraint_box(const IntervalVector &box) {
+   int ret=0;
    for (Index i=0;i<box.size();i++) {
       if (box[i].is_degenerated()) continue;
-      this->add_bound_var(i,true,box[i].ub());
+      int ret1=this->add_bound_var(i,true,box[i].ub());
+      if (ret1==-1) return -1;
+      if (ret1==1) ret=1;
    }
    for (Index i=0;i<box.size();i++) {
       if (box[i].is_degenerated()) continue;
-      this->add_bound_var(i,false,box[i].lb());
+      int ret1=this->add_bound_var(i,false,box[i].lb());
+      if (ret1==-1) return -1;
+      if (ret1==1) ret=1;
    }
+   return ret;
 }
 
 std::forward_list<DDvertex>::iterator DDbuildF2V::addDDvertex(const IntervalVector &v) {
@@ -401,7 +337,8 @@ int DDbuildF2V::add_facet(Index idFacet, const IntervalRow &facet) {
    std::forward_list<DDvertex>::iterator itVertex = vertices.begin();
    std::priority_queue<std::forward_list<DDvertex>::iterator,
 		std::vector<std::forward_list<DDvertex>::iterator>,
-		CmpDD> stack;
+		CmpDD> stack; /* note : absolutely not clear that we need
+				 a priority queue */
    Index refFacet=-1;
    while (itVertex!=vertices.end()) {
 //       bool inBoundary;
@@ -495,7 +432,8 @@ int DDbuildF2V::add_facet(Index idFacet, const IntervalRow &facet) {
 #ifdef DEBUG_CODAC2_DD
        std::cout << " fin traitement liens : " << adjacentVertices.size() << "\n";
 #endif
-       std::vector<PairMaxSets<std::forward_list<DDvertex>::iterator>> maxset;
+       PosetMaxSet<std::pair<std::forward_list<DDvertex>::iterator,
+			std::forward_list<DDvertex>::iterator>> maxset;
        for (Index i=0;i<=(Index)adjacentVertices.size()-1;i++) {
 #ifdef DEBUG_CODAC2_DD
          std::cout << " sommet : " << adjacentVertices[i].first->Id << " : ";
@@ -505,51 +443,29 @@ int DDbuildF2V::add_facet(Index idFacet, const IntervalRow &facet) {
          std::cout << std::endl;
 #endif
          for (Index j=i+1;j<(Index)adjacentVertices.size();j++) {
-              PairMaxSets<std::forward_list<DDvertex>::iterator> 
-			actuel(adjacentVertices[i].first,
-			       adjacentVertices[j].first,
+              PosetElem<std::pair<std::forward_list<DDvertex>::iterator,
+			std::forward_list<DDvertex>::iterator>>
+			actuel(std::pair(adjacentVertices[i].first,
+			       adjacentVertices[j].first),
 			       adjacentVertices[i].second,
 			       adjacentVertices[j].second,refFacet);
 	      if (actuel.elems.size()<fdim-2-lines.size()) continue;
-	      bool placed=false;
-              unsigned long int k=0,l=0;
-	      while (k<maxset.size()) {
-                 int u=actuel.comp(maxset[k]);
-                 if (u==2) { 
-                    if (k!=l) maxset[k].swap(maxset[l]);
-                    k++; l++;
-                    continue;
-                 }
-                 if (u==-1 || u==0) { placed=true; break;  }
-                        /* note : if u==-1 or 0, 
-                           placed should be false so k==l */
-                 if (u==1) {
-                    if (!placed) { 
-                       maxset[k]=actuel; 
-                       placed=true;
-                       l++;
-                    }
-                    k++;
-                 } 
-	      }
-              if (l<k) maxset.resize(l);
-              else if (!placed) {
-                  maxset.push_back(actuel);
-              }
+	      maxset.addElement(std::move(actuel));
           }
        }
 #ifdef DEBUG_CODAC2_DD
        std::cout << " boucle maxset : " << actVertex->Id << "\n";
 #endif
-       for (const PairMaxSets<std::forward_list<DDvertex>::iterator>
+       for (const PosetElem<std::pair<std::forward_list<DDvertex>::iterator,
+			std::forward_list<DDvertex>::iterator>>
 			 &pm : maxset) {
 #ifdef DEBUG_CODAC2_DD
 	      if (pm.elems.size()<fdim-2-lines.size()) {
-           std::cout << " maxset strange : " << pm.a->Id << " " << pm.b->Id << " " << pm.elems.size() <<  std::endl;
+           std::cout << " maxset strange : " << pm.a.first->Id << " " << pm.a.second->Id << " " << pm.elems.size() <<  std::endl;
             }
-		std::cout << pm.a->Id << " " << pm.b->Id << "\n";
+		std::cout << pm.a.first->Id << " " << pm.a.second->Id << "\n";
 #endif
-	    [[maybe_unused]] bool res = this->addDDlink(pm.a,pm.b);
+	    [[maybe_unused]] bool res = this->addDDlink(pm.a.first,pm.a.second);
 #ifdef DEBUG_CODAC2_DD
             std::cout << (res ? "   added " : "   already here ") << "\n";
 #endif
@@ -584,41 +500,86 @@ int DDbuildF2V::add_facet(CollectFacets::mapCIterator itFacet) {
    return this->add_facet(idFacet,facet);
 }
 
-/* TODO : make a specific computation */
-#if 0
-bool DDbuildF2V::vertex_compatible(const std::vector<Index> &fcts,
-                const IntervalVector &v) {
-   IntervalMatrix M = IntervalMatrix::zero(fcts.size(), v.size());
-   for (unsigned long int i=0;i<fcts.size();i++) {
-       M.row(i) = fcts;
+/* detection of "irredundant facets" */
+std::set<Index> DDbuildF2V::redundantFacets() {
+   std::map<Index,std::vector<Index>> mapping;
+   std::set<Index> resultat; /* set of existing facets */
+   for (Index i = -2*dim;i<0;i++) {
+      resultat.insert(i);
    }
-   M.row(fcts.size())=v;
-   IntvFullPivLU decLU(M);
-   return decLU.rank.lb()+eqfacets.size()==v.size();
-}
-
-void DDbuildF2V::removeVertex(Index Id, bool removeLnks) {
-   DDvertex &d = vertices.at(Id);
-   if (removeLnks) {
-      for (Index l : d.links) {
-         auto it = vertices.find(l);
-         if (it==vertices.end()) continue;
-         it->second.removeLnk(Id);
+   for (const auto &u : facetsptr->get_map()) {
+      resultat.insert(u.second.Id);
+   } 
+   for (const DDvertex &vt : vertices) { 
+		/* vt.Id is in decreasing order , therefore we consider
+		   the negation of vt.Id to be in increasing order */
+      Index id = vt.Id;
+      for (Index ft : vt.fcts) {
+          std::vector<Index> &elem = mapping[ft];
+          elem.push_back(-id); /* in decreasing order */
       }
    }
-   this->vertices.erase(Id);
-}
-
-IntervalVector DDbuildF2V::recompute_vertex(const IntervalVector &vect) const {
-   IntervalVector v=vect;
-   for (Index i = eqfacets.size()-1; i>=0; i--) {
-       const EqFacet &ef = eqfacets[i];
-       v[ef.dim]=ef.eqcst.dot(v)+ef.valcst;
+   PosetMaxSet<Index> facetElems;
+   for (std::pair<const Index,std::vector<Index>> &p : mapping) {
+//       std::cout << "insert " << p.first << ":" << reffacets[p.first] << " "  << p.second.size() << " : ";
+//       for (Index q : p.second) std::cout << q << "\n";
+       facetElems.addElement(p.first,p.second); /* swap p.second */
    }
-   return v;
+   /* to get the result of facetElems, we store booleans for each facets */
+   std::vector<bool> redundant(reffacets.size(),true);
+   for (const PosetElem<Index> &elm : facetElems) {
+        redundant[elm.a]=false;
+        resultat.erase(reffacets[elm.a]); 
+		/* note : this approach (fill resultat then remove
+		   irredundant facets) is ok when one facet may "appear"
+                   several times */
+   }
+   /* renumbering reffacets */
+   std::vector<Index> new_reffacets;
+   Index nb_irredundant=0;
+   for (unsigned int i=0;i<reffacets.size();i++) {
+       if (redundant[i]) { reffacets[i]=-1; continue; }
+       new_reffacets.push_back(reffacets[i]);
+       reffacets[i]=nb_irredundant;
+       nb_irredundant++;
+   } 
+   /* renumbering the index of vertices */
+   for (DDvertex &vt : vertices) { 
+      unsigned int j=0;
+      for (unsigned int i=0;i<vt.fcts.size();i++) {
+         if (reffacets[vt.fcts[i]]<0) continue;
+         vt.fcts[j]=reffacets[vt.fcts[i]];
+         j++;
+      }
+      vt.fcts.resize(j);
+   }
+   reffacets = std::move(new_reffacets);
+   return resultat;
 }
-#endif
 
+/* update reffacets following a renumbering */
+void DDbuildF2V::update_renumber(const std::vector<Index> &ret) {
+   for (Index &a : reffacets) {
+      if (a<=0) continue;
+      if (ret[a-1]==-1) {
+         a=0;
+      } else { 
+         a=ret[a-1];
+      }
+   }
+}
+
+/* build the bbox of all vertices */
+IntervalVector DDbuildF2V::build_bbox() const {
+   IntervalVector b = IntervalVector::empty(dim);
+   for (const DDvertex &a : vertices) {
+      b |= this->compute_vertex(a.vertex);
+   }
+   return b;
+}
+
+
+/* normalisation for printing of vertice... good idea ? */
 IntervalVector normalise(const IntervalVector &v) {
    IntervalVector res(v);
    if (res[0].lb()<=0.0) return res;
@@ -918,7 +879,8 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
      this->removeFacet(it,false);
    }
    /*construction of new links for the eq facets */
-   std::vector<PairMaxSets<std::forward_list<DDfacet>::iterator>> maxset;
+   PosetMaxSet<std::pair<std::forward_list<DDfacet>::iterator,
+			std::forward_list<DDfacet>::iterator>> maxset;
    for (std::forward_list<DDfacet>::iterator it = facets.begin();
                   it!=facets.end();++it) {
       DDfacet &d = (*it);
@@ -927,40 +889,19 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
 		it2!=facets.end(); ++it2) {
             DDfacet &d2 = (*it2);
             if (d2.status==DDfacet::FACETON || d2.status==DDfacet::FACETNEW) {
-               PairMaxSets actuel(it,it2,d.vtx,d2.vtx);
-               bool placed=false;
-               unsigned long int k=0, l=0;
-               while (k<maxset.size()) {
-                  int u=actuel.comp(maxset[k]);
-                  if (u==2) { 
-		    if (k!=l) maxset[k].swap(maxset[l]);
-	    	    k++; l++;
-		    continue;
-		  }
-                  if (u==-1 || u==0) { placed=true; break; }
-			/* note : if u==-1 or 0, 
-			   placed should be false so k==l */
-                  if (u==1) {
-                     if (!placed) { 
-			maxset[k]=actuel;
-			placed=true;
-			l++;
-                     } 
-                     k++;
-                  } 
-               }
-               if (l<k) maxset.resize(l);
-               else if (!placed) {
-                   maxset.push_back(actuel);
-               }
+               PosetElem<std::pair<std::forward_list<DDfacet>::iterator,
+                        std::forward_list<DDfacet>::iterator>>
+			 actuel(std::pair(it,it2),d.vtx,d2.vtx);
+	       maxset.addElement(std::move(actuel));
             }
          }
       }
    }
-   for (const PairMaxSets<std::forward_list<DDfacet>::iterator> &pm : maxset) {
+   for (const PosetElem<std::pair<std::forward_list<DDfacet>::iterator,
+			std::forward_list<DDfacet>::iterator>> &pm : maxset) {
 //      std::cout << " maxset : " << pm.a << " " << pm.b << std::endl;
-      pm.a->addLnk(pm.b);
-      pm.b->addLnk(pm.a);
+      pm.a.first->addLnk(pm.a.second);
+      pm.a.second->addLnk(pm.a.first);
    }
    facets.remove_if([](const DDfacet &v) 
 			{ return v.status==DDfacet::FACETREM; });

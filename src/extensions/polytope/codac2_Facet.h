@@ -261,12 +261,14 @@ class CollectFacets {
 				create a duplicate facet */
        KEEP_RHS, /* change nothing (default behaviour) */
        CHANGE_RHS, /* change the value in all cases */
-       MAX_RHS, /* maximize the RHS */
-       MIN_RHS  /* minimize the RHS */
+       MAX_RHS, /* maximize the RHS. if two equalities,
+			duplicate the constraint. if one equality, 
+			change into inequality */
+       MIN_RHS  /* minimize the RHS. if needed, return "empty" (-1) */
      };
        
    
-     /** insert a new facet row X <= rhs
+     /** insert a new facet row X <= rhs (or row X = rhs)
       * @param row Row
       * @param rhs right-hand side 
       * @param eqcst equality constraint
@@ -275,7 +277,7 @@ class CollectFacets {
       * has been inserted, false if old facet */
      std::pair<Index,bool> insert_facet(const Row &row, 
 			double rhs, bool eqcst, ACTION_DUPLICATE act=KEEP_RHS);
-     /** insert a new facet row X <= rhs
+     /** insert a new facet row X <= rhs (or row X = rhs)
       * @param row Row
       * @param rhs right-hand side 
       * @param eqcst equality constraint
@@ -285,7 +287,8 @@ class CollectFacets {
       * returns 0 */
      std::pair<Index,bool> insert_facet(Row &&row, double rhs, bool eqcst,
 			ACTION_DUPLICATE act=KEEP_RHS);
-     /** insert a new facet row X <= rhs, using the Facet constuction
+     /** insert a new facet row X <= rhs or row X = rhs,
+      * using the Facet constuction
       * @param facet the facet
       * @param act action if an rhs with the same row exists
       * @return the Id of the constraint, and true if a new facet
@@ -306,6 +309,9 @@ class CollectFacets {
      /** get the end iterator of the facet
       * @return an iterator on the facet */
      mapIterator endFacet(); 
+     /** get the end iterator of the facet
+      * @return an iterator on the facet */
+     mapCIterator endFacet() const; 
 
      /** change a eqfacet, keeping its Id (unless the new row creates
       * a duplicate)
@@ -352,7 +358,15 @@ class CollectFacets {
             nbound=+oo => new facet iterator (for rhs), or endFacet if 
 	        insertion "failed" */
      mapIterator dissociate_eqFacet(Index eqId , double nbound,
-		ACTION_DUPLICATE act=KEEP_RHS);
+		ACTION_DUPLICATE act=MAX_RHS);
+
+     /** insert a complete collection of facets 
+         @param collect the collection
+         @param act handling of the duplicate 
+         @return the number of added facets, -1 if empty
+      */
+     int merge_CollectFacets(const CollectFacets &collect, 
+			ACTION_DUPLICATE act=MIN_RHS);
 
      /** remove a facet by its Id
       *  @param id Id of the facet (starting from 1)
@@ -364,18 +378,19 @@ class CollectFacets {
       *  remove some contraints, may put endFacet() for some Id */
      IntervalVector extractBox();
    
-     /** renumber the set, removing spurious Id.
+     /** \brief renumber the set, removing spurious Id.
       *  do not modify the iterators, but modify the indices of the 
-      *  facets and equality facets. */
-     void renumber();
+      *  facets and equality facets. 
+      *  \return the matching old Id => new Id */
+     std::vector<Index> renumber();
 
      /** \brief modify the rhs such that the polyhedron encompasses a list
       *  of intervalVector. Also adapt the bbox.
       *  if tight=true, may tighten the bound, and not only increase them.
       *  may add facets if needed to dissociate equality facets. 
-      * \brief vertices the list of vertices
-      * \brief bbox the bbox (to be updated)
-      * \brief tight if false, the rhs are only increased */
+      * \param vertices the list of vertices
+      * \param bbox the bbox (to be updated)
+      * \param tight if false, the rhs are only increased */
      void encompass_vertices(const std::vector<IntervalVector> &vertices,
 		IntervalVector &bbox, bool tight);
      void encompass_vertices(const std::vector<Vector> &vertices,
@@ -406,15 +421,19 @@ class CollectFacets {
       /* look for and remove a value in eqFacet */
       void remove_in_eqFacets(Index id);
       /* finish an insertion process */
-      std::pair<Index,bool> result_insertion(Index id,
-		std::pair<mapIterator,bool> res,
+      std::pair<Index,bool> result_insertion(std::pair<mapIterator,bool> res,
 		 double rhs, bool eqcst, ACTION_DUPLICATE act);
 };
 
 inline CollectFacets::CollectFacets(const CollectFacets& cf)  :
-    dim(cf.getDim()), _map(cf._map), _allFacets(cf._allFacets),
+    dim(cf.getDim()), _map(cf._map), 
+	_allFacets(cf._allFacets.size(),_map.end()),
     _eqFacets(cf._eqFacets)
 {
+    /* redirect the facets */
+    for (mapIterator it = _map.begin(); it!=_map.end(); ++it) {
+        _allFacets[it->second.Id-1]=it;
+    }
 }
 
 inline Index CollectFacets::getDim() const {
@@ -442,6 +461,9 @@ inline Index CollectFacets::nbeqfcts() const {
 
 inline CollectFacets::mapIterator CollectFacets::endFacet() { 
    return this->_map.end();
+}
+inline CollectFacets::mapCIterator CollectFacets::endFacet() const { 
+   return this->_map.cend();
 }
 
 }

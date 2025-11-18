@@ -337,11 +337,20 @@ LPclp::lp_result_stat LPclp::solve(bool checkempty, int option) {
 }
 
 int LPclp::minimize_eqpolytope() {
-    /* TODO : manage equalities for bbox */
     std::vector<IntervalRow> triMat;
     std::vector<Interval> triRhs;
     Index nbCsts=0;
     std::vector<Index> mainCol;
+    for (Index i=0; i<nbCols; i++) {
+       if (bbox[i].is_degenerated()) {
+          Row r = Row::zero(nbCols);
+          r[i]=1.0;
+          triMat.push_back(std::move(r));
+          triRhs.push_back(bbox[i].mid());
+          mainCol.push_back(i);
+          nbCsts++;
+       }
+    }
     for (Index i = 0; i<nbRows; i++) {
        if (!(*this->Afacets)[i]->second.eqcst) continue; 
        if (cststat[i][REMOVED] || cststat[i][INACTIVE] || cststat[i][REDUNDANT])
@@ -382,19 +391,19 @@ int LPclp::minimize_eqpolytope() {
     return nbCsts;
 }
 
-int LPclp::minimize_polytope(const  Interval &tolerance, bool checkempty) {
-    int nb = this->minimize_eqpolytope();
-    if (nb==-1) return -1;
-    if (checkempty) {
-       lp_result_stat stat=this->solve(true);
-       if (stat[EMPTY]) return -1;
-    }
+int LPclp::check_emptiness() {
+   lp_result_stat stat=this->solve(true);
+   if (stat[EMPTY]) return -1;
+   return 0;
+}
+
+int LPclp::minimize_box() {
     /* minimize box */
     for (Index i=0;i<nbCols;i++) {
        Row a = Row::Zero(nbCols);
        a[i]=1.0;
        this->setObjective(a);
-       lp_result_stat stat=this->solve(false,(i!=0 || checkempty ? 4 : 0));
+       lp_result_stat stat=this->solve(false,(i!=0 ? 4 : 0));
        if (stat[EMPTY]) return -1;
        if (stat[BOUNDED]) {
           bbox[i] = min(bbox[i],this->Valobj.ub());
@@ -411,6 +420,17 @@ int LPclp::minimize_polytope(const  Interval &tolerance, bool checkempty) {
        }
     }
     this->update_model_bbox();
+    return 0;
+}
+
+int LPclp::minimize_polytope(const  Interval &tolerance, bool checkempty,
+		bool checkbox) {
+    int nb = this->minimize_eqpolytope();
+    if (nb==-1) return -1;
+    if (checkempty) 
+       if (check_emptiness()==-1) return -1;
+    if (checkbox)
+        if (this->minimize_box()==-1) return -1;
     for (Index i=nbRows-1;i>=0;i--) {
        const auto &fct = (*this->Afacets)[i];
        if (cststat[i][REMOVED] || 

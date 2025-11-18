@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
    const char *namefile = "irbox20-4.ext";
    if (argc>1) namefile= argv[1];
    Polytope pol = Polytope::from_extFile(namefile);
+
+   std::cout << pol << std::endl;
    
    std::vector<IntervalVector> lst = pol.compute_vertices();
    std::cout << "nb vertices : " << lst.size() << std::endl;

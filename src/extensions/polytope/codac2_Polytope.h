@@ -151,7 +151,7 @@ namespace codac2 {
         /**
          * \brief is empty
          */
-        bool is_empty() const;
+        bool is_empty(bool check=true) const;
 
         /**
          * \brief has a flat dimension
@@ -159,7 +159,9 @@ namespace codac2 {
         bool is_flat() const;
 
         /** \brief ``component'' : interval of the bounding box 
-           * (only const !!!) */
+         * (only const !!!). Update the bbox if needed.
+         * \return enclosing of the component
+         */
         const Interval& operator[](Index i) const;
 
         /**
@@ -178,6 +180,14 @@ namespace codac2 {
          * \return the interval I */
         Interval fast_bound(const FacetBase &base) const;
 
+        /** 
+         * \brief bound a constraint, using either clp or DD
+         * \param r the row
+         * \return the max
+         */
+        double bound_row(const Row &r) const;
+  
+#if 0
         /** \brief ``distance'' from the satisfaction of a constraint 
          *  ie the inflation of the rhs needed to satisfy the constraint
          *  \param fc the constraint
@@ -190,6 +200,7 @@ namespace codac2 {
          * \param p the box
          * \return polytope_inclrel checking inclusion and intersection */
         Facet_::polytope_inclrel relation_Box(const IntervalVector& p) const;
+#endif
 
         /**
          * \brief Checks whether the polytope contains a given point, or
@@ -199,6 +210,16 @@ namespace codac2 {
          * \return BoolInterval indicating possible containment.
          */
         BoolInterval contains(const IntervalVector& p) const;
+
+        /**
+         * \brief Checks inclusion in another polytope
+         * \param P the polytope
+         * \param checkF2V checks using DD
+         * \param checkCLP checks using CLP
+         * \return true if inclusion is guaranteed
+         */
+        bool is_included(const Polytope &P, 
+			bool checkF2V=true, bool checkCLP=true) const;
 
         /** \brief intersects a box 
          * \param x the box (IntervalVector) 
@@ -212,6 +233,11 @@ namespace codac2 {
          */
         BoolInterval intersects(const Polytope &p) const;
 
+        /** minimize the constraints, removing (possibly) redundant
+         *  constraints.
+         */
+        void minimize_constraints() const;
+
         /************* Box access *************************/
  
         /**
@@ -221,21 +247,21 @@ namespace codac2 {
          *
          * \return The current bounding box
          */
-        const IntervalVector &box() const;
+        const IntervalVector &box(bool tight=true) const;
 
         /**
-         * \brief compute and update the bounding box
-         * (using LPs on the polytope) 
-         *
-         * \return the updated hull box
-         */
-        const IntervalVector &update_box() const;
- 
-        /**
          * \brief test if bounding box is included
-         * (mainly useful if current bounding box is tight)
+         * \return true if the polytope is included in x
          */
         bool box_is_included(const IntervalVector& x) const;
+
+        /** 
+         * \brief tests if the polytope is bisectable 
+	 * (i.e. its bounding box is bisectable).
+         * do not update the box
+         * \return true if the bbox is bisectable
+         */
+        bool is_bisectable() const;
 
 
         /************* Modification **********************/
@@ -244,7 +270,7 @@ namespace codac2 {
         /** \brief set to empty */
         void set_empty();
 
-        /** \brief set to (singleton) 0 */
+        /** \brief set to (singleton) 0^dim */
         void clear();
 
         /** \brief add a inequality (pair row X <= rhs)
@@ -273,6 +299,26 @@ namespace codac2 {
          *  \return pair of booleans (one for each constraints possibly added */
         std::pair<bool,bool> add_constraint_band(const IntervalRow &cst,
 		 const Interval &rhs, double tolerance=0.0);
+
+        /** \brief intersect with a box.
+         *  \param b the box
+         *  \return 0 if nothing done, 1 changed made, -1 results is empty */
+        int meet_with_box(const IntervalVector &b);
+
+        /** \brief intersect with a box.
+         *  \param b the box
+         *  \return *this */
+        Polytope &operator&=(const IntervalVector &b);
+
+        /** \brief intersect with a polytope.
+         *  \param P the polytope
+         *  \return 0 if nothing done, 1 changed made, -1 results is empty */
+        int meet_with_polytope(const Polytope &P);
+
+        /** \brief intersect with a polytope.
+         *  \param P the polytope
+         *  \return *this */
+        Polytope &operator&=(const Polytope &P);
 
         /** \brief inflation by a cube
          *  this <- this + [-rad,rad]^d
@@ -305,6 +351,15 @@ namespace codac2 {
 
         /*********** Printing and other ``global access'' *********/
         /**
+         * \brief output the bbox and the set of facets 
+         * \param os the output stream
+         * \param P the polytope
+         * \return the stream
+         */
+        friend std::ostream& operator<<(std::ostream& os,
+			const Polytope &P);
+
+        /**
          * \brief Computes a set of vertices enclosing the polytope
          * 
          * \return set of vertices, as IntervalVectors
@@ -318,9 +373,29 @@ namespace codac2 {
          */
         std::vector<std::vector<Vector>> compute_3Dfacets() const;
 
+
+        /** \brief state of the polytope */
+        enum POLSTATE {
+            EMPTY,       /* is empty */
+            NOTEMPTY,    /* is NOT empty */
+            MINIMIZED,   /* minimized : redundant constraints removed */
+            BOXUPDATED,  /* box is minimal */
+            CLPFORM,     /* has an up-to-date clp form */
+            F2VFORM,     /* has an up-to-date F2V form */
+            V2FFORM,     /* has an up-to-date V2F form */
+            INVALID,     /* not initialised */
+            SIZE_POLSTATE
+        };
+        using pol_state = std::bitset<SIZE_POLSTATE>;
+        static constexpr pol_state pol_state_empty = 
+			1<<EMPTY | 1<<MINIMIZED | 1<<BOXUPDATED;
+        static constexpr pol_state pol_state_init = 
+			1<<NOTEMPTY | 1<<MINIMIZED | 1<<BOXUPDATED;
+        
+             
+
    private:
       Index _dim;                      /* dimension */
-      mutable bool  _empty; 	       /* is empty */
       mutable IntervalVector _box;     /* bounding box */
       mutable std::shared_ptr<CollectFacets> _facets; 
 	/* "native" formulation , may be shared by other formulations */
@@ -329,27 +404,53 @@ namespace codac2 {
 		/* DDbuildF2V formulation, if used */
       mutable std::unique_ptr<DDbuildV2F> _DDbuildV2F; 
 		/* DDbuildV2F formulation, generally not used */
-      mutable bool _minimized=true;
-      mutable bool _clpForm_updated=false;
-      mutable bool _buildF2V_updated=false;
-      mutable bool _buildV2F_updated=false;
+      mutable pol_state state = pol_state_init;
       void minimize_constraints_clp(const Interval &tolerance=Interval(0.0)) const;
+      void minimize_constraints_F2V() const;
+      void update_box_clp() const;
+      void update_box_F2V() const;
+      void update_box() const;
+      bool check_empty_clp() const;
+      bool check_empty_F2V() const;
+      bool check_empty() const;
+      double bound_row_clp(const Row &r) const;
+      double bound_row_F2V(const Row &r) const;
       void build_DDbuildF2V() const;
       void build_clpForm() const;
-      void set_empty() const;
+      void set_empty_private() const;
 };
 
 
-inline const IntervalVector &Polytope::box() const { return _box; }
+inline const IntervalVector &Polytope::box(bool tight) const { 
+      if (tight) this->update_box();
+      return _box; 
+}
 inline Index Polytope::dim() const { return _dim; }
 inline Index Polytope::size() const { return _dim; }
-inline bool Polytope::is_empty() const { return _empty; }
-inline bool Polytope::is_flat() const { return _empty ||
+inline bool Polytope::is_empty(bool check) const { 
+	if (!check) return state[EMPTY]; 
+	return this->check_empty(); }
+inline bool Polytope::is_flat() const { return state[EMPTY] ||
 		_box.is_degenerated() || (_facets && _facets->nbeqfcts()>0); }
 inline Index Polytope::nbFacets() const { 
- 	if (_empty) return -1;
+ 	if (state[EMPTY]) return -1;
         if (!_facets) return (2*_dim);
         return (2*_dim + _facets->nbfcts());
      }
+
+inline void Polytope::set_empty_private() const {
+   state = pol_state_empty;
+   _box.set_empty();
+   _clpForm=nullptr;
+   _DDbuildF2V=nullptr;
+   _DDbuildV2F=nullptr;
+   _facets=nullptr;
+}
+
+
+inline void Polytope::set_empty() {
+   this->set_empty_private();
+}
+
 
 }
