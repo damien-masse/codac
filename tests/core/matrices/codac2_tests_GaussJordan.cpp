@@ -1,9 +1,9 @@
 /** 
  *  Codac tests
  * ----------------------------------------------------------------------------
- *  \date       2024
+ *  \date       2025
  *  \author     Damien Massé
- *  \copyright  Copyright 2024 Codac Team
+ *  \copyright  Copyright 2025 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
 
