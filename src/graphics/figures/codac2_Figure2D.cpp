@@ -56,6 +56,7 @@ const vector<FigureAxis>& Figure2D::axes() const
 Figure2D& Figure2D::set_axes(const FigureAxis& axis1, const FigureAxis& axis2)
 {
   _axes = { axis1, axis2 };
+  assert_release(axis1.dim_id != axis2.dim_id);
   for(const auto& output_fig : _output_figures)
     output_fig->update_axes();
   return *this;
@@ -400,6 +401,8 @@ void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap
 void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s)
 {
   _axes[0].limits = x.tdomain();
+  if(_axes[1].limits == Interval(0,1))
+    _axes[1].limits.set_empty();
   _axes[1].limits |= x.codomain();
   for(const auto& output_fig : _output_figures)
     output_fig->update_axes();
