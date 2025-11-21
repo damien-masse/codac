@@ -2,7 +2,6 @@
 // Transformation facets to vertex from a .ine file
 
 #include <codac>
-#include <codac-polytope.h>
 #include <vector>
 #include <set>
 #include <memory>

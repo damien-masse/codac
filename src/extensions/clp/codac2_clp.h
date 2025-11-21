@@ -95,12 +95,10 @@ class LPclp {
       LPclp (const Matrix &mat, const Vector &rhsvect, 
 		const std::vector<Index> &eqSet=std::vector<Index>());
 
-      /** \brief Copy constructor
-       *  Do not build the model, even if the original model is built
-       *  also do not copy all results related to the last computation :
-       *  status, row_basis, valObj, primalSol, primalRay, dualSol, dualRay
+      /** \brief Copy constructor is deleted, to avoir sharing the facets.
+       *  use the constructor if needed.
        */
-      LPclp (const LPclp& P);
+      LPclp (const LPclp& P) = delete;
 
       /** \brief Empty constructor
        *  \param dim number of variables

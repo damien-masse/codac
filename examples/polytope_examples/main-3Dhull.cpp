@@ -2,7 +2,6 @@
 // Generate random points in [-100,100] and draw the convex hull
 
 #include <codac>
-#include <codac-polytope.h>
 #include <vector>
 #include <set>
 #include <memory>

@@ -125,12 +125,12 @@ if (WITH_CAPD)
   set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-capd capd::capd)
 endif()
 
-# POLYTOPE test
-if (WITH_POLYTOPE)
+# CLP test
+if (WITH_CLP)
   list(APPEND SRC_TESTS
-    extensions/polytope/codac2_tests_clp
+    extensions/clp/codac2_tests_clp
   )
-  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-polytope ${CLP_LIBRARIES})
+  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-clp ${CLP_LIBRARIES})
 endif()
 
 # IBEX test

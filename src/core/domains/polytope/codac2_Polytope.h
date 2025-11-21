@@ -18,6 +18,7 @@
 #include <cmath>
 #include <bitset>
 #include <memory>
+#include <initializer_list>
 
 #include "codac2_Index.h"
 #include "codac2_Matrix.h"
@@ -27,10 +28,12 @@
 #include "codac2_IntervalVector.h"
 #include "codac2_IntervalMatrix.h"
 #include "codac2_BoolInterval.h"
-#include "codac2_clp.h"
 #include "codac2_Polytope_util.h"
 #include "codac2_Facet.h"
 #include "codac2_Polytope_dd.h"
+#ifdef WITH_CLP
+#include "../../../extensions/polytope/codac2_clp.h"
+#endif
 
 
 namespace codac2 {
@@ -69,9 +72,15 @@ namespace codac2 {
 
         /** 
          * \brief Constructs a polytope from a set of vertices
-         * for now, just take the bounding box of the vertices
+         * \param the vertices
          */
         Polytope(const std::vector<Vector> &vertices);
+
+        /** 
+         * \brief Constructs a polytope from a set of vertices as intervalboxes
+         * \param the vertices
+         */
+        Polytope(const std::vector<IntervalVector> &vertices);
 
         /** 
          * \brief Constructs a polytope from a set of vertices (intervalVector)
@@ -95,8 +104,26 @@ namespace codac2 {
         Polytope(const Zonotope &zon);
 
         /**
+         * \brief Constructs a polytope from a box and a CollectFacets which
+	 * will be moved in the polytope. Perform a "box extraction" and a 
+         * renumbering on the collection.
+         * \param box the box
+         * \param facets the collection of facets 
+         */
+        Polytope(IntervalVector &&box, CollectFacets &&facets);
+
+        /**
+         * \brief Constructs a polytope from a CollectFacets which
+	 * will be moved in the polytope. Perform a "box extraction" and a 
+         * renumbering on the collection.
+         * \param facets the collection of facets 
+         */
+        Polytope(CollectFacets &&facets);
+
+        /**
          * \brief Constructs a polytope from a bounding box and 
-         * a set of constraints 
+         * a set of constraints (inequalities)
+ 	 * 
          */
         Polytope(const IntervalVector &box, 
                  const std::vector<std::pair<Row,double>> &facets, 
@@ -111,10 +138,26 @@ namespace codac2 {
          * \param filename the file */
 	static Polytope from_extFile(const char *filename);
 
+        /** \brief convex union of polytopes
+         *  use vertices to join the polytopes, as such the result may be
+         *  too large
+         *  \param lst a non-empty initializer_list of valid polytopes of 
+	 *  same dimension
+         *  \return the polytope */
+        static Polytope union_of_polytopes(std::initializer_list<Polytope> lst);
+
         /**
          * \brief Destructor
          */
         ~Polytope();
+
+        /**
+         * \brief copy assignment operator 
+         * \param P copy
+         */
+        Polytope &operator=(const Polytope &P);
+     
+
 
         /***************** ACCESS **************************/
         /**
@@ -218,7 +261,7 @@ namespace codac2 {
          * \param checkCLP checks using CLP
          * \return true if inclusion is guaranteed
          */
-        bool is_included(const Polytope &P, 
+        bool is_subset(const Polytope &P, 
 			bool checkF2V=true, bool checkCLP=true) const;
 
         /** \brief intersects a box 
@@ -253,7 +296,7 @@ namespace codac2 {
          * \brief test if bounding box is included
          * \return true if the polytope is included in x
          */
-        bool box_is_included(const IntervalVector& x) const;
+        bool box_is_subset(const IntervalVector& x) const;
 
         /** 
          * \brief tests if the polytope is bisectable 
@@ -265,7 +308,7 @@ namespace codac2 {
 
 
         /************* Modification **********************/
-        /** modification creates a new polytope         **/
+        /* keeping the current polytope                  */
 
         /** \brief set to empty */
         void set_empty();
@@ -293,12 +336,19 @@ namespace codac2 {
 
         /** \brief two inequalities with intervalVector (cst X in rhs)
          *  using the bounding box
-         *  do basic checks, but do not minimize the system
+         *  do basic checks, but do not minimize the system. Also,
+         *  should not be used for equalities (cst and rhs punctual)
          *  \param cst the row constraint
          *  \param x the rhs
          *  \return pair of booleans (one for each constraints possibly added */
         std::pair<bool,bool> add_constraint_band(const IntervalRow &cst,
 		 const Interval &rhs, double tolerance=0.0);
+
+        /** \brief add a equality (pair row X = rhs)
+         *  do basic checks, but do not minimize the system
+         *  \param facet the constraint
+         *  \return -1 if empty, 0 no change (not probable), 1 change */
+        int add_equality(const std::pair<Row,double>& facet);
 
         /** \brief intersect with a box.
          *  \param b the box
@@ -320,34 +370,85 @@ namespace codac2 {
          *  \return *this */
         Polytope &operator&=(const Polytope &P);
 
-        /** \brief inflation by a cube
+        /** \brief union with a polytope
+         *  \param P the polytope
+         *  \return 0 if nothing done, 1 changed made, -1 results is empty */
+        int join_with_polytope(const Polytope &P);
+
+        /** \brief union with a polytope
+         *  \param P the polytope
+         *  \return *this */
+        Polytope &operator|=(const Polytope &P);
+
+        /** \brief inflation by a cube, keeping the shape (not optimal)
          *  this <- this + [-rad,rad]^d
          *  \param rad radius of the box
-         *  \return the
+         *  \return *this (keep minimized, except rounding)
          */
-        Polytope inflate(double rad);
+        Polytope &inflate(double rad);
 
-        /** \brief inflation by a ball while keeping the set of facets
-         *  this <- this + B_d(rad)
+        /** \brief inflation with a box, keeping the shape (not optimal)
+         *  this <- this + box
+         *  \param box the box
+         *  \return *this (keep minimized, except rounding)
+         */
+        Polytope &inflate(const IntervalVector& box);
+
+        /** \brief inflation by a ball, keeping the shape (not optimal)
+         *  this <- this + B_d(rad) (note: vector norm is computed on double)
          *  \param rad radius of the ball
-         *  \return *this
+         *  \return *this (keep minimized, except rounding)
          */
-        Polytope inflate_ball(double rad);
+        Polytope &inflate_ball(double rad);
 
-        /** \brief expansion of a dimension (flat or not) 
+        /** \brief expansion of a dimension (not optimal)
+         *  equivalent to inflation by a box 0,...,[-rad,rad],...0
          *  \param dm index of the dimension
          *  \param rad radius 
-         *  \return *this */
-        Polytope unflat(Index dm, double rad);
+         *  \return *this (keep minimized, except rounding) */
+        Polytope &unflat(Index dm, double rad);
 
-        /** \brief centered homothety
-         *  x <- [c] + delta*([x]-[c]) ( (1-delta)[c] + delta*[x] )
+        /** \brief centered homothety (optimal if c is punctual)
+         *  x <- [c] + delta*(x-[c]) ( or (1-delta)[c] + delta*x )
+         *  note : delta must be > 0
          *  \param c ``center''
          *  \param delta expansion
-         *  \return this
+         *  \return *this
          */
-        Polytope homothety(IntervalVector c, double delta);
+        Polytope &homothety(const IntervalVector &c, double delta);
 
+        /* creating a new polytope                  */
+
+        /** \brief return a polytope intersected with an hyperplan
+	 * in a specific coordinate (rebuild the constraints without
+         * any dependence on this coordinate in a new polytope)
+         *  \param dm index of the coordinate
+         *  \param x the value of the coordinate
+         *  \return the polytope */
+        Polytope meet_with_hyperplane(Index dm, double x) const;
+
+        /** \brief reverse affine transformation 
+	 *  compute { x' in Box s.t. ([M] x' + [P]) in the initial polytope }
+         *  The bounding box is needed to handle interval in [M].
+         *  \param M non-empty matrix
+         *  \param P non-empty vector 
+         *  \param bbox bouding-box of the new polytope
+         *  \return a new polytope */
+        Polytope reverse_affine_transform(const IntervalMatrix &M,
+		const IntervalVector &P, const IntervalVector &bbox) const;
+
+        /** \brief linear bijective affine transformation 
+	 *  compute { [M] x + [P] s.t. x in the initial polytope }
+         *  with MInv encloses the inverse of M 
+         *  M is used only to approximate the bounding box of the result,
+         *  Minv is used to compute the new constraints
+         *  \param M matrix
+         *  \param MInv its inverse
+         *  \param P non-empty vector 
+         *  \return a new polytope */
+        Polytope bijective_affine_transform(const IntervalMatrix &M,
+			const IntervalMatrix &Minv, 
+			const IntervalVector &P) const;
 
         /*********** Printing and other ``global access'' *********/
         /**
@@ -380,7 +481,9 @@ namespace codac2 {
             NOTEMPTY,    /* is NOT empty */
             MINIMIZED,   /* minimized : redundant constraints removed */
             BOXUPDATED,  /* box is minimal */
+#ifdef WITH_CLP
             CLPFORM,     /* has an up-to-date clp form */
+#endif
             F2VFORM,     /* has an up-to-date F2V form */
             V2FFORM,     /* has an up-to-date V2F form */
             INVALID,     /* not initialised */
@@ -399,25 +502,29 @@ namespace codac2 {
       mutable IntervalVector _box;     /* bounding box */
       mutable std::shared_ptr<CollectFacets> _facets; 
 	/* "native" formulation , may be shared by other formulations */
+#ifdef WITH_CLP
       mutable std::unique_ptr<LPclp> _clpForm; /* LPclp formulation, if used */
+#endif
       mutable std::unique_ptr<DDbuildF2V> _DDbuildF2V; 
 		/* DDbuildF2V formulation, if used */
       mutable std::unique_ptr<DDbuildV2F> _DDbuildV2F; 
 		/* DDbuildV2F formulation, generally not used */
       mutable pol_state state = pol_state_init;
-      void minimize_constraints_clp(const Interval &tolerance=Interval(0.0)) const;
       void minimize_constraints_F2V() const;
-      void update_box_clp() const;
       void update_box_F2V() const;
       void update_box() const;
-      bool check_empty_clp() const;
       bool check_empty_F2V() const;
       bool check_empty() const;
-      double bound_row_clp(const Row &r) const;
       double bound_row_F2V(const Row &r) const;
       void build_DDbuildF2V() const;
-      void build_clpForm() const;
       void set_empty_private() const;
+#ifdef WITH_CLP
+      void minimize_constraints_clp(const Interval &tolerance=Interval(0.0)) const;
+      void update_box_clp() const;
+      bool check_empty_clp() const;
+      double bound_row_clp(const Row &r) const;
+      void build_clpForm() const;
+#endif
 };
 
 
@@ -441,7 +548,9 @@ inline Index Polytope::nbFacets() const {
 inline void Polytope::set_empty_private() const {
    state = pol_state_empty;
    _box.set_empty();
+#ifdef WITH_CLP
    _clpForm=nullptr;
+#endif
    _DDbuildF2V=nullptr;
    _DDbuildV2F=nullptr;
    _facets=nullptr;

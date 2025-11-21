@@ -2,7 +2,6 @@
 // Transformation vertices -> facets from a .ext file
 
 #include <codac>
-#include <codac-polytope.h>
 #include <vector>
 #include <set>
 #include <memory>

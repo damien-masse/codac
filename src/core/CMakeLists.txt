@@ -75,6 +75,14 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Parallelepiped.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Facet.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Facet.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope_util.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope_util.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope_dd.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope_dd.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Slice.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.h

@@ -54,6 +54,17 @@ struct FacetBase {
    }
    FacetBase(FacetBase &&fc) : bdim(fc.bdim), vdim(fc.vdim), row(fc.row) {
    }
+  
+   /* create a "min" and "max" FacetBase for constraints of the form
+      a_i x_i <= b_i (or - a_i x_i <= b_i if neg is true */
+   static std::pair<FacetBase,FacetBase> 
+		base_range(Index dim, Index i, bool neg) {
+      Row r = Row::zero(dim);
+      Index d = (i+(neg?dim:0))*(2*dim);
+      std::cout << i << " " << dim << " " << d << "\n";
+      return std::make_pair<FacetBase,FacetBase>
+		(FacetBase(d,-1.0,r),FacetBase(d,1.0,r));
+   }
 
    inline void swap(FacetBase &fb) {
       this->row.swap(fb.row);
@@ -92,6 +103,9 @@ struct FacetBase {
    }
 
    private:
+   
+   FacetBase(Index bdim, double vdim, const Row &row) : 
+		bdim(bdim), vdim(vdim), row(row) { }
 
    void compute_key() {
       if (row.size()==0) return; 
@@ -110,7 +124,7 @@ struct FacetBase {
              if (val<0.0) bdim=row.size()+i; else bdim=i;
           } else if (val_i>val2abs) {
              val2abs=val_i;
-             if (val_i<0.0) b2dim=row.size()+i; else b2dim=i;
+             if (row[i]<0.0) b2dim=row.size()+i; else b2dim=i;
           }
       }
       if (valabs==0.0) return; /* bdim=-1 */
@@ -119,7 +133,7 @@ struct FacetBase {
           bdim = bdim * (2*row.size()+1) + 2*row.size() - b2dim;
       else
           bdim = bdim * (2*row.size()+1) - b2dim;
-      vdim = valabs/val2abs;
+      vdim = val2abs/valabs;
    }
 };
 
@@ -245,8 +259,16 @@ class CollectFacets {
      CollectFacets(const Matrix &mat, const Vector &rhsvect, 
 			const std::vector<Index> &eqSet);
 
-     /** create a copy of the CollectFacets */
+     /** @brief create a copy of the CollectFacets, updating _allFacets
+      *  @param cf the CollectFacets 
+      */
      CollectFacets(const CollectFacets& cf);
+
+     /** move the elements of CollectFacets. Perform a renumbering if
+      *  nb_removed_facets > 0
+      *  @param cf the CollectFacets 
+      */
+     CollectFacets(CollectFacets&& cf);
   
      /** return the dimension of the facets */
      Index getDim() const;
@@ -312,6 +334,13 @@ class CollectFacets {
      /** get the end iterator of the facet
       * @return an iterator on the facet */
      mapCIterator endFacet() const; 
+     /** get the first iterator 
+      * @return an iterator on the facet */
+     mapIterator beginFacet(); 
+     /** get the first iterator 
+      * @return an iterator on the facet */
+     mapCIterator beginFacet() const; 
+
 
      /** change a eqfacet, keeping its Id (unless the new row creates
       * a duplicate)
@@ -378,7 +407,7 @@ class CollectFacets {
       *  remove some contraints, may put endFacet() for some Id */
      IntervalVector extractBox();
    
-     /** \brief renumber the set, removing spurious Id.
+     /** \brief renumber the set, if _allFacets have removed facets.
       *  do not modify the iterators, but modify the indices of the 
       *  facets and equality facets. 
       *  \return the matching old Id => new Id */
@@ -417,23 +446,41 @@ class CollectFacets {
       mapType _map;
       std::vector<mapIterator> _allFacets;
       std::vector<Index> _eqFacets;   /* index in _allFacets */
+      int nb_removed_facets=0;   /* number of removed facets in _allFacets */
 
       /* look for and remove a value in eqFacet */
       void remove_in_eqFacets(Index id);
       /* finish an insertion process */
       std::pair<Index,bool> result_insertion(std::pair<mapIterator,bool> res,
 		 double rhs, bool eqcst, ACTION_DUPLICATE act);
+      /* return a range of iterators between two bases */
+      std::pair<mapIterator,mapIterator> range_between_bases
+                 (const std::pair<FacetBase,FacetBase> &bases);
+
 };
 
 inline CollectFacets::CollectFacets(const CollectFacets& cf)  :
     dim(cf.getDim()), _map(cf._map), 
 	_allFacets(cf._allFacets.size(),_map.end()),
-    _eqFacets(cf._eqFacets)
+    _eqFacets(cf._eqFacets), nb_removed_facets(cf.nb_removed_facets)
 {
     /* redirect the facets */
     for (mapIterator it = _map.begin(); it!=_map.end(); ++it) {
         _allFacets[it->second.Id-1]=it;
     }
+    /* change the end iterators */
+    if (nb_removed_facets==0) return;
+    for (auto &v : _allFacets) {
+        if (v == cf._map.end()) v = _map.end();
+    }
+}
+
+inline CollectFacets::CollectFacets(CollectFacets&& cf)  :
+    dim(cf.getDim()), _map(std::move(cf._map)), 
+	_allFacets(std::move(cf._allFacets)),
+    _eqFacets(cf._eqFacets), nb_removed_facets(cf.nb_removed_facets)
+{
+    if (nb_removed_facets>0) this->renumber();
 }
 
 inline Index CollectFacets::getDim() const {
@@ -464,6 +511,20 @@ inline CollectFacets::mapIterator CollectFacets::endFacet() {
 }
 inline CollectFacets::mapCIterator CollectFacets::endFacet() const { 
    return this->_map.cend();
+}
+inline CollectFacets::mapIterator CollectFacets::beginFacet() { 
+   return this->_map.begin();
+}
+inline CollectFacets::mapCIterator CollectFacets::beginFacet() const { 
+   return this->_map.cbegin();
+}
+
+
+inline std::pair<CollectFacets::mapIterator,CollectFacets::mapIterator>
+ CollectFacets::range_between_bases
+   (const std::pair<FacetBase,FacetBase> &bases) {
+     return std::pair
+             (_map.lower_bound(bases.first),_map.lower_bound(bases.second));
 }
 
 }

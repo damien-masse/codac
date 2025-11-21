@@ -14,8 +14,8 @@
     add_subdirectory(extensions/capd)
   endif()
 
-  if(WITH_POLYTOPE)
-    add_subdirectory(extensions/polytope/)
+  if(WITH_CLP)
+    add_subdirectory(extensions/clp)
   endif()
 
   #if(WITH_PYTHON)

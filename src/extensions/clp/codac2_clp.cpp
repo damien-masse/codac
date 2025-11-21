@@ -105,6 +105,8 @@ LPclp::LPclp(Index dim) :
 {
 }
 
+#if 0   
+/* no copy constructor it shares the facet pointer */
 LPclp::LPclp(const LPclp &P) :
     nbRows(P.nbRows), nbCols(P.nbCols),
     Afacets(P.Afacets), objvect(P.objvect), cststat(P.cststat),
@@ -115,6 +117,7 @@ LPclp::LPclp(const LPclp &P) :
     tolerance(P.tolerance)
 {
 }
+#endif
 
 LPclp::~LPclp() {
    delete(model);

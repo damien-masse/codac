@@ -108,7 +108,7 @@ Interval bound_linear_form(const Facet &f,
 } /* end of namespace Facet_ */
 
 std::ostream& operator<<(std::ostream& os, const Facet& f) {
-   os << f.second.Id << " : " << f.first.row << (f.second.eqcst ? "=" : "<=" ) << f.second.rhs;
+   os << f.second.Id << "(" << f.first.bdim << "," << f.first.vdim << ") : " << f.first.row << (f.second.eqcst ? "=" : "<=" ) << f.second.rhs;
    return os;
 }
 
@@ -132,7 +132,7 @@ CollectFacets::CollectFacets(const Matrix &mat, const Vector &rhsvect,
    for (Index i=0;i<mat.rows();i++) {
       std::pair<Index,bool> a =this->insert_facet(mat.row(i),rhsvect[i],false);
       if (!a.second) 
-	throw std::domain_error("CollectFacets with duplicate rows");
+	throw std::domain_error("CollectFacets construction with duplicate rows");
    }
    for (Index i: eqSet) { 
       _eqFacets.push_back(i);
@@ -240,9 +240,11 @@ std::pair<CollectFacets::mapIterator,bool>
            if (old_eqcst) 
 		remove_in_eqFacets(result_insert.position->second.Id-1);
 	   _allFacets[result_insert.position->second.Id-1] = endFacet();
+ 	   nb_removed_facets++;
            return { result_insert.position, false };
       } else {
-         _allFacets[_eqFacets[id]] = this->_map.end();
+         _allFacets[_eqFacets[id]] = endFacet();
+	 nb_removed_facets++;
          _eqFacets[id] = _eqFacets.back();
          _eqFacets.pop_back();
          return { this->_map.end(), false };
@@ -270,11 +272,13 @@ std::pair<CollectFacets::mapIterator,bool>
          if (old_eqcst) 
 		remove_in_eqFacets(result_insert.position->second.Id-1);
 	 _allFacets[result_insert.position->second.Id-1] = endFacet();
+ 	 nb_removed_facets++;
 	 result_insert.position->second.Id=id;
          _allFacets[id-1] = result_insert.position;
          return { result_insert.position, false };
       } else {
-         _allFacets[id-1] = this->_map.end();
+         _allFacets[id-1] = endFacet();
+ 	 nb_removed_facets++;
          return { this->_map.end(), false };
       }
    }
@@ -331,11 +335,13 @@ CollectFacets::mapIterator
                 if (old_eqcst) 
 	   	   remove_in_eqFacets(result_insert.position->second.Id-1);
 	        _allFacets[result_insert.position->second.Id-1] = endFacet();
+	  	nb_removed_facets++;
 	        result_insert.position->second.Id=aId+1;
 	        _allFacets[aId] = result_insert.position;
                 ret=result_insert.position;
              } else {
                 _allFacets[aId] = endFacet();
+		nb_removed_facets++;
                 ret=endFacet();
              }
          } else {
@@ -353,10 +359,10 @@ bool CollectFacets::removeFacetById(Index id) {
       this->remove_in_eqFacets(id-1);
    }
    _map.erase(_allFacets[id-1]);
-   _allFacets[id-1]=_map.end();
+   _allFacets[id-1]=endFacet();
+   nb_removed_facets++;
    return true;
 }
-
 
 IntervalVector CollectFacets::extractBox() {
    assert_release(this->getDim()!=-1);
@@ -367,35 +373,48 @@ IntervalVector CollectFacets::extractBox() {
       FacetRhs &rhs = it->second;
       if (rhs.rhs<0.0 || (rhs.rhs>0.0 && rhs.eqcst))
          return IntervalVector::constant(this->getDim(),Interval::empty());
+      _allFacets[it->second.Id-1]= endFacet();
+      nb_removed_facets++;
+      if (rhs.eqcst) remove_in_eqFacets(it->second.Id-1);
       _map.erase(it);
    }
    /* check bounds if IV */
    IntervalVector ret = IntervalVector(this->getDim());
    for (Index i=0;i<this->getDim();i++) {
-      double lbound=-oo, ubound=+oo;
-      row[i]=1.0;
-      it = _map.find(FacetBase(row));
-      if (it!=_map.end()) {
-         FacetRhs &rhs = it->second;
-         ubound = rhs.rhs;
-         if (rhs.eqcst) lbound=rhs.rhs;
-         _map.erase(it);
+      Interval &bound = ret[i];
+      std::pair<mapIterator,mapIterator> pIt 
+	= this->range_between_bases(FacetBase::base_range(this->getDim(),i,
+				false));
+      while (pIt.first!=pIt.second && !bound.is_empty()) {
+         FacetRhs &rhs = pIt.first->second;
+         Interval val(pIt.first->first.row[i]);
+         if (rhs.eqcst) bound &= rhs.rhs/val;
+         else bound = min(bound,rhs.rhs/val);
+         _allFacets[pIt.first->second.Id-1]=endFacet();
+         nb_removed_facets++;
+         if (rhs.eqcst) remove_in_eqFacets(pIt.first->second.Id-1);
+         pIt.first = _map.erase(pIt.first); /* pIt points to the next element */
       }
-      row[i]=-1.0;
-      it = _map.find(FacetBase(row));
-      if (it!=_map.end()) {
-         FacetRhs &rhs = it->second;
-         lbound = std::max(lbound,-rhs.rhs);
-         if (rhs.eqcst) ubound= std::min(ubound,-rhs.rhs);
-         _map.erase(it);
+      pIt = this->range_between_bases(FacetBase::base_range(this->getDim(),i,
+				true));
+      while (pIt.first!=pIt.second && !bound.is_empty()) {
+         FacetRhs &rhs = pIt.first->second;
+         Interval val(pIt.first->first.row[i]);
+         if (rhs.eqcst) bound &= rhs.rhs/val;
+         else bound = max(bound,rhs.rhs/val);
+         _allFacets[pIt.first->second.Id-1]=endFacet();
+         nb_removed_facets++;
+         if (rhs.eqcst) remove_in_eqFacets(pIt.first->second.Id-1);
+         pIt.first = _map.erase(pIt.first); /* pIt points to the next element */
       }
-      ret[i] = Interval(lbound,ubound);
+      if (bound.is_empty()) { ret.set_empty(); break; }
    }
    return ret;
 }
 
 std::vector<Index> CollectFacets::renumber() {
-   /* renumber the constraints */
+   /* renumber the constraints, only if there are removed facets */
+   if (nb_removed_facets==0) return std::vector<Index>();
    std::vector<Index> ret(_allFacets.size(),-1);
    Index sineq=0, seq=0;
    _allFacets.resize(_map.size());
@@ -413,6 +432,7 @@ std::vector<Index> CollectFacets::renumber() {
    }
    if (seq<(Index)_eqFacets.size())
      _eqFacets.resize(seq);
+   nb_removed_facets=0;
    return ret;
 }
 
