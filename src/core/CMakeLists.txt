@@ -96,6 +96,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_FunctionBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_VarBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_constants.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_constants_impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExpr.h
