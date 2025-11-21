@@ -46,6 +46,7 @@ int main(){
 
   fig2->draw_AUV({1,1,3.14/2},2.,{{Color::black(),Color::yellow()}, "0.1", "vehicles"});
   fig2->draw_tank({2,1,3.14/2},1.5,{{Color::black(),Color::yellow()},"vehicles","0.1"});
+  fig2->draw_motor_boat({0,0,0}, 1., {{Color::black(),Color::yellow()},"vehicles"});
   fig2->draw_pie({2,2},{1.5,2.5},{(3*3.14/4)-0.5,(3*3.14/4)+0.5},{Color::blue(),Color::cyan()});
   fig2->draw_polyline({{2,-0.5},{4,0.5},{3,1.5},{4,2.5},{3,3}}, {Color::red(),".."});
   fig2->draw_polygon({{2,4.5},{4,4.5},{4.2,3.5},{3.5,3}}, {Color::none(),Color::green(0.5)});
@@ -61,7 +62,7 @@ int main(){
 	{{Color::red(),Color::yellow(0.4)},"zonotope", "0.05"});
 
   Parallelepiped p_3d ({1.2,3.5,2.2},Matrix({{0.5,0.4,0},{0,0.2,0.1},{0,0,0.3}}));
-  fig2->draw_zonotope(p_3d.project({0,1}), {{Color::green(),Color::yellow(0.4)}, "zonotope"});
+  fig2->draw_zonotope(p_3d.proj({0,1}), {{Color::green(),Color::yellow(0.4)}, "zonotope"});
 
   // Colors
   // predefined colors without and with opacity

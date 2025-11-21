@@ -56,6 +56,7 @@ const vector<FigureAxis>& Figure2D::axes() const
 Figure2D& Figure2D::set_axes(const FigureAxis& axis1, const FigureAxis& axis2)
 {
   _axes = { axis1, axis2 };
+  assert_release(axis1.dim_id != axis2.dim_id);
   for(const auto& output_fig : _output_figures)
     output_fig->update_axes();
   return *this;
@@ -400,6 +401,8 @@ void Figure2D::draw_trajectory(const AnalyticTraj<VectorType>& x, const ColorMap
 void Figure2D::plot_trajectory(const SampledTraj<double>& x, const StyleProperties& s)
 {
   _axes[0].limits = x.tdomain();
+  if(_axes[1].limits == Interval(0,1))
+    _axes[1].limits.set_empty();
   _axes[1].limits |= x.codomain();
   for(const auto& output_fig : _output_figures)
     output_fig->update_axes();
@@ -442,20 +445,53 @@ void Figure2D::plot_trajectories(const SampledTraj<Vector>& x, const StyleProper
     plot_trajectory(xi,s);
 }
 
-void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s)
+template<typename Func>
+void draw_tube_common(Figure2D& fig, const SlicedTube<IntervalVector>& x, int max_nb_slices_to_display, const Func& slice_color)
 {
-  for(auto it = x.rbegin(); it != x.rend(); ++it)
-    draw_box(it->codomain(),s);
+  const int n = x.nb_slices();
+  auto tube_t0tf = x.tdomain()->t0_tf();
+
+  if(n < max_nb_slices_to_display)
+    for(auto it = x.tdomain()->rbegin(); it != x.tdomain()->rend(); ++it)
+      fig.draw_box(x.slice(it)->codomain(), slice_color(tube_t0tf,it));
+
+  else
+  {
+    int group_size = std::max(1, (int)(1.*n/max_nb_slices_to_display));
+
+    for(auto it = x.tdomain()->rbegin() ; it != x.tdomain()->rend(); )
+    {
+      auto c = slice_color(tube_t0tf,it);
+      ConvexPolygon p(x.slice(it)->codomain());
+      it++;
+
+      for(int j = 0; j < group_size-1 && it != x.tdomain()->rend(); j++,it++)
+        p |= ConvexPolygon(x.slice(it)->codomain());
+
+      fig.draw_polygon(p, c);
+      if(it != x.tdomain()->rend())
+      {
+        it--; it--;
+      }
+    }
+  }
 }
 
-void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap)
+void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const StyleProperties& s, int max_nb_slices_to_display)
 {
-  auto tube_t0tf = x.tdomain()->t0_tf();
-  for(auto it = x.rbegin(); it != x.rend(); ++it)
-  {
-    auto c = cmap.color((it->t0_tf().mid()-tube_t0tf.lb())/tube_t0tf.diam());
-    draw_box(it->codomain(), {c,c});
-  }
+  draw_tube_common(*this, x, max_nb_slices_to_display,
+    [&s]([[maybe_unused]] const Interval& tube_t0tf, [[maybe_unused]] std::list<TSlice>::reverse_iterator it) {
+      return s;
+    });
+}
+
+void Figure2D::draw_tube(const SlicedTube<IntervalVector>& x, const ColorMap& cmap, int max_nb_slices_to_display)
+{
+  draw_tube_common(*this, x, max_nb_slices_to_display,
+    [&cmap](const Interval& tube_t0tf, std::list<TSlice>::reverse_iterator it) {
+      auto c = cmap.color((it->mid()-tube_t0tf.lb())/tube_t0tf.diam());
+      return StyleProperties({c,c});
+    });
 }
 
 template<typename Func>
