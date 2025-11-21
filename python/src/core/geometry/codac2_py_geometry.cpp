@@ -69,4 +69,8 @@ void export_geometry(py::module& m)
   m.def("rotate", (ConvexPolygon (*)(const ConvexPolygon&,const Interval&,const IntervalVector&))&rotate,
     T_ROTATE_CONST_T_REF_CONST_INTERVAL_REF_CONST_INTERVALVECTOR_REF,
     "x"_a, "a"_a, "c"_a = Vector::zero(2));
+
+  m.def("merge_adjacent_points", &merge_adjacent_points,
+    VOID_MERGE_ADJACENT_POINTS_LIST_INTERVALVECTOR_REF,
+    "l"_a);
 }

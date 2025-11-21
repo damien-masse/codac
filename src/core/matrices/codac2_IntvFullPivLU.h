@@ -93,7 +93,7 @@ namespace codac2
       *  \return a matrix of row vectors, may be empty
       */
      IntervalMatrix cokernel() const;
-     /** \brief ``underapproximation'' of the column space of the matrix,
+     /** \brief "Underapproximation" of the column space of the matrix,
       *  ie return a set of independant columns of the original matrix
       *  which is possibly maximal. As for Eigen, you must 
       *  provide the original matrix used for the decomposition.
