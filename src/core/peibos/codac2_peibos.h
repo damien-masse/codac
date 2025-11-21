@@ -18,8 +18,8 @@ namespace codac2
 {
   // Forward declarations to reduce compilation load caused by heavy template use:
   class AnalyticTypeBase;
-  template<class T>
-    requires std::is_base_of_v<codac2::AnalyticTypeBase, T>
+  template<typename T>
+    requires std::is_base_of_v<codac2::AnalyticTypeBase,T>
   class AnalyticFunction;
   class Parallelepiped;
   class OctaSym;
