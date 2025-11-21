@@ -149,11 +149,11 @@ namespace codac2
        * \brief Draws text on the figure
        * 
        * \param text Text to display
-       * \param pos Position of the top-left corner of the text
+       * \param ul Position of the top-left corner of the text
        * \param scale Scaling of the text (VIBes only)
        * \param style Style of the text (color, layer)
        */
-      virtual void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& style = StyleProperties()) = 0;
+      virtual void draw_text(const std::string& text, const Vector& ul, double scale, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws a raster on the figure

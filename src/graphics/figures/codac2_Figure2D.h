@@ -477,11 +477,11 @@ namespace codac2
        * \brief Draws text on the figure
        * 
        * \param text Text to display
-       * \param pos Position of the top-left corner of the text
+       * \param ul Position of the top-left corner of the text
        * \param scale Scaling of the text (VIBes only)
        * \param style Style of the text (color, layer)
        */
-      void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& style = StyleProperties());
+      void draw_text(const std::string& text, const Vector& ul, double scale, const StyleProperties& style = StyleProperties());
 
       /**
        * \brief Draws a raster on the figure in VIBes only, only the bounding box is drawn in IPE
@@ -1051,14 +1051,14 @@ namespace codac2
        * \brief Draws text on the figure
        * 
        * \param text Text to display
-       * \param pos Position of the top-left corner of the text
+       * \param ul Position of the top-left corner of the text
        * \param scale Scaling of the text (VIBes only)
        * \param style Style of the text (edge color, layer)
        */
-      static void draw_text(const std::string& text, const Vector& pos, double scale, const StyleProperties& style = StyleProperties())
+      static void draw_text(const std::string& text, const Vector& ul, double scale, const StyleProperties& style = StyleProperties())
       {
         auto_init();
-        selected_fig()->draw_text(text,pos,scale,style);
+        selected_fig()->draw_text(text,ul,scale,style);
       }
 
       /**

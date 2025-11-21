@@ -529,9 +529,9 @@ void Figure2D_IPE::draw_motor_boat(const Vector& x, float size, const StylePrope
   _f_temp_content << "</group>";
 }
 
-void Figure2D_IPE::draw_text(const std::string& text, const Vector& pos, [[maybe_unused]] double scale, const StyleProperties& style)
+void Figure2D_IPE::draw_text(const std::string& text, const Vector& ul, [[maybe_unused]] double scale, const StyleProperties& style)
 {
-  assert(_fig.size() <= c.size());
+  assert(_fig.size() <= ul.size());
   _colors.emplace(ipe_str(style.stroke_color), style.stroke_color);
   _colors.emplace(ipe_str(style.fill_color), style.fill_color);
 
@@ -541,7 +541,7 @@ void Figure2D_IPE::draw_text(const std::string& text, const Vector& pos, [[maybe
   _f_temp_content << "\n \
     <text layer=\"" << style.layer << "\" \n \
     transformations=\"translations\" \n \
-    pos=\"" << scale_x(pos[i()]) << " " << scale_y(pos[j()]) << "\" \n \
+    pos=\"" << scale_x(ul[i()]) << " " << scale_y(ul[j()]) << "\" \n \
     stroke=\"codac_color_" << ipe_str(style.stroke_color) << "\" \n \
     opacity=\"" << ipe_opacity(style.stroke_color) << "%\" \n \
     type=\"label\" \n \
