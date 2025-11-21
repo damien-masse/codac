@@ -52,6 +52,7 @@
     domains/paving/codac2_py_Subpaving.cpp
     domains/zonotope/codac2_py_Parallelepiped.cpp
     domains/zonotope/codac2_py_Zonotope.cpp
+    domains/polytope/codac2_py_Polytope.cpp
     domains/tube/codac2_py_Slice.h
     domains/tube/codac2_py_SlicedTube.h
     domains/tube/codac2_py_TDomain.cpp
@@ -82,6 +83,7 @@
     matrices/codac2_py_MatrixBase.h
     matrices/codac2_py_MatrixBlock.h
     matrices/codac2_py_Vector.cpp
+    matrices/codac2_py_Row.cpp
     matrices/codac2_py_VectorBase.h
 
     operators/codac2_py_operators.cpp

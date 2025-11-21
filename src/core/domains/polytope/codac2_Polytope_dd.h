@@ -1,5 +1,5 @@
 /**
- * \file codac2_Polytope_dd.h implementation of the dd algorithm
+ * \file codac2_Polytope_dd.h implementation of the dd algorithms
  * ----------------------------------------------------------------------------
  *  \date       2025
  *  \author     Damien Massé
@@ -33,9 +33,10 @@
 namespace codac2 {
 
 
-#if 0
-struct DDlink; /* link between two vertices */
-#endif
+/** \brief multiply a vector by a power of 2 (without rounding)
+ *  such that 2^(-10) <= norm(vec) <= 2^10
+ *  \param vec the vector (modified)
+ *  \return the multiplying factor */
 inline double reduce_vector_without_rounding(IntervalVector &vec) {
       int fx;
       if (frexp(vec[0].mag(),&fx)==0.0) fx=INT_MIN;
@@ -53,6 +54,11 @@ inline double reduce_vector_without_rounding(IntervalVector &vec) {
       }
       return mult;
 }
+
+/** \brief multiply a row by a power of 2 (without rounding)
+ *  such that 2^(-10) <= norm(vec) <= 2^10
+ *  \param vec the row (modified)
+ *  \return the multiplying factor */
 inline double reduce_row_without_rounding(Row &vec) {
       int fx;
       if (frexp(vec[0],&fx)==0.0) fx=INT_MIN;
@@ -72,6 +78,7 @@ inline double reduce_row_without_rounding(Row &vec) {
 }
 
 
+/** \brief structure for vertices in BuildF2V */
 struct DDvertex {
    Index Id;
    IntervalVector vertex;
@@ -153,38 +160,8 @@ struct DDvertex {
  
 };
 
-#if 0
-struct DDlink {
-   std::forward_list<DDvertex>::iterator V1;
-   std::forward_list<DDvertex>::iterator V2;
-//   std::unordered_set<std::vector<Index>> fcts;
-  
-   DDlink(const std::forward_list<DDvertex>::iterator &V1,
-	  const std::forward_list<DDvertex>::iterator &V2
-		/*, const std::vector<Index> &fcts*/) : V1(V1), V2(V2) {
-/*       this->fcts.insert(fcts); */
-   }
-
-   void changeVertex(const std::forward_list<DDvertex>::iterator &Vold,
-                const std::forward_list<DDvertex>::iterator &Vnew) {
-       if (this->V1==Vold) { this->V1=Vnew; return; }
-       this->V2=Vnew;
-   }
-   
-   const std::forward_list<DDvertex>::iterator &otherVertex
-		(const std::forward_list<DDvertex>::iterator &V) const {
-       if (V==V1) return V2;
-       return V1;
-   }
-  
-#if 0
-   void addFct(const std::vector<Index> &fcts) {
-      this->fcts.insert(fcts);
-   }
-#endif
-};
-#endif
-
+/** \brief Structure to build an enclosing set of IntervalVector
+ *  from a set of facets */
 class DDbuildF2V {
   public:
      /* create the build with a collection of facet, but
@@ -275,6 +252,7 @@ inline const std::vector<Index> &DDbuildF2V::get_reffacets() const
 	{ return this->reffacets; }
 
 
+/** \brief structure for facets in BuildF2V */
 struct DDfacet {
    CollectFacets::mapIterator facetIt;
    double lambda;
@@ -336,6 +314,8 @@ struct DDfacet {
 
 };
 
+/** \brief construction of an (approximate) set of facets from a
+ *  a set of vertices */
 class DDbuildV2F {
   public:
      DDbuildV2F(Index idVertex, const Vector &vertex);

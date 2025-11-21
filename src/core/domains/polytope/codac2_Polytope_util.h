@@ -35,20 +35,25 @@ namespace codac2 {
 
 /** read a .ine file and return a list of facets
  *  this is a very crude function, which assumes the format of the 
- *  file is correct. Equalities are not treated for now.
- *  @param filename name of the file */
+ *  file is correct. Linearities are not treated for now.
+ *  @param filename name of the file 
+ *  @return the CollectFacets structure containing the facets */
 CollectFacets read_ineFile(const char *filename);
 
 /** read a .ext file and return a list of vertices
  *  this is a very crude function, which assumes the format of the 
  *  file is correct. Rays are not treated for now.
- *  @param filename name of the file */
+ *  @param filename name of the file
+ *  @return a set of vertices */
 std::vector<Vector> read_extFile(const char *filename);
 
 /** construct the list of facets of a 3D-polyhedron from the buildF2V 
  * structure 
  * use the mid of each vertex. For rays/line use an arbitrary bound 
- * @param build the buildF2V structure */
+ * @param build the buildF2V structure 
+ * @param bound the bound for rays/line (not correctly handled)
+ * @return the set of set of vertices
+ */
 std::vector<std::vector<Vector>> build_3Dfacets(const DDbuildF2V &build, double bound=50.0);
    
 }

@@ -31,8 +31,10 @@
 #include "codac2_Polytope_util.h"
 #include "codac2_Facet.h"
 #include "codac2_Polytope_dd.h"
+#include "codac2_Parallelepiped.h"
+#include "codac2_Zonotope.h"
 #ifdef WITH_CLP
-#include "../../../extensions/polytope/codac2_clp.h"
+#include "../../../extensions/clp/codac2_clp.h"
 #endif
 
 
@@ -72,13 +74,13 @@ namespace codac2 {
 
         /** 
          * \brief Constructs a polytope from a set of vertices
-         * \param the vertices
+         * \param vertices the vertices
          */
         Polytope(const std::vector<Vector> &vertices);
 
         /** 
          * \brief Constructs a polytope from a set of vertices as intervalboxes
-         * \param the vertices
+         * \param vertices the vertices
          */
         Polytope(const std::vector<IntervalVector> &vertices);
 
@@ -86,7 +88,7 @@ namespace codac2 {
          * \brief Constructs a polytope from a set of vertices (intervalVector)
          * and a set of linear forms, described as a CollectFacets
          * \param vertices the vertices
-         * \param facetforms the facets description (the CollectFacets)
+         * \param facetsform the facets description (the CollectFacets)
          */
         Polytope(const std::vector<IntervalVector> &vertices, 
 		const CollectFacets &facetsform);
@@ -145,6 +147,14 @@ namespace codac2 {
 	 *  same dimension
          *  \return the polytope */
         static Polytope union_of_polytopes(std::initializer_list<Polytope> lst);
+
+        /** \brief convex union of polytopes
+         *  use vertices to join the polytopes, as such the result may be
+         *  too large
+         *  \param lst a non-empty initializer_list of valid polytopes of 
+	 *  same dimension
+         *  \return the polytope */
+        static Polytope union_of_polytopes(const std::vector<Polytope> &lst);
 
         /**
          * \brief Destructor
@@ -219,7 +229,7 @@ namespace codac2 {
          * return an interval I : row X is guaranteed to be less than I.ub()
          * and I.lb gives an indication of the precision of the computation
          * (i.e. if diam(I) is low, a constraint close to row was used
-         * \param fbase the constraint, expressed as a FacetBase
+         * \param base the constraint, expressed as a FacetBase
          * \return the interval I */
         Interval fast_bound(const FacetBase &base) const;
 
@@ -271,7 +281,7 @@ namespace codac2 {
         BoolInterval intersects(const IntervalVector& x) const;
         
         /** \brief intersects a polytope
-         * \param x the polytope
+         * \param p the polytope
          * \return if the polytope intersects the box
          */
         BoolInterval intersects(const Polytope &p) const;
@@ -319,6 +329,7 @@ namespace codac2 {
         /** \brief add a inequality (pair row X <= rhs)
          *  do basic checks, but do not minimize the system
          *  \param facet the constraint
+         *  \param tolerance tolerance for redundancy checking (CLP only)
          *  \return false if the (basic) checks showed the constraint to
          *  be redundant (or inside tolerance), true if added */
         bool add_constraint(const std::pair<Row,double>& facet,
@@ -328,7 +339,8 @@ namespace codac2 {
          *  using the bounding box
          *  do basic checks, but do not minimize the system
          *  \param cst the row constraint
-         *  \param x the rhs
+         *  \param rhs the rhs
+         *  \param tolerance tolerance for redundancy checking (CLP only)
          *  \return false if the (basic) checks showed the constraint to
          *  be redundant (or inside tolerance), true if added */
         bool add_constraint(const IntervalRow &cst, double rhs,
@@ -339,7 +351,8 @@ namespace codac2 {
          *  do basic checks, but do not minimize the system. Also,
          *  should not be used for equalities (cst and rhs punctual)
          *  \param cst the row constraint
-         *  \param x the rhs
+         *  \param rhs the rhs
+         *  \param tolerance tolerance for redundancy checking (CLP only)
          *  \return pair of booleans (one for each constraints possibly added */
         std::pair<bool,bool> add_constraint_band(const IntervalRow &cst,
 		 const Interval &rhs, double tolerance=0.0);
@@ -443,7 +456,7 @@ namespace codac2 {
          *  M is used only to approximate the bounding box of the result,
          *  Minv is used to compute the new constraints
          *  \param M matrix
-         *  \param MInv its inverse
+         *  \param Minv its inverse
          *  \param P non-empty vector 
          *  \return a new polytope */
         Polytope bijective_affine_transform(const IntervalMatrix &M,
@@ -561,5 +574,6 @@ inline void Polytope::set_empty() {
    this->set_empty_private();
 }
 
+std::ostream& operator<<(std::ostream& os, const Polytope &P);
 
 }

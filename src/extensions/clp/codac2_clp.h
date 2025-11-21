@@ -108,12 +108,12 @@ class LPclp {
       /** \brief destructor */
       ~LPclp();
 
-      /** \brief set bbox
-       *  \param bbox the new bbox
+      /** \brief set the bounding box
+       *  \param box the new box
        */
       void set_bbox(const IntervalVector &box);
 
-      /** \brief get bbox (after minimization)
+      /** \brief get bounding box (after minimization)
        *  \return the bbox
        */
       IntervalVector get_bbox();
@@ -135,8 +135,7 @@ class LPclp {
        *  \return id if ok, or -1 if failure */
       Index updateConstraint(Index id);
       /** \brief Set the objvective
-       *  \param objvect the new objective
-       *  \param rhs its RHS */
+       *  \param objvect the new objective */
       void setObjective(const Row &objvect);
       /** \brief Set the ''activity'' of a constraint 
        *  inactive constraints <=> rhs put to oo

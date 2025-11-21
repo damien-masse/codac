@@ -61,7 +61,6 @@ struct FacetBase {
 		base_range(Index dim, Index i, bool neg) {
       Row r = Row::zero(dim);
       Index d = (i+(neg?dim:0))*(2*dim);
-      std::cout << i << " " << dim << " " << d << "\n";
       return std::make_pair<FacetBase,FacetBase>
 		(FacetBase(d,-1.0,r),FacetBase(d,1.0,r));
    }
@@ -254,8 +253,8 @@ class CollectFacets {
      /** generate the set of facets from a matrix and a vector, i.e.
       *  mat X <= rhs (eqSet states which rows of mat are equalities)
       *  @param mat the matrix
-      *  @rhsvect the vector of rhs
-      *  @eqSet the set of equalities */
+      *  @param rhsvect the vector of rhs
+      *  @param eqSet the set of equalities */
      CollectFacets(const Matrix &mat, const Vector &rhsvect, 
 			const std::vector<Index> &eqSet);
 
@@ -355,9 +354,9 @@ class CollectFacets {
 			 double nrhs, ACTION_DUPLICATE act=KEEP_RHS);
      /** change a facet, keeping its Id (unless the new row creates
       * a duplicate)
-      *  @param Id (the Id of the facet starting from 1)
-      *  @param nrow (the new row of the facet)
-      *  @param nrhs (the new right-hand side)
+      *  @param id the id of the facet starting from 1
+      *  @param nrow the new row of the facet
+      *  @param nrhs the new right-hand side
       *  @param act action if duplicate
       *  @return an iterator on the new facet, true if the modified facet
       *  has been inserted, false if there was a duplicate. In this
@@ -378,6 +377,7 @@ class CollectFacets {
         if nbound = -oo or +oo, do not modify/add the new facet
         @param eqId the equality Id of the equality facet
         @param nbound the new bound
+        @param act action if duplicate
         @return depends on the construction
             nbound=-oo => current facet iterator
             -oo<nbound<rhs => new facet iterator (for nbound), or endFacet if

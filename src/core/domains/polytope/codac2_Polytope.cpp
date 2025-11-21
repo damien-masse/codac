@@ -30,7 +30,7 @@
 #include "codac2_Polytope.h"
 #include "codac2_Facet.h"
 #ifdef WITH_CLP
-#include "../../../extensions/polytope/clp/codac2_clp.h"
+#include "../../../extensions/clp/codac2_clp.h"
 #endif
 
 using namespace codac2;
@@ -241,7 +241,7 @@ Interval Polytope::fast_bound(const FacetBase &base) const {
    if (base.row[gdim]>0.0) {
       res= Interval(_box[gdim].ub())*base.row[gdim];
    } else {
-      res= Interval(-_box[gdim].lb())*base.row[gdim];
+      res= Interval(_box[gdim].lb())*base.row[gdim];
    }
    if (!base.isCoord()) {
       Row bcopy = base.row;
@@ -293,16 +293,6 @@ double Polytope::bound_row_F2V(const Row &r) const {
    return a;
 }
 
-#ifdef WITH_CLP
-double Polytope::bound_row_clp(const Row &r) const {
-   this->build_clpForm();
-   _clpForm->setObjective(r);
-   LPclp::lp_result_stat ret = _clpForm->solve();
-   if (ret[EMPTY]) return -oo;
-   return _clpForm->getValobj().ub();
-}
-#endif
-
 double Polytope::bound_row(const Row &r) const {
    assert(r.size()==_dim);
    if (state[EMPTY]) return -oo;
@@ -334,49 +324,6 @@ void Polytope::build_DDbuildF2V() const {
    }
    state[F2VFORM]=true;
 }
-
-#ifdef WITH_CLP
-void Polytope::build_clpForm() const {
-   if (state[CLPFORM]) return;
-   if (state[EMPTY]) { 
-        _clpForm=nullptr;
-        return;
-   }
-   _clpForm = std::make_unique<LPclp>(_dim,_facets,_box);
-   state[CLPFORM]=true;
-}
-
-void Polytope::minimize_constraints_clp(const Interval &tolerance) const { 
-   assert_release(!state[MINIMIZED]);
-   this->build_clpForm();
-   int ret = _clpForm->minimize_polytope(tolerance, false, !state[BOXUPDATED]);
-   if (ret==-1) {
-      this->set_empty_private();
-      return;
-   }
-   state[NOTEMPTY]=true;
-   if (!state[BOXUPDATED]) {
-     _box &= _clpForm->get_bbox();
-     state[BOXUPDATED]=true;
-   }
-   bool changed=false;
-   for (Index i=0;i<_facets->nbfcts();i++) {
-      if (_clpForm->isRedundant(i)) {
-	_facets->removeFacetById(i+1);
-        changed=true;
-      }
-   } 
-   if (changed) {
-      std::vector<Index> corresp = _facets->renumber();
-      if (state[F2VFORM]) {
-         _DDbuildF2V->update_renumber(corresp);
-      }
-      state[CLPFORM]=false; state[V2FFORM]=false;
-      _clpForm=nullptr;
-   }
-   state[MINIMIZED]=true;
-}
-#endif
 
 void Polytope::minimize_constraints_F2V() const { 
    assert_release(!state[MINIMIZED]);
@@ -416,21 +363,6 @@ void Polytope::minimize_constraints() const {
    this->minimize_constraints_F2V(); 
 }
 
-#ifdef WITH_CLP
-void Polytope::update_box_clp() const {
-   assert_release(!state[BOXUPDATED]);
-   this->build_clpForm();
-   int ret = _clpForm->minimize_box();
-   if (ret==-1) {
-      this->set_empty_private();
-      return;
-   }
-   _box &= _clpForm->get_bbox();
-   state[NOTEMPTY]=true;
-   state[BOXUPDATED]=true;
-}
-#endif
-
 void Polytope::update_box_F2V() const {
    assert_release(!state[BOXUPDATED]);
    this->build_DDbuildF2V();
@@ -451,20 +383,6 @@ void Polytope::update_box() const {
 #endif
    this->update_box_F2V(); 
 }
-
-#ifdef WITH_CLP
-bool Polytope::check_empty_clp() const {
-   assert_release(!state[NOTEMPTY] && !state[EMPTY]);
-   this->build_clpForm();
-   int ret = _clpForm->check_emptiness();
-   if (ret==-1) {
-      this->set_empty_private();
-      return true;
-   }
-   state[NOTEMPTY]=true;
-   return false;
-}
-#endif
 
 bool Polytope::check_empty_F2V() const {
    assert_release(!state[NOTEMPTY] && !state[EMPTY]);
@@ -887,7 +805,7 @@ Polytope Polytope::reverse_affine_transform(const IntervalMatrix &M,
    /* first the box */
    for (Index i=0;i<_dim;i++) {
       IntervalRow rI = M.row(i);
-      Interval rhs = _box[i] - rI.dot(P);
+      Interval rhs = _box[i] - P[i];
       Row r = rI.mid();
       rI = rI - r;
       rhs -= rI.dot(bbox);
@@ -914,7 +832,7 @@ Polytope Polytope::reverse_affine_transform(const IntervalMatrix &M,
    }
    for (auto &facet : _facets->get_map()) {
       IntervalRow rI = facet.first.row * M;
-      Interval rhs = facet.second.rhs - rI.dot(P);
+      Interval rhs = facet.second.rhs - facet.first.row.dot(P);
       Row r = rI.mid();
       rI = rI - r;
       rhs -= rI.dot(bbox);
@@ -954,6 +872,25 @@ Polytope &Polytope::operator&=(const Polytope &P) {
 }
 
 Polytope Polytope::union_of_polytopes(std::initializer_list<Polytope> lst) {
+   if (lst.size()==0) return Polytope();
+   if (lst.size()==1) return Polytope(*(lst.begin()));
+   Index dim = lst.begin()->dim();
+   IntervalVector box = IntervalVector::constant(dim,Interval::empty());
+   std::vector<IntervalVector> lvert;
+   for (auto &P : lst) {
+      std::vector<IntervalVector> tmp = 
+		P.compute_vertices();
+      lvert.insert(lvert.end(),tmp.begin(),tmp.end());
+      box |= P.box();
+   }
+   if (lvert.size()==0) {
+       return Polytope(dim,true);
+   }
+   Polytope ret= Polytope(lvert);
+   return (ret &= box);
+}
+
+Polytope Polytope::union_of_polytopes(const std::vector<Polytope> &lst) {
    if (lst.size()==0) return Polytope();
    if (lst.size()==1) return Polytope(*(lst.begin()));
    Index dim = lst.begin()->dim();
