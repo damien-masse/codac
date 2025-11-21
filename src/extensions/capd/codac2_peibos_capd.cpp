@@ -14,23 +14,23 @@ using namespace std;
 
 namespace codac2
 {
-  std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, bool verbose)
+  vector<pair<PEIBOS_CAPD_Key,pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, bool verbose)
   {
     return PEIBOS(i_map, tf, psi_0, Sigma, epsilon, Vector::zero(psi_0.output_size()), verbose);
   }
 
-  std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const std::vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose)
+  vector<pair<PEIBOS_CAPD_Key,pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> PEIBOS(const capd::IMap& i_map, double tf, const AnalyticFunction<VectorType>& psi_0, const vector<OctaSym>& Sigma, double epsilon, const Vector& offset, bool verbose)
   {
     int m = psi_0.input_size();
     int n = psi_0.output_size();
 
-    assert(offset.size() == n);
-    assert (m < n);
-    assert (Sigma.size() > 0 && (int) Sigma[0].size() ==  n);
+    assert_release(offset.size() == n);
+    assert_release(m < n);
+    assert_release(Sigma.size() > 0 && (int) Sigma[0].size() ==  n);
 
     clock_t t_start = clock();
 
-    std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> output;
+    vector<pair<PEIBOS_CAPD_Key,pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>> output;
     
     // CAPD solver setup
     capd::IMap g (i_map);
@@ -42,7 +42,7 @@ namespace codac2
     capd::interval initialTime(0.);
     capd::interval finalTime(tf);
 
-    std::vector<IntervalVector> boxes;
+    vector<IntervalVector> boxes;
     double true_eps = split(Interval(-1.,1.)*IntervalVector::Ones(m), epsilon, boxes);
     
     for (const auto& sigma : Sigma)
@@ -73,7 +73,7 @@ namespace codac2
         capd::C1Rect2Set s_punct(c_punct);
         timeMap_punct(finalTime, s_punct, solution_punct);      
 
-        output.push_back(std::make_pair(key, std::make_pair(solution, solution_punct)));
+        output.push_back(make_pair(key, make_pair(solution, solution_punct)));
 
       }
     }
@@ -89,17 +89,13 @@ namespace codac2
     return output;
   }
 
-  std::vector<Parallelepiped> reach_set(const std::vector<std::pair<PEIBOS_CAPD_Key,std::pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>>& peibos_output, double t)
+  vector<Parallelepiped> reach_set(const vector<pair<PEIBOS_CAPD_Key,pair<capd::ITimeMap::SolutionCurve,capd::ITimeMap::SolutionCurve>>>& peibos_output, double t)
   {
-    std::vector<Parallelepiped> output;
+    vector<Parallelepiped> output;
 
-    for (const auto& item : peibos_output)
+    for (const auto& [key,flow_pair] : peibos_output)
     {
-      const PEIBOS_CAPD_Key& key = item.first;
-      const auto& flow_pair = item.second;
-
-      const capd::ITimeMap::SolutionCurve& flow = flow_pair.first;
-      const capd::ITimeMap::SolutionCurve& flow_punct = flow_pair.second;
+      const auto& [flow, flow_punct] = flow_pair;
 
       IntervalVector z = to_codac(flow_punct(t));
       auto Jf_tild = (to_codac(flow_punct.derivative(t))).mid();
