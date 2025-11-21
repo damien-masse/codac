@@ -49,7 +49,7 @@ jobs:
       if: matrix.cfg.py_v_maj!=''
     - run: echo "VERBOSE=1" >> $GITHUB_ENV
       shell: bash
-    - run: choco install -y -r --no-progress wget 
+    - run: choco install -y -r --no-progress wget
       shell: pwsh
       if: runner.os=='Windows'
     #- run: choco install -y -r --no-progress eigen --version=3.4.0.20240224 ${{ matrix.cfg.choco_flags }}
