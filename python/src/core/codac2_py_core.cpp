@@ -42,6 +42,7 @@ void export_CtcCtcBoundary(py::module& m, py::class_<CtcBase<IntervalVector>,pyC
 void export_CtcDeriv(py::module& m);
 void export_CtcDist(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcEmpty(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcEval(py::module& m);
 void export_CtcFixpoint(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcIdentity(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcInnerOuter(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -176,6 +177,7 @@ PYBIND11_MODULE(_core, m)
   export_CtcDeriv(m);
   export_CtcDist(m, py_ctc_iv);
   export_CtcEmpty(m, py_ctc_iv);
+  export_CtcEval(m);
   export_CtcFixpoint(m, py_ctc_iv);
   export_CtcIdentity(m, py_ctc_iv);
   export_CtcInnerOuter(m, py_ctc_iv);
@@ -247,7 +249,7 @@ PYBIND11_MODULE(_core, m)
     .value("NATURAL", EvalMode::NATURAL)
     .value("CENTERED", EvalMode::CENTERED)
     .value("DEFAULT", EvalMode::DEFAULT)
-    .def(py::self | py::self, EVALMODE_OPERATOROR_EVALMODE_EVALMODE)
+    .def(py::self | py::self, EVALMODE_OPERATORUNION_EVALMODE_EVALMODE)
   ;
 
   #if FOR_MATLAB // Python enums do not seem to be callable in matlab

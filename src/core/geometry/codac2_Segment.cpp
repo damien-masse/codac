@@ -82,7 +82,9 @@ namespace codac2
 
   BoolInterval Segment::contains(const IntervalVector& p) const
   {
-    if(box().is_superset(p))
+    IntervalVector b = box();
+
+    if(b.is_superset(p))
     {
       switch(orientation((*this)[0], (*this)[1], p))
       {
@@ -97,7 +99,7 @@ namespace codac2
       }
     }
 
-    else if(box().intersects(p))
+    else if(b.intersects(p))
       return BoolInterval::UNKNOWN;
 
     else

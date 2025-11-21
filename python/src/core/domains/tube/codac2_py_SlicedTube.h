@@ -145,12 +145,12 @@ void export_SlicedTube(py::module& m, const std::string& name)
       "x"_a)
 
     .def(py::self &= py::self,
-      SLICEDTUBE_SLICEDTUBE_T_OPERATORANDEQ_CONST_SLICEDTUBE_REF,
+      SLICEDTUBE_SLICEDTUBE_T_OPERATORINTEREQ_CONST_SLICEDTUBE_REF,
       "x"_a)
 
     // For MATLAB compatibility
     .def("self_inter", &SlicedTube<T>::operator&=,
-      SLICEDTUBE_SLICEDTUBE_T_OPERATORANDEQ_CONST_SLICEDTUBE_REF,
+      SLICEDTUBE_SLICEDTUBE_T_OPERATORINTEREQ_CONST_SLICEDTUBE_REF,
       "x"_a)
 
     .def("as_function", &SlicedTube<T>::as_function,

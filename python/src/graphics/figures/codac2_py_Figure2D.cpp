@@ -31,7 +31,7 @@ void export_Figure2D(py::module& m)
       .def(py::init<>())
       .def_static("VIBES", [](){ return GraphicOutput::VIBES; })
       .def_static("IPE", [](){ return GraphicOutput::IPE; })
-      .def(py::self | py::self, GRAPHICOUTPUT_OPERATOROR_GRAPHICOUTPUT_GRAPHICOUTPUT)
+      .def(py::self | py::self, GRAPHICOUTPUT_OPERATORUNION_GRAPHICOUTPUT_GRAPHICOUTPUT)
     ;
   }
 
@@ -41,7 +41,7 @@ void export_Figure2D(py::module& m)
       .value("VIBES", GraphicOutput::VIBES)
       .value("IPE", GraphicOutput::IPE)
       .export_values()
-      .def(py::self | py::self, GRAPHICOUTPUT_OPERATOROR_GRAPHICOUTPUT_GRAPHICOUTPUT)
+      .def(py::self | py::self, GRAPHICOUTPUT_OPERATORUNION_GRAPHICOUTPUT_GRAPHICOUTPUT)
     ;
   }
 
@@ -216,9 +216,13 @@ void export_Figure2D(py::module& m)
       VOID_FIGURE2D_PLOT_TRAJECTORY_CONST_SAMPLEDTRAJ_DOUBLE_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
 
+    .def("plot_trajectories", (void(Figure2D::*)(const SampledTraj<Vector>&))&Figure2D::plot_trajectories,
+      VOID_FIGURE2D_PLOT_TRAJECTORIES_CONST_SAMPLEDTRAJ_VECTOR_REF,
+      "x"_a)
+
     .def("plot_trajectories", (void(Figure2D::*)(const SampledTraj<Vector>&,const StyleProperties&))&Figure2D::plot_trajectories,
       VOID_FIGURE2D_PLOT_TRAJECTORIES_CONST_SAMPLEDTRAJ_VECTOR_REF_CONST_STYLEPROPERTIES_REF,
-      "x"_a, "s"_a=StyleProperties())
+      "x"_a, "s"_a)
 
     .def("draw_tube", [](Figure2D& fig, const py::object& x, const StyleProperties& s)
         {
@@ -252,6 +256,17 @@ void export_Figure2D(py::module& m)
         },
       VOID_FIGURE2D_PLOT_TUBE_CONST_SLICEDTUBE_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
+
+    .def("plot_tube", [](Figure2D& fig, const py::object& x, const py::object& v, const StyleProperties& s)
+        {
+          if(!is_instance<SlicedTube<Interval>>(x) || !is_instance<SlicedTube<Interval>>(v)) {
+            assert_release("plot_tube: invalid function type");
+          }
+
+          fig.plot_tube(cast<SlicedTube<Interval>>(x), cast<SlicedTube<Interval>>(v), s);
+        },
+      VOID_FIGURE2D_PLOT_TUBE_CONST_SLICEDTUBE_INTERVAL_REF_CONST_SLICEDTUBE_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "v"_a, "s"_a=StyleProperties())
 
     // Robots
 
@@ -476,6 +491,17 @@ void export_Figure2D(py::module& m)
         },
       STATIC_VOID_DEFAULTFIGURE_PLOT_TUBE_CONST_SLICEDTUBE_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
       "x"_a, "s"_a=StyleProperties())
+
+    .def_static("plot_tube", [](const py::object& x, const py::object& v, const StyleProperties& s)
+        {
+          if(!is_instance<SlicedTube<Interval>>(x) || !is_instance<SlicedTube<Interval>>(v)) {
+            assert_release("plot_tube: invalid function type");
+          }
+
+          DefaultFigure::plot_tube(cast<const SlicedTube<Interval>&>(x), cast<const SlicedTube<Interval>&>(v), s);
+        },
+      STATIC_VOID_DEFAULTFIGURE_PLOT_TUBE_CONST_SLICEDTUBE_INTERVAL_REF_CONST_SLICEDTUBE_INTERVAL_REF_CONST_STYLEPROPERTIES_REF,
+      "x"_a, "v"_a, "s"_a) // dot not specify default value =StyleProperties(), because of overloading
 
     // Robots
 

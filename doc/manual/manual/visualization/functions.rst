@@ -157,6 +157,9 @@ Trajectories can be drawn with a ColorMap instead of the classic StyleProperties
 .. doxygenfunction:: codac2::Figure2D::plot_tube(const SlicedTube<Interval>&, const StyleProperties&)
   :project: codac
 
+.. doxygenfunction:: codac2::Figure2D::plot_tube(const SlicedTube<Interval>&, const SlicedTube<Interval>&, const StyleProperties&)
+  :project: codac
+
 Vehicles
 --------
 
