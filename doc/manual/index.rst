@@ -82,7 +82,7 @@ The result is a set of non-overlapping boxes containing the set of feasible solu
 .. figure:: manual/example_malti.png
   :width: 400px
 
-  Outer approximation of the solution set, computed with ``CtcInverse``. Blue parts are guaranteed to be solution-free. Computation time: 0.609s. 3624 boxes.
+  Outer approximation of the solution set, projected onto :math:`(x_1,x_2)`, computed with ``CtcInverse``. Blue parts are guaranteed to be solution-free. Computation time: 0.609s. 3624 boxes.
 
 
 Short example: solving an inequality
@@ -207,6 +207,7 @@ User manual
       * The class SetMembershipFunction
       * Extension to custom expressions
    * :ref:`sec-functions-parallelepiped-eval`
+   * :ref:`sec-functions-peibos`
 
 * Tubes
    * What is a tube?

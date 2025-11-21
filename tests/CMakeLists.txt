@@ -78,8 +78,8 @@ list(APPEND SRC_TESTS # listing files without extension
   core/matrices/codac2_tests_hull
   core/matrices/codac2_tests_inversion
   core/matrices/codac2_tests_IntFullPivLU
-#  core/matrices/codac2_tests_IntvLDLT
-
+  core/matrices/codac2_tests_GaussJordan
+  
   ../doc/manual/manual/linear/src
 
   core/operators/codac2_tests_operators
