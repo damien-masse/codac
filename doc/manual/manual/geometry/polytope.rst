@@ -1,4 +1,4 @@
-.. _sec-zonotope:
+.. _sec-polytope:
 
 Polytope
 ========
@@ -17,17 +17,25 @@ is given that each vertice of the polytope is associated to a generator.
 As a result,
 going back to the hyperplane representation may return a larger polytope.
 
-Polytope
---------
+.. toctree::
+  :maxdepth: 1
 
-.. doxygenclass:: codac2::Polytope
-  :project: codac
-  :members:
+  facets.rst
+  polytope_class.rst
+  
 
-CollectFacets
--------------
+Building a polytope
+-------------------
+Polytopes can be defined from a set of facets (linear inequalities 
+or equalities), or a set of vertices. 
 
-.. doxygenclass:: codac2::CollectFacets
-  :project: codac
-  :members:
+.. tabs::
+
+  .. group-tab:: C++
+
+    .. literalinclude:: src_polytope.cpp
+      :language: c++
+      :start-after: [polytope-1-beg]
+      :end-before: [polytope-1-end]
+      :dedent: 2
 

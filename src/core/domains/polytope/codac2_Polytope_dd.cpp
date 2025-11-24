@@ -960,11 +960,11 @@ std::ostream& operator<<(std::ostream& os, const DDbuildV2F& build) {
 		build.facetsptr->nbfcts() << " total fcts) : " << std::endl;
    for (Index i=0;i<build.facetsptr->nbeqfcts();++i) {
       const Facet &eqf = (*build.facetsptr->get_eqFacet(i));
-      os << eqf.first.row << " = " << eqf.second.rhs << std::endl;
+      os << eqf.first.get_row() << " = " << eqf.second.get_rhs() << std::endl;
    }
    for (const auto &ifacet : build.facets) {
       auto &ieqf = *(ifacet.facetIt);
-      os << ieqf.second.Id << " : " << ieqf.first.row << " <= " << ieqf.second.rhs << std::endl;
+      os << ieqf.second.get_Id() << " : " << ieqf.first.get_row() << " <= " << ieqf.second.get_rhs() << std::endl;
       os << " vtx: (";
       for (Index a : ifacet.vtx) {
          os << a << ",";
@@ -972,7 +972,7 @@ std::ostream& operator<<(std::ostream& os, const DDbuildV2F& build) {
       os << ")" << std::endl;
       os << " lnks: (";
       for (std::forward_list<DDfacet>::iterator a : ifacet.links) {
-         os << a->facetIt->second.Id << ",";
+         os << a->facetIt->second.get_Id() << ",";
       }
       os << ")" << std::endl;
    }

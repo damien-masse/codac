@@ -26,9 +26,9 @@ namespace codac2 {
 namespace Facet_ {
 
 polytope_inclrel relation_Box(const Facet &f, const IntervalVector &b) {
-      const Row &row = f.first.row;
-      const double &rhs = f.second.rhs;
-      const bool &eqcst = f.second.eqcst;
+      const Row &row = f.first.get_row();
+      const double rhs = f.second.get_rhs();
+      const bool eqcst = f.second.is_eqcst();
       if (b.is_empty()) return inclrel_includes | inclrel_disjoint;
       IntervalVector a(b);
       /* check the vertex that maximizes row */
@@ -70,8 +70,8 @@ polytope_inclrel relation_Box(const Facet &f, const IntervalVector &b) {
 } 
 
 void contract_Box(const Facet &f, IntervalVector &b) {
-   const Row &row = f.first.row;
-   const double &rhs = f.second.rhs;
+   const Row &row = f.first.get_row();
+   const double rhs = f.second.get_rhs();
    /* use MulOp:bwd */
    IntervalRow x1(row);
    MulOp::bwd(Interval(-oo,rhs),x1,b);
@@ -79,8 +79,8 @@ void contract_Box(const Facet &f, IntervalVector &b) {
 }
 
 void contract_out_Box(const Facet &f, IntervalVector &b) {
-   const Row &row = f.first.row;
-   const double &rhs = f.second.rhs;
+   const Row &row = f.first.get_row();
+   const double rhs = f.second.get_rhs();
    /* use MulOp:bwd */
    IntervalRow x1(row);
    MulOp::bwd(Interval(rhs,oo),x1,b);
@@ -90,9 +90,9 @@ void contract_out_Box(const Facet &f, IntervalVector &b) {
 Interval bound_linear_form(const Facet &f,
 		const Row &row2, const IntervalVector &b) {
    if (f.first.isNull()) return Interval();
-   const Row &row = f.first.row;
-   const double &rhs = f.second.rhs;
-   const bool &eqcst = f.second.eqcst;
+   const Row &row = f.first.get_row();
+   const double rhs = f.second.get_rhs();
+   const bool eqcst = f.second.is_eqcst();
    const Index abdim = f.first.gtDim();
    bool neg = (row[abdim]<0.0);
    if (!eqcst && 

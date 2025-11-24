@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
    std::cout << pol << std::endl;
    
    std::vector<IntervalVector> 
-      lvect = pol.compute_vertices();
+      lvect = pol.vertices();
    std::cout << lvect.size() << " vertices" << std::endl;
    for (IntervalVector a : lvect) 
       std::cout << a << std::endl;

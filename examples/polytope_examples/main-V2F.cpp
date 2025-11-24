@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
    std::cout << pol << std::endl;
    
-   std::vector<IntervalVector> lst = pol.compute_vertices();
+   std::vector<IntervalVector> lst = pol.vertices();
    std::cout << "nb vertices : " << lst.size() << std::endl;
    for (int i=0;i<lst.size();i++) {
      std::cout << lst[i] << std::endl;

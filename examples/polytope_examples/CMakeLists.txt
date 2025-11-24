@@ -34,7 +34,7 @@ if(FAST_RELEASE)
   message(STATUS "You are running Codac in fast release mode. (option -DCMAKE_BUILD_TYPE=Release is required)")
 endif()
 
-set(PROGS main-F2V main-3Dgraphics main-V2F main-3Dhull)
+set(PROGS main-F2V main-3Dgraphics main-V2F main-3Dhull main-3Dtest main-manual)
 
 foreach(PROG ${PROGS})
   add_executable(${PROG} ${PROG}.cpp)

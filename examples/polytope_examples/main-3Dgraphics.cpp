@@ -9,7 +9,7 @@ using namespace std;
 using namespace codac2;
 
 void draw_polytope(Figure3D &fig, const Polytope &P, const StyleProperties &st) {
-   std::vector<std::vector<Vector>> facets3D=P.compute_3Dfacets();
+   std::vector<std::vector<Vector>> facets3D=P.vertices_3Dfacets();
    Vector center = Vector::zero(3);
    Matrix transfo = Matrix::Identity(3,3);
    for (const std::vector<Vector> &vec : facets3D) {
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
    std::cout << "Intersection (minimized) : " << zono2 << "\n";
 
    /* union */
-   Polytope uni = Polytope::union_of_polytopes({ box1, box2, paral, zono });
+   Polytope uni = Polytope::union_of_polytopes({ pbox1, pbox2, paral, zono });
    std::cout << "Union : " << uni << "\n";
    draw_polytope(fig,uni,StyleProperties(Color::dark_orange(0.3),"union"));
 

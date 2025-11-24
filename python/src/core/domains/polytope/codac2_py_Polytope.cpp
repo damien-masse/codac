@@ -67,8 +67,8 @@ void export_Polytope(py::module& m)
       POLYTOPE_POLYTOPE_CONST_INTERVALVECTOR_REF_CONST_VECTOR_PAIR_ROWDOUBLE_REF_BOOL,
       "box"_a,"facets"_a,"minimize"_a)
 
-    .def("assign",[](Polytope &Q, const Polytope &P) { Q=P; return Q; },
-	POLYTOPE_REF_POLYTOPE_OPERATORAFF_CONST_POLYTOPE_REF, "P"_a)
+    .def("copy",[](Polytope &Q) { Polytope P=Q; return P; },
+	POLYTOPE_REF_POLYTOPE_OPERATORAFF_CONST_POLYTOPE_REF)
 
     .def("dim",&Polytope::dim,
 	INDEX_POLYTOPE_DIM_CONST)
@@ -76,11 +76,11 @@ void export_Polytope(py::module& m)
     .def("dim",&Polytope::size,
 	INDEX_POLYTOPE_SIZE_CONST)
   
-    .def("nbFacets",&Polytope::nbFacets,
-	INDEX_POLYTOPE_NBFACETS_CONST)
+    .def("nb_facets",&Polytope::nb_facets,
+	INDEX_POLYTOPE_NB_FACETS_CONST)
 
-//    .def("nbEqFacets",&Polytope::nbEqFacets,
-//	INDEX_POLYTOPE_NBEQFACETS_CONST)
+    .def("nb_eq_facets",&Polytope::nb_eq_facets,
+	INDEX_POLYTOPE_NB_EQ_FACETS_CONST)
 
     .def("is_empty",[](const Polytope &P) { return P.is_empty(true); },
         BOOL_POLYTOPE_IS_EMPTY_BOOL_CONST)
@@ -123,6 +123,9 @@ void export_Polytope(py::module& m)
         POLYTOPE_REF_POLYTOPE_HOMOTHETY_CONST_INTERVALVECTOR_REF_DOUBLE,
 	"c"_a,"delta"_a)
 
+    .def("minimize_constraints",&Polytope::minimize_constraints,
+        VOID_POLYTOPE_MINIMIZE_CONSTRAINTS_CONST)
+
     .def("reverse_affine_transform",&Polytope::reverse_affine_transform,
        POLYTOPE_POLYTOPE_REVERSE_AFFINE_TRANSFORM_CONST_INTERVALMATRIX_REF_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF_CONST,
 	"M"_a,"P"_a,"bbox"_a)
@@ -131,11 +134,11 @@ void export_Polytope(py::module& m)
 	POLYTOPE_POLYTOPE_BIJECTIVE_AFFINE_TRANSFORM_CONST_INTERVALMATRIX_REF_CONST_INTERVALMATRIX_REF_CONST_INTERVALVECTOR_REF_CONST,
 	"M"_a,"Minv"_a,"P"_a)
 
-    .def("compute_vertices",&Polytope::compute_vertices,
-	VECTOR_INTERVALVECTOR_POLYTOPE_COMPUTE_VERTICES_CONST)
+    .def("vertices",&Polytope::vertices,
+	VECTOR_INTERVALVECTOR_POLYTOPE_VERTICES_CONST)
 
-    .def("compute_3Dfacets",&Polytope::compute_3Dfacets,
-	VECTOR_VECTOR_VECTOR_POLYTOPE_COMPUTE_3DFACETS_CONST)
+    .def("vertices_3Dfacets",&Polytope::vertices_3Dfacets,
+	VECTOR_VECTOR_VECTOR_POLYTOPE_VERTICES_3DFACETS_CONST)
 
     .def_static("from_ineFile",&Polytope::from_ineFile,
 	STATIC_POLYTOPE_POLYTOPE_FROM_INEFILE_CONST_CHAR_PTR,"filename"_a)

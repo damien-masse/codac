@@ -879,7 +879,7 @@ Polytope Polytope::union_of_polytopes(std::initializer_list<Polytope> lst) {
    std::vector<IntervalVector> lvert;
    for (auto &P : lst) {
       std::vector<IntervalVector> tmp = 
-		P.compute_vertices();
+		P.vertices();
       lvert.insert(lvert.end(),tmp.begin(),tmp.end());
       box |= P.box();
    }
@@ -898,7 +898,7 @@ Polytope Polytope::union_of_polytopes(const std::vector<Polytope> &lst) {
    std::vector<IntervalVector> lvert;
    for (auto &P : lst) {
       std::vector<IntervalVector> tmp = 
-		P.compute_vertices();
+		P.vertices();
       lvert.insert(lvert.end(),tmp.begin(),tmp.end());
       box |= P.box();
    }
@@ -1040,6 +1040,19 @@ Polytope &Polytope::unflat(Index dm, double rad) {
    return (*this);
 }
 
+Polytope operator+ (const Polytope &p1, const Polytope &p2) {
+   assert(!p1.state[INVALID]);
+   assert(!p2.state[INVALID]);
+   std::vector<IntervalVector> vt1 = p1.vertices();
+   std::vector<IntervalVector> vt2 = p2.vertices();
+   IntervalVector bres = p1.box() + p2.box();
+   std::vector<IntervalVector> result;
+   for (auto &v1 : vt1) 
+     for (auto &v2 : vt2) 
+       result.push_back(v1+v2);
+   Polytope ret = Polytope(result);
+   return (ret &= bres);
+}
    
 std::ostream& operator<<(std::ostream& os,
 		const Polytope &P) {
@@ -1053,7 +1066,7 @@ std::ostream& operator<<(std::ostream& os,
    return os;
 }
 
-std::vector<IntervalVector> Polytope::compute_vertices() const {
+std::vector<IntervalVector> Polytope::vertices() const {
    this->build_DDbuildF2V();
    if (state[EMPTY]) return std::vector<IntervalVector>();
    std::vector<IntervalVector> ret;
@@ -1063,7 +1076,7 @@ std::vector<IntervalVector> Polytope::compute_vertices() const {
    return ret;
 }
 
-std::vector<std::vector<Vector>> Polytope::compute_3Dfacets() const {
+std::vector<std::vector<Vector>> Polytope::vertices_3Dfacets() const {
    this->build_DDbuildF2V();
    if (state[EMPTY]) return std::vector<std::vector<Vector>>();
    return build_3Dfacets(*_DDbuildF2V);
