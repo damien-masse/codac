@@ -372,10 +372,7 @@ Development
 * :ref:`sec-dev-info`
 * :ref:`sec-dev-common-issues`
 * :ref:`sec-dev-changelog`
-* C++ API
-
-
-
+* :ref:`sec-dev-api`
 
 
 
@@ -454,9 +451,7 @@ Development
    development/info_dev.rst
    development/common_issues.rst
    development/changelog.rst
-.. 
-..    C++ API
-
+   development/api_redirect.rst
 
 
 How to cite Codac
