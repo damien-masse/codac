@@ -89,11 +89,11 @@ void contract_out_Box(const Facet &f, IntervalVector &b) {
 
 Interval bound_linear_form(const Facet &f,
 		const Row &row2, const IntervalVector &b) {
-   if (f.first.isNull()) return Interval();
+   if (f.first.is_null()) return Interval();
    const Row &row = f.first.get_row();
    const double rhs = f.second.get_rhs();
    const bool eqcst = f.second.is_eqcst();
-   const Index abdim = f.first.gtDim();
+   const Index abdim = f.first.gt_dim();
    bool neg = (row[abdim]<0.0);
    if (!eqcst && 
        ((!neg && row2[abdim]<=0.0) || (neg && row2[abdim]>=0))) 
@@ -113,7 +113,7 @@ std::ostream& operator<<(std::ostream& os, const Facet& f) {
 }
 
 void output_normalised_facet(std::ostream& os, const Facet& f) {
-   os << f.second.Id << " : " << (f.first.row/std::abs(f.first.row[f.first.gtDim()])) << (f.second.eqcst ? "=" : "<=" ) << (f.second.rhs/std::abs(f.first.row[f.first.gtDim()]));
+   os << f.second.Id << " : " << (f.first.row/std::abs(f.first.row[f.first.gt_dim()])) << (f.second.eqcst ? "=" : "<=" ) << (f.second.rhs/std::abs(f.first.row[f.first.gt_dim()]));
 }
 
 std::ostream& operator<<(std::ostream& os, const CollectFacets& cf) {

@@ -22,10 +22,9 @@ list(APPEND CODAC_CLP_SRC
   add_library(${PROJECT_NAME}-clp ${CODAC_CLP_SRC})
   target_include_directories(${PROJECT_NAME}-clp PUBLIC
     ${CLP_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/
-    ${CMAKE_CURRENT_SOURCE_DIR}/clp
+    ${CMAKE_CURRENT_SOURCE_DIR}
   )
-  target_link_libraries(${PROJECT_NAME}-clp PUBLIC ${PROJECT_NAME}-core Ibex::ibex Eigen3::Eigen ${CLP_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME}-clp PUBLIC ${PROJECT_NAME}-core Eigen3::Eigen ${CLP_LIBRARIES})
 
 
   ################################################################################

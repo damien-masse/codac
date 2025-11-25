@@ -52,6 +52,7 @@
     domains/paving/codac2_py_Subpaving.cpp
     domains/zonotope/codac2_py_Parallelepiped.cpp
     domains/zonotope/codac2_py_Zonotope.cpp
+    domains/polytope/codac2_py_Facet.cpp
     domains/polytope/codac2_py_Polytope.cpp
     domains/tube/codac2_py_Slice.h
     domains/tube/codac2_py_SlicedTube.h

@@ -72,6 +72,7 @@ void export_PavingNode(py::module& m);
 void export_Subpaving(py::module& m);
 void export_Zonotope(py::module& m);
 void export_Parallelepiped(py::module& m);
+void export_Facet(py::module& m);
 void export_Polytope(py::module& m);
 void export_TDomain(py::module& m);
 void export_TimePropag(py::module& m);
@@ -248,6 +249,7 @@ PYBIND11_MODULE(_core, m)
   export_Zonotope(m);
   export_Parallelepiped(m);
 
+  export_Facet(m);
   export_Polytope(m);
 
   // function

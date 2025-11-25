@@ -234,16 +234,16 @@ Polytope::~Polytope() {
 
 
 Interval Polytope::fast_bound(const FacetBase &base) const {
-   if (base.isNull()) return Interval::zero();
+   if (base.is_null()) return Interval::zero();
    if (state[EMPTY]) return Interval();
-   Index gdim = base.gtDim();
+   Index gdim = base.gt_dim();
    Interval res;
    if (base.row[gdim]>0.0) {
       res= Interval(_box[gdim].ub())*base.row[gdim];
    } else {
       res= Interval(_box[gdim].lb())*base.row[gdim];
    }
-   if (!base.isCoord()) {
+   if (!base.is_coord()) {
       Row bcopy = base.row;
       bcopy[gdim]=0.0;
       res += bcopy.dot(_box);
@@ -530,14 +530,14 @@ bool Polytope::add_constraint(const std::pair<Row,double>& facet,
 	double tolerance) {
    if (state[EMPTY]) return false;
    FacetBase base = FacetBase(facet.first);
-   if (base.isNull()) {
+   if (base.is_null()) {
       if (facet.second>=tolerance) return false;
       this->set_empty(); return true;
    }
    Interval act = this->fast_bound(base);
    if (act.ub()<=facet.second+tolerance) return false;
-   if (base.isCoord()) {
-      Index gdim = base.gtDim();
+   if (base.is_coord()) {
+      Index gdim = base.gt_dim();
       Interval val = Interval(facet.second)/facet.first[gdim];
       if (facet.first[gdim]>0.0) {
          _box[gdim] &= Interval(-oo,val.ub());
@@ -632,12 +632,12 @@ std::pair<bool,bool> Polytope::add_constraint_band(const IntervalRow &cst,
 int Polytope::add_equality(const std::pair<Row,double>& facet) {
    if (state[EMPTY]) return -1;
    FacetBase base(facet.first);
-   if (base.isNull()) {
+   if (base.is_null()) {
       if (facet.second==0.0) return 0;
       this->set_empty(); return -1;
    }
-   if (base.isCoord()) {
-      Index gdim = base.gtDim();
+   if (base.is_coord()) {
+      Index gdim = base.gt_dim();
       Interval val = Interval(facet.second)/facet.first[gdim];
       _box[gdim] &= val;
       if (_box[gdim].is_empty()) { 

@@ -163,7 +163,7 @@ option(WITH_CLP "Use CLP for LP in polytopes" OFF)
 
  if(WITH_CLP)
    add_compile_definitions(WITH_CLP)
-   include(./src/extensions/polytope-clp/FindClp.cmake)
+   include(./src/extensions/clp/FindClp.cmake)
    message(STATUS "Found CLP version ${CLP_VERSION}")
    message(STATUS "Found CLP inclusion ${CLP_INCLUDE_DIRS}")
  endif()

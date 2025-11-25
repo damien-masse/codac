@@ -66,11 +66,11 @@ class FacetBase {
    
       /** \brief test if the Row is zero 
        *  \return true if row = 0 */
-      inline bool isNull() const { return (bdim==-1); }
+      inline bool is_null() const { return (bdim==-1); }
    
       /** \brief test if the row has only one non-zero coordinate 
        *  \return true if row is zero for all coordinates except one */
-      inline bool isCoord() const {
+      inline bool is_coord() const {
          if (row.size()==0) return false;
          return (bdim%(2*row.size())==0);
       }
@@ -78,7 +78,7 @@ class FacetBase {
       /** \brief return the index of the greatest coordinate (in absolute value)
        *  suppose the row is not zero
        *  \return a value between 0 and size-1 */
-      inline Index gtDim () const {
+      inline Index gt_dim () const {
          if (row.size()==0) return -1; 
          return (bdim/(2*row.size()))%row.size();
       }
