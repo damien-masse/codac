@@ -340,6 +340,8 @@ class CollectFacets {
       *  @param cf the CollectFacets 
       */
      CollectFacets(CollectFacets&& cf);
+
+     ~CollectFacets() = default;
   
      /** return the dimension of the facets 
       *  @return the dimension */
@@ -540,11 +542,6 @@ inline CollectFacets::CollectFacets(const CollectFacets& cf)  :
     /* redirect the facets */
     for (mapIterator it = _map.begin(); it!=_map.end(); ++it) {
         _allFacets[it->second.Id-1]=it;
-    }
-    /* change the end iterators */
-    if (nb_removed_facets==0) return;
-    for (auto &v : _allFacets) {
-        if (v == cf._map.end()) v = _map.end();
     }
 }
 

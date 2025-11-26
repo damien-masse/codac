@@ -36,6 +36,7 @@ using namespace codac2;
 
 namespace codac2 {
 
+#if 0
 double Polytope::bound_row_clp(const Row &r) const {
    this->build_clpForm();
    _clpForm->setObjective(r);
@@ -110,6 +111,7 @@ bool Polytope::check_empty_clp() const {
    return false;
 }
 
+#endif
 
 }
 

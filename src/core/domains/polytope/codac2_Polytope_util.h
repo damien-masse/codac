@@ -56,5 +56,14 @@ std::vector<Vector> read_extFile(const char *filename);
  */
 std::vector<std::vector<Vector>> build_3Dfacets(const DDbuildF2V &build, double bound=50.0);
    
+/** construct the facet of a 2D-polyhedron from the buildF2V 
+ * structure 
+ * use the mid of each vertex. For rays/line use an arbitrary bound 
+ * @param build the buildF2V structure 
+ * @param bound the bound for rays/line (not correctly handled)
+ * @return the set of set of vertices
+ */
+std::vector<Vector> build_2Dfacet(const DDbuildF2V &build, double bound=50.0);
+   
 }
 

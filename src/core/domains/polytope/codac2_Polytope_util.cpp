@@ -117,7 +117,6 @@ Index fill_3Dfacet(const DDbuildF2V &build,
     
     std::vector<std::forward_list<DDvertex>::const_iterator> used;
     used.push_back(it);
-//    std::cout << "add vert : " << it->Id << "\n";
     Vector vt = build.compute_vertex(it->vertex).mid();
     tofill.push_back(vt);
     while (it != vertices.end()) {
@@ -171,6 +170,23 @@ std::vector<std::vector<Vector>> build_3Dfacets(const DDbuildF2V &build, double 
       result.push_back(nfac);
    }
    return result;
+}
+
+std::vector<Vector> build_2Dfacet(const DDbuildF2V &build, double bound) {
+   assert(build.get_dim()==2);
+   if (build.is_empty()) return std::vector<Vector>();
+   if (build.get_fdim()==0) { /* the only point has no coordinate */
+       std::vector<Vector> result(1);
+       Vector v = Vector::constant(1,1.0);
+       result[0]=(build.get_M_EQ()).mid()*v;
+       return result;
+   } else 
+   { /* equivalent to finding one facet of a 3Dfacet */
+       std::vector<Vector> face;
+       fill_3Dfacet(build,face,-1,bound);
+       /* look for a initial vertex */
+       return face;
+   }
 }
 
 }

@@ -33,10 +33,6 @@
 #include "codac2_Polytope_dd.h"
 #include "codac2_Parallelepiped.h"
 #include "codac2_Zonotope.h"
-#ifdef WITH_CLP
-#include "../../../extensions/clp/codac2_clp.h"
-#endif
-
 
 namespace codac2 {
   /**
@@ -71,6 +67,8 @@ namespace codac2 {
          *  Copy (no minimization)
          */
         Polytope(const Polytope &P);
+
+//        Polytope(Polytope &&P) = default;
 
         /** 
          *  Constructs a polytope from a set of vertices
@@ -159,7 +157,7 @@ namespace codac2 {
         /**
          *  Destructor
          */
-        ~Polytope();
+        ~Polytope() = default;
 
         /**
          *  copy assignment operator 
@@ -167,6 +165,7 @@ namespace codac2 {
          */
         Polytope &operator=(const Polytope &P);
      
+        Polytope &operator=(Polytope &&P) = default;
 
 
         /***************** ACCESS **************************/
@@ -189,6 +188,7 @@ namespace codac2 {
 
         /**
          *  Get the number of constraints
+
          * 
          * \return the number of facets (including equalities)
          */
@@ -235,11 +235,11 @@ namespace codac2 {
         Interval fast_bound(const FacetBase &base) const;
 
         /** 
-         *  bound a constraint, using either clp or DD
+         *  bound a constraint, using either DD
          * \param r the row
          * \return the max
          */
-        double bound_row(const Row &r) const;
+        virtual double bound_row(const Row &r) const;
   
 #if 0
         /**  ``distance'' from the satisfaction of a constraint 
@@ -269,11 +269,9 @@ namespace codac2 {
          *  Checks inclusion in another polytope
          * \param P the polytope
          * \param checkF2V checks using DD
-         * \param checkCLP checks using CLP
          * \return true if inclusion is guaranteed
          */
-        bool is_subset(const Polytope &P, 
-			bool checkF2V=true, bool checkCLP=true) const;
+        virtual bool is_subset(const Polytope &P) const;
 
         /**  intersects a box 
          * \param x the box (IntervalVector) 
@@ -290,7 +288,7 @@ namespace codac2 {
         /** minimize the constraints, removing (possibly) redundant
          *  constraints.
          */
-        void minimize_constraints() const;
+        virtual void minimize_constraints() const;
 
         /************* Box access *************************/
  
@@ -325,7 +323,7 @@ namespace codac2 {
         void set_empty();
 
         /**  set to (singleton) 0^dim */
-        void clear();
+        virtual void clear();
 
         /**  add a inequality (pair row X <= rhs)
          *  do basic checks, but do not minimize the system
@@ -451,7 +449,7 @@ namespace codac2 {
         Polytope reverse_affine_transform(const IntervalMatrix &M,
 		const IntervalVector &P, const IntervalVector &bbox) const;
 
-        /**  linear bijective affine transformation 
+        /**  bijective affine transformation 
 	 *  compute { [M] x + [P] s.t. x in the initial polytope }
          *  with MInv encloses the inverse of M 
          *  M is used only to approximate the bounding box of the result,
@@ -463,6 +461,31 @@ namespace codac2 {
         Polytope bijective_affine_transform(const IntervalMatrix &M,
 			const IntervalMatrix &Minv, 
 			const IntervalVector &P) const;
+
+        /** affine transformation 
+	 *  compute { [M] x + [P] s.t x in the initial polytope }
+         *  Generate IntervalVector from the vertices, but not the
+         *  the vertices of the IntervalVector themselves (hence not
+         *  optimal if [M] and [P] are not punctual). As it uses vertices,
+         *  it may be expensive. Use bijective_affine_transform if [M] is
+         *  non-singular to avoir the use of vertices.
+         *  \param M non-empty matrix
+         *  \param P non-empty vector 
+         *  \return a new polytope */
+        Polytope direct_affine_transform(const IntervalMatrix &M,
+		const IntervalVector &P);
+
+        /** time-elapse transformation
+	 *  compute { x + t [P] s.t x in the initial polytope and t in T }
+         *  Generate IntervalVector from the vertices, but not the
+         *  the vertices of the IntervalVector themselves (hence not
+         *  optimal if [P] is not punctual). As it uses vertices,
+         *  it may be expensive. An inexpensive but less optimal approach is
+         *  to use inflate(T*P).
+         *  \param P non-empty vector
+         *  \param T non-empty interval
+         *  \return a new polytope */
+        Polytope time_elapse(const IntervalVector &P, const Interval &T) const;
 
         /**  sum of two polytopes, based on the sum of vertices
          *  (expensive computations)
@@ -507,6 +530,14 @@ namespace codac2 {
          */
         std::vector<std::vector<Vector>> vertices_3Dfacets() const;
 
+        /**
+         *  Computes the vertices as a 2D facet
+         * 
+         * \return set of set of vertices, as Vectors 
+	 *  (mid of ``real'' vertices'')
+         */
+        std::vector<Vector> vertices_2Dfacet() const;
+
 
              
 
@@ -515,9 +546,6 @@ namespace codac2 {
       mutable IntervalVector _box;     /* bounding box */
       mutable std::shared_ptr<CollectFacets> _facets; 
 	/* "native" formulation , may be shared by other formulations */
-#ifdef WITH_CLP
-      mutable std::unique_ptr<LPclp> _clpForm; /* LPclp formulation, if used */
-#endif
       mutable std::unique_ptr<DDbuildF2V> _DDbuildF2V; 
 		/* DDbuildF2V formulation, if used */
       mutable std::unique_ptr<DDbuildV2F> _DDbuildV2F; 
@@ -529,9 +557,6 @@ namespace codac2 {
             NOTEMPTY,    /* is NOT empty */
             MINIMIZED,   /* minimized : redundant constraints removed */
             BOXUPDATED,  /* box is minimal */
-#ifdef WITH_CLP
-            CLPFORM,     /* has an up-to-date clp form */
-#endif
             F2VFORM,     /* has an up-to-date F2V form */
             V2FFORM,     /* has an up-to-date V2F form */
             INVALID,     /* not initialised */
@@ -544,21 +569,11 @@ namespace codac2 {
 			1<<NOTEMPTY | 1<<MINIMIZED | 1<<BOXUPDATED;
         
       mutable pol_state state = pol_state_init;
-      void minimize_constraints_F2V() const;
-      void update_box_F2V() const;
-      void update_box() const;
-      bool check_empty_F2V() const;
-      bool check_empty() const;
-      double bound_row_F2V(const Row &r) const;
+      virtual void update_box() const;
+      virtual bool check_empty() const;
+      virtual void set_empty_private() const;
       void build_DDbuildF2V() const;
-      void set_empty_private() const;
-#ifdef WITH_CLP
-      void minimize_constraints_clp(const Interval &tolerance=Interval(0.0)) const;
-      void update_box_clp() const;
-      bool check_empty_clp() const;
-      double bound_row_clp(const Row &r) const;
-      void build_clpForm() const;
-#endif
+
 };
 
 
@@ -590,9 +605,6 @@ inline Index Polytope::nb_eq_facets() const {
 inline void Polytope::set_empty_private() const {
    state = pol_state_empty;
    _box.set_empty();
-#ifdef WITH_CLP
-   _clpForm=nullptr;
-#endif
    _DDbuildF2V=nullptr;
    _DDbuildV2F=nullptr;
    _facets=nullptr;
@@ -600,7 +612,6 @@ inline void Polytope::set_empty_private() const {
 
 
 inline void Polytope::set_empty() {
-   this->set_empty_private();
 }
 
 inline const CollectFacets::mapType &Polytope::facets() const 

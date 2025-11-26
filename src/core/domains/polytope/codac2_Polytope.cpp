@@ -29,9 +29,6 @@
 #include "codac2_Zonotope.h"
 #include "codac2_Polytope.h"
 #include "codac2_Facet.h"
-#ifdef WITH_CLP
-#include "../../../extensions/clp/codac2_clp.h"
-#endif
 
 using namespace codac2;
 
@@ -54,8 +51,7 @@ Polytope::Polytope(Index dim, bool empty) : _dim(dim),
 {
 }
 
-Polytope::Polytope(const IntervalVector &box) : _dim(box.size()),
-		_box(box), 
+Polytope::Polytope(const IntervalVector &box) : _dim(box.size()), _box(box),
 		_facets(std::make_shared<CollectFacets>(_dim)),
                 state(box.is_empty() ? pol_state_empty : pol_state_init)
 
@@ -77,7 +73,7 @@ Polytope &Polytope::operator=(const Polytope &P) {
    this->_box = P._box;
    this->_facets = P.state[EMPTY] ? std::make_shared<CollectFacets>(_dim) :
                            std::make_shared<CollectFacets>(*(P._facets));
-#ifdef WITH_CLP
+#if 0
    this->_clpForm=nullptr;
 #endif
    this->_DDbuildF2V=nullptr;
@@ -103,13 +99,12 @@ Polytope::Polytope(const std::vector<Vector> &vertices) :
    _facets->encompass_vertices(vertices,_box,true);
    state = pol_state_init;
    _facets->renumber();
-   _DDbuildV2F.release(); /* encompass may have added constraints */
+   _DDbuildV2F.reset(); /* encompass may have added constraints */
 }   
 
 Polytope::Polytope(const std::vector<IntervalVector> &vertices) : 
   Polytope()
 {
-   if (vertices.empty()) return;
    _dim=vertices[0].size();
    /* build the V2F form */
    _DDbuildV2F = std::make_unique<DDbuildV2F>(1,vertices[0].mid());
@@ -122,7 +117,7 @@ Polytope::Polytope(const std::vector<IntervalVector> &vertices) :
    _facets->encompass_vertices(vertices,_box,true);
    _facets->renumber();
    state = pol_state_init;
-   _DDbuildV2F.release(); /* encompass may have added constraints */
+   _DDbuildV2F.reset(); /* encompass may have added constraints */
 }   
 
 Polytope::Polytope(const std::vector<IntervalVector> &vertices,
@@ -195,7 +190,7 @@ Polytope::Polytope(const Zonotope &zon) :
    _box = zon.z+zon.A*range; /* FIXME : use box */
    _facets->encompass_zonotope(IntervalVector(zon.z), 
 		IntervalMatrix(zon.A), range, true);
-   _DDbuildV2F.release(); /* encompass may have added constraints */
+   _DDbuildV2F.reset(); /* encompass may have added constraints */
    state = pol_state_init;
 }
 
@@ -227,9 +222,6 @@ Polytope Polytope::from_ineFile(const char *filename) {
 Polytope Polytope::from_extFile(const char *filename) {
    std::vector<Vector> vts = read_extFile(filename);
    return Polytope(vts);
-}
-
-Polytope::~Polytope() {
 }
 
 
@@ -280,7 +272,9 @@ Interval Polytope::fast_bound(const FacetBase &base) const {
    return res;
 }
 
-double Polytope::bound_row_F2V(const Row &r) const {
+double Polytope::bound_row(const Row &r) const {
+   assert(r.size()==_dim);
+   if (state[EMPTY]) return -oo;
    this->build_DDbuildF2V();
    double a = -oo;
    if (state[EMPTY]) return a;
@@ -293,16 +287,16 @@ double Polytope::bound_row_F2V(const Row &r) const {
    return a;
 }
 
+#if 0
 double Polytope::bound_row(const Row &r) const {
    assert(r.size()==_dim);
    if (state[EMPTY]) return -oo;
-#ifdef WITH_CLP
    if (!state[F2VFORM] && state[CLPFORM]) { 
 	return this->bound_row_clp(r); 
    }
-#endif
    return this->bound_row_F2V(r); 
 }
+#endif
 
 void Polytope::build_DDbuildF2V() const {
    if (state[F2VFORM]) return;
@@ -325,8 +319,9 @@ void Polytope::build_DDbuildF2V() const {
    state[F2VFORM]=true;
 }
 
-void Polytope::minimize_constraints_F2V() const { 
-   assert_release(!state[MINIMIZED]);
+void Polytope::minimize_constraints() const { 
+   if (state[MINIMIZED]) return;
+   if (state[EMPTY]) return;
    this->build_DDbuildF2V();
    if (state[EMPTY]) return;
    std::set<Index> redundant = _DDbuildF2V->redundantFacets();
@@ -341,7 +336,7 @@ void Polytope::minimize_constraints_F2V() const {
    if (changed) {
       std::vector<Index> corresp = _facets->renumber();
       _DDbuildF2V->update_renumber(corresp);
-#ifdef WITH_CLP
+#if 0
       state[CLPFORM]=false;
       _clpForm=nullptr;
 #endif
@@ -350,20 +345,22 @@ void Polytope::minimize_constraints_F2V() const {
    state[MINIMIZED]=true;
 }
 
+#if 0
 void Polytope::minimize_constraints() const {
    if (state[MINIMIZED]) return;
    if (state[EMPTY]) return;
    /* default : F2V */
-#ifdef WITH_CLP
    if (!state[F2VFORM] && state[CLPFORM]) { 
 	this->minimize_constraints_clp(); 
         return;
    }
-#endif
    this->minimize_constraints_F2V(); 
 }
+#endif
 
-void Polytope::update_box_F2V() const {
+void Polytope::update_box() const {
+   if (state[BOXUPDATED]) return;
+   if (state[EMPTY]) return;
    assert_release(!state[BOXUPDATED]);
    this->build_DDbuildF2V();
    if (state[EMPTY]) return;
@@ -371,36 +368,37 @@ void Polytope::update_box_F2V() const {
    state[BOXUPDATED]=true;
 }
 
+#if 0
 void Polytope::update_box() const {
    if (state[BOXUPDATED]) return;
    if (state[EMPTY]) return;
    /* default : F2V */
-#ifdef WITH_CLP
    if (!state[F2VFORM] && state[CLPFORM]) { 
 	this->update_box_clp(); 
         return;
    }
-#endif
    this->update_box_F2V(); 
 }
-
-bool Polytope::check_empty_F2V() const {
-   assert_release(!state[NOTEMPTY] && !state[EMPTY]);
-   this->build_DDbuildF2V();
-   return state[EMPTY];
-}
+#endif
 
 bool Polytope::check_empty() const {
    if (state[NOTEMPTY]) return false;
    if (state[EMPTY]) return true;
+   this->build_DDbuildF2V();
+   return state[EMPTY];
+}
+
+#if 0
+bool Polytope::check_empty() const {
+   if (state[NOTEMPTY]) return false;
+   if (state[EMPTY]) return true;
    /* default : F2V */
-#ifdef WITH_CLP
    if (!state[F2VFORM] && state[CLPFORM]) { 
 	return this->check_empty_clp(); 
    }
-#endif
    return this->check_empty_F2V(); 
 }
+#endif
 
 BoolInterval Polytope::contains(const IntervalVector& p) const {
    assert_release(p.size()==_dim);
@@ -421,19 +419,16 @@ bool Polytope::box_is_subset(const IntervalVector& x) const {
    return this->box().is_subset(x);
 }
 
-bool Polytope::is_subset(const Polytope& P, bool checkF2V, 
-			[[maybe_unused]] bool checkCLP)
+bool Polytope::is_subset(const Polytope& P)
 	 const {
    const IntervalVector &b2 = P.box(true);
    const IntervalVector &b1 = this->box(true);
    if (!b1.is_subset(b2)) return false;
    for (const auto &fctP : P._facets->get_map()) {
        if (this->fast_bound(fctP.first).ub() <= fctP.second.rhs) continue;
-       if (checkF2V) {
-         double l1 = this->bound_row_F2V(fctP.first.row);
-         if (l1<=fctP.second.rhs) continue;
-       }
-#ifdef WITH_CLP
+       double l1 = this->bound_row(fctP.first.row);
+       if (l1<=fctP.second.rhs) continue;
+#if 0
        if (checkCLP) {
          double l1 = this->bound_row_clp(fctP.first.row);
          if (l1<=fctP.second.rhs) continue;
@@ -518,9 +513,6 @@ void Polytope::clear() {
    state=pol_state_init;
    _box = IntervalVector::Zero(_dim);
    _facets=nullptr;
-#ifdef WITH_CLP
-   _clpForm=nullptr;
-#endif
    _DDbuildF2V=nullptr;
    _DDbuildV2F=nullptr;
 }
@@ -545,7 +537,7 @@ bool Polytope::add_constraint(const std::pair<Row,double>& facet,
 	   this->set_empty_private(); 
            return true;
 	 }
-#ifdef WITH_CLP
+#if 0
          if (state[CLPFORM]) {
             this->_clpForm->set_bbox(_box);
          }
@@ -564,7 +556,7 @@ bool Polytope::add_constraint(const std::pair<Row,double>& facet,
 	   this->set_empty_private(); 
            return true;
 	 }
-#ifdef WITH_CLP
+#if 0
          if (state[CLPFORM]) {
             this->_clpForm->set_bbox(_box);
          }
@@ -587,7 +579,7 @@ bool Polytope::add_constraint(const std::pair<Row,double>& facet,
 		false, CollectFacets::MIN_RHS);
    if (res.first==-1) { this->set_empty_private(); return true; }
    if (res.first==0) return false;
-#ifdef WITH_CLP
+#if 0
    if (state[CLPFORM]) {
       this->_clpForm->updateConstraint(res.first);
    }
@@ -644,7 +636,7 @@ int Polytope::add_equality(const std::pair<Row,double>& facet) {
 	   this->set_empty_private(); 
            return -1;
       }
-#ifdef WITH_CLP
+#if 0
       if (state[CLPFORM]) {
           this->_clpForm->set_bbox(_box);
       }
@@ -665,7 +657,7 @@ int Polytope::add_equality(const std::pair<Row,double>& facet) {
 		true, CollectFacets::MIN_RHS);
    if (res.first==-1) { this->set_empty_private(); return -1; }
    if (res.first==0) return 0;
-#ifdef WITH_CLP
+#if 0
    if (state[CLPFORM]) {
       this->_clpForm->updateConstraint(res.first);
    }
@@ -681,7 +673,7 @@ int Polytope::meet_with_box(const IntervalVector &b) {
    if (_box.is_subset(b)) return 0;
    if (_box.is_disjoint(b)) { this->set_empty(); return -1; }
    _box &= b;
-#ifdef WITH_CLP
+#if 0
    if (state[CLPFORM]) {
        this->_clpForm->set_bbox(_box); 
    }
@@ -755,7 +747,7 @@ int Polytope::meet_with_polytope(const Polytope &P) {
    state[V2FFORM]=state[MINIMIZED]=state[BOXUPDATED]=false;
    state[NOTEMPTY]=false;
    state[F2VFORM]=false;
-#ifdef WITH_CLP
+#if 0
    state[CLPFORM]=false;
 #endif
    return 1;
@@ -767,7 +759,7 @@ Polytope &Polytope::homothety(const IntervalVector &c, double delta) {
    Interval deltaI (delta); /* for interval computation */
    if (state[EMPTY]) return (*this);
    _box = (1.0-deltaI) * c + delta * _box;
-#ifdef WITH_CLP
+#if 0
    if (state[CLPFORM]) {
        this->_clpForm->set_bbox(_box);
    }
@@ -791,7 +783,7 @@ Polytope &Polytope::homothety(const IntervalVector &c, double delta) {
    state[V2FFORM]=false;
    state[MINIMIZED]=false;
    state[F2VFORM]=false;
-#ifdef WITH_CLP
+#if 0
    state[CLPFORM]=false; /* TODO : possible if c is punctual */
 #endif
    return (*this);
@@ -864,6 +856,37 @@ Polytope Polytope::bijective_affine_transform(const IntervalMatrix &M,
         const IntervalMatrix &Minv, const IntervalVector &P) const {
    IntervalVector M2 = M*_box+P;
    return this->reverse_affine_transform(Minv,Minv*P,M2);
+}
+
+Polytope Polytope::direct_affine_transform(const IntervalMatrix &M,
+        const IntervalVector &P) {
+   this->build_DDbuildF2V();
+   IntervalVector nBox = M*this->box()+P;
+   std::vector<IntervalVector> resultat;
+   if (state[EMPTY]) return Polytope(*this);
+   const std::forward_list<DDvertex> &vertices=_DDbuildF2V->get_vertices();
+   for (const DDvertex &vt : vertices) {
+        IntervalVector a = M*_DDbuildF2V->compute_vertex(vt.vertex)+P;
+        resultat.push_back(a);
+   }
+   Polytope res(resultat);
+   return (res &= nBox);
+}
+
+Polytope Polytope::time_elapse(const IntervalVector &P,
+        const Interval &T) const {
+   this->build_DDbuildF2V();
+   IntervalVector nBox = this->box()+T*P;
+   std::vector<IntervalVector> resultat;
+   if (state[EMPTY]) return Polytope(*this);
+   const std::forward_list<DDvertex> &vertices=_DDbuildF2V->get_vertices();
+   for (const DDvertex &vt : vertices) {
+        IntervalVector vert = _DDbuildF2V->compute_vertex(vt.vertex);
+        resultat.push_back(vert+T.lb()*P);
+        resultat.push_back(vert+T.ub()*P);
+   }
+   Polytope res(resultat);
+   return (res &= nBox);
 }
 
 Polytope &Polytope::operator&=(const Polytope &P) {
@@ -959,7 +982,7 @@ Polytope &Polytope::inflate_ball(double rad) {
    state[F2VFORM]=false;
    _DDbuildF2V=nullptr;
    _DDbuildV2F=nullptr;
-#ifdef WITH_CLP
+#if 0
    state[CLPFORM]=false;
    _clpForm=nullptr;
 #endif
@@ -994,7 +1017,7 @@ Polytope &Polytope::inflate(const IntervalVector& box) {
    state[F2VFORM]=false;
    _DDbuildF2V=nullptr;
    _DDbuildV2F=nullptr;
-#ifdef WITH_CLP
+#if 0
    _clpForm=nullptr;
    state[CLPFORM]=false;
 #endif
@@ -1033,7 +1056,7 @@ Polytope &Polytope::unflat(Index dm, double rad) {
    state[F2VFORM]=false;
    _DDbuildF2V=nullptr;
    _DDbuildV2F=nullptr;
-#ifdef WITH_CLP
+#if 0
    state[CLPFORM]=false;
    _clpForm=nullptr;
 #endif
@@ -1057,10 +1080,10 @@ Polytope operator+ (const Polytope &p1, const Polytope &p2) {
 std::ostream& operator<<(std::ostream& os,
 		const Polytope &P) {
    if (P.state[Polytope::EMPTY]) {
-      os << "Polytope(empty dim " << P._dim << ")" << std::endl;
+      os << "Polytope(" << P.state << " empty dim " << P._dim << ")" << std::endl;
       return os;
    }
-   os << "Polytope(bbox " << P._box << ") : " << std::endl;
+   os << "Polytope(" << P.state << " bbox " << P._box << ") : " << std::endl;
    os << *P._facets;
    os << "EndPolytope" << std::endl;
    return os;
@@ -1080,6 +1103,12 @@ std::vector<std::vector<Vector>> Polytope::vertices_3Dfacets() const {
    this->build_DDbuildF2V();
    if (state[EMPTY]) return std::vector<std::vector<Vector>>();
    return build_3Dfacets(*_DDbuildF2V);
+} 
+
+std::vector<Vector> Polytope::vertices_2Dfacet() const {
+   this->build_DDbuildF2V();
+   if (state[EMPTY]) return std::vector<Vector>();
+   return build_2Dfacet(*_DDbuildF2V);
 } 
 
 }
