@@ -131,7 +131,11 @@ void export_Polytope(py::module& m)
 	"M"_a,"P"_a,"bbox"_a)
  
     .def("affine_transform",&Polytope::affine_transform,
-	POLYTOPE_POLYTOPE_AFFINE_TRANSFORM_CONST_INTERVALMATRIX_REF_CONST_INTERVALVECTOR_REF_CONST,
+	POLYTOPE_POLYTOPE_AFFINE_TRANSFORM_CONST_INTERVALMATRIX_REF_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF_BOOL_CONST,
+	"M"_a,"P"_a,"B"_a,"use_direct"_a)
+
+    .def("direct_affine_transform",&Polytope::direct_affine_transform,
+	POLYTOPE_POLYTOPE_DIRECT_AFFINE_TRANSFORM_CONST_INTERVALMATRIX_REF_CONST_INTERVALVECTOR_REF_CONST,
 	"M"_a,"P"_a)
 
     .def("vertices",&Polytope::vertices,
