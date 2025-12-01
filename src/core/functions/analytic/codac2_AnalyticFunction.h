@@ -238,9 +238,8 @@ namespace codac2
 			x_.da.cols() == flatten_x.size());
          
          IntervalVector centered_flatten = flatten_x-flatten_x.mid();   
-         Polytope res = Polytope(centered_flatten).direct_affine_transform
-		(x_.da, x_.m);
-         res.meet_with_box(x_.a);
+         Polytope res = Polytope(centered_flatten).affine_transform
+		(x_.da, x_.m, x_.a);
          return res;
       }
 

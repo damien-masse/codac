@@ -73,9 +73,6 @@ Polytope &Polytope::operator=(const Polytope &P) {
    this->_box = P._box;
    this->_facets = P.state[EMPTY] ? std::make_shared<CollectFacets>(_dim) :
                            std::make_shared<CollectFacets>(*(P._facets));
-#if 0
-   this->_clpForm=nullptr;
-#endif
    this->_DDbuildF2V=nullptr;
    this->_DDbuildV2F=nullptr;
    this->state = P.state & (pol_state_empty | 
@@ -157,7 +154,7 @@ Polytope::Polytope(const Parallelepiped &par) :
       we consider the inversion */
    IntervalMatrix u = inverse_enclosure(par.A);
    for (Index i=0;i<u.rows();i++) {
-      this->add_constraint_band(u.row(i),
+      this->add_constraint_band(IntervalRow(u.row(i)),
 			u.row(i).dot(par.z)+Interval(-1.0,1.0),0.0);
    }   
    IntervalVector range = IntervalVector::constant(par.A.cols(),
@@ -228,6 +225,7 @@ Polytope Polytope::from_extFile(const char *filename) {
 Interval Polytope::fast_bound(const FacetBase &base) const {
    if (base.is_null()) return Interval::zero();
    if (state[EMPTY]) return Interval();
+   if (is_box()) return base.row.dot(_box).ub();
    Index gdim = base.gt_dim();
    Interval res;
    if (base.row[gdim]>0.0) {
@@ -275,6 +273,7 @@ Interval Polytope::fast_bound(const FacetBase &base) const {
 double Polytope::bound_row(const Row &r) const {
    assert(r.size()==_dim);
    if (state[EMPTY]) return -oo;
+   if (is_box()) return r.dot(_box).ub();
    this->build_DDbuildF2V();
    double a = -oo;
    if (state[EMPTY]) return a;
@@ -286,17 +285,6 @@ double Polytope::bound_row(const Row &r) const {
    }
    return a;
 }
-
-#if 0
-double Polytope::bound_row(const Row &r) const {
-   assert(r.size()==_dim);
-   if (state[EMPTY]) return -oo;
-   if (!state[F2VFORM] && state[CLPFORM]) { 
-	return this->bound_row_clp(r); 
-   }
-   return this->bound_row_F2V(r); 
-}
-#endif
 
 void Polytope::build_DDbuildF2V() const {
    if (state[F2VFORM]) return;
@@ -336,31 +324,15 @@ void Polytope::minimize_constraints() const {
    if (changed) {
       std::vector<Index> corresp = _facets->renumber();
       _DDbuildF2V->update_renumber(corresp);
-#if 0
-      state[CLPFORM]=false;
-      _clpForm=nullptr;
-#endif
       state[V2FFORM]=false;
    }
    state[MINIMIZED]=true;
 }
 
-#if 0
-void Polytope::minimize_constraints() const {
-   if (state[MINIMIZED]) return;
-   if (state[EMPTY]) return;
-   /* default : F2V */
-   if (!state[F2VFORM] && state[CLPFORM]) { 
-	this->minimize_constraints_clp(); 
-        return;
-   }
-   this->minimize_constraints_F2V(); 
-}
-#endif
-
 void Polytope::update_box() const {
    if (state[BOXUPDATED]) return;
    if (state[EMPTY]) return;
+   if (is_box()) { state[BOXUPDATED]=true; return; }
    assert_release(!state[BOXUPDATED]);
    this->build_DDbuildF2V();
    if (state[EMPTY]) return;
@@ -368,37 +340,21 @@ void Polytope::update_box() const {
    state[BOXUPDATED]=true;
 }
 
-#if 0
-void Polytope::update_box() const {
-   if (state[BOXUPDATED]) return;
-   if (state[EMPTY]) return;
-   /* default : F2V */
-   if (!state[F2VFORM] && state[CLPFORM]) { 
-	this->update_box_clp(); 
-        return;
-   }
-   this->update_box_F2V(); 
-}
-#endif
-
 bool Polytope::check_empty() const {
    if (state[NOTEMPTY]) return false;
    if (state[EMPTY]) return true;
+   if (is_box()) { 
+	if (_box.is_empty()) { 
+	  state[EMPTY]=true; 
+	  return true; 
+        } else { 
+	  state[NOTEMPTY]=true; 
+	  return false; 
+        } 
+   }
    this->build_DDbuildF2V();
    return state[EMPTY];
 }
-
-#if 0
-bool Polytope::check_empty() const {
-   if (state[NOTEMPTY]) return false;
-   if (state[EMPTY]) return true;
-   /* default : F2V */
-   if (!state[F2VFORM] && state[CLPFORM]) { 
-	return this->check_empty_clp(); 
-   }
-   return this->check_empty_F2V(); 
-}
-#endif
 
 BoolInterval Polytope::contains(const IntervalVector& p) const {
    assert_release(p.size()==_dim);
@@ -428,12 +384,6 @@ bool Polytope::is_subset(const Polytope& P)
        if (this->fast_bound(fctP.first).ub() <= fctP.second.rhs) continue;
        double l1 = this->bound_row(fctP.first.row);
        if (l1<=fctP.second.rhs) continue;
-#if 0
-       if (checkCLP) {
-         double l1 = this->bound_row_clp(fctP.first.row);
-         if (l1<=fctP.second.rhs) continue;
-       }
-#endif
        return false;
    }
    return true;
@@ -613,11 +563,17 @@ std::pair<bool,bool> Polytope::add_constraint_band(const IntervalRow &cst,
    Row cstmid = cst.mid();
    IntervalRow rem = cst-cstmid;
    Interval d = rhs+rem.dot(_box);
+   return this->add_constraint_band(cstmid,d,tolerance);
+}
+     
+std::pair<bool,bool> Polytope::add_constraint_band(const Row &cst,
+	 const Interval &rhs, double tolerance) {
+   if (state[EMPTY]) return { false, false };
    bool rub, rlb;
-   if (d.ub()==+oo) rub=false;
-   else rub = this->add_constraint(std::pair(cstmid, d.ub()), tolerance);
-   if (d.lb()==-oo) rlb=false;
-   else rlb = this->add_constraint(std::pair(-cstmid, -d.lb()), tolerance);
+   if (rhs.ub()==+oo) rub=false;
+   else rub = this->add_constraint(std::pair(cst, rhs.ub()), tolerance);
+   if (rhs.lb()==-oo) rlb=false;
+   else rlb = this->add_constraint(std::pair(-cst, -rhs.lb()), tolerance);
    return { rlb, rub };
 }
      
@@ -791,9 +747,12 @@ Polytope &Polytope::homothety(const IntervalVector &c, double delta) {
 
 Polytope Polytope::reverse_affine_transform(const IntervalMatrix &M,
 	const IntervalVector &P, const IntervalVector &bbox) const {
-   assert(!state[INVALID]);
-   if (state[EMPTY]) return Polytope(_dim,true);
-   CollectFacets cf(_dim);
+   assert_release(!state[INVALID]);
+   assert_release(M.rows()==_dim);
+   assert_release(bbox.size()==M.cols());
+   assert_release(P.size()==_dim);
+   if (state[EMPTY]) return Polytope(M.cols(),true);
+   CollectFacets cf(M.cols());
    /* first the box */
    for (Index i=0;i<_dim;i++) {
       IntervalRow rI = M.row(i);
@@ -806,19 +765,19 @@ Polytope Polytope::reverse_affine_transform(const IntervalMatrix &M,
          std::pair<Index,bool> ret =
 		 cf.insert_facet(std::move(r),rhs.ub(),true,
 				CollectFacets::MIN_RHS);
-         if (ret.first==-1) return Polytope(this->_dim, true);
+         if (ret.first==-1) return Polytope(M.cols(), true);
       } else {
          if (rhs.ub()!=+oo) {
            std::pair<Index,bool> ret =
 		 cf.insert_facet(r,rhs.ub(),false,
 				CollectFacets::MIN_RHS);
-           if (ret.first==-1) return Polytope(this->_dim, true);
+           if (ret.first==-1) return Polytope(M.cols(), true);
          }
          if (rhs.lb()!=-oo) {
             std::pair<Index,bool> ret =
                 cf.insert_facet(-r,-rhs.lb(),false,
 				CollectFacets::MIN_RHS);
-            if (ret.first==-1) return Polytope(this->_dim, true);
+            if (ret.first==-1) return Polytope(M.cols(), true);
          }
       }
    }
@@ -833,33 +792,82 @@ Polytope Polytope::reverse_affine_transform(const IntervalMatrix &M,
          std::pair<Index,bool> ret =
 		 cf.insert_facet(std::move(r),rhs.ub(),facet.second.eqcst,
 				CollectFacets::MIN_RHS);
-         if (ret.first==-1) return Polytope(this->_dim, true);
+         if (ret.first==-1) return Polytope(M.cols(), true);
       } else {
          if (rhs.ub()!=+oo) {
             std::pair<Index,bool> ret =
 		 cf.insert_facet(r,rhs.ub(),false,
 				CollectFacets::MIN_RHS);
-            if (ret.first==-1) return Polytope(this->_dim, true);
+            if (ret.first==-1) return Polytope(M.cols(), true);
          }
          if (rhs.lb()!=-oo) {
             std::pair<Index,bool> ret =
  		cf.insert_facet(-r,-rhs.lb(),false,
 				CollectFacets::MIN_RHS);
-            if (ret.first==-1) return Polytope(this->_dim, true);
+            if (ret.first==-1) return Polytope(M.cols(), true);
          }
       } 
    }  
    return Polytope(IntervalVector(bbox),std::move(cf));
 }
 
-Polytope Polytope::bijective_affine_transform(const IntervalMatrix &M,
-        const IntervalMatrix &Minv, const IntervalVector &P) const {
-   IntervalVector M2 = M*_box+P;
-   return this->reverse_affine_transform(Minv,Minv*P,M2);
+Polytope Polytope::affine_transform(const IntervalMatrix &M,
+        const IntervalVector &P, const IntervalVector &B,
+	bool use_direct) const {
+   assert_release(!state[INVALID]);
+   if (state[EMPTY]) return Polytope(_dim,true);
+   assert_release(M.cols()==_dim);
+   assert_release(M.rows()==P.size());
+   assert_release(B.size()==P.size());
+   /* x' \in [M] x + [P]
+         becomes x' \in Mmid x + ([P] + ([M]-Mmid) B) */
+   Matrix Mmid = M.mid();
+   IntervalVector P2 = P + (M - Mmid)*_box;
+   if (Mmid.rows()==_dim) {
+      IntervalMatrix Minv = inverse_enclosure(Mmid);
+      if (!Minv.is_unbounded()) {
+        IntervalVector M2 = B & (M*_box+P);
+	if (!use_direct) 
+           return this->reverse_affine_transform(Minv,-Minv*P2,M2);
+	else {
+           Polytope R = this->reverse_affine_transform(Minv,-Minv*P2,M2);
+	   return (R &= this->direct_affine_transform(M,P));
+        }
+      }
+   } else if (M.rows()>_dim) {
+      IntvFullPivLU LUdec(Matrix(Mmid.transpose())); 
+		/* we use the tranpose for solve as we did not define
+                   leftSolve */
+      if (LUdec.is_surjective()==BoolInterval::TRUE) {
+         IntervalVector M2 = B & (M*_box+P);
+         IntervalMatrix inv = 
+		LUdec.solve(IntervalMatrix::Identity(_dim,_dim));
+         IntervalMatrix leftInv = inv.transpose();
+         Polytope R = this->reverse_affine_transform(leftInv,-leftInv*P2,M2);
+	 IntervalMatrix leftKer = LUdec.kernel().transpose();
+	 for (Index k = 0; k<leftKer.rows(); k++) {
+             IntervalRow r = leftKer.row(k);
+             Interval u = r.dot(P2);
+             if (r.is_degenerated() && u.is_degenerated()) 
+		R.add_equality(
+			std::pair<Row,double>(r.mid(),u.mid()));
+	     else R.add_constraint_band(r,u);
+         }
+	if (!use_direct) 
+           return R;
+	else 
+	   return (R &= this->direct_affine_transform(M,P));
+      }
+   }
+   Polytope R =  this->direct_affine_transform(M,P);   
+   R.meet_with_box(B);
+   return R;
 }
 
 Polytope Polytope::direct_affine_transform(const IntervalMatrix &M,
-        const IntervalVector &P) {
+        const IntervalVector &P) const {
+   assert_release(!state[INVALID]);
+   if (state[EMPTY]) return Polytope(_dim,true);
    this->build_DDbuildF2V();
    IntervalVector nBox = M*this->box()+P;
    std::vector<IntervalVector> resultat;
@@ -1066,6 +1074,7 @@ Polytope &Polytope::unflat(Index dm, double rad) {
 Polytope operator+ (const Polytope &p1, const Polytope &p2) {
    assert(!p1.state[INVALID]);
    assert(!p2.state[INVALID]);
+   if (p1.is_box() && p2.is_box()) return Polytope(p1.box()+p2.box());
    std::vector<IntervalVector> vt1 = p1.vertices();
    std::vector<IntervalVector> vt2 = p2.vertices();
    IntervalVector bres = p1.box() + p2.box();
@@ -1090,6 +1099,24 @@ std::ostream& operator<<(std::ostream& os,
 }
 
 std::vector<IntervalVector> Polytope::vertices() const {
+   assert(!state[INVALID]);
+   if (this->is_box()) {
+      if (_box.is_empty()) return std::vector<IntervalVector>();
+      std::vector<IntervalVector> ret;
+      Vector a = _box.lb();
+      ret.push_back(IntervalVector(a));
+      Index i=0;
+      while (i<_box.size()) {
+         if (_box[i].is_degenerated()) { i++; continue; }
+         if (a[i]==_box[i].lb()) {
+              a[i]=_box[i].ub();
+              ret.push_back(IntervalVector(a));
+              i=0; continue;
+         }
+         a[i]=_box[i].lb(); i++;
+      }
+      return ret;
+   }
    this->build_DDbuildF2V();
    if (state[EMPTY]) return std::vector<IntervalVector>();
    std::vector<IntervalVector> ret;

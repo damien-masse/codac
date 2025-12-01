@@ -95,8 +95,8 @@ void export_Polytope(py::module& m)
         BOOLINTERVAL_POLYTOPE_CONTAINS_CONST_INTERVALVECTOR_REF_CONST, "p"_a)
 
     .def("is_subset",[](const Polytope &Q, const Polytope &P) 
-			{ return Q.is_subset(P,true,true); },
-        BOOL_POLYTOPE_IS_SUBSET_CONST_POLYTOPE_REF_BOOL_BOOL_CONST, "P"_a)
+			{ return Q.is_subset(P); },
+        VIRTUAL_BOOL_POLYTOPE_IS_SUBSET_CONST_POLYTOPE_REF_CONST, "P"_a)
 
     .def("box",[](const Polytope &Q) 
 			{ return Q.box(true); },
@@ -124,15 +124,15 @@ void export_Polytope(py::module& m)
 	"c"_a,"delta"_a)
 
     .def("minimize_constraints",&Polytope::minimize_constraints,
-        VOID_POLYTOPE_MINIMIZE_CONSTRAINTS_CONST)
+        VIRTUAL_VOID_POLYTOPE_MINIMIZE_CONSTRAINTS_CONST)
 
     .def("reverse_affine_transform",&Polytope::reverse_affine_transform,
        POLYTOPE_POLYTOPE_REVERSE_AFFINE_TRANSFORM_CONST_INTERVALMATRIX_REF_CONST_INTERVALVECTOR_REF_CONST_INTERVALVECTOR_REF_CONST,
 	"M"_a,"P"_a,"bbox"_a)
  
-    .def("bijective_affine_transform",&Polytope::bijective_affine_transform,
-	POLYTOPE_POLYTOPE_BIJECTIVE_AFFINE_TRANSFORM_CONST_INTERVALMATRIX_REF_CONST_INTERVALMATRIX_REF_CONST_INTERVALVECTOR_REF_CONST,
-	"M"_a,"Minv"_a,"P"_a)
+    .def("affine_transform",&Polytope::affine_transform,
+	POLYTOPE_POLYTOPE_AFFINE_TRANSFORM_CONST_INTERVALMATRIX_REF_CONST_INTERVALVECTOR_REF_CONST,
+	"M"_a,"P"_a)
 
     .def("vertices",&Polytope::vertices,
 	VECTOR_INTERVALVECTOR_POLYTOPE_VERTICES_CONST)

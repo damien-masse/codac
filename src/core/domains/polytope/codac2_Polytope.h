@@ -157,7 +157,7 @@ namespace codac2 {
         /**
          *  Destructor
          */
-        ~Polytope() = default;
+        virtual ~Polytope() = default;
 
         /**
          *  copy assignment operator 
@@ -187,8 +187,15 @@ namespace codac2 {
 //        Index dim_polytope() const;
 
         /**
-         *  Get the number of constraints
+         *  Returns true if the polytope is a box (i.e. there are no
+         *  other facets).
+         *
+         *  \return true if the polytope is a box, false otherwise.
+         */
+        bool is_box() const;
 
+        /**
+         *  Get the number of constraints
          * 
          * \return the number of facets (including equalities)
          */
@@ -268,7 +275,6 @@ namespace codac2 {
         /**
          *  Checks inclusion in another polytope
          * \param P the polytope
-         * \param checkF2V checks using DD
          * \return true if inclusion is guaranteed
          */
         virtual bool is_subset(const Polytope &P) const;
@@ -354,6 +360,8 @@ namespace codac2 {
          *  \param tolerance tolerance for redundancy checking (CLP only)
          *  \return pair of booleans (one for each constraints possibly added */
         std::pair<bool,bool> add_constraint_band(const IntervalRow &cst,
+		 const Interval &rhs, double tolerance=0.0);
+        std::pair<bool,bool> add_constraint_band(const Row &cst,
 		 const Interval &rhs, double tolerance=0.0);
 
         /**  add a equality (pair row X = rhs)
@@ -449,31 +457,36 @@ namespace codac2 {
         Polytope reverse_affine_transform(const IntervalMatrix &M,
 		const IntervalVector &P, const IntervalVector &bbox) const;
 
-        /**  bijective affine transformation 
-	 *  compute { [M] x + [P] s.t. x in the initial polytope }
-         *  with MInv encloses the inverse of M 
-         *  M is used only to approximate the bounding box of the result,
-         *  Minv is used to compute the new constraints
+        /**  affine transformation 
+	 *  compute { [B] cap ([M] x + [P]) s.t. x in the initial polytope }
+         *  If [M] is bijective, use inverse to compute the inverse of M
+         *  If [M] is full-rank and injective, use the
+         *  LU decomposition of transpose(M) to compute
+         *  the left inverse of M and the kernel of M.
+         *  Otherwise, call direct-affine-transform.
+	 *  if use_direct is true, use both methods if possible
          *  \param M matrix
-         *  \param Minv its inverse
          *  \param P non-empty vector 
+	 *  \param B box limiting the result
+	 *  \param use_direct use direct_affine_transform in addition of
+	 *  the other method
          *  \return a new polytope */
-        Polytope bijective_affine_transform(const IntervalMatrix &M,
-			const IntervalMatrix &Minv, 
-			const IntervalVector &P) const;
+        Polytope affine_transform(const IntervalMatrix &M,
+			const IntervalVector &P, const IntervalVector &B,
+			bool use_direct=false) const;
 
         /** affine transformation 
 	 *  compute { [M] x + [P] s.t x in the initial polytope }
          *  Generate IntervalVector from the vertices, but not the
          *  the vertices of the IntervalVector themselves (hence not
          *  optimal if [M] and [P] are not punctual). As it uses vertices,
-         *  it may be expensive. Use bijective_affine_transform if [M] is
-         *  non-singular to avoir the use of vertices.
+         *  it may be expensive. Use affine_transform to avoid use of
+	 *  vertices (for injective transformations).
          *  \param M non-empty matrix
          *  \param P non-empty vector 
          *  \return a new polytope */
         Polytope direct_affine_transform(const IntervalMatrix &M,
-		const IntervalVector &P);
+		const IntervalVector &P) const;
 
         /** time-elapse transformation
 	 *  compute { x + t [P] s.t x in the initial polytope and t in T }
@@ -541,7 +554,7 @@ namespace codac2 {
 
              
 
-   private:
+   protected:
       Index _dim;                      /* dimension */
       mutable IntervalVector _box;     /* bounding box */
       mutable std::shared_ptr<CollectFacets> _facets; 
@@ -588,6 +601,9 @@ inline bool Polytope::is_empty(bool check) const {
 	return this->check_empty(); }
 inline bool Polytope::is_flat() const { return state[EMPTY] ||
 		_box.is_degenerated() || (_facets && _facets->nbeqfcts()>0); }
+inline bool Polytope::is_box() const {
+    return (!_facets || _facets->nbfcts()==0);
+}
 inline Index Polytope::nb_facets() const { 
  	if (state[EMPTY]) return -1;
         if (!_facets) return (2*_dim);

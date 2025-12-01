@@ -34,6 +34,7 @@
 #include "codac2_Polytope.h"
 #include "codac2_Parallelepiped.h"
 #include "codac2_Zonotope.h"
+#include "codac2_clp.h"
 
 namespace codac2 {
   /**
@@ -43,12 +44,15 @@ namespace codac2 {
   class Polytope_clp : public Polytope {
 
    public:
-      Polytope_clp() : Polytope();
+      Polytope_clp() : Polytope() {};
       explicit Polytope_clp(Index dim) : Polytope(dim) {};
       explicit Polytope_clp(Index dim, bool empty) : Polytope(dim,empty) {};
       explicit Polytope_clp(const IntervalVector &box) : Polytope(box) {};
       Polytope_clp(const Polytope_clp &P) : Polytope(P) {}; /* FIXME */
       Polytope_clp(Polytope_clp &&P) = default;
+      virtual ~Polytope_clp() override = default;
+      explicit Polytope_clp(const Polytope &P) : Polytope(P) {}; /* FIXME */
+      explicit Polytope_clp(Polytope &&P) : Polytope(P) {}; /* FIXME */
       explicit Polytope_clp(const std::vector<Vector> &vertices) : Polytope(vertices) {};
       explicit Polytope_clp(const std::vector<IntervalVector> &vertices) : Polytope(vertices) {};
       Polytope_clp(const std::vector<IntervalVector> &vertices,
@@ -64,14 +68,23 @@ namespace codac2 {
        * \param P copy
        */
       Polytope_clp &operator=(const Polytope_clp &P);
+      Polytope_clp &operator=(Polytope_clp &&P) = default;
 
+      /**
+       * transfer from Polytope
+       * \param P copy
+       */
+      Polytope_clp &operator=(const Polytope &P);
+      Polytope_clp &operator=(Polytope &&P);
 
       void minimize_constraints() const override;
+
+      double bound_row(const Row &r) const override;
      
    private:
       mutable std::unique_ptr<LPclp> _clpForm = nullptr; /* LPclp formulation */
 
-      mutable bool clpUptodate = nullptr;
+      mutable bool clpUptodate = false;
 
       void update_box() const override;
       bool check_empty() const override;
@@ -88,5 +101,6 @@ namespace codac2 {
       bool check_empty_F2V() const;
       double bound_row_F2V(const Row &r) const;
       void build_DDbuildF2V() const;
-  }
+  };
 
+}
