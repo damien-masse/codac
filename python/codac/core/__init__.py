@@ -560,7 +560,10 @@ def fixpoint(contract, *x):
 
     prev_vol = vol
     if isinstance(x, tuple):
+      print("before",isinstance(x,tuple))
       x = contract(*x)
+      print("after",isinstance(x,tuple))
+      print()
     else: # prevent from unpacking
       x = contract(x)
 
