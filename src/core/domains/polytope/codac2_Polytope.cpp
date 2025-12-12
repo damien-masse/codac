@@ -371,6 +371,21 @@ BoolInterval Polytope::contains(const IntervalVector& p) const {
    return r;
 }
 
+BoolInterval Polytope::interior_contains(const IntervalVector& p) const {
+   assert_release(p.size()==_dim);
+   if (p.is_empty()) return BoolInterval::TRUE;
+   if (state[EMPTY]) return BoolInterval::FALSE;
+   if (!p.is_interior_subset(_box)) return BoolInterval::FALSE;
+   BoolInterval r = BoolInterval::TRUE;
+   for (const auto &fct : _facets->get_map()) {
+       Facet_::polytope_inclrel pincl = 
+		Facet_::relation_Box(fct,p,true);
+       if (pincl[Facet_::NOTINCLUDE]) return BoolInterval::FALSE;
+       if (pincl[Facet_::MAYINCLUDE]) r = BoolInterval::UNKNOWN;
+   }
+   return r;
+}
+
 bool Polytope::box_is_subset(const IntervalVector& x) const {
    return this->box().is_subset(x);
 }
@@ -387,6 +402,73 @@ bool Polytope::is_subset(const Polytope& P)
        return false;
    }
    return true;
+}
+
+bool Polytope::is_superset(const Polytope& P)
+	 const {
+   return P.is_subset((*this));
+}
+
+bool Polytope::is_interior_subset(const Polytope& P)
+	 const {
+   const IntervalVector &b2 = P.box(true);
+   const IntervalVector &b1 = this->box(true);
+   if (!b1.is_interior_subset(b2)) return false;
+   for (const auto &fctP : P._facets->get_map()) {
+       if (this->fast_bound(fctP.first).ub() < fctP.second.rhs) continue;
+       double l1 = this->bound_row(fctP.first.row);
+       if (l1<fctP.second.rhs) continue;
+       return false;
+   }
+   return true;
+}
+
+bool Polytope::intersects(const IntervalVector& p) const {
+   assert(!status[INVALID]);
+   const IntervalVector &b1 = this->box(true);
+   if (!b1.intersects(p)) return false;
+   Polytope q(*this); /* TODO : copy DDbuildF2V */
+   q.meet_with_box(p);
+   return !(q.check_empty());
+}
+
+bool Polytope::intersects(const Polytope& p) const {
+   assert(!status[INVALID]);
+   const IntervalVector &b1 = this->box();
+   if (!b1.intersects(p.box())) return false;
+   Polytope q(*this); /* TODO : copy DDbuildF2V */
+   q.meet_with_polytope(p);
+   return !(q.check_empty());
+}
+
+bool Polytope::is_disjoint(const Polytope& p) const {
+   return (!this->intersects(p));
+}
+
+void Polytope::contract_out_Box(IntervalVector &b) const {
+   assert(!status[INVALID]);
+   const IntervalVector &b1 = this->_box;
+   /* we can compute the diff, but as the goal is to return one interval vector,
+      we do it "by hand" to avoid the generation of too many elements.
+      also, we quit as soon a the vector is "full" */
+   IntervalVector result = IntervalVector::constant(_dim,Interval::empty());
+   for (Index i=0;i<_dim;i++) {
+      std::vector<Interval> vt = b[i].diff(b1[i]);
+      if (vt.empty()) continue;
+      IntervalVector r1(b);
+      r1[i] = vt[0];
+      if (vt.size()>1) r1[i] |= vt[1];
+      if (r1[i]==b[i]) return;
+      result |= r1;
+      if (b.is_subset(result)) return;
+   }
+   for (auto &facet : _facets->get_map()) {
+       IntervalVector r1(b);
+       Facet_::contract_out_Box(facet,r1);
+       result |= r1;
+       if (b.is_subset(result)) return;
+   }
+   b = result;
 }
 
 #if 0
@@ -435,17 +517,6 @@ const Interval& Polytope::operator[](Index i) const {
    return _box[i];
 }
 
-Vector Polytope::mid() const {
-   assert_release(_dim>=0);
-   if (_empty) return 
-	Vector::Constant(_dim,std::numeric_limits<double>::quiet_NaN());
-   if (!_clpForm) return _box.mid();
-   LPclp::lp_result_stat stat = _clpForm->solve(true,0);
-   if (stat[LPclp::NOTEMPTY] || stat[LPclp::NOTEMPTY_APPROX])
-       return _clpForm->getFeasiblePoint().mid();
-   return Vector::Constant(_dim,std::numeric_limits<double>::quiet_NaN());
-}
-
 double Polytope::;istance_cst(const Facet &fc) const {
    assert_release(_dim==fc.row.size());
    if (_empty) return -oo;
@@ -457,6 +528,23 @@ double Polytope::;istance_cst(const Facet &fc) const {
 }
 
 #endif
+
+Vector Polytope::mid() const {
+   assert_release(!state[INVALID]);
+   this->update_box();
+   return (_box.mid());
+}
+
+Vector Polytope::mid_in() const {
+   assert_release(!state[INVALID]);
+   if (this->is_box()) return (_box.mid());
+   std::vector<IntervalVector> vt = this->vertices();
+   if (vt.empty()) return _box.mid();
+   Vector ret = vt[0].mid();
+   for (Index i=1;i<(Index)vt.size();i++) 
+      ret += vt[i].mid();
+   return ret/vt.size();
+}
 
 void Polytope::clear() {
    assert_release(!state[INVALID]);
@@ -1086,6 +1174,25 @@ Polytope operator+ (const Polytope &p1, const Polytope &p2) {
    return (ret &= bres);
 }
    
+Polytope Polytope::operator-() const {
+   assert_release(!state[INVALID]);
+   if (state[EMPTY]) return Polytope(_dim,true);
+   CollectFacets cf(_dim);
+   IntervalVector bbox(-_box);
+   for (auto &facet : _facets->get_map()) {
+      FacetBase nf = facet.first;
+      nf.negate_row();
+      std::pair<Index,bool> ret =
+		 cf.insert_facet(Facet_::make(nf,-facet.second.rhs,
+					facet.second.eqcst),
+				CollectFacets::MIN_RHS);
+      if (ret.first==-1) return Polytope(_dim, true); /* should not happen */
+   }  
+   Polytope ret = Polytope(IntervalVector(bbox),std::move(cf));
+   ret.state=this->state & pol_state_init; 
+   return ret;
+}
+
 std::ostream& operator<<(std::ostream& os,
 		const Polytope &P) {
    if (P.state[Polytope::EMPTY]) {

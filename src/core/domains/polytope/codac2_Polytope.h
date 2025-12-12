@@ -225,10 +225,16 @@ namespace codac2 {
         const Interval& operator[](Index i) const;
 
         /**
-         * ``middle'' (vector inside the polytope, if possible)
-         * \return 
+         * ``middle'' of the bbox
+         * \return the middle of the box
          */
         Vector mid() const;
+
+        /**
+         * point inside the polytope using the vertices
+         * \return a barycenter of the middle of the vertices
+         */
+        Vector mid_in() const;
 
         /** 
          *  bound a constraint (fast), either by a "close" one (+box)
@@ -242,7 +248,7 @@ namespace codac2 {
         Interval fast_bound(const FacetBase &base) const;
 
         /** 
-         *  bound a constraint, using either DD
+         *  bound a constraint, using DD
          * \param r the row
          * \return the max
          */
@@ -273,28 +279,63 @@ namespace codac2 {
         BoolInterval contains(const IntervalVector& p) const;
 
         /**
+         *  Checks whether the interior of the polytope contains a given
+         * point, or includes a box
+         *
+         * \param p The point or box to check, enclosed in an IntervalVector.
+         * \return BoolInterval indicating possible containment.
+         */
+        BoolInterval interior_contains(const IntervalVector& p) const;
+
+        /**
          *  Checks inclusion in another polytope
          * \param P the polytope
          * \return true if inclusion is guaranteed
          */
         virtual bool is_subset(const Polytope &P) const;
 
+        /**
+         *  Checks enclosure of another polytope
+         * \param P the polytope
+         * \return true if (*this) encloses P
+         */
+        bool is_superset(const Polytope &P) const;
+
+        /**
+         *  Checks inclusion in the interior of another polytope
+         * \param P the polytope
+         * \return true if inclusion is guaranteed
+         */
+        virtual bool is_interior_subset(const Polytope &P) const;
+
         /**  intersects a box 
          * \param x the box (IntervalVector) 
-         * \return if the polytope intersects the box
+         * \return false if the intersection is guaranteed to be empty
          */
-        BoolInterval intersects(const IntervalVector& x) const;
+        bool intersects(const IntervalVector& x) const;
         
         /**  intersects a polytope
          * \param p the polytope
-         * \return if the polytope intersects the box
+         * \return false if the intersection is guaranteed to be empty
          */
-        BoolInterval intersects(const Polytope &p) const;
+        bool intersects(const Polytope &p) const;
+
+        /** test if it is disjoint with a polytope
+         * \param p the polytope
+         * \return true if the intersection is guaranteed to be empty
+         */
+        bool is_disjoint(const Polytope &p) const;
+
+        /** compute the box hull of B diff (*this)
+         *  \param b a box, contracted.
+         */
+        void contract_out_Box(IntervalVector &b) const;
 
         /** minimize the constraints, removing (possibly) redundant
          *  constraints.
          */
         virtual void minimize_constraints() const;
+
 
         /************* Box access *************************/
  
@@ -506,6 +547,10 @@ namespace codac2 {
          * \param p2 second polytope 
          * \return a new polytope */
         friend Polytope operator+ (const Polytope &p1, const Polytope &p2);
+
+        /** unary minus 
+         *  \return the negation of the current polytope */
+        Polytope operator- () const;
   
 
         /*********** Printing and other ``global access'' *********/

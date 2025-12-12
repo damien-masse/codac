@@ -45,6 +45,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolar.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolygon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolygon.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolytope.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolytope.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcProj.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcProj.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcSegment.cpp
@@ -236,6 +238,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepNot.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepPolygon.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepPolygon.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepPolytope.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepPolytope.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepProj.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepProj.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepTransform.cpp

@@ -275,7 +275,7 @@ namespace Facet_ {
   const polytope_inclrel inclrel_disjoint = 1<<DISJOINT;
 
   /* test only includes and intersects */
-  polytope_inclrel relation_Box(const Facet &f, const IntervalVector &b);
+  polytope_inclrel relation_Box(const Facet &f, const IntervalVector &b, bool strict=false);
 
    /* give the bound for a Row and a box, based on the largest index (bdim).
       ie compute R(bdim)/r(bdim) rhs + (R - R(bdim)/r(bdim) r) B,

@@ -892,6 +892,18 @@ namespace codac2
       }
 
       /**
+       * \brief draws a 2D convex polytope on the figure
+       * 
+       * \param P polytope to draw 
+       * \param style style of the polytope (edge color and fill color)
+       */
+      static void draw_polytope(const Polytope& P, const StyleProperties& style = StyleProperties()) 
+      {
+        auto_init();
+        selected_fig()->draw_polytope(P,style);
+      }
+
+      /**
        * \brief Draws a trajectory on the figure
        * 
        * \param x Trajectory to draw

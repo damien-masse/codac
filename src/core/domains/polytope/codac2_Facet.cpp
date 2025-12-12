@@ -25,10 +25,11 @@ namespace codac2 {
 
 namespace Facet_ {
 
-polytope_inclrel relation_Box(const Facet &f, const IntervalVector &b) {
+polytope_inclrel relation_Box(const Facet &f, const IntervalVector &b, bool strict) {
       const Row &row = f.first.get_row();
       const double rhs = f.second.get_rhs();
       const bool eqcst = f.second.is_eqcst();
+      if (eqcst && strict) return inclrel_notinclude | inclrel_disjoint;
       if (b.is_empty()) return inclrel_includes | inclrel_disjoint;
       IntervalVector a(b);
       /* check the vertex that maximizes row */
@@ -37,11 +38,11 @@ polytope_inclrel relation_Box(const Facet &f, const IntervalVector &b) {
       }
       Interval maxv = row.dot(a)-rhs;
       polytope_inclrel r1=0;
-      if (maxv.ub()<=0.0) {
+      if (maxv.ub()<=0.0 && (!strict || maxv.ub()<0.0)) {
          if (!eqcst) return inclrel_includes | inclrel_intersects;
          else if (maxv.ub()<0.0) return inclrel_notinclude | inclrel_disjoint;
          r1 = inclrel_includes;
-      } else if (maxv.lb()<=0.0) {
+      } else if (maxv.lb()<=0.0 && (!strict || maxv.lb()<0.0)) {
          r1 = inclrel_mayinclude;
       } else {
          r1 = inclrel_notinclude;
@@ -51,11 +52,13 @@ polytope_inclrel relation_Box(const Facet &f, const IntervalVector &b) {
           if (row[i]>0) a[i]=b[i].lb(); else a[i]=b[i].ub();
       }
       Interval minv = row.dot(a)-rhs;
-      if (minv.lb()>0.0) return inclrel_notinclude | inclrel_disjoint;
+      if (minv.lb()>0.0 || (strict && minv.lb()>=0.0)) 
+	  return inclrel_notinclude | inclrel_disjoint;
       if (!eqcst) {
-         if (minv.ub()>0.0) return r1 | inclrel_mayintersect;
+         if (minv.ub()>0.0 || (strict && minv.ub()>=0.0)) 
+		return r1 | inclrel_mayintersect;
          return r1 | inclrel_intersects;
-      } else {
+      } else { /* eqcst==true -> strict == false */
          if (r1[INCLUDES]) { /* maxv.ub == 0 */
               if (minv.lb()>=0.0) return 
 				inclrel_includes | inclrel_intersects;
@@ -74,13 +77,34 @@ void contract_Box(const Facet &f, IntervalVector &b) {
    const double rhs = f.second.get_rhs();
    /* use MulOp:bwd */
    IntervalRow x1(row);
-   MulOp::bwd(Interval(-oo,rhs),x1,b);
+   MulOp::bwd(f.second.is_eqcst() ? Interval(rhs,rhs) : Interval(-oo,rhs),x1,b);
    if (b[0].is_empty()) b.set_empty();
 }
 
 void contract_out_Box(const Facet &f, IntervalVector &b) {
    const Row &row = f.first.get_row();
    const double rhs = f.second.get_rhs();
+   if (f.first.is_coord()) {
+      Index c = f.first.gt_dim();
+      Interval val = Interval(rhs)/row[c];
+      if (f.second.is_eqcst()) {
+           if (!val.is_degenerated()) return; /* can't use a value */
+           if (val==b[c]) b.set_empty();
+      } else {
+         if (row[c]>0.0) { /* x[c]>val.lb() */
+            if (b[c].ub()<=val.lb()) { b.set_empty(); }
+            else if (b[c].lb()<=val.lb()) 
+		{ b[c] = Interval(val.lb(),b[c].ub()); }
+         }
+      }
+      return;
+   }
+   Interval a = b.dot(row);
+   if (a.ub()<=rhs) { b.set_empty(); return; }
+   if (f.second.is_eqcst()) {
+	if (a.lb()>=rhs) b.set_empty();
+        return; 
+   }
    /* use MulOp:bwd */
    IntervalRow x1(row);
    MulOp::bwd(Interval(rhs,oo),x1,b);
