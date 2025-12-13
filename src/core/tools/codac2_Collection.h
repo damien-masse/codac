@@ -11,13 +11,13 @@
 
 #include <type_traits>
 #include <cassert>
-#include <vector>
+#include <list>
 #include <memory>
 
 namespace codac2
 {
   template<typename T>
-  class Collection : public std::vector<std::shared_ptr<T>>
+  class Collection : public std::list<std::shared_ptr<T>>
   {
     public:
 
@@ -34,14 +34,14 @@ namespace codac2
       template<typename... T_>
         requires (std::is_same_v<std::shared_ptr<T>,std::shared_ptr<T_>> && ...)
       Collection(const std::shared_ptr<T_>&... x)
-        : std::vector<std::shared_ptr<T>>({x...})
+        : std::list<std::shared_ptr<T>>({x...})
       { }
 
       Collection(const Collection<T>& c)
-        : std::vector<std::shared_ptr<T>>(c.size())
+        : std::list<std::shared_ptr<T>>(c.size())
       {
-        for(size_t i = 0 ; i < c.size() ; i++)
-          (*this)[i] = std::dynamic_pointer_cast<T>(c[i]->copy());
+        for(const auto& ci : c)
+          this->push_back(std::dynamic_pointer_cast<T>(ci->copy()));
       }
 
       template<typename T_>
@@ -55,7 +55,7 @@ namespace codac2
         requires std::is_base_of_v<T,T_>
       void push_back(const std::shared_ptr<T_>& x)
       {
-        this->std::vector<std::shared_ptr<T>>::push_back(x);
+        this->std::list<std::shared_ptr<T>>::push_back(x);
       }
   };
 }
