@@ -28,20 +28,21 @@ namespace codac2
         requires ((!std::is_same_v<Collection<T>,T_>) && ...)
       Collection(const T_&... x)
       {
-        (push_back(x), ...);
+        (this->push_back(x), ...);
       }
 
-      template<typename... T_>
-        requires (std::is_same_v<std::shared_ptr<T>,std::shared_ptr<T_>> && ...)
-      Collection(const std::shared_ptr<T_>&... x)
-        : std::list<std::shared_ptr<T>>({x...})
+      Collection(std::initializer_list<std::shared_ptr<T>> init)
+        : std::list<std::shared_ptr<T>>(init)
       { }
 
       Collection(const Collection<T>& c)
-        : std::list<std::shared_ptr<T>>(c.size())
+        : std::list<std::shared_ptr<T>>()
       {
         for(const auto& ci : c)
+        {
+          assert(ci);
           this->push_back(std::dynamic_pointer_cast<T>(ci->copy()));
+        }
       }
 
       template<typename T_>
