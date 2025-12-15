@@ -15,7 +15,6 @@
 using namespace std;
 using namespace codac2;
 
-
 Figure2D_IPE::Figure2D_IPE(const Figure2D& fig)
   : OutputFigure2D(fig), _f(fig.name() + ".xml"),
     _x_offset(0.03*_fig.axes()[0].limits.diam()),
@@ -33,10 +32,9 @@ Figure2D_IPE::~Figure2D_IPE()
   _f = std::ofstream(_fig.name() + ".xml", std::ofstream::binary | std::ofstream::app);
   std::ifstream f_temp_content(_fig.name() + "_tmp.xml", std::ofstream::binary);
 
-  // _f << f_temp_content.rdbuf();
   for (const auto& item : _items)
     _f << item.second;
-
+    
   f_temp_content.close();
   std::remove((_fig.name() + "_tmp.xml").c_str());
   _f.close();
@@ -302,7 +300,7 @@ void Figure2D_IPE::draw_tick_label(const Vector& c, const Vector& r, const std::
     depth=\"0\" \n \
     valign=\"baseline\">" + text + "</text>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -310,22 +308,22 @@ void Figure2D_IPE::draw_axes()
 {
   double axe_thickness = 1.0/_ratio[0];
   draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},
-                 {_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes", to_string(axe_thickness)));
+                 {_fig.axes()[0].limits.ub(),_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes", "w:"+to_string(axe_thickness)));
 
   draw_polyline({{_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.lb()},
-                 {_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes", to_string(axe_thickness)));
+                 {_fig.axes()[0].limits.lb(),_fig.axes()[1].limits.ub()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes", "w:"+to_string(axe_thickness)));
 
   for (const auto& x_tick : _x_ticks) 
   {
     auto formatted_x_tick = format_number(x_tick,(_x_ticks[1] - _x_ticks[0]));
-    draw_polyline({{x_tick,_fig.axes()[1].limits.lb()-0.02*_fig.axes()[1].limits.diam()},{x_tick,_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes", to_string(axe_thickness)));
+    draw_polyline({{x_tick,_fig.axes()[1].limits.lb()-0.02*_fig.axes()[1].limits.diam()},{x_tick,_fig.axes()[1].limits.lb()}}, 0., StyleProperties({Color::black(),Color::black()}, "axes", "w:"+to_string(axe_thickness)));
     draw_tick_label({x_tick+0.005*_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.lb()-0.02*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, formatted_x_tick, StyleProperties({Color::black(),Color::black()}, "axes"));
   }
 
   for (const auto& y_tick : _y_ticks) 
   {
     auto formatted_y_tick = format_number(y_tick,(_y_ticks[1] - _y_ticks[0]));
-    draw_polyline({{_fig.axes()[0].limits.lb()-0.02*_fig.axes()[0].limits.diam(),y_tick},{_fig.axes()[0].limits.lb(),y_tick}}, 0., StyleProperties({Color::black(),Color::black()}, "axes", to_string(axe_thickness)));
+    draw_polyline({{_fig.axes()[0].limits.lb()-0.02*_fig.axes()[0].limits.diam(),y_tick},{_fig.axes()[0].limits.lb(),y_tick}}, 0., StyleProperties({Color::black(),Color::black()}, "axes", "w:"+to_string(axe_thickness)));
     draw_tick_label({_fig.axes()[0].limits.lb()-(0.02+0.0095*(formatted_y_tick.size()-1))*_fig.axes()[0].limits.diam(),y_tick+0.005*_fig.axes()[1].limits.diam()}, {_fig.axes()[0].limits.diam(),_fig.axes()[1].limits.diam()}, formatted_y_tick, StyleProperties({Color::black(),Color::black()}, "axes"));
   }
 }
@@ -346,9 +344,10 @@ void Figure2D_IPE::draw_point(const Vector& c, const StyleProperties& style)
     stroke-opacity=\"" + to_string(ipe_opacity(style.stroke_color)) + "%\" \n \
     size=\"normal\"\n/>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
+
 
 void Figure2D_IPE::draw_box(const IntervalVector& x, const StyleProperties& style)
 {
@@ -370,7 +369,7 @@ void Figure2D_IPE::draw_circle(const Vector& c, double r, const StyleProperties&
                   + to_string(scale_x(c[i()])) + " " + to_string(scale_y(c[j()])) + " e \n";
   _working_item += "</path>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -387,7 +386,7 @@ void Figure2D_IPE::draw_ring(const Vector& c, const Interval& r, const StyleProp
                   + to_string(scale_x(c[i()])) + " " + to_string(scale_y(c[j()])) + " e \n";
   _working_item += "</path>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -405,7 +404,7 @@ void Figure2D_IPE::draw_polyline(const std::vector<Vector>& x, float tip_length,
 
   _working_item += "</path>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -424,7 +423,7 @@ void Figure2D_IPE::draw_polygon(const std::vector<Vector>& x, const StylePropert
 
   _working_item += "</path>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -452,7 +451,7 @@ void Figure2D_IPE::draw_pie(const Vector& c, const Interval& r, const Interval& 
 
   _working_item += "</path>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -468,7 +467,7 @@ void Figure2D_IPE::draw_ellipse(const Vector& c, const Vector& ab, double theta,
                   + to_string(scale_x(c[i()])) + " " + to_string(scale_y(c[j()])) + " e \n";
   _working_item += "</path>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -484,7 +483,7 @@ void Figure2D_IPE::draw_tank(const Vector& x, float size, const StyleProperties&
   constexpr char tank_shape[] = " 1 -1.5 m \n -1 -1.5 l \n 0 -1.5 l \n 0 -1 l \n -1 -1 l \n -1 1 l \n 0 1 l \n 0 1.5 l \n -1 1.5 l \n 1 1.5 l \n 0 1.5 l \n 0 1 l \n 3 0.5 l \n 3 -0.5 l \n 0 -1 l \n 0 -1.5 l \n";
   _working_item += std::string(tank_shape) + "h\n" + "</path>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -511,7 +510,7 @@ void Figure2D_IPE::draw_AUV(const Vector& x, float size, const StyleProperties& 
   _working_item += std::string(propeller_shape) + "h\n" + "</path>\n";
   _working_item += "</group>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -560,7 +559,7 @@ void Figure2D_IPE::draw_motor_boat(const Vector& x, float size, const StylePrope
 
   _working_item += "</group>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 
@@ -583,7 +582,7 @@ void Figure2D_IPE::draw_text(const std::string& text, const Vector& ul, [[maybe_
     depth=\"0\" \n \
     valign=\"top\">" + text + "</text>";
 
-  _items.insert({0., _working_item});
+  _items.insert({style.z_value, _working_item});
   _working_item="";
 }
 

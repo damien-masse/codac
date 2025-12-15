@@ -52,6 +52,7 @@ void Figure2D_VIBes::update_drawing_properties(const StyleProperties& style)
 
   _params["LineStyle"] = style.line_style;
   _params["LineWidth"] = std::to_string(style.line_width);
+  _params["ZValue"] = style.z_value;
   if (style.layer != "alpha")
     _params["group"] = style.layer;
   else
