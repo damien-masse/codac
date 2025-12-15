@@ -39,3 +39,20 @@ or equalities), or a set of vertices.
       :end-before: [polytope-1-end]
       :dedent: 2
 
+Output of a polytope
+--------------------
+Polytopes are displayed as a set of linear constraints and a bounding box.
+To display the set of vertices, one can use the 
+vertices() method.
+
+.. tabs::
+
+  .. group-tab:: C++
+
+    .. literalinclude:: src_polytope.cpp
+      :language: c++
+      :start-after: [polytope-2-beg]
+      :end-before: [polytope-2-end]
+      :dedent: 2
+
+

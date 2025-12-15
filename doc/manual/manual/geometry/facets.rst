@@ -8,6 +8,13 @@ Facet classes
 Facets
 ------
 
+.. doxygentypedef:: codac2::Facet
+  :project: codac
+
+.. doxygennamespace:: codac2::Facet_
+  :project: codac
+  :members:
+
 .. doxygenclass:: codac2::FacetBase
   :project: codac
   :members:
@@ -15,6 +22,7 @@ Facets
 .. doxygenclass:: codac2::FacetRhs
   :project: codac
   :members:
+
 
 Collection of facets
 --------------------

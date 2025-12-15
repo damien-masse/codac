@@ -1196,10 +1196,10 @@ Polytope Polytope::operator-() const {
 std::ostream& operator<<(std::ostream& os,
 		const Polytope &P) {
    if (P.state[Polytope::EMPTY]) {
-      os << "Polytope(" << P.state << " empty dim " << P._dim << ")" << std::endl;
+      os << "Polytope(" /* << P.state */ << " empty dim " << P._dim << ")" << std::endl;
       return os;
    }
-   os << "Polytope(" << P.state << " bbox " << P._box << ") : " << std::endl;
+   os << "Polytope(" /* << P.state */ << " bbox " << P._box << ") : " << std::endl;
    os << *P._facets;
    os << "EndPolytope" << std::endl;
    return os;

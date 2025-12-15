@@ -8,15 +8,6 @@
 using namespace std;
 using namespace codac2;
 
-void draw_polytope(Figure3D &fig, const Polytope &P, const StyleProperties &st) {
-   std::vector<std::vector<Vector>> facets3D=P.vertices_3Dfacets();
-   Vector center = Vector::zero(3);
-   Matrix transfo = Matrix::Identity(3,3);
-   for (const std::vector<Vector> &vec : facets3D) {
-      fig.draw_polygon(center,transfo,vec,st);
-   }
-}
-
 int main(int argc, char *argv[])
 {
 //   std::cout << std::scientific << std::setprecision(20);
@@ -44,12 +35,12 @@ int main(int argc, char *argv[])
 
    // p1 and p2 are ``almost'' the same polytope
 
-   draw_polytope(fig,p1,StyleProperties(Color::dark_red(0.8),"p1"));
+   fig.draw_polytope(p1,StyleProperties(Color::dark_red(0.8),"p1"));
    std::cout << p1 << std::endl;
 
    std::vector<IntervalVector> vp2 = p2.vertices();
    for (auto &v : vp2) std::cout << v << std::endl;
-   draw_polytope(fig,p2,StyleProperties(Color::dark_blue(0.8),"p2"));
+   fig.draw_polytope(p2,StyleProperties(Color::dark_blue(0.8),"p2"));
 
    return 0;
 }
