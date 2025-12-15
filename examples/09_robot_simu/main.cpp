@@ -22,4 +22,9 @@ int main()
     {0,x.codomain()[0].inflate(1.)},
     {1,x.codomain()[1].inflate(1.)}
   ).auto_scale();
+
+  // Optional tube built from a trajectory:
+  auto tdomain = create_tdomain(x.tdomain(),1e-2);
+  SlicedTube<IntervalVector> ix(tdomain,x);
+  g.draw_tube(ix.inflate(1e-1));
 }

@@ -19,3 +19,8 @@ g.set_axes( \
   axis(0,x.codomain()[0].inflate(1.)), \
   axis(1,x.codomain()[1].inflate(1.)) \
 ).auto_scale()
+
+# Optional tube built from a trajectory:
+tdomain = create_tdomain(x.tdomain(),1e-2)
+ix = SlicedTube_IntervalVector(tdomain,x)
+g.draw_tube(ix.inflate(1e-1))
