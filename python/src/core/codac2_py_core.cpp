@@ -52,6 +52,7 @@ void export_CtcNot(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcInterv
 void export_CtcPointCloud(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcPolar(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcPolygon(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcPolytope(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcProj(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcSegment(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcUnion(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -140,6 +141,7 @@ void export_SepInter(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepInverse(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepNot(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepPolygon(py::module& m, py::class_<SepBase,pySep>& sep);
+void export_SepPolytope(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepProj(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepTransform(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepUnion(py::module& m, py::class_<SepBase,pySep>& sep);
@@ -194,6 +196,7 @@ PYBIND11_MODULE(_core, m)
   export_CtcPointCloud(m, py_ctc_iv);
   export_CtcPolar(m, py_ctc_iv);
   export_CtcPolygon(m, py_ctc_iv);
+  export_CtcPolytope(m, py_ctc_iv);
   export_CtcProj(m, py_ctc_iv);
   export_CtcSegment(m, py_ctc_iv);
   export_CtcUnion(m, py_ctc_iv);
@@ -305,6 +308,7 @@ PYBIND11_MODULE(_core, m)
   export_SepInverse(m,py_sep);
   export_SepNot(m,py_sep);
   export_SepPolygon(m,py_sep);
+  export_SepPolytope(m,py_sep);
   export_SepProj(m,py_sep);
   export_SepTransform(m,py_sep);
   export_SepUnion(m,py_sep);

@@ -39,6 +39,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/contractors/codac2_tests_CtcInverseNotIn
   core/contractors/codac2_tests_CtcLazy
   core/contractors/codac2_tests_CtcPolygon
+  core/contractors/codac2_tests_CtcPolytope
   core/contractors/codac2_tests_CtcSegment
   core/contractors/codac2_tests_linear_ctc
   ../doc/manual/manual/contractors/geometric/src
@@ -90,6 +91,7 @@ list(APPEND SRC_TESTS # listing files without extension
   core/separators/codac2_tests_SepCtcBoundary
   core/separators/codac2_tests_SepInverse
   core/separators/codac2_tests_SepPolygon
+  core/separators/codac2_tests_SepPolytope
   core/separators/codac2_tests_SepProj
   core/separators/codac2_tests_SepTransform
   
