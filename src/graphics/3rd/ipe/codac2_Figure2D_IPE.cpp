@@ -462,8 +462,8 @@ void Figure2D_IPE::draw_ellipse(const Vector& c, const Vector& ab, double theta,
 
   begin_path(style);
 
-  _working_item += to_string(scale_length(ab[0]) * std::cos(theta)) + " " + to_string(scale_length(ab[0]) * std::sin(theta)) + " " 
-                  + to_string(- scale_length(ab[1]) * std::sin(theta)) + " " + to_string(scale_length(ab[1]) * std::cos(theta)) + " " 
+  _working_item += to_string(ab[0] * _ratio[0] * std::cos(theta)) + " " + to_string(ab[0] * _ratio[0] * std::sin(theta)) + " " 
+                  + to_string(- ab[1] * _ratio[1] * std::sin(theta)) + " " + to_string(ab[1] * _ratio[1] * std::cos(theta)) + " " 
                   + to_string(scale_x(c[i()])) + " " + to_string(scale_y(c[j()])) + " e \n";
   _working_item += "</path>";
 
