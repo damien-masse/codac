@@ -5,6 +5,7 @@ using namespace codac2;
 
 int main()
 {
+  DefaultFigure::draw_ellipse({0,0}, {7.5,3.5}, 0, {{Color::black(0.5),Color::yellow(0.5)},"z:-2.5"});
   VectorVar x(2);
 
   AnalyticFunction f_half_wing {
