@@ -5,12 +5,6 @@ using namespace codac2;
 
 int main()
 {
-  std::shared_ptr<codac2::Figure2D> fig = std::make_shared<Figure2D>("My Figure",GraphicOutput::VIBES|GraphicOutput::IPE);
-  fig->set_axes(axis(0,{-8,8}), axis(1,{-4,4}));
-  fig->auto_scale();
-  DefaultFigure::set(fig);
-  DefaultFigure::draw_ellipse({0,0}, {7.5,3.5}, 0, {{Color::black(0.5),Color::yellow(0.5)},"z:-2.5"});
-
   VectorVar x(2);
 
   AnalyticFunction f_half_wing {
@@ -46,6 +40,8 @@ int main()
   DefaultFigure::pave(
     {{-8,8},{-4,4}}, bat.create_sep(), 0.1,
     PavingStyle::black_white());
+
+  DefaultFigure::draw_ellipse({0,0}, {7.5,3.5}, 0, {{Color::black(0.5),Color::yellow(0.5)},"z:-2.5"});
 
   #if 0 // towards paving features..
   auto p = pave({{-8,8},{-4,4}}, *bat.create_sep(), e);
