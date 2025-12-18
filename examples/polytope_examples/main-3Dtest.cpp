@@ -8,15 +8,6 @@
 using namespace std;
 using namespace codac2;
 
-void draw_polytope(Figure3D &fig, const Polytope &P, const StyleProperties &st) {
-   std::vector<std::vector<Vector>> facets3D=P.vertices_3Dfacets();
-   Vector center = Vector::zero(3);
-   Matrix transfo = Matrix::Identity(3,3);
-   for (const std::vector<Vector> &vec : facets3D) {
-      fig.draw_polygon(center,transfo,vec,st);
-   }
-}
-
 int main(int argc, char *argv[])
 {
 //   std::cout << std::scientific << std::setprecision(20);
@@ -40,7 +31,7 @@ int main(int argc, char *argv[])
          { {1,-10,-2} ,0 } };
 
    Polytope p(IntervalVector({{-4,4},{-4,4},{-4,4}}), facets, true);
-   draw_polytope(fig,p,StyleProperties(Color::dark_red(0.8),
+   fig.draw_polytope(p,StyleProperties(Color::dark_red(0.8),
 			"initial polytope"));
 
    std::vector<IntervalVector> vertices = p.vertices();
@@ -55,7 +46,7 @@ int main(int argc, char *argv[])
         StyleProperties(Color::orange(0.6),
  			"box_inflate"));
    }
-   draw_polytope(fig,q,StyleProperties(Color::red(0.4),
+   fig.draw_polytope(q,StyleProperties(Color::red(0.4),
 			"inflate"));
    Polytope r = p;
    r.inflate_ball(0.5);
@@ -64,7 +55,7 @@ int main(int argc, char *argv[])
         StyleProperties(Color::orange(0.6),
  			"ball_inflate"));
    }
-   draw_polytope(fig,r,StyleProperties(Color::purple(0.4),
+   fig.draw_polytope(r,StyleProperties(Color::purple(0.4),
 			"inflate_ball"));
 
    Polytope s = p;
@@ -74,21 +65,21 @@ int main(int argc, char *argv[])
         StyleProperties(Color::black(),
  			"box_unflat"));
    }
-   draw_polytope(fig,s,StyleProperties(Color::yellow(0.4),
+   fig.draw_polytope(s,StyleProperties(Color::yellow(0.4),
                         "unflat"));
 
    Polytope t = p;
    t.homothety(IntervalVector({0,0,-0.5}),2);
-   draw_polytope(fig,t,StyleProperties(Color::dark_blue(0.8),
+   fig.draw_polytope(t,StyleProperties(Color::dark_blue(0.8),
                         "homothety"));
 
    Polytope u = t;
    u.meet_with_polytope(p);
-   draw_polytope(fig,u,StyleProperties(Color::dark_gray(),
+   fig.draw_polytope(u,StyleProperties(Color::dark_gray(),
                         "intersection"));
 
    Polytope v = Polytope::union_of_polytopes({ p,t });
-   draw_polytope(fig,v,StyleProperties(Color::cyan(0.4),
+   fig.draw_polytope(v,StyleProperties(Color::cyan(0.4),
                         "union"));
 
    IntervalMatrix M { { cos(PI/3) , sin(PI/3) , 0 },
@@ -98,7 +89,7 @@ int main(int argc, char *argv[])
    Polytope w = p.reverse_affine_transform(M,P,
                         IntervalVector({{-4,4},{-4,4},{-4,4}}));
 
-   draw_polytope(fig,w,StyleProperties(Color::blue(0.8),
+   fig.draw_polytope(w,StyleProperties(Color::blue(0.8),
                         "transformation"));
 
    return 0;

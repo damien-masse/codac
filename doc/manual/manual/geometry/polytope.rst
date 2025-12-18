@@ -55,4 +55,6 @@ vertices() method.
       :end-before: [polytope-2-end]
       :dedent: 2
 
+Operations on polytopes
+-----------------------
 
