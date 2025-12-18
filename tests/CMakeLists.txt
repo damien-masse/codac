@@ -128,14 +128,6 @@ if (WITH_CAPD)
   set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-capd capd::capd)
 endif()
 
-# CLP test
-if (WITH_CLP)
-  list(APPEND SRC_TESTS
-    extensions/clp/codac2_tests_clp
-  )
-  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-clp ${CLP_LIBRARIES})
-endif()
-
 # IBEX test
 #if (WITH_IBEX)
   #find_package(IBEX REQUIRED)
