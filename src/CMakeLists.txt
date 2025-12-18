@@ -14,10 +14,6 @@
     add_subdirectory(extensions/capd)
   endif()
 
-  if(WITH_CLP)
-    add_subdirectory(extensions/clp)
-  endif()
-
   #if(WITH_PYTHON)
   #  add_subdirectory(sympy)
   #endif()
@@ -115,24 +111,6 @@
                  PATH_SUFFIXES lib)
                  
     set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_CAPD_LIBRARY} capd::capd)
-    ")
-
-  endif()
-
-  if(WITH_CLP)
-
-    file(APPEND ${CODAC_CMAKE_CONFIG_FILE} "
-
-  # Optional 3rd party:
-
-    find_path(CODAC_CLP_INCLUDE_DIR ${PROJECT_NAME}-clp.h
-              PATH_SUFFIXES include/${PROJECT_NAME}-clp)
-    set(CODAC_INCLUDE_DIRS \${CODAC_INCLUDE_DIRS} \${CODAC_CLP_INCLUDE_DIR} \${CLP_INCLUDE_DIRS})
-
-    find_library(CODAC_CLP_LIBRARY NAMES ${PROJECT_NAME}-clp
-                 PATH_SUFFIXES lib)
-                 
-    set(CODAC_LIBRARIES \${CODAC_LIBRARIES} \${CODAC_CLP_LIBRARY} ${CLP_LIBRARIES})
     ")
 
   endif()
