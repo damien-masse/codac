@@ -126,6 +126,9 @@ void export_pave(py::module& m);
 // peibos
 void export_peibos(py::module& m);
 
+// proj
+void export_qinter(py::module& m);
+
 // separators
 py::class_<SepBase,pySep> export_Sep(py::module& m);
 void export_SepAction(py::module& m, py::class_<SepBase,pySep>& pysep);
@@ -288,6 +291,9 @@ PYBIND11_MODULE(_core, m)
 
   // peibos
   export_peibos(m);
+
+  // proj
+  export_qinter(m);
 
   // separators
   auto py_sep = export_Sep(m);

@@ -92,6 +92,8 @@
 
     peibos/codac2_py_peibos.cpp
 
+    proj/codac2_py_qinter.cpp
+
     separators/codac2_py_Sep.cpp
     separators/codac2_py_Sep.h
     separators/codac2_py_SepAction.cpp
