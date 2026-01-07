@@ -4,28 +4,19 @@
 
 # Finding Catch2
 
-  #message(STATUS "Getting Catch2 library... (an Internet connection might be required)")
-
-  Include(FetchContent)
-
-  #find_package(Catch2 3.6.0 EXACT QUIET)
-  find_package(Catch2 3.6.0 QUIET)
-  if(Catch2_FOUND)
-    message(STATUS "Found Catch2 version ${Catch2_VERSION} in ${Catch2_DIR}")
-  else()
-    message(STATUS "Attempt to install Catch2 automatically...")
-    FetchContent_Declare(
-    Catch2
-    #GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    #GIT_TAG        v3.6.0
-    #URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.6.0.zip
-    URL ${CMAKE_SOURCE_DIR}/3rd/Catch2-3.6.0.zip
-    #SOURCE_DIR "P:/devel/GitHub/Catch2"
-    #FIND_PACKAGE_ARGS
-  )
+option(ENABLE_FIND_PACKAGE_CATCH2 "ENABLE_FIND_PACKAGE_CATCH2" ON)
+if(ENABLE_FIND_PACKAGE_CATCH2)
+  find_package(Catch2 3.0.0 QUIET) # Use Catch2_DIR or CMAKE_PREFIX_PATH to specify a custom Catch2 installation path...
+endif()
+if(Catch2_FOUND)
+  message(STATUS "Found Catch2 version ${Catch2_VERSION} in ${Catch2_DIR}")
+else()
+  message(STATUS "Attempt to install Catch2 automatically...")
+  FetchContent_Declare(Catch2 URL https://github.com/catchorg/Catch2/archive/refs/tags/v3.6.0.zip)
+  #FetchContent_Declare(Catch2 URL ${CMAKE_CURRENT_SOURCE_DIR}/../3rd/Catch2-3.6.0.zip) # If needed to be self-contained...
   FetchContent_MakeAvailable(Catch2)
-  # Adds Catch2::Catch2WithMain
-  endif()
+endif()
+# Adds Catch2::Catch2WithMain
 
 list(APPEND SRC_TESTS # listing files without extension
 
@@ -40,6 +31,8 @@ list(APPEND SRC_TESTS # listing files without extension
   core/contractors/codac2_tests_CtcAction
   core/contractors/codac2_tests_CtcCartProd
   core/contractors/codac2_tests_CtcCtcBoundary
+  core/contractors/codac2_tests_CtcDeriv
+  core/contractors/codac2_tests_CtcEval
   core/contractors/codac2_tests_CtcFixpoint
   core/contractors/codac2_tests_CtcInter
   core/contractors/codac2_tests_CtcInverse
@@ -56,6 +49,14 @@ list(APPEND SRC_TESTS # listing files without extension
   core/domains/interval/codac2_tests_Interval_operations
   core/domains/interval/codac2_tests_IntervalMatrix
   core/domains/interval/codac2_tests_IntervalVector
+  core/domains/zonotope/codac2_tests_Parallelepiped
+  core/domains/zonotope/codac2_tests_Parallelepiped_eval
+  core/domains/tube/codac2_tests_TDomain
+  core/domains/tube/codac2_tests_Slice
+  core/domains/tube/codac2_tests_Slice_polygon
+  core/domains/tube/codac2_tests_SlicedTube
+  core/domains/tube/codac2_tests_SlicedTube_integral
+  ../doc/manual/manual/intervals/src
 
   core/functions/analytic/codac2_tests_AnalyticFunction
   ../doc/manual/manual/functions/analytic/src
@@ -76,9 +77,12 @@ list(APPEND SRC_TESTS # listing files without extension
   core/matrices/codac2_tests_hull
   core/matrices/codac2_tests_inversion
   core/matrices/codac2_tests_IntFullPivLU
+  core/matrices/codac2_tests_GaussJordan
   ../doc/manual/manual/linear/src
 
   core/operators/codac2_tests_operators
+
+  core/peibos/codac2_tests_peibos
 
   core/separators/codac2_tests_SepCartProd
   core/separators/codac2_tests_SepCtcBoundary
@@ -88,7 +92,11 @@ list(APPEND SRC_TESTS # listing files without extension
   core/separators/codac2_tests_SepTransform
   
   core/tools/codac2_tests_Approx
+  core/tools/codac2_tests_serialization
   core/tools/codac2_tests_transformations
+  core/tools/codac2_tests_trunc
+  core/tools/ibex/codac2_tests_ibex
+  ../doc/manual/manual/tools/src
   
   core/trajectory/codac2_tests_AnalyticTraj
   core/trajectory/codac2_tests_SampledTraj
@@ -96,7 +104,16 @@ list(APPEND SRC_TESTS # listing files without extension
   graphics/styles/codac2_tests_Color
 )
 
-set(CODAC_LIBRARIES ${PROJECT_NAME}-core)
+file(COPY
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/domains/tube/codac2_tests_predefined_tubes.py
+  # Add here other Python files that are not tests but need to be exported to Python package
+  # ...
+  
+  DESTINATION
+  ${CMAKE_BINARY_DIR}/python/python_package/codac/tests
+)
+
+set(CODAC_LIBRARIES ${PROJECT_NAME}-core ${PROJECT_NAME}-graphics)
 
 # CAPD test
 if (WITH_CAPD)
@@ -109,10 +126,9 @@ endif()
 
 # IBEX test
 #if (WITH_IBEX)
-  list(APPEND SRC_TESTS
-    extensions/ibex/codac2_tests_ibex
-  )
-  set(CODAC_LIBRARIES ${CODAC_LIBRARIES} ${PROJECT_NAME}-ibex)
+  #find_package(IBEX REQUIRED)
+  #ibex_init_common() # IBEX should have installed this function
+  #message(STATUS "Found IBEX version ${IBEX_VERSION}")
 #endif()
 
 foreach(SRC_TEST ${SRC_TESTS})

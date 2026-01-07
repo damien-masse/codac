@@ -50,6 +50,13 @@ namespace codac2
         {
           IntervalVector xi = x.subvector(i,i+ci->size()-1);
           ci->contract(xi);
+
+          if(xi.is_empty())
+          {
+            x.set_empty();
+            return;
+          }
+          
           x.put(i,xi);
           i += ci->size();
         }

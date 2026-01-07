@@ -2,7 +2,7 @@
  *  \file codac2_AnalyticFunction.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé, Maël Godard
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -16,9 +16,12 @@
 #include "codac2_FunctionBase.h"
 #include "codac2_template_tools.h"
 #include "codac2_AnalyticExprWrapper.h"
-#include "codac2_ScalarExprList.h"
 #include "codac2_operators.h"
 #include "codac2_cart_prod.h"
+#include "codac2_vec.h"
+#include "codac2_Wrapper.h"
+#include "codac2_Parallelepiped.h"
+#include "codac2_peibos_tools.h"
 
 namespace codac2
 {
@@ -35,6 +38,22 @@ namespace codac2
   inline EvalMode operator|(EvalMode a, EvalMode b)
   { return static_cast<EvalMode>(static_cast<int>(a) | static_cast<int>(b)); }
 
+  struct ScalarExprList : public AnalyticExprWrapper<VectorType>
+  {
+    // Mainly used to take advantage of initializer lists in AnalyticFunction constructors.
+    template<typename... S>
+      requires (std::is_same_v<typename ExprType<S>::Type,ScalarType> && ...)
+    ScalarExprList(const S&... y)
+      : AnalyticExprWrapper<VectorType>(vec(y...))
+    { }
+  };
+
+  template<typename T>
+  class SampledTraj;
+
+  template<typename T>
+  class SlicedTube;
+
   template<typename T>
     requires std::is_base_of_v<AnalyticTypeBase,T>
   class AnalyticFunction : public FunctionBase<AnalyticExpr<T>>
@@ -47,6 +66,7 @@ namespace codac2
       {
         assert_release(y->belongs_to_args_list(this->args()) && 
           "Invalid argument: variable not present in input arguments");
+        update_var_names();
       }
 
       AnalyticFunction(const FunctionArgsList& args, const AnalyticExprWrapper<T>& y)
@@ -54,11 +74,8 @@ namespace codac2
       {
         assert_release(y->belongs_to_args_list(this->args()) && 
           "Invalid argument: variable not present in input arguments");
+        update_var_names();
       }
-
-      AnalyticFunction(const FunctionArgsList& args, const AnalyticVarExpr<T>& y)
-        : AnalyticFunction(args, { std::dynamic_pointer_cast<AnalyticExpr<T>>(y.copy()) })
-      { }
 
       AnalyticFunction(const AnalyticFunction<T>& f)
         : FunctionBase<AnalyticExpr<T>>(f)
@@ -96,8 +113,16 @@ namespace codac2
             
             if constexpr(std::is_same_v<T,ScalarType>)
               return x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0];
-            else
+
+            else if constexpr(std::is_same_v<T,VectorType>)
               return x_.m + (x_.da*(flatten_x-flatten_x.mid())).col(0);
+
+            else
+            {
+              static_assert(std::is_same_v<T,MatrixType>);
+              return x_.m + (x_.da*(flatten_x-flatten_x.mid()))
+                .reshaped(x_.m.rows(), x_.m.cols());
+            }
           }
 
           case EvalMode::DEFAULT:
@@ -108,27 +133,31 @@ namespace codac2
             // If the centered form is not available for this expression...
             if(x_.da.size() == 0 // .. because some parts have not yet been implemented,
               || !x_.def_domain) // .. or due to restrictions in the derivative definition domain
-              return eval(EvalMode::NATURAL, x...);
+              return x_.a; // natural evaluation
 
             else
             {
               auto flatten_x = IntervalVector(cart_prod(x...));
+
               if constexpr(std::is_same_v<T,ScalarType>)
                 return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid()))[0]);
-              else
+
+              else if constexpr(std::is_same_v<T,VectorType>)
               {
                 assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
                 return x_.a & (x_.m + (x_.da*(flatten_x-flatten_x.mid())).col(0));
               }
+
+              else
+              {
+                static_assert(std::is_same_v<T,MatrixType>);
+                assert(x_.da.rows() == x_.a.size() && x_.da.cols() == flatten_x.size());
+                return x_.a & (x_.m +(x_.da*(flatten_x-flatten_x.mid()))
+                  .reshaped(x_.m.rows(),x_.m.cols()));
+              }
             }
           }
         }
-      }
-
-      template<typename... Args>
-      typename T::Domain eval(const Args&... x) const
-      {
-        return eval(EvalMode::NATURAL | EvalMode::CENTERED, x...);
       }
 
       template<typename... Args>
@@ -138,71 +167,94 @@ namespace codac2
         return eval_<false>(x...).da;
       }
 
+      template<typename... Args>
+      typename T::Domain eval(const Args&... x) const
+      {
+        return eval(EvalMode::NATURAL | EvalMode::CENTERED, x...);
+      }
+
+      template<typename... Args>
+      auto traj_eval(const SampledTraj<Args>&... x) const
+      {
+        SampledTraj<typename T::Scalar> y;
+        for(const auto& [ti,xi] : std::get<0>(std::tie(x...)))
+          y.set(this->real_eval(x(ti)...),ti);
+        return y;
+      }
+
+      template<typename... Args>
+      auto tube_eval(const SlicedTube<Args>&... x) const
+      {
+        auto tdomain = std::get<0>(std::tie(x...)).tdomain();
+
+        SlicedTube<typename T::Domain> y(
+          tdomain, (typename T::Domain)(this->output_size())
+        );
+
+        for(auto it = tdomain->begin() ; it != tdomain->end() ; it++)
+          y.slice(it)->codomain() = this->eval(x.slice(it)->codomain()...);
+
+        return y;
+      }
+
+      template<typename... Args>
+        requires std::is_same_v<VectorType,T> && ((!std::is_same_v<MatrixType,typename ExprType<Args>::Type>) && ...)
+      Parallelepiped parallelepiped_eval(const Args&... x) const
+      {
+        this->check_valid_inputs(x...);
+        assert_release(this->input_size() < this->output_size() &&
+                      "Parallelepiped evaluation requires more outputs than inputs.");
+        assert_release(this->input_size() > 0 &&
+                    "Parallelepiped evaluation requires at least one input.");
+
+        IntervalVector Y = this->eval(((typename Wrapper<Args>::Domain)(x)).mid()...);
+        Vector z = Y.mid();
+
+        Matrix A = this->diff(((typename Wrapper<Args>::Domain)(x)).mid()...).mid();
+
+        // Maximum error computation
+        double rho = error_peibos(Y, z, this->diff(x...), A, cart_prod(x...));
+
+        // Inflation of the parallelepiped
+        Matrix A_inf = inflate_flat_parallelepiped(A, (cart_prod(x...).template cast<Interval>()).rad(), rho);
+
+        return Parallelepiped(z, A_inf);
+      }
+
       Index output_size() const
       {
         if constexpr(std::is_same_v<T,ScalarType>)
           return 1;
 
-        else if constexpr(std::is_same_v<T,VectorType>)
-        {
-          assert_release(this->args().size() == 1 && "unable (yet) to compute output size for multi-arg functions");
-
-          // A dump evaluation is performed to estimate the dimension
-          // of the image of this function. A natural evaluation is assumed
-          // to be faster.
-
-          if(dynamic_cast<ScalarVar*>(this->args()[0].get())) // if the argument is scalar
-            return eval(EvalMode::NATURAL, Interval()).size();
-          else
-            return eval(EvalMode::NATURAL, IntervalVector(this->input_size())).size();
+        else {
+          std::pair<Index,Index> oshape = output_shape();
+          return oshape.first * oshape.second;
         }
+      }
 
-        else
-        {
-          assert_release(false && "unable to estimate output size");
-          return 0;
-        }
+      std::pair<Index,Index> output_shape() const 
+      {
+        if constexpr(std::is_same_v<T,ScalarType>)
+          return {1,1};
+        else return this->expr()->output_shape();
       }
 
       friend std::ostream& operator<<(std::ostream& os, [[maybe_unused]] const AnalyticFunction<T>& f)
       {
-        if constexpr(std::is_same_v<T,ScalarType>) 
-          os << "scalar function";
-        else if constexpr(std::is_same_v<T,VectorType>) 
-          os << "vector function";
+        os << "(";
+        for(size_t i = 0 ; i < f.args().size() ; i++)
+          os << (i!=0 ? "," : "") << f.args()[i]->name();
+        os << ") ↦ " << f.expr()->str();
         return os;
       }
 
-    protected:
+      // not working with Clang: template<typename Y, typename... X>
+      // not working with Clang:   requires (sizeof...(X) > 0)
+      // not working with Clang: friend class CtcInverse;
 
-      template<typename Y>
-      friend class CtcInverse_;
+      // So, the following methods are temporarily public
 
-      template<typename D>
-      void add_value_to_arg_map(ValuesMap& v, const D& x, Index i) const
-      {
-        assert(i >= 0 && i < (Index)this->args().size());
-        assert_release(size_of(x) == this->args()[i]->size() && "provided arguments do not match function inputs");
-
-        using D_TYPE = typename ValueType<D>::Type;
-
-        IntervalMatrix d(0,0); // derivatives disabled for matrix inputs
-
-        if constexpr(!std::is_same_v<D_TYPE,MatrixType>)
-        {
-          d = IntervalMatrix::zero(size_of(x), this->args().total_size());
-          
-          Index p = 0;
-          for(Index j = 0 ; j < i ; j++)
-            p += this->args()[j]->size();
-
-          for(Index k = p ; k < p+size_of(x) ; k++)
-            d(k-p,k) = 1.;
-        }
-
-        v[this->args()[i]->unique_id()] = 
-          std::make_shared<D_TYPE>(typename D_TYPE::Domain(x).mid(), x, d, true);
-      }
+      // protected:
 
       template<typename... Args>
       void fill_from_args(ValuesMap& v, const Args&... x) const
@@ -211,18 +263,41 @@ namespace codac2
         (add_value_to_arg_map(v, x, i++), ...);
       }
 
-      template<typename D>
-      void intersect_value_from_arg_map(const ValuesMap& v, D& x, Index i) const
-      {
-        assert(v.find(this->args()[i]->unique_id()) != v.end() && "argument cannot be found");
-        x &= std::dynamic_pointer_cast<typename ValueType<D>::Type>(v.at(this->args()[i]->unique_id()))->a;
-      }
-
       template<typename... Args>
       void intersect_from_args(const ValuesMap& v, Args&... x) const
       {
         Index i = 0;
         (intersect_value_from_arg_map(v, x, i++), ...);
+      }
+
+    protected:
+
+      template<typename D>
+      void add_value_to_arg_map(ValuesMap& v, const D& x, Index i) const
+      {
+        assert(i >= 0 && i < (Index)this->args().size());
+        assert_release(size_of(x) == this->args()[i]->size() && "provided arguments do not match function inputs");
+
+        using D_TYPE = typename ExprType<D>::Type;
+
+        IntervalMatrix d = IntervalMatrix::zero(size_of(x), this->args().total_size());
+        
+        Index p = 0;
+        for(Index j = 0 ; j < i ; j++)
+          p += this->args()[j]->size();
+
+        for(Index k = p ; k < p+size_of(x) ; k++)
+          d(k-p,k) = 1.;
+
+        v[this->args()[i]->unique_id()] = 
+          std::make_shared<D_TYPE>(typename D_TYPE::Domain(x).mid(), x, d, true);
+      }
+
+      template<typename D>
+      void intersect_value_from_arg_map(const ValuesMap& v, D& x, Index i) const
+      {
+        assert(v.find(this->args()[i]->unique_id()) != v.end() && "argument cannot be found");
+        x &= std::dynamic_pointer_cast<typename ExprType<D>::Type>(v.at(this->args()[i]->unique_id()))->a;
       }
 
       template<bool NATURAL_EVAL,typename... Args>
@@ -236,7 +311,7 @@ namespace codac2
         else
         {
           fill_from_args(v, x...);
-          return this->expr()->fwd_eval(v, cart_prod(x...).size(), NATURAL_EVAL); // todo: improve size computation
+          return this->expr()->fwd_eval(v, this->input_size(), NATURAL_EVAL);
         }
       }
 
@@ -249,31 +324,20 @@ namespace codac2
         assert_release(this->_args.total_size() == n && 
           "Invalid arguments: wrong number of input arguments");
       }
+      
+      inline void update_var_names()
+      {
+        for(const auto& v : this->_args) // variable names are automatically computed in FunctionArgsList,
+          // so we propagate them to the expression
+          this->_y->replace_arg(v->unique_id(), std::dynamic_pointer_cast<ExprBase>(v));
+      }
   };
-
-  AnalyticFunction(const FunctionArgsList&, double) -> 
-    AnalyticFunction<ScalarType>;
-
-  AnalyticFunction(const FunctionArgsList&, const Interval&) -> 
-    AnalyticFunction<ScalarType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<int>) -> 
-    AnalyticFunction<VectorType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<double>) -> 
-    AnalyticFunction<VectorType>;
-
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<Interval>) -> 
-    AnalyticFunction<VectorType>;
 
   AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarExpr>) -> 
     AnalyticFunction<VectorType>;
 
-  AnalyticFunction(const FunctionArgsList&, std::initializer_list<ScalarVar>) -> 
-    AnalyticFunction<VectorType>;
-
   template<typename T>
   AnalyticFunction(const FunctionArgsList&, const T&) -> 
-    AnalyticFunction<typename ValueType<T>::Type>;
+    AnalyticFunction<typename ExprType<T>::Type>;
 
 }

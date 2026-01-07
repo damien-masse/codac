@@ -21,8 +21,9 @@ namespace codac2
   struct Wrapper
   { };
 
-  template<>
-  struct Wrapper<int> {
+  template<typename T>
+    requires (std::is_arithmetic_v<T>)
+  struct Wrapper<T> {
     using Domain = Interval;
   };
 
@@ -32,13 +33,16 @@ namespace codac2
   };
 
   template<>
-  struct Wrapper<double> {
+  struct Wrapper<Interval> {
     using Domain = Interval;
   };
 
-  template<>
-  struct Wrapper<Interval> {
-    using Domain = Interval;
+  template<typename T,typename D>
+  struct AnalyticType;
+
+  template<typename T,typename D>
+  struct Wrapper<AnalyticType<T,D>> {
+    using Domain = D;
   };
 
   template<typename OtherDerived>

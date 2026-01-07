@@ -25,6 +25,7 @@ namespace codac2
 
       virtual void contract(IntervalMatrix& A, IntervalVector& x, IntervalVector& b) const = 0;
       virtual std::shared_ptr<CtcLinearBase> copy() const = 0;
+      virtual ~CtcLinearBase() = default;
   };
 
   /**
@@ -186,7 +187,7 @@ namespace codac2
         IntervalMatrix Ap = A0_inv*A;
         IntervalVector bp = A0_inv*b;
 
-        _ctc_no_precond.front().contract(Ap,x,bp);
+        _ctc_no_precond.front()->contract(Ap,x,bp);
 
         b &= A0*bp;
         A &= A0*Ap;

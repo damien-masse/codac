@@ -51,16 +51,16 @@ namespace codac2
         return std::make_shared<SetOperationExpr<C,X...>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<X...>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<X...>::replace_arg(old_arg_id, new_expr);
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
       {
         bool b = true;
 
-        std::apply([&b,args](auto &&... x)
+        std::apply([&b,&args](auto &&... x)
         {
           ((b &= x->belongs_to_args_list(args)), ...);
         }, this->_x);
@@ -71,7 +71,7 @@ namespace codac2
       std::shared_ptr<CtcBase<IntervalVector>> create_ctc(const FunctionArgsList& args, const std::vector<std::shared_ptr<CtcBase<IntervalVector>>>& values) const
       {
         return std::apply(
-          [this,values,args](auto &&... x)
+          [this,&values,&args](auto &&... x)
           {
             return C::create_ctc(x->create_ctc(args,values)...);
           },
@@ -81,7 +81,7 @@ namespace codac2
       std::shared_ptr<SepBase> create_sep(const FunctionArgsList& args, const std::vector<std::shared_ptr<SepBase>>& values) const
       {
         return std::apply(
-          [this,values,args](auto &&... x)
+          [this,&values,&args](auto &&... x)
           {
             return C::create_sep(x->create_sep(args,values)...);
           },
@@ -111,9 +111,9 @@ namespace codac2
         return std::make_shared<SetOperationExpr<ProjSetOp,SetExpr>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<SetExpr>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<SetExpr>::replace_arg(old_arg_id, new_expr);
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
@@ -160,9 +160,9 @@ namespace codac2
         return std::make_shared<SetOperationExpr<InverseSetOp,SetExpr>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<SetExpr>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<SetExpr>::replace_arg(old_arg_id, new_expr);
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const
@@ -203,9 +203,9 @@ namespace codac2
         return std::make_shared<SetOperationExpr<ActionSetOp,SetExpr>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       {
-        return OperationExprBase<SetExpr>::replace_expr(old_expr_id, new_expr);
+        return OperationExprBase<SetExpr>::replace_arg(old_arg_id, new_expr);
       }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const

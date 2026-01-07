@@ -11,15 +11,18 @@
 #include <pybind11/pybind11.h>
 #include <codac2_Interval.h>
 #include <codac2_AnalyticFunction.h>
-#include <codac2_ValueType.h>
+#include <codac2_ExprType.h>
 #include <codac2_Row.h>
 #include <codac2_IntervalRow.h>
 #include <codac2_math.h>
+#include <codac2_Sep.h>
+#include "codac2_py_Sep.h"
 #include "codac2_py_AnalyticFunction.h"
 #include "codac2_py_CtcInverse.h"
 #include "codac2_py_CtcInverseNotIn.h"
-#include "codac2_py_SepInverse.h"
 #include "codac2_py_MatrixBlock.h"
+#include "codac2_py_Slice.h"
+#include "codac2_py_SlicedTube.h"
 
 using namespace codac2;
 namespace py = pybind11;
@@ -33,10 +36,13 @@ void export_OctaSym(py::module& m);
 py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector(py::module& m);
 void export_CtcAction(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCartProd(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcConstell(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCross(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcCtcBoundary(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcDeriv(py::module& m);
 void export_CtcDist(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcEmpty(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcEval(py::module& m);
 void export_CtcFixpoint(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcIdentity(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcInnerOuter(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -47,6 +53,7 @@ void export_CtcPointCloud(py::module& m, py::class_<CtcBase<IntervalVector>,pyCt
 void export_CtcPolar(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcPolygon(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcProj(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcQInter(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcSegment(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcUnion(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcWrapper(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -64,8 +71,16 @@ py::class_<IntervalMatrix> export_IntervalMatrix(py::module& m);
 void export_Paving(py::module& m);
 void export_PavingNode(py::module& m);
 void export_Subpaving(py::module& m);
+void export_Zonotope(py::module& m);
+void export_Parallelepiped(py::module& m);
+void export_TDomain(py::module& m);
+void export_TimePropag(py::module& m);
+void export_TSlice(py::module& m);
+void export_TubeBase(py::module& m);
+void export_tube_cart_prod(py::module& m);
 
 // functions
+void export_VarBase(py::module& m);
 void export_ScalarVar(py::module& m);
 void export_VectorVar(py::module& m);
 void export_MatrixVar(py::module& m);
@@ -99,6 +114,7 @@ py::class_<Vector> export_Vector(py::module& m);
 py::class_<Matrix> export_Matrix(py::module& m);
 void export_hull(py::module& m);
 void export_inversion(py::module& m);
+void export_GaussJordan(py::module& m);
 void export_IntvFullPivLU(py::module& m);
 
 // operators
@@ -107,25 +123,37 @@ void export_operators(py::module& m);
 // paver
 void export_pave(py::module& m);
 
+// peibos
+void export_peibos(py::module& m);
+
+// proj
+void export_qinter(py::module& m);
+
 // separators
 py::class_<SepBase,pySep> export_Sep(py::module& m);
 void export_SepAction(py::module& m, py::class_<SepBase,pySep>& pysep);
+void export_SepCartPolar(py::module& m, py::class_<SepBase,pySep>& pysep);
 void export_SepCartProd(py::module& m, py::class_<SepBase,pySep>& pysep);
 void export_SepChi(py::module& m, py::class_<SepBase,pySep>& pysep);
 void export_SepCross(py::module& m, py::class_<SepBase,pySep>& pysep);
 void export_SepCtcBoundary(py::module& m, py::class_<SepBase,pySep>& pysep);
 void export_SepCtcPair(py::module& m, py::class_<SepBase,pySep>& pysep);
 void export_SepInter(py::module& m, py::class_<SepBase,pySep>& sep);
+void export_SepInverse(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepNot(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepPolygon(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepProj(py::module& m, py::class_<SepBase,pySep>& sep);
+void export_SepQInter(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepTransform(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepUnion(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& sep);
 
 // tools
 void export_Approx(py::module& m);
+void export_RobotSimulator(py::module& m);
+void export_serialization(py::module& m);
 void export_transformations(py::module& m);
+void export_trunc(py::module& m);
 
 // trajectory
 void export_AnalyticTraj(py::module& m);
@@ -137,6 +165,8 @@ PYBIND11_MODULE(_core, m)
   m.doc() = string(FOR_MATLAB ? "Matlab" : "Python") + " binding of Codac (core)";
   m.attr("oo") = oo;
   m.attr("PI") = PI;
+  
+  export_TimePropag(m);
 
   // 3rd
 
@@ -147,10 +177,13 @@ PYBIND11_MODULE(_core, m)
   auto py_ctc_iv = export_CtcIntervalVector(m);
   export_CtcAction(m, py_ctc_iv);
   export_CtcCartProd(m, py_ctc_iv);
+  export_CtcConstell(m, py_ctc_iv);
   export_CtcCross(m, py_ctc_iv);
   export_CtcCtcBoundary(m, py_ctc_iv);
+  export_CtcDeriv(m);
   export_CtcDist(m, py_ctc_iv);
   export_CtcEmpty(m, py_ctc_iv);
+  export_CtcEval(m);
   export_CtcFixpoint(m, py_ctc_iv);
   export_CtcIdentity(m, py_ctc_iv);
   export_CtcInnerOuter(m, py_ctc_iv);
@@ -165,6 +198,7 @@ PYBIND11_MODULE(_core, m)
   export_CtcPolar(m, py_ctc_iv);
   export_CtcPolygon(m, py_ctc_iv);
   export_CtcProj(m, py_ctc_iv);
+  export_CtcQInter(m, py_ctc_iv);
   export_CtcSegment(m, py_ctc_iv);
   export_CtcUnion(m, py_ctc_iv);
   export_CtcWrapper(m, py_ctc_iv);
@@ -180,6 +214,7 @@ PYBIND11_MODULE(_core, m)
   export_EigenBlock<Vector>(m, "VectorBlock");
   export_hull(m);
   export_inversion(m);
+  export_GaussJordan(m);
   export_IntvFullPivLU(m);
 
   // domains
@@ -194,6 +229,16 @@ PYBIND11_MODULE(_core, m)
   auto py_IB = export_EigenBlock<IntervalMatrix>(m, "IntervalMatrixBlock");
   export_EigenBlock<IntervalRow>(m, "IntervalRowBlock");
   export_EigenBlock<IntervalVector>(m, "IntervalVectorBlock");
+  export_Slice<Interval>(m, "Slice_Interval");
+  export_Slice<IntervalVector>(m, "Slice_IntervalVector");
+  export_Slice<IntervalMatrix>(m, "Slice_IntervalMatrix");
+  export_TDomain(m);
+  export_TSlice(m);
+  export_TubeBase(m);
+  export_SlicedTube<Interval>(m, "SlicedTube_Interval");
+  export_SlicedTube<IntervalVector>(m, "SlicedTube_IntervalVector");
+  export_SlicedTube<IntervalMatrix>(m, "SlicedTube_IntervalMatrix");
+  export_tube_cart_prod(m);
 
   export_arithmetic_add(py_V, py_IV, py_M, py_IM, py_B, py_IB);
   export_arithmetic_sub(py_V, py_IV, py_M, py_IM, py_B, py_IB);
@@ -204,13 +249,22 @@ PYBIND11_MODULE(_core, m)
   export_PavingNode(m);
   export_Subpaving(m);
 
+  export_Zonotope(m);
+  export_Parallelepiped(m);
+
   // function
   py::enum_<EvalMode>(m, "EvalMode")
     .value("NATURAL", EvalMode::NATURAL)
     .value("CENTERED", EvalMode::CENTERED)
     .value("DEFAULT", EvalMode::DEFAULT)
-    .def(py::self | py::self, EVALMODE_OPERATOROR_EVALMODE_EVALMODE)
+    .def(py::self | py::self, EVALMODE_OPERATORUNION_EVALMODE_EVALMODE)
   ;
+
+  #if FOR_MATLAB // Python enums do not seem to be callable in matlab
+  m.attr("EvalMode_NATURAL") = EvalMode::NATURAL;
+  m.attr("EvalMode_CENTERED") = EvalMode::CENTERED;
+  m.attr("EvalMode_DEFAULT") = EvalMode::DEFAULT;
+  #endif
 
   export_ScalarExpr(m);
   export_VectorExpr(m);
@@ -218,6 +272,7 @@ PYBIND11_MODULE(_core, m)
   export_AnalyticFunction<ScalarType>(m,"AnalyticFunction_Scalar");
   export_AnalyticFunction<VectorType>(m,"AnalyticFunction_Vector");
   export_AnalyticFunction<MatrixType>(m,"AnalyticFunction_Matrix");
+  export_VarBase(m);
   export_ScalarVar(m);
   export_VectorVar(m);
   export_MatrixVar(m);
@@ -234,9 +289,16 @@ PYBIND11_MODULE(_core, m)
   // paver
   export_pave(m);
 
+  // peibos
+  export_peibos(m);
+
+  // proj
+  export_qinter(m);
+
   // separators
   auto py_sep = export_Sep(m);
   export_SepAction(m,py_sep);
+  export_SepCartPolar(m,py_sep);
   export_SepCartProd(m,py_sep);
   export_SepChi(m,py_sep);
   export_SepCross(m,py_sep);
@@ -247,15 +309,26 @@ PYBIND11_MODULE(_core, m)
   export_SepNot(m,py_sep);
   export_SepPolygon(m,py_sep);
   export_SepProj(m,py_sep);
+  export_SepQInter(m,py_sep);
   export_SepTransform(m,py_sep);
   export_SepUnion(m,py_sep);
   export_SepWrapper(m,py_sep);
 
   // tools
   export_Approx(m);
+  export_serialization(m);
   export_transformations(m);
+  export_trunc(m);
+  export_RobotSimulator(m);
 
   // trajectory
   export_AnalyticTraj(m);
   export_SampledTraj(m);
+
+
+  m.def("srand", []()
+    {
+      srand(time(NULL));
+    },
+    DOC_TO_BE_DEFINED);
 }

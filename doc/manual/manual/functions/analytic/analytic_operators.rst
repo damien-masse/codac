@@ -3,7 +3,7 @@
 Analytic operators
 ==================
 
-  Main author: `Simon Rohou <https://www.simon-rohou.fr/research/>`_
+  Main authors: `Simon Rohou <https://www.simon-rohou.fr/research/>`_, `Damien Massé <https://lab-sticc.univ-brest.fr/~dmasse/>`_
   
 .. raw:: html
 
@@ -64,7 +64,8 @@ When operators are available for operations 2--3, then an ``AnalyticFunction`` c
 .. |C|   replace:: :vertical:`Centr.`
 .. |D|   replace:: :vertical:`Diff.`
 .. |CHI| replace:: :math:`\begin{split}\chi(x_1,x_2,x_3) =\\ \begin{cases}x_2 & \text{if } x_1 \leqslant 0, \\x_3 & \text{if } x_1>0.\end{cases}\end{split}`
-
+.. |CHI_TYPES| replace:: ``x1``: scalar, ``x2``, ``x3``: any (same types)
+.. |EXT| replace:: :math:`\begin{split}f(x) \textrm{ if } x \in D_f,\\ g(x) \textrm{ otherwise}\end{split}`
 
 .. |AbsOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_abs.h"><code class="docutils literal notranslate"><span class="pre">AbsOp</span></code></a>`
 
@@ -88,6 +89,8 @@ When operators are available for operations 2--3, then an ``AnalyticFunction`` c
 
 .. |ExpOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_exp.h"><code class="docutils literal notranslate"><span class="pre">ExpOp</span></code></a>`
 
+.. |ExtendOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_extend.h"><code class="docutils literal notranslate"><span class="pre">ExtendOp</span></code></a>`
+
 .. |FloorOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_floor.h"><code class="docutils literal notranslate"><span class="pre">FloorOp</span></code></a>`
 
 .. |LogOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_log.h"><code class="docutils literal notranslate"><span class="pre">LogOp</span></code></a>`
@@ -105,6 +108,10 @@ When operators are available for operations 2--3, then an ``AnalyticFunction`` c
 .. |TanOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_tan.h"><code class="docutils literal notranslate"><span class="pre">TanOp</span></code></a>`
 
 .. |TanhOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_tanh.h"><code class="docutils literal notranslate"><span class="pre">TanhOp</span></code></a>`
+
+.. |FlattenOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_flatten.h"><code class="docutils literal notranslate"><span class="pre">FlattenOp</span></code></a>`
+
+.. |TransposeOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_transpose.h"><code class="docutils literal notranslate"><span class="pre">TransposeOp</span></code></a>`
 
 .. |AddOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_arith_add.h"><code class="docutils literal notranslate"><span class="pre">AddOp</span></code></a>`
 
@@ -131,6 +138,12 @@ When operators are available for operations 2--3, then an ``AnalyticFunction`` c
 .. |VectorOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_vec.h"><code class="docutils literal notranslate"><span class="pre">VectorOp</span></code></a>`
 
 .. |MatrixOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/operators/codac2_mat.h"><code class="docutils literal notranslate"><span class="pre">MatrixOp</span></code></a>`
+
+.. |OctaSymOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/actions/codac2_OctaSym_operator.h"><code class="docutils literal notranslate"><span class="pre">OctaSymOp</span></code></a>`
+
+.. |TrajOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/trajectory/codac2_Traj_operator.h"><code class="docutils literal notranslate"><span class="pre">TrajectoryOp</span></code></a>`
+
+.. |TubeOp| replace:: :raw-html:`<a href="https://github.com/codac-team/codac/blob/codac2/src/core/domains/tube/codac2_Tube_operator.h"><code class="docutils literal notranslate"><span class="pre">TubeOp</span></code></a>`
 
 Only the :bg-ok:`✓` operators are supported at the moment.
 If you notice any mathematical operators missing from the list below, feel free to contribute to the library. You can submit your suggestions or pull requests on the `GitHub repository of Codac <https://github.com/codac-team/codac>`_.
@@ -162,7 +175,7 @@ If you notice any mathematical operators missing from the list below, feel free 
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\cosh(x)`                                    | ``cosh(x)``          | |CoshOp|      | ``x``: scalar                       ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
-  | :math:`\det(\mathbf{A})`                            | ``det(A)``           | |DetOp|       | ``A``: matrix                       ||bok|   ||nok|   ||nok|  ||bok|       |
+  | :math:`\det(\mathbf{A})`                            | ``det(A)``           | |DetOp|       | ``A``: matrix                       ||bok|   ||bok|   ||bok|  ||bok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\exp(x)`                                     | ``exp(x)``           | |ExpOp|       | ``x``: scalar                       ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
@@ -184,20 +197,24 @@ If you notice any mathematical operators missing from the list below, feel free 
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\tanh(x)`                                    | ``tanh(x)``          | |TanhOp|      | ``x``: scalar                       ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :math:`\mathrm{flatten}(\mathbf{X})`                | ``flatten(X)``       | |FlattenOp|   | ``X``: matrix                       ||okk|   ||okk|   ||okk|  ||okk|       |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :math:`\mathbf{X}^\intercal`                        | ``transpose(x)``     | |TransposeOp| | ``X``: matrix                       ||okk|   ||okk|   ||okk|  ||okk|       |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :bg-title:`Binary operations`                                                                                                                                           |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`x_1+x_2`                                     | ``x1+x2``            | |AddOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathbf{x}_1+\mathbf{x}_2`                   | ``x1+x2``            |               | ``x1``, ``x2``: vector              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
-  | :math:`\mathbf{X}_1+\mathbf{X}_2`                   | ``X1+X2``            |               | ``x1``, ``x2``: matrix              ||okk|   ||nok|   ||nok|  ||okk|       |
+  | :math:`\mathbf{X}_1+\mathbf{X}_2`                   | ``X1+X2``            |               | ``x1``, ``x2``: matrix              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`x_1-x_2`                                     | ``x1-x2``            | |SubOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathbf{x}_1-\mathbf{x}_2`                   | ``x1-x2``            |               | ``x1``, ``x2``: vector              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
-  | :math:`\mathbf{X}_1-\mathbf{X}_2`                   | ``X1-X2``            |               | ``x1``, ``x2``: matrix              ||okk|   ||nok|   ||nok|  ||okk|       |
+  | :math:`\mathbf{X}_1-\mathbf{X}_2`                   | ``X1-X2``            |               | ``x1``, ``x2``: matrix              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`x_1\cdot x_2`                                | ``x1*x2``            | |MulOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
@@ -206,29 +223,29 @@ If you notice any mathematical operators missing from the list below, feel free 
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathbf{x}_1\cdot x_2`                       | ``x1*x2``            |               | ``x1``: vector, ``x2``: scalar      ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
-  | :math:`x_1\cdot\mathbf{X}_2`                        | ``x1*X2``            |               | ``x1``: scalar, ``X2``: matrix      ||okk|   ||nok|   ||nok|  ||nok|       |
+  | :math:`x_1\cdot\mathbf{X}_2`                        | ``x1*X2``            |               | ``x1``: scalar, ``X2``: matrix      ||okk|   ||okk|   ||okk|  ||nok|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathbf{x}_1\cdot\mathbf{x}_2`               | ``x1*x2``            |               | ``x1``: row, ``x2``: vector         ||okk|   ||nok|   ||nok|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
-  | :math:`\mathbf{X}_1\cdot\mathbf{x}_2`               | ``X1*x2``            |               | ``X1``: matrix, ``x2``: vector      ||okk|   ||nok|   ||nok|  ||okk|       |
+  | :math:`\mathbf{X}_1\cdot\mathbf{x}_2`               | ``X1*x2``            |               | ``X1``: matrix, ``x2``: vector      ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
-  | :math:`\mathbf{X}_1\cdot\mathbf{X}_2`               | ``X1*X2``            |               | ``X1``: matrix, ``X2``: matrix      ||okk|   ||nok|   ||nok|  ||nok|       |
+  | :math:`\mathbf{X}_1\cdot\mathbf{X}_2`               | ``X1*X2``            |               | ``X1``: matrix, ``X2``: matrix      ||okk|   ||okk|   ||okk|  ||nok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`x_1/x_2`                                     | ``x1/x2``            | |DivOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathbf{x}_1/x_2`                            | ``x1/x2``            |               | ``X1``: vector, ``x2``: scalar      ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
-  | :math:`\mathbf{X}_1/x_2`                            | ``X1/x2``            |               | ``X1``: matrix, ``x2``: scalar      ||okk|   ||nok|   ||nok|  ||nok|       |
+  | :math:`\mathbf{X}_1/x_2`                            | ``X1/x2``            |               | ``X1``: matrix, ``x2``: scalar      ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
-  | :math:`\mathbf{x}_1\times\mathbf{x}_2`              | ``cross_prod(x1,x2)``| |CrossProdOp| | ``x1``, ``x2``: vector              ||okk|   ||nok|   ||nok|  ||nok|       |
+  | :math:`\mathbf{x}_1\times\mathbf{x}_2`              | ``cross_prod(x1,x2)``| |CrossProdOp| | ``x1``, ``x2``: vector              ||okk|   ||okk|   ||okk|  ||nok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\max(x_1,x_2)`                               | ``max(x1,x2)``       | |MaxOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\min(x_1,x_2)`                               | ``min(x1,x2)``       | |MinOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
-  | :math:`x_1\bmod x_2`                                | ``mod(x1,x2)``       | |ModOp|       | ``x1``, ``x2``: scalar              ||nok|   ||nok|   ||nok|  ||okk|       |
+  | :math:`x_1\bmod x_2`                                | --                   | |ModOp|       | --                                  ||nok|   ||nok|   ||nok|  ||bok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`(x_1)^{x_2}`                                 | | ``pow(x1,x2)``     | |PowOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
   |                                                     | | ``x1^x2``          |               |                                     |        |        |       |            |
@@ -236,31 +253,70 @@ If you notice any mathematical operators missing from the list below, feel free 
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathrm{arctan2}(y,x)`                       | ``atan2(y,x)``       | |Atan2Op|     | ``y``, ``x``: scalar                ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | |EXT|                                               | ``extend(fx,gx)``    | |ExtendOp|    | ``fx``, ``gx``: any (same types)    ||okk|   ||okk|   ||okk|  ||okk|       |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :bg-title:`Ternary operations`                                                                                                                                          |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
-  | |CHI|                                               | ``chi(x1,x2,x3)``    | |ChiOp|       | ``x1``, ``x2``, ``x3``: scalar      ||okk|   ||nok|   ||nok|  ||okk|       |
+  | |CHI|                                               | ``chi(x1,x2,x3)``    | |ChiOp|       | |CHI_TYPES|                         ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :bg-title:`Vectorial / matricial operations`                                                                                                                            |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`x_i` (vector coeff)                          | ``x[i]``             | |ComponentOp| | ``x``: vector, ``i``: scalar        ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
-  | :math:`X_{ij}` (mat. coeff)                         | ``X(i,j)``           |               | ``X``: matrix, ``i``, ``j``: scalar ||okk|   ||nok|   ||nok|  ||okk|       |
+  | :math:`X_{ij}` (mat. coeff)                         | ``X(i,j)``           |               | ``X``: matrix, ``i``, ``j``: scalar ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathbf{x}_{i:j}` (subvector)                | ``x.subvector(i,j)`` | |SubvectorOp| | | ``x``: vector expression          ||okk|   ||okk|   ||okk|  ||okk|       |
   |                                                     |                      |               | | ``i``, ``j``: scalar              |        |        |       |            |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`[x_1,x_2,\dots]^\intercal`                   | ``vec(x1,x2,...)``   | |VectorOp|    | ``x1``, ``...``: scalar             ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
-  | :math:`\left(\mathbf{x}_1,\mathbf{x}_2,\dots\right)`| ``mat(x1,x2,...)``   | |MatrixOp|    | ``x1``, ``...``: vector             ||okk|   ||nok|   ||nok|  ||nok|       |
+  | :math:`\left(\mathbf{x}_1,\mathbf{x}_2,\dots\right)`| ``mat(x1,x2,...)``   | |MatrixOp|    | ``x1``, ``...``: vector             ||okk|   ||okk|   ||okk|  ||nok|       |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :math:`\sigma(\mathbf{x})`                          | ``s(x)``             | |OctaSymOp|   | ``s``: action, ``x``: vector        ||okk|   ||okk|   ||okk|  ||okk|       |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :bg-title:`Temporal operations`                                                                                                                                         |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :math:`\mathbf{x}(t)`                               | ``x(t)``             | |TrajOp|      | ``x``: trajectory, ``t``: scalar    ||okk|   ||nok|   ||nok|  ||nok|       |
+  +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
+  | :math:`[\mathbf{x}](t)`                             | ``x(t)``             | |TubeOp|      | ``x``: tube, ``t``: scalar          ||okk|   ||nok|   ||nok|  ||nok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
 
-Note that the operator :math:`\det` is only available for :math:`1\times 1` and :math:`2\times 2` matrices.
+| Note: the operator :math:`\det` is only available for :math:`1\times 1` and :math:`2\times 2` matrices.
+| Note: the operator :math:`\bmod` is only available for real periods (double precision), interval periods are not yet supported.
 
 
-Expression involving a non-supported centered-form operation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Expressions involving a non-supported centered-form operation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If an operator, for which the centered form is not defined, is involved in an expression, then this expression cannot be evaluated using the centered form (calculation is disabled for the entire operation). A simple natural evaluation will then be computed.
+
+
+Expressions involving a temporal operator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Temporal operations for involving trajectories or tubes in analytic expressions require an intermediate operation:
+
+.. tabs::
+  
+  .. code-tab:: py
+
+    x = # some sampled trajectory...
+    g = x.as_function() # intermediate operation
+
+    t = ScalarVar()
+    h = AnalyticFunction(
+      [t], g(t)
+    )
+
+  .. code-tab:: c++
+
+    x = // some sampled trajectory...
+    g = x.as_function(); // intermediate operation
+
+    ScalarVar t;
+    AnalyticFunction h(
+      {t}, g(t)
+    );
 
 
 Direct use of operators
@@ -316,3 +372,11 @@ For example, the operator ``cos`` is proposed with:
       :start-after: [9-beg]
       :end-before: [9-end]
       :dedent: 4
+
+  .. group-tab:: Matlab
+
+    .. literalinclude:: src.m
+      :language: matlab
+      :start-after: [9-beg]
+      :end-before: [9-end]
+      :dedent: 0

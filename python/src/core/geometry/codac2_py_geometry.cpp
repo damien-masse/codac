@@ -11,6 +11,9 @@
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <codac2_geometry.h>
+#include <codac2_Segment.h>
+#include <codac2_Polygon.h>
+#include <codac2_ConvexPolygon.h>
 #include "codac2_py_geometry_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 
 using namespace std;
@@ -29,7 +32,7 @@ void export_geometry(py::module& m)
     .value("UNKNOWN", OrientationInterval::UNKNOWN)
 
     .def(py::self | py::self,
-      ORIENTATIONINTERVAL_OPERATOROR_ORIENTATIONINTERVAL_ORIENTATIONINTERVAL)
+      ORIENTATIONINTERVAL_OPERATORUNION_ORIENTATIONINTERVAL_ORIENTATIONINTERVAL)
 
     .def("__repr__", [](const OrientationInterval& x) {
           std::ostringstream s;
@@ -50,4 +53,24 @@ void export_geometry(py::module& m)
   m.def("convex_hull", &convex_hull,
     VECTOR_INTERVALVECTOR_CONVEX_HULL_VECTOR_INTERVALVECTOR,
     "pts"_a);
+
+  m.def("rotate", (IntervalVector (*)(const IntervalVector&,const Interval&,const IntervalVector&))&rotate,
+    INTERVALVECTOR_ROTATE_CONST_INTERVALVECTOR_REF_CONST_INTERVAL_REF_CONST_INTERVALVECTOR_REF,
+    "x"_a, "a"_a, "c"_a = Vector::zero(2));
+
+  m.def("rotate", (Segment (*)(const Segment&,const Interval&,const IntervalVector&))&rotate,
+    T_ROTATE_CONST_T_REF_CONST_INTERVAL_REF_CONST_INTERVALVECTOR_REF,
+    "x"_a, "a"_a, "c"_a = Vector::zero(2));
+
+  m.def("rotate", (Polygon (*)(const Polygon&,const Interval&,const IntervalVector&))&rotate,
+    T_ROTATE_CONST_T_REF_CONST_INTERVAL_REF_CONST_INTERVALVECTOR_REF,
+    "x"_a, "a"_a, "c"_a = Vector::zero(2));
+
+  m.def("rotate", (ConvexPolygon (*)(const ConvexPolygon&,const Interval&,const IntervalVector&))&rotate,
+    T_ROTATE_CONST_T_REF_CONST_INTERVAL_REF_CONST_INTERVALVECTOR_REF,
+    "x"_a, "a"_a, "c"_a = Vector::zero(2));
+
+  m.def("merge_adjacent_points", &merge_adjacent_points,
+    VOID_MERGE_ADJACENT_POINTS_LIST_INTERVALVECTOR_REF,
+    "l"_a);
 }

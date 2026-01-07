@@ -15,7 +15,9 @@
 #include <pybind11/stl.h>
 #include <codac2_Matrix.h>
 #include <codac2_TrajBase.h>
+#include <codac2_SampledTraj.h>
 #include "codac2_py_matlab.h"
+#include "codac2_py_SampledTraj_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 
 using namespace std;
 using namespace codac2;
@@ -78,18 +80,12 @@ void export_TrajBase(py::class_<S>& pyclass)
       SAMPLEDTRAJ_T_TRAJBASE_T_SAMPLED_AS_CONST_SAMPLEDTRAJ_Q_REF_CONST,
       "x"_a)
 
-    .def("primitive", [](const S& x, const T& y0, double dt)
+    .def("primitive", [](const S& x, double dt)
         {
-          return x.primitive(y0,dt);
+          return x.primitive(dt);
         },
-      SAMPLEDTRAJ_T_TRAJBASE_T_PRIMITIVE_CONST_T_REF_DOUBLE_CONST,
-      "y0"_a, "dt"_a)
-
-    .def("as_function", [](const S& x)
-        {
-          return x.as_function();
-        },
-      ANALYTICFUNCTION_TYPENAME_VALUETYPE_T_TYPE_TRAJBASE_T_AS_FUNCTION_CONST)
+      SAMPLEDTRAJ_T_TRAJBASE_T_PRIMITIVE_DOUBLE_CONST,
+      "dt"_a)
 
   ;
 }

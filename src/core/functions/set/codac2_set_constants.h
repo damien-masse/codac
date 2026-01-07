@@ -27,7 +27,7 @@ namespace codac2
         return std::make_shared<ConstValueSetExpr<T>>(*this);
       }
 
-      void replace_expr(const ExprID& old_expr_id, const std::shared_ptr<ExprBase>& new_expr)
+      void replace_arg(const ExprID& old_arg_id, const std::shared_ptr<ExprBase>& new_expr)
       { }
 
       virtual bool belongs_to_args_list(const FunctionArgsList& args) const

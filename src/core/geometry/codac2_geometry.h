@@ -104,4 +104,53 @@ namespace codac2
    * \return Points on the convex hull in counterclockwise order.
    */
   std::vector<IntervalVector> convex_hull(std::vector<IntervalVector> pts);
+
+  /**
+   * \brief Rotates a 2D interval vector around a point by a given angle.
+   *
+   * This function performs a 2D rotation of the input interval vector ``p`` by an interval angle ``a``,
+   * optionally around a center of rotation ``c`` (default is the origin).
+   * This operation propagates uncertainties through interval arithmetic.
+   *
+   * \param p The input 2D interval vector to be rotated.
+   * \param a The rotation angle as an interval (in radians).
+   * \param c The center of rotation as an interval vector (default is the origin (0,0)).
+   * \return The rotated interval vector.
+   */
+  IntervalVector rotate(const IntervalVector& p, const Interval& a, const IntervalVector& c = Vector::zero(2));
+
+  /**
+   * \brief Rotates a 2D object (``Segment``, ``Polygon``, *etc*) around a point by a given angle.
+   *
+   * This function performs a 2D rotation of the input object ``x`` by an interval angle ``a``,
+   * optionally around a center of rotation ``c`` (default is the origin).
+   * This operation propagates uncertainties through interval arithmetic.
+   *
+   * \param x The input 2D object to be rotated.
+   * \param a The rotation angle as an interval (in radians).
+   * \param c The center of rotation as an interval vector (default is the origin (0,0)).
+   * \return The rotated object.
+   */
+  template<typename T>
+  inline T rotate(const T& x, const Interval& a, const IntervalVector& c = Vector::zero(2))
+  {
+    T x_(x);
+    for(auto& ei : x_)
+      ei = rotate(ei,a,c);
+    return x_;
+  }
+
+  /**
+   * \brief Merges overlapping or adjacent ``IntervalVector`` points within a list.
+   *
+   * This function iteratively scans a list of ``IntervalVector`` objects and merges
+   * any pairs that intersect.
+   * The process repeats until no further merges are possible.
+   *
+   * This operation is useful for simplifying collections of intervals or bounding boxes
+   * that may overlap due to uncertainty propagation or geometric tolerance.
+   *
+   * \param l list of ``IntervalVector`` objects to be merged. The list is modified in-place.
+   */
+  void merge_adjacent_points(std::list<IntervalVector>& l);
 }

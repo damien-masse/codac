@@ -14,10 +14,13 @@
     contractors/codac2_py_Ctc.h
     contractors/codac2_py_CtcAction.cpp
     contractors/codac2_py_CtcCartProd.cpp
+    contractors/codac2_py_CtcConstell.cpp
     contractors/codac2_py_CtcCross.cpp
     contractors/codac2_py_CtcCtcBoundary.cpp
+    contractors/codac2_py_CtcDeriv.cpp
     contractors/codac2_py_CtcDist.cpp
     contractors/codac2_py_CtcEmpty.cpp
+    contractors/codac2_py_CtcEval.cpp
     contractors/codac2_py_CtcFixpoint.cpp
     contractors/codac2_py_CtcInnerOuter.cpp
     contractors/codac2_py_CtcIdentity.cpp
@@ -30,6 +33,7 @@
     contractors/codac2_py_CtcPolar.cpp
     contractors/codac2_py_CtcPolygon.cpp
     contractors/codac2_py_CtcProj.cpp
+    contractors/codac2_py_CtcQInter.cpp
     contractors/codac2_py_CtcSegment.cpp
     contractors/codac2_py_CtcUnion.cpp
     contractors/codac2_py_CtcWrapper.cpp
@@ -47,6 +51,15 @@
     domains/paving/codac2_py_Paving.cpp
     domains/paving/codac2_py_PavingNode.cpp
     domains/paving/codac2_py_Subpaving.cpp
+    domains/zonotope/codac2_py_Parallelepiped.cpp
+    domains/zonotope/codac2_py_Zonotope.cpp
+    domains/tube/codac2_py_Slice.h
+    domains/tube/codac2_py_SlicedTube.h
+    domains/tube/codac2_py_TDomain.cpp
+    domains/tube/codac2_py_TimePropag.cpp
+    domains/tube/codac2_py_TSlice.cpp
+    domains/tube/codac2_py_TubeBase.cpp
+    domains/tube/codac2_py_tube_cart_prod.cpp
     domains/codac2_py_BoolInterval.cpp
 
     functions/analytic/codac2_py_analytic_variables.cpp
@@ -66,6 +79,7 @@
     matrices/codac2_py_hull.cpp
     matrices/codac2_py_inversion.cpp
     matrices/codac2_py_IntvFullPivLU.cpp
+    matrices/codac2_py_GaussJordan.cpp
     matrices/codac2_py_Matrix.cpp
     matrices/codac2_py_MatrixBase.h
     matrices/codac2_py_MatrixBlock.h
@@ -76,25 +90,34 @@
 
     paver/codac2_py_pave.cpp
 
+    peibos/codac2_py_peibos.cpp
+
+    proj/codac2_py_qinter.cpp
+
     separators/codac2_py_Sep.cpp
     separators/codac2_py_Sep.h
     separators/codac2_py_SepAction.cpp
+    separators/codac2_py_SepCartPolar.cpp
     separators/codac2_py_SepCartProd.cpp
     separators/codac2_py_SepChi.cpp
     separators/codac2_py_SepCross.cpp
     separators/codac2_py_SepCtcBoundary.cpp
     separators/codac2_py_SepCtcPair.cpp
     separators/codac2_py_SepInter.cpp
-    separators/codac2_py_SepInverse.h
+    separators/codac2_py_SepInverse.cpp
     separators/codac2_py_SepNot.cpp
     separators/codac2_py_SepPolygon.cpp
     separators/codac2_py_SepProj.cpp
+    separators/codac2_py_SepQInter.cpp
     separators/codac2_py_SepTransform.cpp
     separators/codac2_py_SepUnion.cpp
     separators/codac2_py_SepWrapper.cpp
 
     tools/codac2_py_Approx.cpp
+    tools/codac2_py_RobotSimulator.cpp
+    tools/codac2_py_serialization.cpp
     tools/codac2_py_transformations.cpp
+    tools/codac2_py_trunc.cpp
 
     trajectory/codac2_py_AnalyticTraj.cpp
     trajectory/codac2_py_SampledTraj.cpp
@@ -111,11 +134,14 @@
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/domains/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/functions/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/graphics/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/matrices/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/paver/
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/peibos/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/separators/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tools/
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/

@@ -34,11 +34,13 @@ void export_IntervalVector_(py::module& m, py::class_<IV>& pyclass)
 
   pyclass
 
+    .def(py::init<>())
+
     .def(py::init(
         [](Index_type n)
         {
           matlab::test_integer(n);
-          return std::make_unique<IV>(n);
+          return std::make_unique<IV>((int)n);
         }),
       DOC_TO_BE_DEFINED,
       "n"_a)
@@ -52,6 +54,24 @@ void export_IntervalVector_(py::module& m, py::class_<IV>& pyclass)
     .def(py::init<const V&,const V&>(),
       MATRIX_ADDONS_INTERVALMATRIXBASE_MATRIX_CONST_MATRIX_DOUBLERC_REF_CONST_MATRIX_DOUBLERC_REF,
       "lb"_a, "ub"_a)
+    
+    .def(py::init(
+        [](const std::vector<std::vector<double>>& v)
+        {
+          auto iv = std::make_unique<IV>(v.size());
+          for(size_t i = 0 ; i < v.size() ; i++)
+          {
+            if(v[i].size() == 1)
+              (*iv)[i] = Interval(v[i][0]);
+            else if(v[i].size() == 2)
+              (*iv)[i] = Interval(v[i][0],v[i][1]);
+            else
+              throw invalid_argument("Interval is not made of one or two values.");
+          }
+          return iv;
+        }),
+      DOC_TO_BE_DEFINED,
+      "v"_a)
 
     .def(py::init( // this constructor must be the last one to be declared
         [](const std::vector<Interval>& v)
@@ -61,7 +81,7 @@ void export_IntervalVector_(py::module& m, py::class_<IV>& pyclass)
             (*iv)[i] = v[i];
           return iv;
         }),
-      MATRIX_ADDONS_INTERVALVECTOR_MATRIX_CONST_INITIALIZER_LIST_INTERVAL_REF,
+      MATRIX_ADDONS_INTERVALVECTOR_MATRIX_INITIALIZER_LIST_INTERVAL,
       "v"_a)
 
     .def("complementary", [](const IV& x) { return x.complementary(); },

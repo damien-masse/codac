@@ -23,6 +23,12 @@ namespace codac2
   {
     assert_release(eps > 0.);
     assert_release(x.size() == this->size());
+
+    if(_y.size() == 0) // the set is projected onto itself
+    {
+      _ctc.front()->contract(x);
+      return;
+    }
     
     list<IntervalVector> l_stack { cart_prod_xy(x,_y) };
     x.set_empty();
@@ -35,7 +41,7 @@ namespace codac2
       l_stack.pop_front();
 
       IntervalVector w_ctc(w);
-      _ctc.front().contract(w_ctc);
+      _ctc.front()->contract(w_ctc);
 
       // If the guess box may contain some values
       if(!w_ctc.is_empty())

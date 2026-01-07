@@ -87,7 +87,13 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
         SAMPLEDTRAJ_T_SAMPLEDTRAJ_CONST_LIST_DOUBLE_REF_CONST_LIST_T_REF,
         "l_t"_a, "l_x"_a)
 
-    .def("__getitem__", [](const SampledTraj<T>& x, Index_type i) -> SampledTraj<double>
+    .def(
+        #if FOR_MATLAB
+          "__call__"
+        #else
+          "__getitem__"
+        #endif
+        , [](const SampledTraj<T>& x, Index_type i) -> SampledTraj<double>
         {
           matlab::test_integer(i);
           return x[matlab::input_index(i)];
@@ -156,8 +162,20 @@ py::class_<SampledTraj<T>> _export_SampledTraj(py::module& m, const string& clas
       "t"_a)
 
     .def("set", &SampledTraj<T>::set,
-      VOID_SAMPLEDTRAJ_T_SET_DOUBLE_CONST_T_REF,
-      "ti"_a, "xi"_a)
+      VOID_SAMPLEDTRAJ_T_SET_CONST_T_REF_DOUBLE,
+      "xi"_a, "ti"_a)
+
+    .def("as_function", &SampledTraj<T>::as_function,
+      ANALYTICFUNCTION_TYPE_SAMPLEDTRAJ_T_AS_FUNCTION_CONST)
+
+    .def("primitive", (SampledTraj<T> (SampledTraj<T>::*)() const) &SampledTraj<T>::primitive,
+      SAMPLEDTRAJ_T_SAMPLEDTRAJ_T_PRIMITIVE_CONST)
+
+    .def("derivative", &SampledTraj<T>::derivative,
+      SAMPLEDTRAJ_T_SAMPLEDTRAJ_T_DERIVATIVE_CONST)
+
+    .def("mean", &SampledTraj<T>::mean,
+      T_SAMPLEDTRAJ_T_MEAN_CONST)
 
     .def("__repr__", [](const SampledTraj<T>& x) {
           std::ostringstream stream;

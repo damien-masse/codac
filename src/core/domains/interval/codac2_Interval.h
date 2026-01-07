@@ -16,7 +16,7 @@
 
 #include <list>
 #include <array>
-#include <3rd/gaol/gaol_interval.h>
+#include <gaol/gaol_interval.h>
 #include "codac2_Index.h"
 #include "codac2_Domain.h"
 #include "codac2_assert.h"
@@ -24,19 +24,6 @@
 
 namespace codac2
 {
-  const double oo = []() {
-
-    // (from IBEX lib, main author: Gilles Chabert)
-    // We use Gaol not in PRESERVE_ROUNDING mode, thus
-    // assuming the rounding mode is always set upward.
-    // Calling this function in the initialization of
-    // the 'oo' constant should be enough as this constant
-    // is initialized before the first Codac function call occurs.
-    gaol::round_upward();
-
-    return std::numeric_limits<double>::infinity();
-  }();
-
   class Interval;
 
   template<>
@@ -111,6 +98,15 @@ namespace codac2
        * \param l list of values contained in the resulting interval
        */
       Interval(std::initializer_list<double> l);
+
+      /**
+       * \brief Sets the value of this interval to [-oo,oo]
+       * 
+       * \note This function is used for template purposes.
+       * 
+       * \return a reference to this
+       */
+      Interval& init();
 
       /**
        * \brief Sets the value of this interval to x
@@ -215,6 +211,25 @@ namespace codac2
       double mig() const;
 
       /**
+       * \brief Returns the signed magnitude of this 
+       * i.e. lower bound if |lower bound|>|upper bound|, upper bound otherwise.
+       * 
+       * \return the signed magnitude of the interval
+       */
+      double smag() const;
+
+      /**
+       * \brief Returns the signed mignitude of this 
+       * 
+       * lower bound if lower_bound > 0,
+       * upper bound if upper_bound < 0,
+       * 0 otherwise.
+       * 
+       * \return the signed mignitude of the interval
+       */
+      double smig() const;
+
+      /**
        * \brief Returns a random value inside the interval
        *
        * \note The seed of the pseudo-random number generator is 
@@ -309,6 +324,21 @@ namespace codac2
        * \return true if this is degenerated
        */
       bool is_degenerated() const;
+
+      /**
+       * \brief Tests if this is an integer, that is, in the
+       * form of \f$[n,n]\f$ where n is an integer
+       *
+       * \return true if this is an integer singleton
+       */
+      bool is_integer() const;
+
+      /**
+       * \brief Checks whether the interval has integer lower and upper bounds.
+       *
+       * \return ``true`` if this has integer lower and upper bounds; ``false`` otherwise.
+       */
+      bool has_integer_bounds() const;
 
       /**
        * \brief Tests if this and x intersect
@@ -438,7 +468,7 @@ namespace codac2
       std::vector<Interval> complementary(bool compactness = true) const;
 
       /**
-       * \brief Computes the result of \f$[x]\[y]\f$
+       * \brief Computes the result of \f$[x]\backslash[y]\f$
        * 
        * \param y interval to remove from this
        * \param compactness optional boolean to obtain or not disjoint intervals
@@ -690,7 +720,30 @@ namespace codac2
    */
   Interval operator""_i(long double x);
 
-  double previous_float(double x);
+  /**
+   * @brief Returns the previous representable double-precision floating-point value before x.
+   *
+   * This function computes the largest double value that is strictly less than the input value x,
+   * effectively moving one step down in the floating-point representation.
+   * 
+   * \see For obtaining the next representable double value greater than x, use ``next_float()``.
+   *
+   * \param x The input double value.
+   * \return The previous representable double value before x.
+   */
+  double prev_float(double x);
+
+  /**
+   * \brief Returns the next representable double-precision floating-point value after x.
+   *
+   * This function computes the smallest double value that is strictly greater than the input value x,
+   * effectively moving one step up in the floating-point representation.
+   * 
+   * \see For obtaining the previous representable double value less than x, use ``prev_float()``.
+   *
+   * \param x The input double value.
+   * \return The next representable double value after x.
+   */
   double next_float(double x);
 
   /**
@@ -703,6 +756,17 @@ namespace codac2
    * \return intersection result
    */
   Interval operator&(const Interval& x, const Interval& y);
+
+  /**
+   * \brief Returns the squared-union of an interval and a real: \f$[x]\sqcup\{y\}\f$
+   * 
+   * \note The squared-union is defined as: \f$[x]\sqcup[y]=\left[[x]\cup[y]\right]\f$
+   * 
+   * \param x interval value
+   * \param y real value
+   * \return squared-union result
+   */
+  Interval operator|(const Interval& x, double y);
 
   /**
    * \brief Returns the squared-union of two intervals: \f$[x]\sqcup[y]\f$

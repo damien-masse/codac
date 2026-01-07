@@ -16,35 +16,39 @@
 
 namespace codac2
 {
-  template<typename X=IntervalVector>
-  class CtcUnion : public Ctc<CtcUnion<X>,X>
+  template<typename... X>
+  class CtcUnion : public Ctc<CtcUnion<X...>,X...>
   {
     public:
 
       explicit CtcUnion(Index n)
-        : Ctc<CtcUnion<X>,X>(n)
+        : Ctc<CtcUnion<X...>,X...>(n)
       {
-        if constexpr(std::is_same_v<X,Interval>)
-        {
-          assert(n == 1);
-        }
+        if constexpr(std::is_same_v<X...,Interval>)
+          assert_release(n == 1);
       }
 
       template<typename C>
-        requires (IsCtcBaseOrPtr<C,X> && !std::is_same_v<CtcUnion<X>,C>)
+        requires (IsCtcBaseOrPtr<C,X...> && !std::is_same_v<CtcUnion<X...>,C>)
       CtcUnion(const C& c)
-        : Ctc<CtcUnion<X>,X>(size_of(c)), _ctcs(c)
+        : Ctc<CtcUnion<X...>,X...>(size_of(c)), _ctcs(c)
       { }
 
       template<typename... C>
-        requires (IsCtcBaseOrPtr<C,X> && ...)
+        requires (IsCtcBaseOrPtr<C,X...> && ...)
       CtcUnion(const C&... c)
-        : Ctc<CtcUnion<X>,X>(size_first_item(c...)), _ctcs(c...)
+        : Ctc<CtcUnion<X...>,X...>(size_first_item(c...)), _ctcs(c...)
       {
         assert_release(all_same_size(c...));
       }
 
-      void contract(X& x) const
+      size_t nb() const
+      {
+        return _ctcs.size();
+      }
+
+      template<typename X_> // single type
+      void contract_impl(X_& x) const
       {
         auto result = x;
         result.set_empty();
@@ -59,34 +63,60 @@ namespace codac2
         x = result;
       }
 
-      template<typename C>
-        requires std::is_base_of_v<CtcBase<X>,C>
-      CtcUnion<X>& operator|=(const C& c)
+      void contract(X&... x) const
       {
-        assert_release(c.size() == this->size());
-        _ctcs.add_shared_ptr(std::make_shared<C>(c));
-        return *this;
+        // contract_impl(..) method for multiple types is not yet implemented
+        contract_impl(x...);
       }
 
-      CtcUnion<X>& operator|=(const std::shared_ptr<CtcBase<X>>& c)
+      template<typename C>
+        requires IsCtcBaseOrPtr<C,X...>
+      CtcUnion<X...>& operator|=(const C& c)
       {
-        assert_release(c->size() == this->size());
-        _ctcs.add_shared_ptr(c);
+        assert_release(size_of(c) == this->size());
+        _ctcs.push_back(c);
         return *this;
       }
 
     protected:
 
-      Collection<CtcBase<X>> _ctcs;
+      Collection<CtcBase<X...>> _ctcs;
   };
 
-  template<typename C1, typename C2>
-    requires (std::is_same_v<typename C1::ContractedType,typename C2::ContractedType>
-      && std::is_base_of_v<CtcBase<typename C1::ContractedType>,C1>
-      && std::is_base_of_v<CtcBase<typename C1::ContractedType>,C2>)
-  inline CtcUnion<typename C1::ContractedType> operator|(const C1& c1, const C2& c2)
+  template <>
+  class CtcUnion<> : public CtcUnion<IntervalVector>
+  { };
+
+  template<typename Tuple>
+  struct CtcUnionType;
+
+  template<typename... T>
+  struct CtcUnionType<std::tuple<T...>> {
+    using Ctc = CtcUnion<T...>;
+  };
+
+  template<typename C1,typename C2>
+  typename CtcUnionType<typename C1::ContractedTypes>::Ctc operator|(const C1& c1, const C2& c2)
   {
-    return CtcUnion<typename C1::ContractedType>(c1,c2);
+    return { c1, c2 };
+  }
+
+  template<typename C1,typename C2>
+  typename CtcUnionType<typename C1::ContractedTypes>::Ctc operator|(const std::shared_ptr<C1>& c1, const std::shared_ptr<C2>& c2)
+  {
+    return { c1, c2 };
+  }
+
+  template<typename C1,typename C2>
+  typename CtcUnionType<typename C1::ContractedTypes>::Ctc operator|(const std::shared_ptr<C1>& c1, const C2& c2)
+  {
+    return { c1, c2 };
+  }
+
+  template<typename C1,typename C2>
+  typename CtcUnionType<typename C1::ContractedTypes>::Ctc operator|(const C1& c1, const std::shared_ptr<C2>& c2)
+  {
+    return { c1, c2 };
   }
 
   template<typename C2>
@@ -104,4 +134,7 @@ namespace codac2
     assert_release(c1.size() == c2.size());
     return CtcUnion<IntervalVector>(c1,CtcWrapper(c2));
   }
+
+  // Template deduction guides
+  CtcUnion(Index) -> CtcUnion<IntervalVector>;
 }

@@ -19,6 +19,8 @@
 #include "codac2_py_SepInter_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_SepUnion.h"
 #include "codac2_py_SepUnion_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
+#include "codac2_SepNot.h"
+#include "codac2_py_SepNot_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 
 using namespace codac2;
 namespace py = pybind11;
@@ -30,6 +32,18 @@ py::class_<SepBase,pySep> export_Sep(py::module& m)
   py::class_<BoxPair> exported_BoxPair(m, "BoxPair", BOXPAIR_MAIN);
   exported_BoxPair
 
+    .def_property("inner",
+      [](BoxPair& bp) -> IntervalVector& { return bp.inner; },
+      [](BoxPair& bp, const IntervalVector& x) { bp.inner = x; },
+      py::return_value_policy::reference_internal
+    )
+
+    .def_property("outer",
+      [](BoxPair& bp) -> IntervalVector& { return bp.outer; },
+      [](BoxPair& bp, const IntervalVector& x) { bp.outer = x; },
+      py::return_value_policy::reference_internal
+    )
+  
     .def(py::init(
         [](const IntervalVector& inner, const IntervalVector& outer)
         {
@@ -74,21 +88,21 @@ py::class_<SepBase,pySep> export_Sep(py::module& m)
         {
           return SepInter(s1.copy(),s2.copy());
         },
-      SEPINTER_OPERATORAND_CONST_S1_REF_CONST_S2_REF)
+      SEPINTER_OPERATORINTER_CONST_S1_REF_CONST_S2_REF)
 
     .def("__and__", [](const SepBase& s1, const IntervalVector& x2)
         {
           auto s2 = SepWrapper(x2);
           return SepInter(s1.copy(),s2.copy());
         },
-      SEPINTER_OPERATORAND_CONST_INTERVALVECTOR_REF_CONST_S2_REF)
+      SEPINTER_OPERATORINTER_CONST_INTERVALVECTOR_REF_CONST_S2_REF)
 
     .def("__rand__", [](const SepBase& s1, const IntervalVector& x2)
         {
           auto s2 = SepWrapper(x2);
           return SepInter(s1.copy(),s2.copy());
         },
-      SEPINTER_OPERATORAND_CONST_INTERVALVECTOR_REF_CONST_S2_REF)
+      SEPINTER_OPERATORINTER_CONST_INTERVALVECTOR_REF_CONST_S2_REF)
 
     // Union of separators
 
@@ -96,21 +110,29 @@ py::class_<SepBase,pySep> export_Sep(py::module& m)
         {
           return SepUnion(s1.copy(),s2.copy());
         },
-      SEPUNION_OPERATOROR_CONST_S1_REF_CONST_S2_REF)
+      SEPUNION_OPERATORUNION_CONST_S1_REF_CONST_S2_REF)
 
     .def("__or__", [](const SepBase& s1, const IntervalVector& x2)
         {
           auto s2 = SepWrapper(x2);
           return SepUnion(s1.copy(),s2.copy());
         },
-      SEPUNION_OPERATOROR_CONST_INTERVALVECTOR_REF_CONST_S2_REF)
+      SEPUNION_OPERATORUNION_CONST_INTERVALVECTOR_REF_CONST_S2_REF)
 
     .def("__ror__", [](const SepBase& s1, const IntervalVector& x2)
         {
           auto s2 = SepWrapper(x2);
           return SepUnion(s1.copy(),s2.copy());
         },
-      SEPUNION_OPERATOROR_CONST_INTERVALVECTOR_REF_CONST_S2_REF)
+      SEPUNION_OPERATORUNION_CONST_INTERVALVECTOR_REF_CONST_S2_REF)
+
+    // Negation of separator
+
+    .def("__invert__", [](const SepBase& s1)
+        {
+          return SepNot(s1.copy());
+        },
+      SEPNOT_OPERATORNOT_CONST_S_REF)
 
   ;
 

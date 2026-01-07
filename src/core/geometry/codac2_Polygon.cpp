@@ -21,10 +21,10 @@ namespace codac2
   { }
 
   Polygon::Polygon(initializer_list<Vector> vertices)
-    : Polygon(std::vector<Vector>(vertices))
+    : Polygon(vector<Vector>(vertices))
   { }
 
-  Polygon::Polygon(const std::vector<Vector>& vertices)
+  Polygon::Polygon(const vector<Vector>& vertices)
     : Polygon(vectorVector_to_vectorIntervalVector(vertices))
   { }
 
@@ -34,7 +34,7 @@ namespace codac2
   }
 
   Polygon::Polygon(const std::vector<IntervalVector>& v)
-    : _edges(
+    : std::vector<Segment>(
       [v]
       {
         vector<Segment> edges;
@@ -95,29 +95,25 @@ namespace codac2
   { }
 
   Polygon::Polygon(initializer_list<Segment> edges)
-    : _edges(edges)
+    : vector<Segment>(edges)
   { }
 
   Polygon::Polygon(const vector<Segment>& edges)
-    : _edges(edges)
+    : vector<Segment>(edges)
   { }
   
   Polygon::Polygon(const IntervalVector& x)
-    : Polygon([&x]() -> std::vector<IntervalVector>
+    : Polygon([&x]() -> vector<IntervalVector>
       {
+        assert_release(x.size() == 2);
+
         if(x.is_empty())
           return { };
         
-        else if(x[0].is_degenerated())
+        else if(x.is_flat())
           return {
             { x[0].lb(),x[1].lb() },
-            { x[0].lb(),x[1].ub() }
-          };
-
-        else if(x[1].is_degenerated())
-          return {
-            { x[0].lb(),x[1].lb() },
-            { x[1].ub(),x[1].lb() }
+            { x[0].ub(),x[1].ub() }
           };
 
         else
@@ -133,120 +129,118 @@ namespace codac2
   
   const vector<Segment>& Polygon::edges() const
   {
-    return _edges;
+    return *this;
   }
-  
-  list<IntervalVector> Polygon::unsorted_vertices() const
-  {
-    list<IntervalVector> l;
 
-    if(!is_empty())
-    {
-      for(const auto& ei : _edges)
-        l.push_back(ei[0]);
-
-      size_t n = _edges.size();
-      if(_edges[0][0] != _edges[n-1][1])
-        l.push_back(_edges[n-1][1]);
-
-      // Removing duplicates
-      l.sort([](const IntervalVector& a, const IntervalVector& b) {
-          return a[0].lb() < b[0].lb()
-           || (a[0].lb() == b[0].lb() && a[1].lb() < b[1].lb())
-           || (a[0].lb() == b[0].lb() && a[1].lb() == b[1].lb() && a[0].ub() < b[0].ub())
-           || (a[0].lb() == b[0].lb() && a[1].lb() == b[1].lb() && a[0].ub() == b[0].ub() && a[1].ub() < b[1].ub());
-        });
-      l.unique();
-    }
-    
-    return l;
-  }
-  
-  vector<IntervalVector> Polygon::sorted_vertices() const
+  vector<IntervalVector> Polygon::vertices() const
   {
     vector<IntervalVector> v;
 
     if(!is_empty())
     {
-      size_t n = _edges.size();
+      size_t n = this->size();
 
       for(size_t i = 0 ; i < n ; i++)
-        v.push_back({ _edges[i][0][0], _edges[i][0][1] });
+        v.push_back((*this)[i][0]);
 
-      if(_edges[0][0] != _edges[n-1][1])
-        v.push_back({ _edges[n-1][1][0], _edges[n-1][1][1] });
+      if((*this)[0][0] != (*this)[n-1][1])
+        v.push_back((*this)[n-1][1]);
     }
 
     return v;
   }
 
+  IntervalVector Polygon::box() const
+  {
+    IntervalVector b = IntervalVector::empty(2);
+    for(const auto& e : *this)
+      b |= e.box();
+    return b;
+  }
+
   bool Polygon::is_empty() const
   {
-    return _edges.empty();
+    return this->vector<Segment>::empty();
   }
 
   BoolInterval Polygon::contains(const IntervalVector& p) const
   {
     assert_release(p.size() == 2);
 
-    for(const auto& edge_k : _edges)
+    IntervalVector box_hull = box();
+    if(!p.intersects(box_hull))
+      return BoolInterval::FALSE;
+
+    for(const auto& e : *this)
     {
-      auto b = edge_k.contains(p);
+      auto b = e.contains(p);
       if(b == BoolInterval::TRUE || b == BoolInterval::UNKNOWN)
         return b;
     }
 
-    if(_edges.size() <= 2) // if the polygon has no volume
+    if(this->size() <= 2) // if the polygon has no volume
       // Then it contains a point only if the point is on one of,
       // its edges, which has been tested before
       return BoolInterval::FALSE;
 
     bool retry;
-    double eps = 0.;
     Segment transect(IntervalVector(2),IntervalVector(2));
-    // ^ selected transect (horizontal ray) for crossing the polygon.
+    // ^ selected transect (e.g. horizontal ray) for crossing the polygon.
     // Odd number of crossing => point is inside
     // Even number of crossing => point is outside
 
+    Index i = 0;
     // Some limit cases must be considered, for instance when the
     // transect crosses exactly one vertex of the polygon, and/or 
     // when the point to be tested is this very vertex. Below, we
     // generate a convenient transect avoiding such configuration.
+
     do
     {
       retry = false;
 
-      // Horizontal ray candidate:
-      Segment try_transect { {{-oo,next_float(-oo)},p[1]+eps}, p };
+      // Creating a ray candidate:
+      Segment try_transect = [i,&p]() -> Segment {
+        switch(i)
+        {
+          case 0:
+            return { {next_float(-oo),p[1]}, p };
+          case 1:
+            return { {prev_float(oo),p[1]}, p };
+          case 2:
+            return { {p[0],next_float(-oo)}, p };
+          case 3:
+            return { {p[0],prev_float(oo)}, p };
+          default:
+          {
+            assert_release(false &&
+              "failed to test if the point is contained in polygon");
+            return Segment(IntervalVector(2),IntervalVector(2));
+          }
+        }
+      }();
 
       // The ray may pass through the vertices, we must double counting
-      for(const auto& pi : unsorted_vertices())
-      {
-        auto b = try_transect.contains(pi);
-        if(b == BoolInterval::UNKNOWN)
-          return BoolInterval::UNKNOWN;
-        else if(b == BoolInterval::TRUE)
+      for(const auto& pi : vertices())
+        if(try_transect.contains(pi) != BoolInterval::FALSE)
         {
-          eps = Interval(0,1).rand();
           retry = true;
           break;
         }
-      }
 
       if(!retry)
         transect = try_transect;
 
+      i++;
+      assert(i < 10);
     } while(retry);
 
     // Now the number i of crossing can be computed.
-    Index i = 0;
+    i = 0;
 
-    for(const auto& edge_k : _edges)
+    for(const auto& e : *this)
     {
-      if(transect.box().is_strict_superset(edge_k.box()))
-        continue; // case of a ray passing over a colinear edge
-
-      switch(transect.intersects(edge_k))
+      switch(transect.intersects(e))
       {
         case BoolInterval::TRUE:
           i++;
@@ -278,22 +272,21 @@ namespace codac2
     if(is_empty() || p.is_empty())
       return is_empty() && p.is_empty();
 
-    size_t n = _edges.size();
-    if(p.edges().size() != n)
+    size_t n = this->size();
+    if(p.size() != n)
       return false;
 
     size_t i; // looking for same reference of first value
     for(i = 0 ; i < n ; i++)
-      if(_edges[0] == p.edges()[i])
+      if((*this)[0] == p[i])
         break;
 
     int way = 1;
     if(n > 1)
-      way = (_edges[1] == p.edges()[(i+1)%n]) ? 1 : -1;
-    assert(way == 1 || (way == -1 && _edges[1] == p.edges()[(i-1+2*n)%n]));
+      way = ((*this)[1] == p[(i+1)%n]) ? 1 : -1;
 
     for(size_t j = 0 ; j < n ; j++)
-      if(_edges[j] != p.edges()[(i+way*j+2*n)%n])
+      if((*this)[j] != p[(i+way*j+2*n)%n])
         return false;
 
     return true;
@@ -303,11 +296,11 @@ namespace codac2
   {
     str << "{ ";
 
-    auto v = p.sorted_vertices();
+    auto v = p.vertices();
     for(size_t i = 0 ; i < v.size() ; i++)
     {
       if(i > 0) str << " -- ";
-      str << " -- " << v[i];
+      str << v[i];
     }
 
     str << " }";

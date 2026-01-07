@@ -29,10 +29,6 @@ A Debian package is available for the last release |version| of the library:
 
 Then, check your installation :ref:`with the instructions of this page <sec-start-cpp-project>`.
 
-.. warning::
-
-  | :strike:`URL changed: Please uninstall before.`
-
 .. admonition:: Uninstall Codac
 
   To uninstall Codac, you might want to do the following:
@@ -42,8 +38,6 @@ Then, check your installation :ref:`with the instructions of this page <sec-star
     sudo apt remove libcodac-dev libibex-dev
     sudo rm -f /etc/apt/sources.list.d/ensta-bretagne.list
     sudo apt update
-
-  :strike:`Note also that ``libeigen3-dev`` ` :strike:`might have been installed as a dependency of Codac but might be also used by other software. You might want to keep it.`
 
 .. admonition:: Standalone archives
 
@@ -113,8 +107,6 @@ Steps
 
       # Configure Codac before installation
       cd $HOME/codac
-      # Get automatically pybind11 and eigen submodules:
-      git submodule init ; git submodule update 
       mkdir build ; cd build
       cmake -DCMAKE_INSTALL_PREFIX=$HOME/codac/build_install -DCMAKE_PREFIX_PATH=$HOME/ibex-lib/build_install -DCMAKE_BUILD_TYPE=Release ..
 
@@ -201,7 +193,7 @@ Optionally, for Python binding (*e.g.* ``choco install python --version=3.10.4``
   choco install doxygen.install --version=1.13
   choco install graphviz
   python -m pip install --upgrade pip
-  pip install --upgrade wheel setuptools sphinx sphinx_rtd_theme furo sphinx-math-dollar sphinx_tabs breathe
+  pip install --upgrade wheel setuptools sphinx sphinx_rtd_theme furo sphinx-math-dollar sphinx_tabs breathe sphinx_togglebutton
 
 The logic to follow will then be similar to Linux (note that for Visual Studio, commands such as ``make install`` need to be replaced with something similar to:
 
@@ -258,7 +250,7 @@ Optionally, for Python binding and documentation:
   wget https://github.com/Homebrew/homebrew-core/raw/d2267b9f2ad247bc9c8273eb755b39566a474a70/Formula/doxygen.rb ; brew reinstall ./doxygen.rb ; brew pin doxygen
   brew install graphviz
   python -m pip install --upgrade pip
-  pip install --upgrade wheel setuptools sphinx sphinx_rtd_theme furo sphinx-math-dollar sphinx_tabs
+  pip install --upgrade wheel setuptools sphinx sphinx_rtd_theme furo sphinx-math-dollar sphinx_tabs sphinx_togglebutton
 
 
 Troubleshooting

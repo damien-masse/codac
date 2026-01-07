@@ -36,38 +36,6 @@ namespace codac2
     return x.size();
   }
 
-  template<typename T1, typename T2>
-  inline bool same_size(const T1& x1, const T2& x2)
-  {
-    return size_of(x1) == size_of(x2);
-  }
-
-  template<class... T>
-  bool all_same_size(const T&... x)
-  {
-    return (... && (same_size(std::get<0>(std::make_tuple(x...)), x)));
-  }
-
-  template<class... T>
-  Index size_first_item(const T&... x)
-  {
-    return size_of(std::get<0>(std::make_tuple(x...)));
-  }
-
-  // Removes duplicates when no comparison operator is available
-  template<typename T>
-  void remove_duplicates_from_list(std::list<T>& l)
-  {
-    typename std::list<T>::iterator it = l.begin();
-    while(it != l.end())
-    {
-      if(std::count(l.begin(), l.end(), *it) > 1)
-        l.erase(it++);
-      else
-        ++it;
-    }
-  }
-
   template<typename C>
     requires is_ctc_v<C>
   inline Index size_of(const std::shared_ptr<C>& x)
@@ -82,6 +50,38 @@ namespace codac2
     return x->size();
   }
 
+  template<typename T1, typename T2>
+  inline bool same_size(const T1& x1, const T2& x2)
+  {
+    return size_of(x1) == size_of(x2);
+  }
+
+  template<class... T>
+  inline bool all_same_size(const T&... x)
+  {
+    return (... && (same_size(std::get<0>(std::make_tuple(x...)), x)));
+  }
+
+  template<class... T>
+  inline Index size_first_item(const T&... x)
+  {
+    return size_of(std::get<0>(std::make_tuple(x...)));
+  }
+
+  // Removes duplicates when no comparison operator is available
+  template<typename T>
+  inline void remove_duplicates_from_list(std::list<T>& l)
+  {
+    typename std::list<T>::iterator it = l.begin();
+    while(it != l.end())
+    {
+      if(std::count(l.begin(), l.end(), *it) > 1)
+        l.erase(it++);
+      else
+        ++it;
+    }
+  }
+
   template<int R,int C>
   inline auto vectorVector_to_vectorIntervalVector(const std::vector<Mat<double,R,C>>& x)
   {
@@ -89,5 +89,23 @@ namespace codac2
     for(size_t i = 0 ; i < x.size() ; i++)
       v[i] = x[i].template cast<Interval>();
     return v;
+  }
+
+  template <std::size_t N>
+  static inline std::array<float, N> to_array(std::initializer_list<float> list)
+  {
+    assert(list.size() == N);
+    std::array<float, N> arr{};
+    std::copy(list.begin(), list.end(), arr.begin());
+    return arr;
+  }
+
+  template<int N>
+  inline Vector to_vector(const std::array<int,N>& x)
+  {
+    Vector s(x.size());
+    for(size_t i = 0 ; i < N ; i++)
+      s[i] = x[i];
+    return s;
   }
 }

@@ -27,7 +27,7 @@ using namespace pybind11::literals;
 
 py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector(py::module& m)
 {
-  py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> py_ctc_iv(m, "CtcIntervalVector");
+  py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> py_ctc_iv(m, "Ctc_IntervalVector_");
   py_ctc_iv
 
     .def(py::init<Index>(),
@@ -51,7 +51,7 @@ py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c1.copy()),
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c2.copy()));
         },
-      CTCINTER_TYPENAME_C1_CONTRACTEDTYPE_OPERATORAND_CONST_C1_REF_CONST_C2_REF)
+      CTCINTERTYPE_TYPENAMEC1_CONTRACTEDTYPES_CTC_OPERATORINTER_CONST_C1_REF_CONST_C2_REF)
 
     .def("__and__", [](const CtcBase<IntervalVector>& c1, const IntervalVector& x2)
         {
@@ -60,7 +60,7 @@ py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c1.copy()),
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c2.copy()));
         },
-      CTCINTER_INTERVALVECTOR_OPERATORAND_CONST_INTERVALVECTOR_REF_CONST_C2_REF)
+      CTCINTER_INTERVALVECTOR_OPERATORINTER_CONST_INTERVALVECTOR_REF_CONST_C2_REF)
 
     .def("__rand__", [](const CtcBase<IntervalVector>& c1, const IntervalVector& x2)
         {
@@ -69,7 +69,7 @@ py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c1.copy()),
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c2.copy()));
         },
-      CTCINTER_INTERVALVECTOR_OPERATORAND_CONST_INTERVALVECTOR_REF_CONST_C2_REF)
+      CTCINTER_INTERVALVECTOR_OPERATORINTER_CONST_INTERVALVECTOR_REF_CONST_C2_REF)
 
     // Union of contractors
 
@@ -79,7 +79,7 @@ py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c1.copy()),
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c2.copy()));
         },
-      CTCUNION_TYPENAME_C1_CONTRACTEDTYPE_OPERATOROR_CONST_C1_REF_CONST_C2_REF)
+      CTCUNIONTYPE_TYPENAMEC1_CONTRACTEDTYPES_CTC_OPERATORUNION_CONST_C1_REF_CONST_C2_REF)
 
     .def("__or__", [](const CtcBase<IntervalVector>& c1, const IntervalVector& x2)
         {
@@ -88,7 +88,7 @@ py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c1.copy()),
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c2.copy()));
         },
-      CTCUNION_INTERVALVECTOR_OPERATOROR_CONST_INTERVALVECTOR_REF_CONST_C2_REF)
+      CTCUNION_INTERVALVECTOR_OPERATORUNION_CONST_INTERVALVECTOR_REF_CONST_C2_REF)
 
     .def("__ror__", [](const CtcBase<IntervalVector>& c1, const IntervalVector& x2)
         {
@@ -97,7 +97,7 @@ py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector> export_CtcIntervalVector
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c1.copy()),
             std::dynamic_pointer_cast<CtcBase<IntervalVector>>(c2.copy()));
         },
-      CTCUNION_INTERVALVECTOR_OPERATOROR_CONST_INTERVALVECTOR_REF_CONST_C2_REF)
+      CTCUNION_INTERVALVECTOR_OPERATORUNION_CONST_INTERVALVECTOR_REF_CONST_C2_REF)
 
   ;
 

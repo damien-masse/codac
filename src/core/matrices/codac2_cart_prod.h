@@ -2,7 +2,7 @@
  *  \file codac2_cart_prod.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2023 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -20,12 +20,16 @@ namespace codac2
     return { x };
   }
 
-  inline IntervalVector to_IntervalVector(const IntervalVector& x)
+  template<typename OtherDerived>
+    requires (std::is_same_v<typename OtherDerived::Scalar,Interval> && OtherDerived::ColsAtCompileTime==1)
+  inline IntervalVector to_IntervalVector(const Eigen::MatrixBase<OtherDerived>& x)
   {
     return x;
   }
 
-  inline IntervalVector to_IntervalVector(const Vector& x)
+  template<typename OtherDerived>
+    requires (std::is_same_v<typename OtherDerived::Scalar,double> && OtherDerived::ColsAtCompileTime==1)
+  inline IntervalVector to_IntervalVector(const Eigen::MatrixBase<OtherDerived>& x)
   {
     return x.template cast<Interval>();
   }
@@ -35,7 +39,7 @@ namespace codac2
     requires (!Eigen::IsVectorOrRow<R,C>)
   inline IntervalVector to_IntervalVector(const Eigen::Matrix<T,R,C>& x)
   {
-    return Eigen::Map<const Eigen::Matrix<T,R,1>>(x.data(), x.size());
+    return x.reshaped();
   }
 
   inline IntervalVector cart_prod()
@@ -66,8 +70,7 @@ namespace codac2
   }
 
   template<typename... X>
-    requires ((!is_interval_based_v<X>) && ...)
-      && ((!is_ctc_v<X>) && ...) && ((!is_sep_v<X>) && ...)
+    requires ((std::is_arithmetic_v<X> || is_matrix_base_double<X>) && ...)
   inline Vector cart_prod(const X&... x)
   {
     return cart_prod(to_IntervalVector(x)...).mid();

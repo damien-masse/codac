@@ -9,11 +9,11 @@
 
 import unittest
 from codac import *
-import sys, math
+import sys, math, numpy as np
 
 class TestSampledTraj(unittest.TestCase):
 
-  def tests_SampledTraj(self):
+  def test_SampledTraj(self):
 
     x = SampledVectorTraj({
       0.25: [-0.5,0.5],
@@ -108,6 +108,28 @@ class TestSampledTraj(unittest.TestCase):
     while t_ < 5:
       self.assertTrue(Approx(h.real_eval(t_),1e-8) == Vector([2*math.cos(t_),math.sin(2*t_)]))
       t_=t_+1e-2
+
+    # SampledTraj (nan case)
+
+    x = SampledVectorTraj()
+    x.set(Vector([0,0]),0.)
+    x.set(Vector([2,2]),2.)
+    self.assertTrue(x(1.) == Vector([1,1]))
+    x.set(Vector([0,float("nan")]),0.)
+    self.assertTrue(x(1.).is_nan())
+
+    # SampledTraj, derivative
+
+    t = ScalarVar()
+    f = AnalyticFunction([t], sqr(t)*exp(sin(t)))
+    x = AnalyticTraj(f,[0,10]).sampled(1e-3)
+    s = AnalyticTraj(AnalyticFunction([t],exp(sin(t))*(2*t+sqr(t)*cos(t))),[0,10]).sampled(1e-2)
+
+    d = x.derivative()
+    p = d.primitive()
+
+    for i in np.arange(0, 10, 1e-1):
+      self.assertTrue(Approx(p(i),1e-2) == x(i))
 
 if __name__ ==  '__main__':
   unittest.main()

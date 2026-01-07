@@ -50,6 +50,8 @@ namespace codac2
 
         else if constexpr(std::is_same_v<T,Interval>)
         {
+          if((x1.is_empty() && !x2._x.is_empty()) || (!x1.is_empty() && x2._x.is_empty()))
+            return false;
           return (x1.lb() == x2._x.lb() || x1.lb() == Approx<double>(x2._x.lb(),x2._eps))
               && (x1.ub() == x2._x.ub() || x1.ub() == Approx<double>(x2._x.ub(),x2._eps));
         }
@@ -70,7 +72,7 @@ namespace codac2
 
         else
         {
-          assert_release(false && "Approx::operator== unhandled case");
+          assert_release_constexpr(false && "Approx::operator== unhandled case");
           return false;
         }
       }
@@ -114,16 +116,17 @@ namespace codac2
       const double _eps;
   };
   
-  template<>
-  class Approx<Polygon>
+  template<typename P>
+    requires std::is_base_of_v<Polygon,P>
+  class Approx<P>
   {
     public:
 
-      explicit Approx(const Polygon& x, double eps = DEFAULT_EPS)
+      explicit Approx(const P& x, double eps = DEFAULT_EPS)
         : _x(x), _eps(eps)
       { }
 
-      friend bool operator==(const Polygon& p1, const Approx<Polygon>& p2)
+      friend bool operator==(const P& p1, const Approx<P>& p2)
       {
         size_t n = p1.edges().size();
         if(p2._x.edges().size() != n)
@@ -137,7 +140,6 @@ namespace codac2
         int way = 1;
         if(n > 1)
           way = (Approx<Segment>(p1.edges()[1], p2._eps) == p2._x.edges()[(i+1)%n]) ? 1 : -1;
-        assert(way == 1 || (way == -1 && p1.edges()[1] == p2._x.edges()[(i-1+2*n)%n]));
 
         for(size_t j = 0 ; j < n ; j++)
           if(Approx<Segment>(p1.edges()[j], p2._eps) != p2._x.edges()[(i+way*j+2*n)%n])
@@ -146,7 +148,7 @@ namespace codac2
         return true;
       }
 
-      friend std::ostream& operator<<(std::ostream& os, const Approx<Polygon>& x)
+      friend std::ostream& operator<<(std::ostream& os, const Approx<P>& x)
       {
         os << "Approx(" << x._x << ")";
         return os;
@@ -154,7 +156,33 @@ namespace codac2
     
     private:
 
-      const Polygon _x;
+      const P _x;
+      const double _eps;
+  };
+  
+  template<typename T>
+  class Approx<std::pair<T,T>>
+  {
+    public:
+
+      explicit Approx(const std::pair<T,T>& x, double eps = DEFAULT_EPS)
+        : _x(x), _eps(eps)
+      { }
+
+      friend bool operator==(const std::pair<T,T>& p1, const Approx<std::pair<T,T>>& p2)
+      {
+        return Approx<T>(p2._x.first,p2._eps) == p1.first && Approx<T>(p2._x.second,p2._eps) == p1.second;
+      }
+
+      friend std::ostream& operator<<(std::ostream& os, const Approx<std::pair<T,T>>& x)
+      {
+        os << "Approx(" << x._x.first << "," << x._x.second << ")";
+        return os;
+      }
+    
+    private:
+
+      const std::pair<T,T> _x;
       const double _eps;
   };
 

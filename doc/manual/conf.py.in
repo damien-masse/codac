@@ -20,6 +20,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx_tabs.tabs',
     'breathe',
+    'sphinx_togglebutton',
 ]
 
 templates_path = ['_templates']
@@ -31,7 +32,8 @@ exclude_patterns = []
 
 html_static_path = ['_static']
 html_theme = "furo"
-html_logo = "_static/logos/logo_codac.svg"
+#html_logo = "_static/logos/logo_codac.svg"
+html_logo = "_static/logos/logo_codac_christmas.png"
 html_favicon = "_static/logos/logo_codac.ico"
 
 # These paths are either relative to html_static_path
@@ -60,6 +62,9 @@ html_theme_options = {
         "color-link--visited": "var(--color-link)",
 
         "header-height": "2rem",
+        "admonition-font-size": "100%",
+
+        "color-toc-item-text--active": "#000000",
     },
 
     "dark_css_variables": {
@@ -79,6 +84,9 @@ html_theme_options = {
         "color-link--hover": "#77C8F6",
 
         "header-height": "2rem",
+        "admonition-font-size": "100%",
+
+        "color-toc-item-text--active": "#FFFFFF",
     },
 
     "announcement": "You are currently reading the new Codac documentation, which is currently in preparation. <a href=\"http://codac.io\">See the v1 website</a>.",
@@ -95,3 +103,9 @@ mathjax3_config = {
 breathe_projects = {
   "codac": "../api/xml"
 }
+
+#togglebutton_hint = "<strong style=\"color: #009945;\">Reveal the solution.</strong>"
+togglebutton_hint = "Reveal the solution."
+togglebutton_hint_hide = "Hide the solution."
+
+html_extra_path = ['extra_html']

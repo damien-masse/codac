@@ -15,7 +15,7 @@ f = AnalyticFunction(
 
 tdomain = [0,5]
 sampled_f = AnalyticTraj(f,tdomain).sampled(0.8)
-sampled_f.set(6, [0,-1]) # appending the position (0,-1) at t=6
+sampled_f.set([0,-1], 6.) # appending the position (0,-1) at t=6
 
 w = VectorVar(3)
 g = sampled_f.as_function()
@@ -27,7 +27,6 @@ h = AnalyticFunction(
 s_h = SepInverse(h, [0,0.1])
 s_projh = SepProj(s_h, [0,1], [sampled_f.tdomain()])
 
-DefaultFigure.set_window_properties([75,75],[700,700])
-draw_while_paving([[-3,3],[-2,2]], s_projh, 5e-2)
+DefaultFigure.pave([[-3,3],[-2,2]], s_projh, 5e-2)
 DefaultFigure.draw_trajectory(sampled_f)
 DefaultFigure.draw_trajectory(AnalyticTraj(f,tdomain), Color.dark_gray())

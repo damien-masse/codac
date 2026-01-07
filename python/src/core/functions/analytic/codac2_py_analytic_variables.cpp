@@ -22,14 +22,20 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 
+void export_VarBase(py::module& m)
+{
+  py::class_<VarBase, std::shared_ptr<VarBase>>(m, "VarBase");
+}
+
 void export_ScalarVar(py::module& m)
 {
-  py::class_<ScalarVar, std::shared_ptr<ScalarVar> /* due to enable_shared_from_this */>
+  py::class_<ScalarVar, VarBase, std::shared_ptr<ScalarVar> /* due to enable_shared_from_this */>
     exported(m, "ScalarVar", SCALARVAR_MAIN);
   exported
   
-    .def(py::init<>(),
-      SCALARVAR_SCALARVAR)
+    .def(py::init<const std::string&>(),
+      SCALARVAR_SCALARVAR_CONST_STRING_REF,
+      "name"_a = "?")
 
     .def("size", &ScalarVar::size,
       INDEX_SCALARVAR_SIZE_CONST)
@@ -86,36 +92,33 @@ ScalarExpr get_item(const VectorVar& v, Index_type i)
 
 void export_VectorVar(py::module& m)
 {
-  py::class_<VectorVar,
+  py::class_<VectorVar, VarBase,
     std::shared_ptr<VectorVar> /* due to enable_shared_from_this */>
     exported(m, "VectorVar", VECTORVAR_MAIN);
   exported
   
     .def(py::init(
-        [](Index_type n)
+        [](Index_type n, const std::string& name = "?")
         {
           matlab::test_integer(n);
-          return std::make_unique<VectorVar>(n);
+          return std::make_unique<VectorVar>(n,name);
         }),
-      VECTORVAR_VECTORVAR_INDEX,
-      "n"_a)
+      VECTORVAR_VECTORVAR_INDEX_CONST_STRING_REF,
+      "n"_a, "name"_a = "?")
 
     .def("size", &VectorVar::size,
-      INDEX_VECTORVAR_SIZE_CONST);
-
-  if(FOR_MATLAB)
-    exported.def("__call__", [](const VectorVar& v, Index_type i) -> ScalarExpr
+      INDEX_VECTORVAR_SIZE_CONST)
+    
+    .def(
+        #if FOR_MATLAB
+          "__call__"
+        #else
+          "__getitem__"
+        #endif
+        , [](const VectorVar& v, Index_type i) -> ScalarExpr
       {
         return get_item(v, i);
-      }, ANALYTICEXPRWRAPPER_SCALARTYPE_VECTORVAR_OPERATORCOMPO_INDEX_CONST);
-
-  else
-    exported.def("__getitem__", [](const VectorVar& v, Index_type i) -> ScalarExpr
-      {
-        return get_item(v, i);
-      }, ANALYTICEXPRWRAPPER_SCALARTYPE_VECTORVAR_OPERATORCOMPO_INDEX_CONST);
-
-  exported
+      }, ANALYTICEXPRWRAPPER_SCALARTYPE_VECTORVAR_OPERATORCOMPO_INDEX_CONST)
 
     .def("subvector", [](const VectorVar& v, Index_type i, Index_type j) -> VectorExpr
       {
@@ -163,36 +166,28 @@ ScalarExpr get_item(const MatrixVar& m, Index_type i, Index_type j)
 
 void export_MatrixVar(py::module& m)
 {
-  py::class_<MatrixVar,
+  py::class_<MatrixVar, VarBase,
     std::shared_ptr<MatrixVar> /* due to enable_shared_from_this */>
     exported(m, "MatrixVar", MATRIXVAR_MAIN);
   exported
   
     .def(py::init(
-        [](Index_type r, Index_type c)
+        [](Index_type r, Index_type c, const std::string& name = "?")
         {
           matlab::test_integer(r);
           matlab::test_integer(c);
-          return std::make_unique<MatrixVar>(r,c);
+          return std::make_unique<MatrixVar>(r,c,name);
         }),
-      MATRIXVAR_MATRIXVAR_INDEX_INDEX,
-      "r"_a, "c"_a)
+      MATRIXVAR_MATRIXVAR_INDEX_INDEX_CONST_STRING_REF,
+      "r"_a, "c"_a, "name"_a = "?")
 
     .def("size", &MatrixVar::size,
-      INDEX_MATRIXVAR_SIZE_CONST);
+      INDEX_MATRIXVAR_SIZE_CONST)
 
-    if(FOR_MATLAB)
-    {
-      // todo
-    }
-
-    else
-      exported.def("__call__", [](const MatrixVar& v, Index_type i, Index_type j) -> ScalarExpr
-        {
-          return get_item(v, i, j);
-        }, ANALYTICEXPRWRAPPER_SCALARTYPE_MATRIXVAR_OPERATORCALL_INDEX_INDEX_CONST);
-
-  exported
+    .def("__call__", [](const MatrixVar& v, Index_type i, Index_type j) -> ScalarExpr
+      {
+        return get_item(v, i, j);
+      }, ANALYTICEXPRWRAPPER_SCALARTYPE_MATRIXVAR_OPERATORCALL_INDEX_INDEX_CONST)
 
     .def("__pos__",  [](const MatrixVar& e1)                           { return e1;      }, py::is_operator())
     .def("__add__",  [](const MatrixVar& e1, const MatrixVar& e2)      { return e1 + e2; }, py::is_operator())
@@ -204,6 +199,9 @@ void export_MatrixVar(py::module& m)
     .def("__sub__",  [](const MatrixVar& e1, const MatrixExpr& e2)     { return e1 - e2; }, py::is_operator())
     .def("__sub__",  [](const MatrixVar& e1, const IntervalMatrix& e2) { return e1 - e2; }, py::is_operator())
     .def("__rsub__", [](const MatrixVar& e1, const IntervalMatrix& e2) { return e2 - e1; }, py::is_operator())
+    .def("__mul__",  [](const MatrixVar& e1, const VectorVar& e2)      { return e1 * e2; }, py::is_operator())
+    .def("__mul__",  [](const MatrixVar& e1, const VectorExpr& e2)     { return e1 * e2; }, py::is_operator())
+    .def("__mul__",  [](const MatrixVar& e1, const IntervalVector& e2) { return e1 * e2; }, py::is_operator())
     .def("__mul__",  [](const MatrixVar& e1, const MatrixVar& e2)      { return e1 * e2; }, py::is_operator())
     .def("__mul__",  [](const MatrixVar& e1, const MatrixExpr& e2)     { return e1 * e2; }, py::is_operator())
     .def("__mul__",  [](const MatrixVar& e1, const IntervalMatrix& e2) { return e1 * e2; }, py::is_operator())

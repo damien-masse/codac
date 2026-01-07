@@ -30,21 +30,21 @@ void export_Interval_operations(py::module& m, py::class_<Interval>& py_Interval
   py_Interval
 
   .def(py::self & py::self,
-    INTERVAL_OPERATORAND_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
+    INTERVAL_OPERATORINTER_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
     "x"_a)
 
   // For MATLAB compatibility
   .def("inter", (Interval(*)(const Interval&,const Interval&)) &codac2::operator&,
-    INTERVAL_OPERATORAND_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
+    INTERVAL_OPERATORINTER_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
     "x"_a)
 
   .def(py::self | py::self,
-    INTERVAL_OPERATOROR_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
+    INTERVAL_OPERATORUNION_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
     "x"_a)
   
   // For MATLAB compatibility
   .def("union", (Interval(*)(const Interval&,const Interval&)) &codac2::operator|,
-    INTERVAL_OPERATOROR_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
+    INTERVAL_OPERATORUNION_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
     "x"_a)
 
   .def(+ py::self,
@@ -198,19 +198,19 @@ void export_Interval_operations(py::module& m, py::class_<Interval>& py_Interval
     INTERVAL_MAX_CONST_INTERVAL_REF_CONST_INTERVAL_REF,
     "x"_a, "y"_a)
 
-  .def("sign", &codac2::sign,
+  .def("sign", (Interval(*)(const Interval&)) &codac2::sign,
     INTERVAL_SIGN_CONST_INTERVAL_REF,
     "x"_a)
 
-  .def("integer", &codac2::integer,
+  .def("integer", (Interval(*)(const Interval&)) &codac2::integer,
     INTERVAL_INTEGER_CONST_INTERVAL_REF,
     "x"_a)
 
-  .def("floor", &codac2::floor,
+  .def("floor", (Interval(*)(const Interval&)) &codac2::floor,
     INTERVAL_FLOOR_CONST_INTERVAL_REF,
     "x"_a)
 
-  .def("ceil", &codac2::ceil,
+  .def("ceil", (Interval(*)(const Interval&)) &codac2::ceil,
     INTERVAL_CEIL_CONST_INTERVAL_REF,
     "x"_a)
 

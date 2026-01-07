@@ -12,7 +12,7 @@
 #include "codac2_Interval.h"
 #include "codac2_Wrapper.h"
 #include "codac2_AnalyticFunction.h"
-#include "codac2_ValueType.h"
+#include "codac2_ExprType.h"
 
 namespace codac2
 {
@@ -28,6 +28,7 @@ namespace codac2
       { }
 
       virtual Index size() const = 0;
+      virtual std::pair<Index,Index> shape() const = 0;
       virtual bool is_empty() const = 0;
       virtual Interval tdomain() const = 0;
       virtual void truncate_tdomain(const Interval& new_tdomain) = 0;
@@ -37,7 +38,7 @@ namespace codac2
 
       auto nan_value() const
       {
-        if constexpr(std::is_same_v<T,double> || std::is_same_v<typename ValueType<T>::Type,ScalarType>)
+        if constexpr(std::is_same_v<T,double> || std::is_same_v<typename ExprType<T>::Type,ScalarType>)
           return std::numeric_limits<double>::quiet_NaN();
 
         else
@@ -53,8 +54,8 @@ namespace codac2
         auto tdom = tdomain();
         SampledTraj<T> straj;
         for(double t = tdom.lb() ; t < tdom.ub() ; t+=dt)
-          straj.set(t, (*this)(t));
-        straj.set(tdom.ub(), (*this)(tdom.ub()));
+          straj.set((*this)(t), t);
+        straj.set((*this)(tdom.ub()), tdom.ub());
         return straj;
       }
 
@@ -65,36 +66,39 @@ namespace codac2
         
         SampledTraj<T> straj;
         for(const auto& [ti,dump] : x)
-          straj.set(ti, (*this)(ti));
+          straj.set((*this)(ti), ti);
         return straj;
       }
 
-      SampledTraj<T> primitive(const T& y0, double dt) const
+      SampledTraj<T> primitive(double dt) const
       {
         assert_release(dt > 0.);
         assert_release(!is_empty());
 
+        T s = [this]() {
+          if constexpr(std::is_same_v<T,double>)
+            return 0.;
+          else
+            return T((*this)(this->tdomain().lb())).init(0.);
+        }();
+
         SampledTraj<T> p;
         double t = tdomain().lb(), last_t = t;
-        p.set(t, y0); t += dt;
-        T y = y0;
+        p.set(s, t); t += dt;
 
         while(t < tdomain().ub())
         {
-          y += ((*this)(last_t)+(*this)(t))*dt/2.;
-          p.set(t, y);
+          s += ((*this)(last_t)+(*this)(t))*dt/2.;
+          p.set(s, t);
           last_t = t;
           t += dt;
         }
 
         t = tdomain().ub();
-        y += ((*this)(last_t)+(*this)(t))*(t-last_t)/2.;
-        p.set(t, y);
+        s += ((*this)(last_t)+(*this)(t))*(t-last_t)/2.;
+        p.set(s, t);
 
         return p;
       }
-
-      // Implementation in codac2_Trajectory_operator.h
-      AnalyticFunction<typename ValueType<T>::Type> as_function() const;
   };
 }

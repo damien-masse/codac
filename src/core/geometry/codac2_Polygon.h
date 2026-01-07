@@ -25,7 +25,7 @@ namespace codac2
    * A polygon can be constructed from a list of vertices (either ``Vector`` or ``IntervalVector``)
    * or from a list of edges (``Segment``s). Internally, it stores a list of edges enclosed in ``Segment``s.
    */
-  class Polygon
+  class Polygon : public std::vector<Segment>
   {
     public:
 
@@ -81,21 +81,18 @@ namespace codac2
       const std::vector<Segment>& edges() const;
 
       /**
-       * \brief Returns the list of unique vertices in no particular order.
-       *
-       * If a vertex is involved several times in the polygon definition,
-       * then it will be returned only once in the output list.
-       * 
-       * \return A list of ``IntervalVector``s enclosing the unique vertices.
-       */
-      std::list<IntervalVector> unsorted_vertices() const;
-
-      /**
        * \brief Returns the list of vertices sorted in polygonal order.
        *
        * \return A vector of ``IntervalVector``s enclosing the ordered vertices.
        */
-      std::vector<IntervalVector> sorted_vertices() const;
+      std::vector<IntervalVector> vertices() const;
+
+      /**
+       * \brief Computes the bounding box of the polygon.
+       *
+       * \return The ``IntervalVector`` hull box.
+       */
+      IntervalVector box() const;
 
       /**
        * \brief Checks whether the polygon is empty (has no vertex).
@@ -136,11 +133,6 @@ namespace codac2
        * \brief Default protected constructor used internally.
        */
       Polygon();
-
-      /**
-       * \brief Internal representation of the polygon as a list of edges.
-       */
-      const std::vector<Segment> _edges;
   };
 
   /**

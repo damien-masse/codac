@@ -33,9 +33,13 @@ void export_paving_base(py::class_<P>& c)
     .def("tree", (std::shared_ptr<PavingNode<P>>(Paving<P,X...>::*)()) &Paving<P,X...>::tree,
       SHARED_PTR_PAVINGNODE_P_PAVING_PX_TREE)
 
-    .def("intersecting_boxes", &Paving<P,X...>::intersecting_boxes,
-      LIST_INTERVALVECTOR_PAVING_PX_INTERSECTING_BOXES_CONST_INTERVALVECTOR_REF_CONST_NODEVALUE__REF_CONST
-      "x"_a, "node_value"_a)
+    .def("boxes", (std::list<IntervalVector>(Paving<P,X...>::*)(const typename Paving<P,X...>::NodeValue_&) const) &Paving<P,X...>::boxes,
+      LIST_INTERVALVECTOR_PAVING_PX_BOXES_CONST_NODEVALUE__REF_CONST
+      "node_value"_a)
+
+    .def("boxes", (std::list<IntervalVector>(Paving<P,X...>::*)(const typename Paving<P,X...>::NodeValue_&,const IntervalVector&) const) &Paving<P,X...>::boxes,
+      LIST_INTERVALVECTOR_PAVING_PX_BOXES_CONST_NODEVALUE__REF_CONST_INTERVALVECTOR_REF_CONST
+      "node_value"_a, "x"_a)
     
   ;
 }
@@ -59,6 +63,10 @@ void export_Paving(py::module& m)
     .def("connected_subsets", (std::list<PavingOut::ConnectedSubset_>(PavingOut::*)(const IntervalVector&,const PavingOut::NodeValue_&) const) &PavingOut::connected_subsets,
       LIST_PAVINGOUT_CONNECTEDSUBSET__PAVINGOUT_CONNECTED_SUBSETS_CONST_INTERVALVECTOR_REF_CONST_PAVINGOUT_NODEVALUE__REF_CONST,
       "x0"_a, "node_value"_a = PavingOut::outer)
+
+    .def("__and__", (IntervalVector (PavingOut::*)(const IntervalVector&))&PavingOut::operator&,
+      INTERVALVECTOR_PAVINGOUT_OPERATORINTER_CONST_INTERVALVECTOR_REF_CONST,
+      "x"_a)
 
     .def_readonly_static("outer", &PavingOut::outer,
       STATIC_CONST_NODEVALUE__PAVINGOUT_OUTER)

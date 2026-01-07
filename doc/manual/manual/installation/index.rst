@@ -3,8 +3,6 @@
 Installation guide
 ==================
 
-  Main authors: `Fabrice Le Bars <https://www.ensta-bretagne.fr/lebars/>`_, `Simon Rohou <https://www.simon-rohou.fr/research/>`_
-
 Codac is available in both C++20 and Python3, as well as MATLAB `through its Python interface <https://fr.mathworks.com/help/matlab/matlab_external/install-supported-python-implementation.html>`_. 
 
 .. toctree::
@@ -13,6 +11,7 @@ Codac is available in both C++20 and Python3, as well as MATLAB `through its Pyt
    python.rst
    cpp.rst
    matlab.rst
+   performances.rst
 
 |
 

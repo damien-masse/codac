@@ -40,6 +40,9 @@ void export_SepUnion(py::module& m, py::class_<SepBase,pySep>& pysep)
       SEPUNION_SEPUNION_CONST_S_REF_VARIADIC,
       "s1"_a, "s2"_a)
 
+    .def("nb", &SepUnion::nb,
+      SIZET_SEPUNION_NB_CONST)
+
     .def("separate", &SepUnion::separate,
       BOXPAIR_SEPUNION_SEPARATE_CONST_INTERVALVECTOR_REF_CONST,
       "x"_a)
@@ -49,6 +52,6 @@ void export_SepUnion(py::module& m, py::class_<SepBase,pySep>& pysep)
           s1 |= s2.copy();
           return s1;
         },
-      SEPUNION_REF_SEPUNION_OPERATOROREQ_CONST_S_REF)
+      SEPUNION_REF_SEPUNION_OPERATORUNIONEQ_CONST_S_REF)
   ;
 }

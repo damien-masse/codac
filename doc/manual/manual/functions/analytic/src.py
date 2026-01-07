@@ -68,6 +68,19 @@ class TestAnalyticFunctionManual(unittest.TestCase):
     test.assertTrue(Approx(h.eval(PI)) == 2*PI)
 
 
+    # [4b-beg]
+    a = ScalarVar()
+    v = VectorVar(2)
+
+    Rot = AnalyticFunction([a], mat(vec(cos(a),sin(a)),vec(-sin(a),cos(a))))
+    f = AnalyticFunction([v], Rot(PI/4)*v)
+    
+    y = f.eval([1,1]) # y == [ [-2.22045e-16, 4.4409e-16] ; [1.41421, 1.41422] ]
+    # [4b-end]
+    
+    test.assertTrue(Approx(y,1e-5) == Vector([0,1.41421]))
+
+
     # [5-beg]
     x1 = ScalarVar() # scalar argument
     f1 = AnalyticFunction([x1], x1*cos(x1))
@@ -117,7 +130,7 @@ class TestAnalyticFunctionManual(unittest.TestCase):
     x2 = ScalarVar()
     f2 = AnalyticFunction([x1,x2], x1^x2) # example of multivariate function
     J2 = f2.diff(2.,Interval(2,3))
-    # J2 = intv. matrix 1x2: [[ [4,12], [0,0] ]]
+    # J2 = intv. matrix 1x2: [[ [4,12], [2.77258,5.54518] ]]
 
     v = VectorVar(3)
     f3 = AnalyticFunction([v], [ # vectorial function
@@ -129,7 +142,7 @@ class TestAnalyticFunctionManual(unittest.TestCase):
     # [7-end]
 
     test.assertTrue(Approx(J1) == IntervalMatrix([[[-(PI/2),1]]]))
-    test.assertTrue(Approx(J2,1e-8) == IntervalMatrix([[[4,12],0]]))
+    test.assertTrue(Approx(J2,1e-8) == IntervalMatrix([[[4,12],[4*math.log(2),8*math.log(2)]]]))
     test.assertTrue(J3 == IntervalMatrix([[1,-16,0],[0,0,[-1,0]]]))
 
     f = f3

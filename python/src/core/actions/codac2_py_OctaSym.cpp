@@ -14,10 +14,12 @@
 #include "codac2_py_Ctc.h"
 #include "codac2_py_Sep.h"
 #include <codac2_OctaSym.h>
+#include <codac2_OctaSym_operator.h>
 #include <codac2_template_tools.h>
 #include <codac2_CtcAction.h>
 #include <codac2_SepAction.h>
 #include "codac2_py_OctaSym_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
+#include "codac2_py_cast.h"
 
 using namespace std;
 using namespace codac2;
@@ -38,7 +40,7 @@ void export_OctaSym(py::module& m)
           for(const auto& li : l)
           {
             matlab::test_integer(li);
-            v[i++] = matlab::input_index(li);
+            v[i++] = (Index)li;
           }
 
           return std::make_unique<OctaSym>(v);
@@ -60,7 +62,7 @@ void export_OctaSym(py::module& m)
       MATRIX_OCTASYM_PERMUTATION_MATRIX_CONST)
 
     .def("__call__", [](const OctaSym& a, const IntervalVector& x) { return a(x); },
-      MAT_TMINUSONE1_OCTASYM_OPERATORCALL_CONST_MAT_TMINUSONE1_REF_CONST,
+      MAT_TYPENAME_DERIVED_SCALARMINUSONE1_OCTASYM_OPERATORCALL_CONST_EIGEN_MATRIXBASE_DERIVED_REF_CONST,
       "x"_a)
 
     .def("__call__", [](const OctaSym& a, const pyCtcIntervalVector& c) { return CtcAction(c.copy(),a); },
@@ -70,6 +72,14 @@ void export_OctaSym(py::module& m)
     .def("__call__", [](const OctaSym& a, const SepBase& s) { return SepAction(s.copy(),a); },
       SEPACTION_OCTASYM_OPERATORCALL_CONST_S_REF_CONST,
       "s"_a)
+
+    .def("__call__", [](const OctaSym& a, const SampledTraj<Vector>& x) { return a(x); },
+      SAMPLEDTRAJ_T_OCTASYM_OPERATORCALL_CONST_SAMPLEDTRAJ_T_REF_CONST,
+      "x"_a)
+
+    .def("__call__", [](const OctaSym& a, const VectorExpr& x) { return a.operator()(x); },
+      VECTOREXPR_OCTASYM_OPERATORCALL_CONST_V_REF_CONST,
+      "x"_a)
 
     .def("__repr__", [](const OctaSym& s) {
           std::ostringstream stream;

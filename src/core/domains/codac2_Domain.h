@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <vector>
 #include <string>
+#include "codac2_math.h"
 
 namespace codac2
 {
@@ -38,6 +39,8 @@ namespace codac2
       virtual V mid() const = 0;
       virtual V mag() const = 0;
       virtual V mig() const = 0;
+      virtual V smag() const = 0;
+      virtual V smig() const = 0;
       virtual V rad() const = 0;
       virtual V diam() const = 0;
       virtual double volume() const = 0;
@@ -58,4 +61,11 @@ namespace codac2
       virtual bool is_strict_superset(const T& x) const = 0;
   };
 
+  template<typename... X>
+  static double total_volume(const X&... x)
+  {
+    double v = 0;
+    ((v += x.volume()), ...);
+    return v;
+  }
 }

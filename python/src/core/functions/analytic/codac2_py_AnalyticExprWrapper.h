@@ -87,7 +87,13 @@ inline void export_VectorExpr(py::module& m)
     .def(py::init<VectorExpr>())
     .def(py::init<VectorVar>())
 
-    .def("__getitem__", [](const VectorExpr& x, Index_type i)
+    .def(
+        #if FOR_MATLAB
+          "__call__"
+        #else
+          "__getitem__"
+        #endif
+        , [](const VectorExpr& x, Index_type i)
         {
           matlab::test_integer(i);
           return x[matlab::input_index(i)];
@@ -115,6 +121,7 @@ inline void export_VectorExpr(py::module& m)
     .def("__rmul__", [](const VectorExpr& e1, const ScalarExpr& e2)     { return e2*e1; }, py::is_operator())
     .def("__mul__",  [](const VectorExpr& e1, const Interval& e2)       { return e1*e2; }, py::is_operator())
     .def("__rmul__", [](const VectorExpr& e1, const Interval& e2)       { return e2*e1; }, py::is_operator())
+    .def("__rmul__", [](const VectorExpr& e1, const MatrixExpr& e2)     { return e2*e1; }, py::is_operator())
 
     .def("__truediv__",  [](const VectorExpr& e1, const ScalarExpr& e2) { return e1/e2; }, py::is_operator())
     .def("__truediv__",  [](const VectorExpr& e1, const Interval& e2)   { return e1/e2; }, py::is_operator())
@@ -163,6 +170,9 @@ inline void export_MatrixExpr(py::module& m)
     .def("__rmul__", [](const MatrixExpr& e1, const ScalarExpr& e2)     { return e2*e1; }, py::is_operator())
     .def("__rmul__", [](const MatrixExpr& e1, const Interval& e2)       { return e2*e1; }, py::is_operator())
     .def("__rmul__", [](const MatrixExpr& e1, const ScalarVar& e2)      { return e2*e1; }, py::is_operator())
+    .def("__mul__",  [](const MatrixExpr& e1, const VectorVar& e2)      { return e1*e2; }, py::is_operator())
+    .def("__mul__",  [](const MatrixExpr& e1, const IntervalVector& e2) { return e1*e2; }, py::is_operator())
+    .def("__mul__",  [](const MatrixExpr& e1, const VectorExpr& e2)     { return e1*e2; }, py::is_operator())
 
     .def("__truediv__", [](const MatrixExpr& e1, const ScalarExpr& e2)  { return e1/e2; }, py::is_operator())
     .def("__truediv__", [](const MatrixExpr& e1, const Interval& e2)    { return e1/e2; }, py::is_operator())

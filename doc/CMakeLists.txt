@@ -2,11 +2,6 @@
 #  Codac - cmake configuration file
 # ==================================================================
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mathjax_stmaryrd.js DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mathjax_stmaryrd.js
-        DESTINATION share/doc/${CMAKE_PROJECT_NAME}
-        OPTIONAL)
-
 # Technical API documentation (Doxygen)
 
   if(WITH_PYTHON)
@@ -37,13 +32,13 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mathjax_stmaryrd.js
         set(NULL_DEST "/dev/null")
       endif()
 
-      message(STATUS "Building API Documentation (mandatory for Python binding)")
+      message(STATUS "Building API Documentation (mandatory for Python binding or for building the manual)")
+
+      set(SPHINX_EXTRA_API ${CMAKE_CURRENT_BINARY_DIR}/manual/extra_html/api)
+      file(MAKE_DIRECTORY ${SPHINX_EXTRA_API})
+
       execute_process(COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} OUTPUT_QUIET)
       add_custom_target(api COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} OUTPUT_QUIET)
-
-      install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/api/html 
-              DESTINATION share/doc/${CMAKE_PROJECT_NAME}/api
-              OPTIONAL)
 
     endif()
 
@@ -92,8 +87,19 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mathjax_stmaryrd.js
                       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                       COMMENT "Generating the manual website using Sphinx")
 
+    add_custom_command(
+      TARGET manual POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_directory
+              ${CMAKE_BINARY_DIR}/doc/api/html
+              ${SPHINX_EXTRA_API}
+      COMMENT "Copying generated Doxygen HTML to Sphinx extra_html/api"
+    )
+    
     install(DIRECTORY ${SPHINX_BUILD}/
-            DESTINATION share/manual/${CMAKE_PROJECT_NAME}
+            DESTINATION share/codac_website
             OPTIONAL)
+    install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/api
+            DESTINATION share/codac_website
+        OPTIONAL)
 
   endif()

@@ -152,6 +152,55 @@ namespace codac2
         l.push_back(pts[i]);
       }
 
-    return { l.begin(), l.end() };
+    // Merge consecutive points
+    pts.clear();
+    pts.push_back(l.front()); l.pop_front();
+
+    for(const auto& li : l)
+    {
+      if(li.intersects(pts.back()))
+        pts.back() |= li;
+      else
+        pts.push_back(li);
+    }
+
+    return pts;
+  }
+
+  IntervalVector rotate(const IntervalVector& p, const Interval& a, const IntervalVector& c)
+  {
+    assert_release(p.size() == 2 && c.size() == 2);
+    return {
+      (p[0]-c[0])*cos(a)-(p[1]-c[1])*sin(a)+c[0],
+      (p[0]-c[0])*sin(a)+(p[1]-c[1])*cos(a)+c[1]
+    };
+  }
+
+  void merge_adjacent_points(list<IntervalVector>& l)
+  {
+    bool merged_something;
+    do
+    {
+      merged_something = false;
+      for(auto li = l.begin(); li != l.end();)
+      {
+        for(auto lj = l.begin(); lj != l.end(); ++lj)
+        {
+          if(li != lj && li->intersects(*lj))
+          {
+            *li |= *lj;
+            li = l.erase(li);
+            merged_something = true;
+            break;
+          }
+
+          else
+            ++li;
+        }
+
+        if(merged_something)
+          break;
+      }
+    } while(merged_something);
   }
 }

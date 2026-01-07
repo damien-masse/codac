@@ -74,8 +74,8 @@ TEST_CASE("SampledTraj as operator (1d case)")
 
   AnalyticFunction h { {t}, g(t) };
 
-  for(double t = -PI ; t < PI ; t+=1e-2)
-    CHECK(Approx(h.real_eval(t),1e-8) == cos(t));
+  for(double t_ = -PI ; t_ < PI ; t_+=1e-2)
+    CHECK(Approx(h.real_eval(t_),1e-8) == cos(t_));
 }
 
 TEST_CASE("SampledTraj as operator (nd case)")
@@ -96,8 +96,8 @@ TEST_CASE("SampledTraj as operator (nd case)")
       g(t)
     };
 
-    for(double t = 0 ; t < 5 ; t+=1e-2)
-      CHECK(Approx(h.real_eval(t),1e-8) == Vector({2*cos(t),sin(2*t)}));
+    for(double t_ = 0 ; t_ < 5 ; t_+=1e-2)
+      CHECK(Approx(h.real_eval(t_),1e-8) == Vector({2*cos(t_),sin(2*t_)}));
   }
   {
     AnalyticFunction h {
@@ -105,8 +105,8 @@ TEST_CASE("SampledTraj as operator (nd case)")
       { g(t)[0],g(t)[1] }
     };
 
-    for(double t = 0 ; t < 5 ; t+=1e-2)
-      CHECK(Approx(h.real_eval(t),1e-8) == Vector({2*cos(t),sin(2*t)}));
+    for(double t_ = 0 ; t_ < 5 ; t_+=1e-2)
+      CHECK(Approx(h.real_eval(t_),1e-8) == Vector({2*cos(t_),sin(2*t_)}));
   }
 }
 
@@ -120,4 +120,33 @@ TEST_CASE("SampledTraj: operations")
   x = cos(x) + 4.;
   x -= 42.;
   CHECK(Approx(x.codomain(),1e-5) == Interval(-1,1)+4.-42.);
+}
+
+TEST_CASE("SampledTraj: nan case")
+{
+  SampledTraj<Vector> x;
+  x.set(Vector({0,0}),0.);
+  x.set(Vector({2,2}),2.);
+  CHECK(x(1.) == Vector({1,1}));
+  x.set(Vector({0,NAN}),0.);
+  CHECK(x(1.).is_nan());
+}
+
+TEST_CASE("SampledTraj: derivative")
+{
+  ScalarVar t;
+  AnalyticFunction f({t}, sqr(t)*exp(sin(t)));
+  SampledTraj<double> x = AnalyticTraj(f,{0,10}).sampled(1e-3);
+  SampledTraj<double> s = AnalyticTraj(AnalyticFunction({t},exp(sin(t))*(2*t+sqr(t)*cos(t))),{0,10}).sampled(1e-2);
+
+  //DefaultFigure::plot_trajectory(x);
+  //DefaultFigure::plot_trajectory(x.derivative(), Color::blue());
+  //DefaultFigure::plot_trajectory(s, Color::light_gray());
+  //DefaultFigure::plot_trajectory(x.derivative().primitive(), Color::red());
+
+  auto d = x.derivative();
+  auto p = d.primitive();
+
+  for(double i = 0 ; i < 10 ; i+=1e-1)
+    CHECK(Approx(p(i),1e-2) == x(i));
 }

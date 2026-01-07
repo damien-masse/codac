@@ -2,10 +2,10 @@ from codac import *
 
 # As an example, defining a custom contractor (does nothing special here)
 
-class MyCtc(Ctc):
+class MyCtc(Ctc_IntervalVector):
 
   def __init__(self, C_):
-    Ctc.__init__(self, C_.size())
+    Ctc_IntervalVector.__init__(self, C_.size())
     self.C = C_
 
   def contract(self, x):
@@ -18,4 +18,4 @@ f = AnalyticFunction([x], sqrt(sqr(x[0])+sqr(x[1])))
 c = CtcInverse(f, [2.2,2.4])
 
 a = MyCtc(c) | CtcWrapper([[-1.5,1.5],[-0.25,0.25]])
-draw_while_paving([[-5,5],[-5,5]], a, 0.1)
+DefaultFigure.pave([[-5,5],[-5,5]], a, 0.1)

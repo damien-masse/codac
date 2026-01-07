@@ -27,12 +27,24 @@ void export_ColorMap(py::module& m)
         COLORMAP_COLORMAP_MODEL,
         "m"_a=Model::RGB)
 
-    .def("__getitem__", [](const ColorMap& x, float r) -> const Color&
+    .def(
+        #if FOR_MATLAB
+          "__call__"
+        #else
+          "__getitem__"
+        #endif
+        , [](const ColorMap& x, float r) -> const Color&
         {
           return x.at(r);
         }, py::return_value_policy::reference_internal)
 
-    .def("__setitem__", [](ColorMap& x, float r, const Color& c)
+    .def(
+        #if FOR_MATLAB
+          "setitem"
+        #else
+          "__setitem__"
+        #endif
+        , [](ColorMap& x, float r, const Color& c)
         {
           x[r] = c;
         })
@@ -47,19 +59,25 @@ void export_ColorMap(py::module& m)
     // Predifined color maps
 
     .def_static("haxby", &ColorMap::haxby,
-        STATIC_COLORMAP_COLORMAP_HAXBY)
+        STATIC_COLORMAP_COLORMAP_HAXBY_FLOAT,
+        "alpha"_a=1.)
     
     .def_static("basic", &ColorMap::basic,
-        STATIC_COLORMAP_COLORMAP_BASIC)
+        STATIC_COLORMAP_COLORMAP_BASIC_FLOAT,
+        "alpha"_a=1.)
 
     .def_static("blue_tube", &ColorMap::blue_tube,
-        STATIC_COLORMAP_COLORMAP_BLUE_TUBE)
+        STATIC_COLORMAP_COLORMAP_BLUE_TUBE_FLOAT,
+        "alpha"_a=1.)
+
 
     .def_static("red_tube", &ColorMap::red_tube,
-        STATIC_COLORMAP_COLORMAP_RED_TUBE)
+        STATIC_COLORMAP_COLORMAP_RED_TUBE_FLOAT,
+        "alpha"_a=1.)
 
     .def_static("rainbow", &ColorMap::rainbow,
-        STATIC_COLORMAP_COLORMAP_RAINBOW)
+        STATIC_COLORMAP_COLORMAP_RAINBOW_FLOAT,
+        "alpha"_a=1.)
 
   ;
 }

@@ -383,6 +383,25 @@ TEST_CASE("bwd mul operations")
   //
   //cout << x << endl;
   //cout << x2 << endl;
+  IntervalMatrix Q { { 1, 0, deltaM }, 
+		     { 0, deltaM, 1 } };
+  IntervalMatrix R { { 1, 0 }, {0 , 1} };
+  IntervalMatrix P { { {0,1}, {0,1} },
+	             { {0,1}, {0,1} },
+		     { {0,1}, {0,1} } };
+  MulOp::bwd(R,Q,P);
+  CHECK(Approx(P,1e-5) == IntervalMatrix({{{0.99,1},{0,0.1}},{{0,1},{0,1}},{{0,0.1},{0.9,1}}}));
+}
+
+TEST_CASE("test chi op")
+{
+  CHECK(ChiOp::fwd(Interval(0.2,0.4),Interval(-2.0,-1.0),Interval(1.0,2.0)) == Interval(1.0,2.0));
+  CHECK(ChiOp::fwd(Interval(-0.2,0.2),IntervalVector({{-2.0,-1.0},{-1.0,0.0}}),IntervalVector({0.0,1.0})) == IntervalVector({{-2.0,0.0},{-1.0,1.0}}));
+  CHECK(ChiOp::fwd(
+    Interval(-0.2,0.0),
+    IntervalMatrix({{{-2.0,-1.0},{-1.0,0.0}},{{-2.0,-1.0},{-1.0,0.0}}}),
+    IntervalMatrix({{{2.0,3.0},{0.0,3.0}},{{2.0,3.0},{1.0,2.0}}}))
+  == IntervalMatrix({{{-2.0,-1.0},{-1.0,0.0}},{{-2.0,-1.0},{-1.0,0.0}}}));
 }
 
 TEST_CASE("test cross prod")
@@ -398,4 +417,24 @@ TEST_CASE("test mat operator")
   IntervalVector x1({2,3}), x2({4,5}), x3({6,7}); 
   CHECK(MatrixOp::fwd(x1,x2,x3) == IntervalMatrix({{2,4,6},{3,5,7}}));
   CHECK(MatrixOp::fwd(x1) == IntervalMatrix({{2},{3}}));
+}
+
+TEST_CASE("test transpose operator")
+{
+  IntervalMatrix M({{ {1,1.5},{2,2.5},{3,3.5} },{ {4,4.5},{5,5.5},{6,6.5} } });
+  IntervalMatrix N({{ {0.8,1.2}, {3.5,4} }, { {2.0,2.2}, {4.8,5.2} },
+		{ {2.8,3.2}, {5.8,6.2} }});
+  CHECK(TransposeOp::fwd(M) == IntervalMatrix({{{1,1.5},{4,4.5}},{{2,2.5},{5,5.5}},{{3,3.5},{6,6.5}}}));
+  TransposeOp::bwd(N,M);
+  CHECK(M == IntervalMatrix({{ {1,1.2},{2,2.2},{3,3.2} },{ 4.0,{5,5.2},{6,6.2} } }));
+}
+
+TEST_CASE("test flatten operator")
+{
+  IntervalMatrix M({{ {1,1.5},{2,2.5},{3,3.5} },{ {4,4.5},{5,5.5},{6,6.5} } });
+  IntervalVector N({ {0.8,1.2}, {3.5,4} ,  {2.0,2.2}, {4.8,5.2} ,
+		 {2.8,3.2}, {5.8,6.2} });
+  CHECK(FlattenOp::fwd(M) == IntervalVector({{1,1.5},{4,4.5},{2,2.5},{5,5.5},{3,3.5},{6,6.5}}));
+  FlattenOp::bwd(N,M);
+  CHECK(M == IntervalMatrix({ {{1,1.2},{2,2.2},{3,3.2}} , {4.0,{5,5.2},{6,6.2}} }));
 }

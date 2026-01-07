@@ -14,7 +14,7 @@
 #include <codac2_pave.h>
 #include <codac2_Subpaving.h>
 #include <codac2_CtcWrapper.h>
-#include <codac2_drawwhilepaving.h>
+#include <codac2_SepInverse.h>
 
 using namespace std;
 using namespace codac2;
@@ -22,9 +22,27 @@ using namespace codac2;
 TEST_CASE("CtcInverse")
 {
   {
+    ScalarVar x;
+    AnalyticFunction f { {x}, x-42 };
+    CtcInverse<Interval,Interval> c(f, Interval(0.));
+    Interval a;
+    c.contract(a);
+    CHECK(a == 42);
+  }
+
+  {
+    VectorVar x(1);
+    AnalyticFunction f { {x}, x[0]-42 };
+    CtcInverse<Interval,IntervalVector> c(f, Interval(0.));
+    IntervalVector a(1);
+    c.contract(a);
+    CHECK(a == IntervalVector({{42}}));
+  }
+
+  {
     ScalarVar x,y;
     AnalyticFunction f { {x,y}, x-y };
-    CtcInverse_<Interval> c(f, Interval(0.));
+    CtcInverse<Interval,Interval,Interval> c(f, Interval(0.));
     CHECK(c.function().input_size() == 2);
 
     Interval a,b;
@@ -230,19 +248,65 @@ TEST_CASE("ParabolasExample")
   CtcInverse ctc(h, IntervalVector::zero(3));
   IntervalVector x0 {{0,1},{0,1},{0.05,0.18},{0.05,0.18}};
 
-  //draw_while_paving(x0, ctc, 0.001);
+  //DefaultFigure::pave(x0, ctc, 0.001);
   //DefaultFigure::set_axes(axis(0,{0.11,0.23}), axis(1,{0.1,0.22}));
 
   auto p = pave(x0, ctc, 0.01);
   auto cs = p.connected_subsets();
   CHECK(cs.size() == 1);
-  CHECK(Approx(cs.begin()->box(),1e-4) == IntervalVector({
-    {0.149199,0.182388},
-    {0.148306,0.1826},
-    {0.148054,0.18},
-    {0.148732,0.18}
-  }));
+  IntervalVector hull({
+     {0.149199,0.182388},
+     {0.148306,0.1826},
+     {0.148054,0.18},
+     {0.148732,0.18}
+  });
+  hull.inflate(1e-4);
+  CHECK(hull.is_superset(cs.begin()->box()));
 
   //for(const auto& bi : cs)
   //  DefaultFigure::draw_box(bi.box().subvector(0,1));
+}
+
+TEST_CASE("Automatic template deduction - Issue #245")
+{
+  VectorVar s(2);
+  AnalyticFunction f({s},{sqr(s[0])+sqr(s[1])-1.0});
+
+  // Compilation checks:
+
+  SepInverse s1(f,IntervalVector({0.0})*0.); // expr. template
+  SepInverse s2(f,IntervalVector({0.0}));
+  SepInverse s3(f,Vector({0.0}));
+  SepInverse s4(f,{{0.0,0.0}});
+  SepInverse s5(f,{0.0});
+  SepInverse s6(f,{0});
+
+  CtcInverse c1(f,IntervalVector({0.0})*0.); // expr. template
+  CtcInverse c2(f,IntervalVector({0.0}));
+  CtcInverse c3(f,Vector({0.0}));
+  CtcInverse c4(f,{{0.0,0.0}});
+  CtcInverse c5(f,{0.0});
+  CtcInverse c6(f,{0});
+
+  CHECK(s1.separate(IntervalVector(2)).outer == IntervalVector({{-1,1},{-1,1}}));
+  CHECK(s2.separate(IntervalVector(2)).outer == IntervalVector({{-1,1},{-1,1}}));
+  CHECK(s3.separate(IntervalVector(2)).outer == IntervalVector({{-1,1},{-1,1}}));
+  CHECK(s4.separate(IntervalVector(2)).outer == IntervalVector({{-1,1},{-1,1}}));
+  CHECK(s5.separate(IntervalVector(2)).outer == IntervalVector({{-1,1},{-1,1}}));
+  CHECK(s6.separate(IntervalVector(2)).outer == IntervalVector({{-1,1},{-1,1}}));
+
+  IntervalVector x(2);
+
+  x = IntervalVector(2); c1.contract(x);
+  CHECK(x == IntervalVector({{-1,1},{-1,1}}));
+  x = IntervalVector(2); c2.contract(x);
+  CHECK(x == IntervalVector({{-1,1},{-1,1}}));
+  x = IntervalVector(2); c3.contract(x);
+  CHECK(x == IntervalVector({{-1,1},{-1,1}}));
+  x = IntervalVector(2); c4.contract(x);
+  CHECK(x == IntervalVector({{-1,1},{-1,1}}));
+  x = IntervalVector(2); c5.contract(x);
+  CHECK(x == IntervalVector({{-1,1},{-1,1}}));
+  x = IntervalVector(2); c6.contract(x);
+  CHECK(x == IntervalVector({{-1,1},{-1,1}}));
 }

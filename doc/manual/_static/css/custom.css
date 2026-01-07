@@ -76,6 +76,16 @@ div[class^="highlight"] {
   color: white;
 }
 
+.bg-noa { /* noa: "not available" */
+  background-color: #DDDDDD;
+  color: gray;
+}
+
+.medskip {
+  color: transparent; /* make the text invisible */
+  user-select: none; /* prevent selection of the text */
+}
+
 td:has(.bg-ok) {
   background-color: #2ecc71;
 }
@@ -86,6 +96,14 @@ td:has(.bg-bok) {
 
 td:has(.bg-nok) {
   background-color: #e55039;
+}
+
+td:has(.bg-noa) { /* noa: "not available" */
+  background-color: #DDDDDD;
+}
+
+td:has(.medskip) {
+  min-width: 120px;
 }
 
 .cpp + .sphinx-tabs::before { /* for examples following a Doxygen block */
@@ -121,7 +139,41 @@ article .align-default {
   text-align: left;
 }
 
+article .align-centered {
+  text-align: center;
+}
+
 dl.cpp:not(dl.cpp dl.cpp) { /* for displaying a border on doxygen blocks */
   border-left: 5px solid var(--color-background-border);
   padding-left: 5px;
+}
+
+#how-to-cite-codac pre {
+  font-size: 60%;
+}
+
+a .download:before {
+  content: "⬇️ ";
+}
+
+.toggle-hidden .sphinx-tabs-panel {
+  background-color: #AAFFBF;
+}
+
+.toggle-hidden .sphinx-tabs-panel, .toggle-hidden [aria-selected="true"] {
+  background-color: #AAFFBF;
+  border-bottom: 1px solid #AAFFBF;
+}
+
+.reveal-bg { /* displays a checkerboard background to reveal transparency effects */
+  --size: 12px;
+
+  background-color: #eee;
+  background-image:
+      linear-gradient(45deg, #ddd 25%, transparent 25%),
+      linear-gradient(-45deg, #ddd 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ddd 75%),
+      linear-gradient(-45deg, transparent 75%, #ddd 75%);
+  background-size: var(--size) var(--size);
+  background-position: 0 0, 0 calc(var(--size)/2), calc(var(--size)/2) calc(var(--size)/-2), calc(var(--size)/-2) 0;
 }

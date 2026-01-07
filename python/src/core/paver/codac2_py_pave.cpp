@@ -10,6 +10,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
+#include <pybind11/functional.h>
 #include <codac2_pave.h>
 #include "codac2_py_pave_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py):
 #include "codac2_py_cast.h"
@@ -25,16 +26,24 @@ void export_pave(py::module& m)
     PAVINGOUT_PAVE_CONST_INTERVALVECTOR_REF_CONST_CTCBASE_INTERVALVECTOR_REF_DOUBLE_BOOL,
     "x"_a, "c"_a, "eps"_a, "verbose"_a=false);
 
+  m.def("pave", (PavingOut (*)(const IntervalVector&,const CtcBase<IntervalVector>&,double,double&,bool))&codac2::pave,
+    PAVINGOUT_PAVE_CONST_INTERVALVECTOR_REF_CONST_CTCBASE_INTERVALVECTOR_REF_DOUBLE_DOUBLE_REF_BOOL,
+    "x"_a, "c"_a, "eps"_a, "time"_a, "verbose"_a=false);
+
   m.def("pave", (PavingInOut (*)(const IntervalVector&,const SepBase&,double,bool))&codac2::pave,
     PAVINGINOUT_PAVE_CONST_INTERVALVECTOR_REF_CONST_SEPBASE_REF_DOUBLE_BOOL,
     "x"_a, "s"_a, "eps"_a, "verbose"_a=false);
+
+  m.def("regular_pave", &codac2::regular_pave,
+    PAVINGINOUT_REGULAR_PAVE_CONST_INTERVALVECTOR_REF_CONST_FUNCTION_BOOLINTERVAL_CONST_INTERVALVECTOR_REF__REF_DOUBLE_BOOL,
+    "x"_a, "test"_a, "eps"_a, "verbose"_a=false);
 
   m.def("sivia",
       [](const IntervalVector& x, const py::object& f, const py::object& y, double eps, bool verbose)
       {
         if(!is_instance<AnalyticFunction<ScalarType>>(f)
           && !is_instance<AnalyticFunction<VectorType>>(f)
-          && !is_instance<AnalyticFunction<VectorType>>(f)) {
+          && !is_instance<AnalyticFunction<MatrixType>>(f)) {
           assert_release("sivia: invalid function type");
         }
 

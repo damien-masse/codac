@@ -42,22 +42,27 @@ namespace codac2
         : _tree(std::make_shared<PavingNode<P>>(*static_cast<P*>(this), x))
       { }
 
-      Index size() const
+      inline Index size() const
       {
         return std::get<0>(_tree->boxes()).size();
       }
 
-      std::shared_ptr<const PavingNode<P>> tree() const
+      inline std::shared_ptr<const PavingNode<P>> tree() const
       {
         return _tree;
       }
 
-      std::shared_ptr<PavingNode<P>> tree()
+      inline std::shared_ptr<PavingNode<P>> tree()
       {
         return std::const_pointer_cast<PavingNode<P>>(const_cast<const Paving<P,X...>*>(this)->tree());
       }
 
-      std::list<IntervalVector> intersecting_boxes(const IntervalVector& x, const NodeValue_& node_value) const
+      inline std::list<IntervalVector> boxes(const NodeValue_& node_value) const
+      {
+        return boxes(node_value, IntervalVector(size()));
+      }
+
+      inline std::list<IntervalVector> boxes(const NodeValue_& node_value, const IntervalVector& intersecting_box) const
       {
         std::list<IntervalVector> l;
 
@@ -65,26 +70,22 @@ namespace codac2
           (Node_ n)
           {
             for(const auto& bi : node_value(n))
-            {
-              auto inter = bi & x;
-              if(bi.intersects(x))
+              if(bi.intersects(intersecting_box))
                 l.push_back(bi);
-            }
-
-            return n->hull().intersects(x);
+            return n->hull().intersects(intersecting_box);
           });
 
         return l;
       }
 
-      std::list<ConnectedSubset_> connected_subsets(const NodeValue_& node_value) const
+      inline std::list<ConnectedSubset_> connected_subsets(const NodeValue_& node_value) const
       {
         return connected_subsets(IntervalVector(size()), node_value);
       }
 
-      std::list<ConnectedSubset_> connected_subsets(const IntervalVector& x0, const NodeValue_& node_value) const
+      inline std::list<ConnectedSubset_> connected_subsets(const IntervalVector& x0, const NodeValue_& node_value) const
       {
-        std::list<IntervalVector> l_boxes = intersecting_boxes(x0, node_value);
+        std::list<IntervalVector> l_boxes = boxes(node_value, x0);
         [[maybe_unused]] Index nb_boxes = l_boxes.size();
         std::list<ConnectedSubset_> l_subsets;
 
@@ -101,7 +102,7 @@ namespace codac2
             current_box = l_neighbouring_boxes_to_visit.front();
             l_neighbouring_boxes_to_visit.pop_front();
 
-            for(const auto& ni : intersecting_boxes(current_box, node_value))
+            for(const auto& ni : boxes(node_value, current_box))
             {
               if(std::find(l_boxes.begin(), l_boxes.end(), ni) != l_boxes.end())
               {
@@ -125,7 +126,7 @@ namespace codac2
 
       friend class PavingNode<P>;
 
-      static NodeTuple_ init_tuple(const IntervalVector& x)
+      inline static NodeTuple_ init_tuple(const IntervalVector& x)
       {
         return std::make_tuple(((X)x)...);
       }
@@ -146,6 +147,25 @@ namespace codac2
 
       std::list<PavingOut::ConnectedSubset_> connected_subsets(const PavingOut::NodeValue_& node_value = PavingOut::outer) const;
       std::list<PavingOut::ConnectedSubset_> connected_subsets(const IntervalVector& x0, const PavingOut::NodeValue_& node_value = PavingOut::outer) const;
+
+      inline IntervalVector operator&(const IntervalVector& x) const
+      {
+        assert_release(x.size() == this->size());
+        
+        if(x.is_empty())
+          return IntervalVector::empty(x.size());
+
+        IntervalVector x_ = IntervalVector::empty(x.size());
+        this->tree()->visit([&]
+          (Node_ n)
+          {
+            for(const auto& bi : PavingOut::outer(n))
+              x_ |= bi & x;
+            return n->hull().intersects(x);
+          });
+        assert(x_.is_subset(x));
+        return x_;
+      }
 
       static const NodeValue_ outer, outer_complem;
   };

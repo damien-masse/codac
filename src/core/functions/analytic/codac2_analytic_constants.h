@@ -2,7 +2,7 @@
  *  \file codac2_analytic_constants.h
  * ----------------------------------------------------------------------------
  *  \date       2024
- *  \author     Simon Rohou
+ *  \author     Simon Rohou, Damien Massé
  *  \copyright  Copyright 2024 Codac Team
  *  \license    GNU Lesser General Public License (LGPL)
  */
@@ -10,7 +10,7 @@
 #pragma once
 
 #include "codac2_Index.h"
-#include "codac2_ValueType.h"
+#include "codac2_ExprType.h"
 
 namespace codac2
 {
@@ -22,6 +22,11 @@ namespace codac2
       ConstValueExpr(const typename T::Domain& x)
         : _x(x)
       { }
+
+      const typename T::Domain& value() const
+      {
+        return _x;
+      }
 
       std::shared_ptr<ExprBase> copy() const
       {
@@ -55,10 +60,31 @@ namespace codac2
         AnalyticExpr<T>::value(v).a &= _x;
       }
 
-      void replace_expr([[maybe_unused]] const ExprID& old_expr_id, [[maybe_unused]] const std::shared_ptr<ExprBase>& new_expr)
+      std::pair<Index,Index> output_shape() const
+      {
+        if constexpr(std::is_same_v<T,ScalarType>)
+          return {1,1};
+
+        if constexpr(std::is_same_v<T,VectorType>)
+          return {_x.size(),1};
+
+        if constexpr(std::is_same_v<T,MatrixType>)
+          return {_x.rows(),_x.cols()};
+
+        assert_release_constexpr(false && "unknow output shape for constant");
+      }
+
+      void replace_arg([[maybe_unused]] const ExprID& old_arg_id, [[maybe_unused]] const std::shared_ptr<ExprBase>& new_expr)
       { }
 
       virtual bool belongs_to_args_list([[maybe_unused]] const FunctionArgsList& args) const
+      {
+        return true;
+      }
+
+      virtual std::string str(bool in_parentheses = false) const override;
+
+      virtual bool is_str_leaf() const
       {
         return true;
       }
@@ -69,8 +95,10 @@ namespace codac2
   };
 
   template<typename T>
-  inline AnalyticExprWrapper<typename ValueType<T>::Type> const_value(const T& x)
+  inline AnalyticExprWrapper<typename ExprType<T>::Type> const_value(const T& x)
   {
-    return { std::make_shared<ConstValueExpr<typename ValueType<T>::Type>>(x) };
+    return { std::make_shared<ConstValueExpr<typename ExprType<T>::Type>>(x) };
   }
 }
+
+#include "codac2_analytic_constants_impl.h"

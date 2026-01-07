@@ -14,6 +14,7 @@
 #include "codac2_Vector.h"
 #include "codac2_IntervalVector.h"
 #include "codac2_StyleProperties.h"
+#include "codac2_StyleGradientProperties.h"
 #include "codac2_Ellipsoid.h"
 #include "codac2_SampledTraj.h"
 #include "codac2_AnalyticTraj.h"
@@ -46,52 +47,52 @@ namespace codac2
        * \brief Draws a point on the figure
        * 
        * \param c Coordinates of the point
-       * \param s Style of the point (edge color and fill color)
+       * \param style Style of the point (edge color and fill color)
        */
-      virtual void draw_point(const Vector& c, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_point(const Vector& c, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws a box on the figure
        * 
        * \param x Box to draw
-       * \param s Style of the box (edge color and fill color)
+       * \param style Style of the box (edge color and fill color)
        */
-      virtual void draw_box(const IntervalVector& x, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_box(const IntervalVector& x, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws a circle on the figure
        * 
        * \param c Center of the circle
        * \param r Radius of the circle
-       * \param s Style of the circle (edge color and fill color)
+       * \param style Style of the circle (edge color and fill color)
        */
-      virtual void draw_circle(const Vector& c, double r, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_circle(const Vector& c, double r, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws a ring on the figure
        * 
        * \param c Center of the ring
        * \param r Inner and outer radius of the ring
-       * \param s Style of the ring (edge color and fill color)
+       * \param style Style of the ring (edge color and fill color)
        */
-      virtual void draw_ring(const Vector& c, const Interval& r, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_ring(const Vector& c, const Interval& r, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws a polyline on the figure
        * 
        * \param x Vector of the points of the polyline
        * \param tip_length Length of the tip of the arrow
-       * \param s Style of the polyline (edge color and fill color)
+       * \param style Style of the polyline (edge color and fill color)
        */
-      virtual void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_polyline(const std::vector<Vector>& x, float tip_length, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws a polygone on the figure
        * 
        * \param x Vector of the points of the polygone
-       * \param s Style of the polygone (edge color and fill color)
+       * \param style Style of the polygone (edge color and fill color)
        */
-      virtual void draw_polygon(const std::vector<Vector>& x, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_polygon(const std::vector<Vector>& x, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws a pie on the figure
@@ -99,9 +100,9 @@ namespace codac2
        * \param c Center of the pie
        * \param r Inner and outer radius of the pie
        * \param theta Start and end angle of the pie (in radians)
-       * \param s Style of the pie (edge color and fill color)
+       * \param style Style of the pie (edge color and fill color)
        */
-      virtual void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_pie(const Vector& c, const Interval& r, const Interval& theta, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws an ellipse on the figure
@@ -109,9 +110,9 @@ namespace codac2
        * \param c Center of the ellipse
        * \param ab Half-lengths of the ellipse
        * \param theta Rotation angle of the ellipse (in radians)
-       * \param s Style of the ellipse (edge color and fill color)
+       * \param style Style of the ellipse (edge color and fill color)
        */
-      virtual void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_ellipse(const Vector& c, const Vector& ab, double theta, const StyleProperties& style = StyleProperties()) = 0;
 
       // Robots
 
@@ -120,26 +121,47 @@ namespace codac2
        * 
        * \param x Coordinates of the tank
        * \param size Size of the tank
-       * \param s Style of the tank (edge color and fill color)
+       * \param style Style of the tank (edge color and fill color)
        */
-      virtual void draw_tank(const Vector& x, float size, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_tank(const Vector& x, float size, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws an AUV on the figure
        * 
        * \param x Coordinates of the AUV
        * \param size Size of the AUV
-       * \param s Style of the AUV (edge color and fill color)
+       * \param style Style of the AUV (edge color and fill color)
        */
-      virtual void draw_AUV(const Vector& x, float size, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_AUV(const Vector& x, float size, const StyleProperties& style = StyleProperties()) = 0;
 
       /**
        * \brief Draws a motor boat on the figure
        * 
        * \param x Coordinates of the motor boat
        * \param size Size of the motor boat
-       * \param s Style of the motor boat (edge color and fill color)
+       * \param style Style of the motor boat (edge color and fill color)
        */
-      virtual void draw_motor_boat(const Vector& x, float size, const StyleProperties& s = StyleProperties()) = 0;
+      virtual void draw_motor_boat(const Vector& x, float size, const StyleProperties& style = StyleProperties()) = 0;
+
+      // Miscellaneous
+
+      /**
+       * \brief Draws text on the figure
+       * 
+       * \param text Text to display
+       * \param ul Position of the top-left corner of the text
+       * \param scale Scaling of the text (VIBes only)
+       * \param style Style of the text (color, layer)
+       */
+      virtual void draw_text(const std::string& text, const Vector& ul, double scale, const StyleProperties& style = StyleProperties()) = 0;
+
+      /**
+       * \brief Draws a raster on the figure
+       * 
+       * \param filename The name of the file
+       * \param bbox The bounding box of the raster
+       * \param style Style of the raster (only the layer is used)
+       */
+      virtual void draw_raster(const std::string& filename, const IntervalVector& bbox, const StyleProperties& style = StyleProperties()) = 0;
   };
 }

@@ -11,13 +11,13 @@
 
 #include <type_traits>
 #include <cassert>
-#include <vector>
+#include <list>
 #include <memory>
 
 namespace codac2
 {
   template<typename T>
-  class Collection
+  class Collection : public std::list<std::shared_ptr<T>>
   {
     public:
 
@@ -25,94 +25,38 @@ namespace codac2
       { }
 
       template<typename... T_>
-        requires ((std::is_base_of_v<T,T_> // T_ should be some T class
-          && !std::is_same_v<Collection<T>,T_>) && ...)
+        requires ((!std::is_same_v<Collection<T>,T_>) && ...)
       Collection(const T_&... x)
       {
-        (add_shared_ptr(std::make_shared<T_>(x)), ...);
+        (this->push_back(x), ...);
       }
 
-      template<typename... T_>
-        requires (std::is_same_v<std::shared_ptr<T>,std::shared_ptr<T_>> && ...)
-      Collection(const std::shared_ptr<T_>&... x)
-      {
-        (add_shared_ptr(x), ...);
-      }
+      Collection(std::initializer_list<std::shared_ptr<T>> init)
+        : std::list<std::shared_ptr<T>>(init)
+      { }
 
       Collection(const Collection<T>& c)
+        : std::list<std::shared_ptr<T>>()
       {
-        for(const auto& ci : c._v)
-          add_shared_ptr(std::dynamic_pointer_cast<T>(ci->copy()));
+        for(const auto& ci : c)
+        {
+          assert(ci);
+          this->push_back(std::dynamic_pointer_cast<T>(ci->copy()));
+        }
       }
 
       template<typename T_>
         requires std::is_base_of_v<T,T_>
-      void add(const T_& x)
+      void push_back(const T_& x)
       {
-        add_shared_ptr(std::make_shared<T>(x));
+        this->push_back(std::make_shared<T_>(x));
       }
 
-      void add_shared_ptr(std::shared_ptr<T> shrd_ptr)
+      template<typename T_>
+        requires std::is_base_of_v<T,T_>
+      void push_back(const std::shared_ptr<T_>& x)
       {
-        assert(shrd_ptr);
-        _v.push_back(shrd_ptr);
-        _v_raw.push_back(shrd_ptr.get());
+        this->std::list<std::shared_ptr<T>>::push_back(x);
       }
-
-      void add_raw_ptr(T *x)
-      {
-        assert(x);
-        _v_raw.push_back(x);
-      }
-
-      using iterator = typename std::vector<T*>::iterator;
-      using const_iterator = typename std::vector<T*>::const_iterator;
-
-      T& front()
-      {
-        return const_cast<T&>(const_cast<const Collection<T>*>(this)->front());
-      }
-
-      const T& front() const
-      {
-        assert(!_v_raw.empty());
-        return *_v_raw.front();
-      }
-
-      T& back()
-      {
-        return const_cast<T&>(const_cast<const Collection<T>*>(this)->back());
-      }
-
-      const T& back() const
-      {
-        assert(!_v_raw.empty());
-        return *_v_raw.back();
-      }
-
-      iterator begin()
-      {
-        return const_cast<iterator>(const_cast<const Collection<T>*>(this)->begin());
-      }
-
-      const_iterator begin() const
-      {
-        return _v_raw.cbegin();
-      }
-
-      const_iterator end() const
-      {
-        return _v_raw.cend();
-      }
-
-      iterator end()
-      {
-        return const_cast<iterator>(const_cast<const Collection<T>*>(this)->end());
-      }
-
-    private:
-
-      std::vector<std::shared_ptr<T>> _v;
-      std::vector<T*> _v_raw;
   };
 }

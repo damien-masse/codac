@@ -16,7 +16,6 @@
 #include "codac2_IntervalVector.h"
 #include "codac2_Paving.h"
 #include "codac2_template_tools.h"
-#include "codac2_Figure2D.h"
 
 namespace codac2
 {
@@ -64,7 +63,7 @@ namespace codac2
 
         else
         {
-          assert_release(false &&
+          assert_release_constexpr(false &&
             "cannot find a default complementary \"node value\" function for such Subaving class");
           return { };
         }

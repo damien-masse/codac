@@ -14,14 +14,24 @@ def hull(x):
   if x == -oo:
     return Interval(-oo, next_float(-oo))
   if x == oo:
-    return Interval(previous_float(oo), oo)
+    return Interval(prev_float(oo), oo)
   else:
-    return INterval(x)
+    return Interval(x)
 
 
 class TestSegment(unittest.TestCase):
 
-  def tests_intersects(self):
+  def test_contains(self):
+
+    p1 = Vector([0,-10])
+    p2 = Vector([-10,-10])
+    p3 = Vector([-11,-10])
+    e1 = Segment(Vector([-10,-10]), Vector([10,-10]))
+    self.assertTrue(e1.contains(p1) == BoolInterval.TRUE)
+    self.assertTrue(e1.contains(p2) == BoolInterval.TRUE)
+    self.assertTrue(e1.contains(p3) == BoolInterval.FALSE)
+
+  def test_intersects(self):
 
     self.assertTrue(Segment([[0,0],[10,0]]).intersects(Segment([[4,0],[6,0]])) == BoolInterval.TRUE)
     self.assertTrue(Segment([[0,0],[10,0]]).intersects(Segment([[5,0],[15,0]])) == BoolInterval.TRUE)
@@ -33,7 +43,7 @@ class TestSegment(unittest.TestCase):
     self.assertTrue(Segment(IntervalVector([hull(-oo),2]),Vector([0,2])).intersects(Segment(Vector([0,0]),Vector([0,1]))) == BoolInterval.FALSE)
     self.assertTrue(Segment(IntervalVector([hull(-oo),2]),Vector([0,2])).intersects(Segment(Vector([0,0]),Vector([0,2]))) == BoolInterval.TRUE)
 
-  def tests_contains(self):
+  def test_contains(self):
 
     p1,p2,p3 = Vector([0.,0.]), Vector([1.5,3.]), Vector([0.,2.])
     e1 = Segment(Vector([-10.,-10.]), Vector([10.,10.]))
@@ -45,7 +55,7 @@ class TestSegment(unittest.TestCase):
     self.assertTrue(e3.contains(p2) != BoolInterval.FALSE)
     self.assertTrue(e3.contains(p3) == BoolInterval.FALSE)
 
-  def tests_proj_intersection(self):
+  def test_proj_intersection(self):
 
     self.assertTrue(proj_intersection([[0,0],[1,1]], [[3,3],[4,4]])
       == IntervalVector(2))
@@ -80,7 +90,7 @@ class TestSegment(unittest.TestCase):
     self.assertTrue(proj_intersection([[0,4],[4,0]], [[4,4],[0,0]])
       == IntervalVector([2,2]))
 
-  def tests_intersection(self):
+  def test_intersection(self):
 
     self.assertTrue((Segment([0,0],[0,0]) & Segment([0,0],[5,0])) == IntervalVector([0,0])) # degenerate line, horizontal edge line
     self.assertTrue((Segment([0,0],[0,0]) & Segment([0,0],[0,5])) == IntervalVector([0,0])) # degenerate line, vertical edge line
@@ -118,6 +128,11 @@ class TestSegment(unittest.TestCase):
 
     self.assertTrue((Segment([2,0],[6,4]) & Segment([6,5],[5,6])) == IntervalVector.empty(2))
     self.assertTrue(proj_intersection(Segment([2,0],[6,4]), Segment([6,5],[5,6])) == IntervalVector([6.5,4.5]))
+
+    # Near infinite cases
+    e1 = Segment([-1,6],[-1,next_float(-oo)])
+    e2 = Segment([-1,-1],[3,-6])
+    self.assertTrue((e1 & e2) == IntervalVector([-1,-1]))
 
 if __name__ ==  '__main__':
   unittest.main()

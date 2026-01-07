@@ -6,21 +6,27 @@
 
     ${CMAKE_CURRENT_SOURCE_DIR}/actions/codac2_OctaSym.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/actions/codac2_OctaSym.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/actions/codac2_OctaSym_operator.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_Ctc.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcAction.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCartProd.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcConstell.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcConstell.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCross.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCross.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcCtcBoundary.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDeriv.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDeriv.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcDist.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEllipse.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEllipse.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEmpty.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEmpty.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcEval.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcFixpoint.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcFixpoint.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcIdentity.cpp
@@ -41,6 +47,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcPolygon.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcProj.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcProj.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcQInter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcQInter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcSegment.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcSegment.h
     ${CMAKE_CURRENT_SOURCE_DIR}/contractors/codac2_CtcWrapper.h
@@ -51,6 +59,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/codac2_Domain.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/codac2_Wrapper.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_checks.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_mapping.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_utils.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/ellipsoid/codac2_Ellipsoid_utils.h
@@ -65,6 +75,24 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_Paving.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_PavingNode.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving/codac2_Subpaving.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Parallelepiped.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Parallelepiped.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope/codac2_Zonotope.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Slice.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SliceBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SlicedTube.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SlicedTube_integral_impl.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_SlicedTubeBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TDomain.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TDomain.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TimePropag.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TSlice.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TSlice.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_TubeBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_Tube_operator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube/codac2_tube_cart_prod.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_ExprBase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_ExprBase.h
@@ -72,14 +100,14 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_FunctionBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/codac2_VarBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_constants.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_constants_impl.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_analytic_variables.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExpr.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticExprWrapper.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticFunction.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_AnalyticType.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ScalarExprList.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ValueType.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic/codac2_ExprType.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_operations.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_operators.h
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set/codac2_set_variables.h
@@ -114,6 +142,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_cross_prod.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_det.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_exp.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_extend.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_flatten.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_floor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_log.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_mat.h
@@ -130,6 +160,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_subvector.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_tan.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_tanh.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_transpose.h
     ${CMAKE_CURRENT_SOURCE_DIR}/operators/codac2_vec.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons/codac2_Matrix_addons_Base.h
@@ -169,12 +200,21 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_pave.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/paver/codac2_pave.h
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/peibos/codac2_peibos_tools.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/peibos/codac2_peibos_tools.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/peibos/codac2_peibos.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/peibos/codac2_peibos.h
+
     ${CMAKE_CURRENT_SOURCE_DIR}/proj/codac2_ProjBase.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/proj/codac2_ProjBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/proj/codac2_qinter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/proj/codac2_qinter.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_Sep.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepAction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepAction.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartPolar.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartPolar.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartProd.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepCartProd.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepChi.cpp
@@ -194,6 +234,8 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepPolygon.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepProj.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepProj.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepQInter.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepQInter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepTransform.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepTransform.h
     ${CMAKE_CURRENT_SOURCE_DIR}/separators/codac2_SepUnion.cpp
@@ -204,15 +246,22 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_Approx.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_assert.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_Collection.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_fixpoint.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_Index.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_math.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_object_file_format.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_serialize.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_RobotSimulator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_RobotSimulator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_serialization.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_template_tools.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_transformations.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_transformations.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_trunc.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_trunc.h
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/codac2_TypeInfo.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/ibex/codac2_ibex.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/ibex/codac2_ibex_impl.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_AnalyticTraj.h
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory/codac2_SampledTraj.h
@@ -240,24 +289,27 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/interval/eigen
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/paving
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/zonotope
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/tube
     ${CMAKE_CURRENT_SOURCE_DIR}/functions
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/analytic
     ${CMAKE_CURRENT_SOURCE_DIR}/functions/set
     ${CMAKE_CURRENT_SOURCE_DIR}/geometry
-    ${CMAKE_CURRENT_SOURCE_DIR}/graphics
-    ${CMAKE_CURRENT_SOURCE_DIR}/graphics/ipe
-    ${CMAKE_CURRENT_SOURCE_DIR}/graphics/vibes
+    #${CMAKE_CURRENT_SOURCE_DIR}/graphics
+    #${CMAKE_CURRENT_SOURCE_DIR}/graphics/ipe
+    #${CMAKE_CURRENT_SOURCE_DIR}/graphics/vibes
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/Matrix_addons
     ${CMAKE_CURRENT_SOURCE_DIR}/matrices/eigen/MatrixBase_addons
     ${CMAKE_CURRENT_SOURCE_DIR}/operators
     ${CMAKE_CURRENT_SOURCE_DIR}/paver
+    ${CMAKE_CURRENT_SOURCE_DIR}/peibos
     ${CMAKE_CURRENT_SOURCE_DIR}/proj
     ${CMAKE_CURRENT_SOURCE_DIR}/separators
     ${CMAKE_CURRENT_SOURCE_DIR}/tools
     ${CMAKE_CURRENT_SOURCE_DIR}/trajectory
   )
-  target_link_libraries(${PROJECT_NAME}-core PUBLIC ${PROJECT_NAME}-graphics Ibex::ibex Eigen3::Eigen)
+  target_link_libraries(${PROJECT_NAME}-core PUBLIC Ibex::ibex Eigen3::Eigen)
   
 
 ################################################################################
