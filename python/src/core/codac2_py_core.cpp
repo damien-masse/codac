@@ -54,6 +54,7 @@ void export_CtcPolar(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcInte
 void export_CtcPolygon(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcPolytope(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcProj(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
+void export_CtcQInter(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcSegment(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcUnion(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
 void export_CtcWrapper(py::module& m, py::class_<CtcBase<IntervalVector>,pyCtcIntervalVector>& ctc);
@@ -128,6 +129,9 @@ void export_pave(py::module& m);
 // peibos
 void export_peibos(py::module& m);
 
+// proj
+void export_qinter(py::module& m);
+
 // separators
 py::class_<SepBase,pySep> export_Sep(py::module& m);
 void export_SepAction(py::module& m, py::class_<SepBase,pySep>& pysep);
@@ -143,6 +147,7 @@ void export_SepNot(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepPolygon(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepPolytope(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepProj(py::module& m, py::class_<SepBase,pySep>& sep);
+void export_SepQInter(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepTransform(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepUnion(py::module& m, py::class_<SepBase,pySep>& sep);
 void export_SepWrapper(py::module& m, py::class_<SepBase,pySep>& sep);
@@ -198,6 +203,7 @@ PYBIND11_MODULE(_core, m)
   export_CtcPolygon(m, py_ctc_iv);
   export_CtcPolytope(m, py_ctc_iv);
   export_CtcProj(m, py_ctc_iv);
+  export_CtcQInter(m, py_ctc_iv);
   export_CtcSegment(m, py_ctc_iv);
   export_CtcUnion(m, py_ctc_iv);
   export_CtcWrapper(m, py_ctc_iv);
@@ -295,6 +301,9 @@ PYBIND11_MODULE(_core, m)
   // peibos
   export_peibos(m);
 
+  // proj
+  export_qinter(m);
+
   // separators
   auto py_sep = export_Sep(m);
   export_SepAction(m,py_sep);
@@ -310,6 +319,7 @@ PYBIND11_MODULE(_core, m)
   export_SepPolygon(m,py_sep);
   export_SepPolytope(m,py_sep);
   export_SepProj(m,py_sep);
+  export_SepQInter(m,py_sep);
   export_SepTransform(m,py_sep);
   export_SepUnion(m,py_sep);
   export_SepWrapper(m,py_sep);
