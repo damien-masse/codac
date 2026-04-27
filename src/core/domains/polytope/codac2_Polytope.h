@@ -597,6 +597,8 @@ namespace codac2 {
         std::vector<Vector> vertices_2Dfacet() const;
 
 
+        /* access for debug */
+        std::unique_ptr<DDbuildF2V> get_DDbuildF2V() const;
              
 
    protected:
@@ -680,5 +682,12 @@ inline const CollectFacets::mapType &Polytope::facets() const
 
 std::ostream& operator<<(std::ostream& os, const Polytope &P);
 Polytope operator+ (const Polytope &p1, const Polytope &p2);
+
+inline std::unique_ptr<DDbuildF2V> Polytope::get_DDbuildF2V() const {
+   this->build_DDbuildF2V();
+   std::unique_ptr<DDbuildF2V> ret=nullptr;
+   ret.swap(this->_DDbuildF2V);
+   return ret;
+}
 
 }

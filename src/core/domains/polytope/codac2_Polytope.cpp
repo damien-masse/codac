@@ -34,7 +34,7 @@ using namespace codac2;
 
 
 namespace codac2 {
-
+   
 Polytope::Polytope() : _dim(-1), state(pol_state_empty | pol_state(1<<INVALID))
 {
 }
@@ -1225,6 +1225,8 @@ std::vector<IntervalVector> Polytope::vertices() const {
       return ret;
    }
    this->build_DDbuildF2V();
+   std::cout << "DDbuildF2V" << "\n";
+   std::cout << *_DDbuildF2V << "\n";
    if (state[EMPTY]) return std::vector<IntervalVector>();
    std::vector<IntervalVector> ret;
    for (const DDvertex &vtx : _DDbuildF2V->get_vertices()) {

@@ -13,6 +13,8 @@ int main(int argc, char *argv[])
 {
    std::cout << std::scientific << std::setprecision(9);
 
+   DDbuildF2V::tolerance=1e-4;
+
    const char *namefile = "cross12.ine";
    if (argc>1) namefile= argv[1];
    Polytope pol = Polytope::from_ineFile(namefile);
@@ -21,6 +23,17 @@ int main(int argc, char *argv[])
    std::vector<IntervalVector> 
       lvect = pol.vertices();
    std::cout << lvect.size() << " vertices" << std::endl;
+#if 0
+   for (int i=0;i<lvect.size();i++) {
+      for (int j = i+1;j<lvect.size();j++) {
+         Vector u = (lvect[i]-lvect[j]).mig();
+         if (u.lpNorm<Eigen::Infinity>()<1e-5) {
+            std::cout << i << " : " << lvect[i] << "\n";
+            std::cout << j << " : " << lvect[j] << "\n";
+         }
+      }
+   }
+#endif
    for (IntervalVector a : lvect) 
       std::cout << a << std::endl;
 

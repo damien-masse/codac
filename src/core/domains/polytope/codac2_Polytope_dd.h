@@ -1,9 +1,9 @@
 /**
  * \file codac2_Polytope_dd.h implementation of the dd algorithms
  * ----------------------------------------------------------------------------
- *  \date       2025
+ *  \date       2026
  *  \author     Damien Massé
- *  \copyright  Copyright 2025
+ *  \copyright  Copyright 2026
  *  \license    This program is distributed under the terms of
  *              the GNU Lesser General Public License (LGPL).
  */
@@ -34,7 +34,7 @@ namespace codac2 {
 
 
 /** \brief multiply a vector by a power of 2 (without rounding)
- *  such that 2^(-10) <= norm(vec) <= 2^10
+ *  such that 2^(-5) <= norm(vec) <= 2^5
  *  \param vec the vector (modified)
  *  \return the multiplying factor */
 inline double reduce_vector_without_rounding(IntervalVector &vec) {
@@ -46,7 +46,7 @@ inline double reduce_vector_without_rounding(IntervalVector &vec) {
          if (fx2>fx) fx=fx2;
       }
       assert_release (fx!=INT_MIN);
-      if (std::abs(fx)<10) return 1.0;
+      if (std::abs(fx)<5) return 1.0;
       double mult=exp2(-fx);
       for (Index i=0;i<vec.size();i++) {
 //           vec[i] = Interval(ldexp(vec[i].lb(),-fx),ldexp(vec[i].ub(),-fx));
@@ -56,7 +56,7 @@ inline double reduce_vector_without_rounding(IntervalVector &vec) {
 }
 
 /** \brief multiply a row by a power of 2 (without rounding)
- *  such that 2^(-10) <= norm(vec) <= 2^10
+ *  such that 2^(-5) <= norm(vec) <= 2^5
  *  \param vec the row (modified)
  *  \return the multiplying factor */
 inline double reduce_row_without_rounding(Row &vec) {
@@ -68,7 +68,7 @@ inline double reduce_row_without_rounding(Row &vec) {
          if (fx2>fx) fx=fx2;
       }
       assert_release (fx!=INT_MIN);
-      if (std::abs(fx)<10) return 1.0;
+      if (std::abs(fx)<5) return 1.0;
       double mult=exp2(-fx);
       for (Index i=0;i<vec.size();i++) {
 //           vec[i] = ldexp(vec[i],-fx);
@@ -118,7 +118,11 @@ struct DDvertex {
       reduce_vector_without_rounding(vertex);
    }
 
-   bool addLnk(const std::forward_list<DDvertex>::iterator &a,
+   inline bool is_ray() {
+      return (this->vertex[0].lb()<=0.0);
+   }
+
+   inline bool addLnk(const std::forward_list<DDvertex>::iterator &a,
 		 bool check=false) {
       if (check) {
          for (auto b : links) {
@@ -131,7 +135,7 @@ struct DDvertex {
 
 //   void addLnkVertex(const std::forward_list<DDvertex>::iterator &V1);
 
-   void removeLnk(const std::forward_list<DDvertex>::iterator &a) {
+   inline void removeLnk(const std::forward_list<DDvertex>::iterator &a) {
       for (Index i=0;i<(Index)links.size();i++) {
          if (links[i]==a) { 
 	    links[i]=links[links.size()-1]; 
@@ -141,7 +145,7 @@ struct DDvertex {
       }
    }
 
-   void changeLnk(const std::forward_list<DDvertex>::iterator &a,
+   inline void changeLnk(const std::forward_list<DDvertex>::iterator &a,
 		const std::forward_list<DDvertex>::iterator &b) {
       for (Index i=0;i<(Index)links.size();i++) {
          if (links[i]==a) { links[i]=b; return; }
@@ -150,7 +154,7 @@ struct DDvertex {
       links.push_back(b);
    }
 
-   bool addFct(Index a) {
+   inline bool addFct(Index a) {
       auto rev_it = this->fcts.rbegin();
       while (rev_it != this->fcts.rend() && (*rev_it)>a) rev_it++;
       if (rev_it!=this->fcts.rend() && (*rev_it)==a) return false;
@@ -201,6 +205,8 @@ class DDbuildF2V {
 
      friend std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build);
 
+     static double tolerance;
+
   private:
      int add_facet(Index idFacet, const IntervalRow &facet);
      bool addDDlink(const std::forward_list<DDvertex>::iterator& V1,
@@ -237,7 +243,6 @@ class DDbuildF2V {
 
      bool empty, flat;
      Index nbIn;
-     double tolerance = 1e-9;
 };
 
 inline Index DDbuildF2V::get_dim() const { return this->dim; }

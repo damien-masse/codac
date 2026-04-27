@@ -38,6 +38,8 @@ namespace codac2 {
 /*** DDbuildF2V *****/
 /********************/
 
+double DDbuildF2V::tolerance=1e-5;
+
 DDbuildF2V::DDbuildF2V(Index dim, const IntervalVector &box,
 	std::shared_ptr<CollectFacets> facetsptr, bool include_box) : dim(dim),
 		fdim(dim), bbox(box), facetsptr(facetsptr),
@@ -221,10 +223,10 @@ Index DDbuildF2V::addVertexSon(const DDvertex &p1, DDvertex &p2, double rhs,
 
 IntervalVector DDbuildF2V::compute_vertex(const IntervalVector &vect) const {
    if (!flat) {
-     if (vect[0]==0.0) return vect.tail(this->fdim);
+     if (vect[0].lb()<=0.0) return vect.tail(this->fdim);
      return vect.tail(this->fdim)/vect[0];
    }
-   if (vect[0]==0.0) return this->M_EQ*vect;
+   if (vect[0].lb()<=0.0) return this->M_EQ*vect;
    return this->M_EQ*(vect/vect[0]);
 }
 
@@ -294,13 +296,12 @@ int DDbuildF2V::add_facet(Index idFacet, const IntervalRow &facet) {
       for (;itVertex!=vertices.end();++itVertex) {
           this->addDDlink(itVertex,newVertex);
       }
+      /* ce nouveau sommet prend la facette "infinie" ...
+         et toutes les facettes (hors oo) ajoutées jusqu'à présent */
+      newVertex->addFct(-1);
       for (Index a=0;a<codeFacet;a++) {
           newVertex->addFct(a);
       }
-      /* ce nouveau sommet a une face spéciale, "négation" de la contrainte,
-         de code 0 */
-      newVertex->addFct(reffacets.size());
-      reffacets.push_back(0);
       /* suppression de la ligne */
       this->lines.pop_back();
       return 1;
@@ -399,18 +400,48 @@ int DDbuildF2V::add_facet(Index idFacet, const IntervalRow &facet) {
 	       continue;
              }
            }
-           if (-destlink.lambda.lb()/actVertex->lambda.lb()<tolerance) {
+	   {
+              Interval ratio = 
+			-destlink.lambda.lb()/actVertex->lambda;
+              if (ratio.ub()<tolerance) { 
+			/* FIXME : take first value into account */
 #ifdef DEBUG_CODAC2_DD
-	       std::cout << " Extension sommet " << -destlink.lambda.lb()/actVertex->lambda.lb() << "\n";
+	         std::cout << " Extension sommet " << ratio.ub() << "\n";
+		std::cout << "sommet init : " << destlink.vertex << "\n";
 #endif
+              Interval a1;
+              Interval a2;
+	      Index start_join=0; /* 1 : keep the first component */
+	      if (destlink.is_ray()==actVertex->is_ray()) {
+		a1 = 1.0/(1.0+ratio);
+	        if (destlink.is_ray()) 
+                  a2 = 1.0/(1.0-(actVertex->lambda/destlink.lambda.lb()));
+	        else
+		{
+		  a2 = partV[0]/
+		    (actVertex->vertex[0]*(1.0-
+		 	(actVertex->lambda/destlink.lambda.lb())));
+		  start_join=1;
+                }
+              }
+	      else {
+		a1=1.0;
+                a2=ratio;
+              }
 	      /* extend the vertex, and add fct */
-	      adjacentVertices.push_back(std::pair(lnk,fctSon(-1,lnk->fcts,actVertex->fcts)));
-              destlink.vertex |=
-                 (partV - 
-		(destlink.lambda.lb()/actVertex->lambda)*actVertex->vertex);
-              destlink.addFct(refFacet);
-	      destlink.removeLnk(actVertex);
-	      continue;
+	        adjacentVertices.push_back(std::pair(lnk,fctSon(-1,lnk->fcts,actVertex->fcts)));
+                for (Index i=start_join;i<destlink.vertex.size();++i) {
+		  destlink.vertex[i] |=
+			a1*partV[i] +
+		 	a2*actVertex->vertex[i];
+                }    
+                destlink.addFct(refFacet);
+	        destlink.removeLnk(actVertex);
+#ifdef DEBUG_CODAC2_DD
+		std::cout << "result : " << destlink.vertex << "\n";
+#endif
+	        continue;
+             }
            }
 	   /* creation of a new vertex */
 	   IntervalVector newV = -destlink.lambda.lb()*actVertex->vertex
@@ -528,6 +559,7 @@ std::set<Index> DDbuildF2V::redundantFacets() {
    /* to get the result of facetElems, we store booleans for each facets */
    std::vector<bool> redundant(reffacets.size(),true);
    for (const PosetElem<Index> &elm : facetElems) {
+	if (elm.a<0) continue;
         redundant[elm.a]=false;
         resultat.erase(reffacets[elm.a]); 
 		/* note : this approach (fill resultat then remove
@@ -547,6 +579,7 @@ std::set<Index> DDbuildF2V::redundantFacets() {
    for (DDvertex &vt : vertices) { 
       unsigned int j=0;
       for (unsigned int i=0;i<vt.fcts.size();i++) {
+         if (vt.fcts[i]<0) continue;
          if (reffacets[vt.fcts[i]]<0) continue;
          vt.fcts[j]=reffacets[vt.fcts[i]];
          j++;
@@ -594,11 +627,14 @@ std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build) {
    }
    Index nbvx=0, nbrays=0;
    for (const auto &vt : build.vertices) {
-      if (vt.vertex[0]!=0) nbvx++; else nbrays++;
+      if (vt.vertex[0].lb()>0.0) nbvx++; else nbrays++;
       os << " " << vt.Id << " : " << normalise(vt.vertex) << std::endl;
       os << " fct : (";
       for (const auto &a : vt.fcts) {
-         os << a << ":" << build.reffacets[a] << ",";
+         os << a << ":";
+	 if (a>=0) os << build.reffacets[a];
+	 else os << "oo";
+	 os << ",";
       }
       os << ")" << std::endl;
       os << " lnks: (";
