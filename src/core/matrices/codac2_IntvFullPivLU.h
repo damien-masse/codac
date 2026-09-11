@@ -131,7 +131,10 @@ namespace codac2
          *
          * \pre \f$\mathbf{M}\f$ is the matrix used to build the decomposition
          *
-         * \param M the matrix used to build the decomposition.
+         * \param M the matrix used to build the decomposition. Using
+         * another matrix (with the same number of columns) selects its columns
+         * related to the linearly independant columns in the decomposition
+         * (i.e. \f$X image(A) = image(B)\f$ is a subsystem of \f$X A = B\f$)
          * \return a matrix of columns of \f$\mathbf{M}\f$, or one vector of 0
          * if the rank of \f$\mathbf{M}\f$ may be 0.
          */
@@ -146,7 +149,11 @@ namespace codac2
          *
          * \pre M is the matrix used to build the decomposition
          *
-         * \param M the matrix used to build the decomposition.
+         * \param M the matrix used to build the decomposition. Using
+         * another matrix (with the same number of rows) selects its rows
+         * related to the linearly independant rows in the decomposition
+         * (i.e. \f$coimage(A) X = coimage(B)\f$ is a subsystem of 
+	 * \f$A X = B\f$)
          * \return a matrix of rows of \f$\mathbf{M}\f$, or one row of 0
          * if the rank of \f$\mathbf{M}\f$ may be 0.
          */
