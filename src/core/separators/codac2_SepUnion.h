@@ -21,6 +21,19 @@ namespace codac2
     public:
 
       template<typename S>
+        requires IsSepBaseOrPtr<S>
+      SepUnion(std::initializer_list<S> seps)
+        : SepUnion(Collection<SepBase>(seps))
+      { }
+
+      SepUnion(const Collection<SepBase>& c)
+        : Sep<SepUnion>([&c]() {
+            assert_release(!c.empty());
+            return size_of(c.front());
+          }()), _seps(c)
+      { }
+
+      template<typename S>
         requires (IsSepBaseOrPtr<S> && !std::is_same_v<SepUnion,S>)
       SepUnion(const S& s)
         : Sep<SepUnion>(size_of(s)), _seps(s)
@@ -34,20 +47,18 @@ namespace codac2
         assert_release(all_same_size(s...));
       }
 
+      size_t nb() const
+      {
+        return _seps.size();
+      }
+
       BoxPair separate(const IntervalVector& x) const;
 
       template<typename S>
-        requires std::is_base_of_v<SepBase,S>
+        requires IsSepBaseOrPtr<S>
       SepUnion& operator|=(const S& s)
       {
-        assert_release(s.size() == this->size());
-        _seps.push_back(s);
-        return *this;
-      }
-
-      SepUnion& operator|=(const std::shared_ptr<SepBase>& s)
-      {
-        assert_release(s->size() == this->size());
+        assert_release(size_of(s) == this->size());
         _seps.push_back(s);
         return *this;
       }

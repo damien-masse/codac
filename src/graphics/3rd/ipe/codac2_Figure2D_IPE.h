@@ -73,6 +73,13 @@ namespace codac2
       void clear();
 
       /**
+       * \brief Saves the figure to a file
+       * 
+       * \param filename Name of the file to save the figure to
+       */
+      void save(const std::string& filename);
+
+      /**
        * \brief Begins a new path in the IPE file
        * 
        * \param style the style properties for the path (color, line width, etc.)
@@ -252,7 +259,9 @@ namespace codac2
       double scale_length(double y) const;
       void print_header_page();
 
-      std::ofstream _f, _f_temp_content;
+      std::ofstream _f;
+      std::string _working_item;
+      std::multimap<double,std::string> _items;
       const double _ipe_grid_size = 500.;
       Vector _ratio { 1., 1. };
 

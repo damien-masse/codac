@@ -175,7 +175,7 @@ If you notice any mathematical operators missing from the list below, feel free 
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\cosh(x)`                                    | ``cosh(x)``          | |CoshOp|      | ``x``: scalar                       ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
-  | :math:`\det(\mathbf{A})`                            | ``det(A)``           | |DetOp|       | ``A``: matrix                       ||bok|   ||bok|   ||bok|  ||bok|       |
+  | :math:`\det(\mathbf{A})`                            | ``det(A)``           | |DetOp|       | ``A``: matrix                       ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\exp(x)`                                     | ``exp(x)``           | |ExpOp|       | ``x``: scalar                       ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
@@ -223,7 +223,7 @@ If you notice any mathematical operators missing from the list below, feel free 
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathbf{x}_1\cdot x_2`                       | ``x1*x2``            |               | ``x1``: vector, ``x2``: scalar      ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
-  | :math:`x_1\cdot\mathbf{X}_2`                        | ``x1*X2``            |               | ``x1``: scalar, ``X2``: matrix      ||okk|   ||okk|   ||okk|  ||nok|       |
+  | :math:`x_1\cdot\mathbf{X}_2`                        | ``x1*X2``            |               | ``x1``: scalar, ``X2``: matrix      ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathbf{x}_1\cdot\mathbf{x}_2`               | ``x1*x2``            |               | ``x1``: row, ``x2``: vector         ||okk|   ||nok|   ||nok|  ||okk|       |
   +-----------------------------------------------------+----------------------+               +-------------------------------------+--------+--------+-------+------------+
@@ -245,10 +245,9 @@ If you notice any mathematical operators missing from the list below, feel free 
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\min(x_1,x_2)`                               | ``min(x1,x2)``       | |MinOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
-  | :math:`x_1\bmod x_2`                                | --                   | |ModOp|       | --                                  ||nok|   ||nok|   ||nok|  ||bok|       |
+  | :math:`x_1\mod p`                                   | ``mod(x1,p)``        | |ModOp|       | ``x1``, ``p``: scalar               ||okk|   ||nok|   ||nok|  ||okk|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`(x_1)^{x_2}`                                 | | ``pow(x1,x2)``     | |PowOp|       | ``x1``, ``x2``: scalar              ||okk|   ||okk|   ||okk|  ||okk|       |
-  |                                                     | | ``x1^x2``          |               |                                     |        |        |       |            |
   |                                                     | | ``x1**x2`` (py)    |               |                                     |        |        |       |            |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
   | :math:`\mathrm{arctan2}(y,x)`                       | ``atan2(y,x)``       | |Atan2Op|     | ``y``, ``x``: scalar                ||okk|   ||okk|   ||okk|  ||okk|       |
@@ -281,8 +280,38 @@ If you notice any mathematical operators missing from the list below, feel free 
   | :math:`[\mathbf{x}](t)`                             | ``x(t)``             | |TubeOp|      | ``x``: tube, ``t``: scalar          ||okk|   ||nok|   ||nok|  ||nok|       |
   +-----------------------------------------------------+----------------------+---------------+-------------------------------------+--------+--------+-------+------------+
 
-| Note: the operator :math:`\det` is only available for :math:`1\times 1` and :math:`2\times 2` matrices.
 | Note: the operator :math:`\bmod` is only available for real periods (double precision), interval periods are not yet supported.
+
+
+
+Why ``^`` is disabled in Codac
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``^`` syntax is intentionally disabled in Codac for powers. Although this operator can be overloaded, its precedence remains the one of the bitwise XOR operator, both in Python and in C++. Overloading an operator does not change the precedence rules of the host language.
+
+As a consequence, an expression such as ``x^2 + sin(x)`` is parsed as ``x^(2 + sin(x))``, not as ``(x^2) + sin(x)``. This kind of ambiguity is easy to overlook and may silently produce an expression different from the one intended by the user.
+
+To avoid such error-prone expressions, Codac does not provide ``^`` as a power syntax. Use:
+
+- ``pow(x1,x2)`` for generic powers;
+- ``x1**x2`` in Python when exponentiation syntax is preferred;
+- ``sqr(x1)`` for squares when applicable (it is equivalent to ``pow(x1,2)``).
+
+Examples:
+
+.. tabs::
+
+  .. code-tab:: py
+
+    x = ScalarVar()
+    f = AnalyticFunction([x], x**2 + sin(x))
+    g = AnalyticFunction([x], pow(x,2) + sin(x))
+
+  .. code-tab:: c++
+
+    ScalarVar x;
+    AnalyticFunction f({x}, pow(x,2) + sin(x));
+    AnalyticFunction g({x}, sqr(x) + sin(x));
 
 
 Expressions involving a non-supported centered-form operation
@@ -290,6 +319,8 @@ Expressions involving a non-supported centered-form operation
 
 If an operator, for which the centered form is not defined, is involved in an expression, then this expression cannot be evaluated using the centered form (calculation is disabled for the entire operation). A simple natural evaluation will then be computed.
 
+
+.. _sec-functions-temporal-operator:
 
 Expressions involving a temporal operator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -300,7 +331,7 @@ Temporal operations for involving trajectories or tubes in analytic expressions 
   
   .. code-tab:: py
 
-    x = # some sampled trajectory...
+    x = # some tube or sampled trajectory...
     g = x.as_function() # intermediate operation
 
     t = ScalarVar()
@@ -310,7 +341,7 @@ Temporal operations for involving trajectories or tubes in analytic expressions 
 
   .. code-tab:: c++
 
-    x = // some sampled trajectory...
+    x = // some tube or sampled trajectory...
     g = x.as_function(); // intermediate operation
 
     ScalarVar t;

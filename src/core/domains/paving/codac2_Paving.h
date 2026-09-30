@@ -75,6 +75,8 @@ namespace codac2
             return n->hull().intersects(intersecting_box);
           });
 
+        if(l.empty())
+          l.push_back(IntervalVector::empty(this->size()));
         return l;
       }
 
@@ -152,10 +154,16 @@ namespace codac2
       {
         assert_release(x.size() == this->size());
         
-        if(x.is_empty())
-          return IntervalVector::empty(x.size());
-
         IntervalVector x_ = IntervalVector::empty(x.size());
+
+        if(x.is_empty())
+          return x_;
+
+        // The parts of the box that are outside of the paving can not be contracted
+        auto d = x.diff(this->tree()->hull());
+        for(const auto& di : d)
+          x_ |= di;
+
         this->tree()->visit([&]
           (Node_ n)
           {
@@ -169,6 +177,8 @@ namespace codac2
 
       static const NodeValue_ outer, outer_complem;
   };
+
+  IntervalVector operator&(const IntervalVector& x, const PavingOut& p);
 
 
   class PavingInOut;

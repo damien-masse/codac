@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <tuple>
 #include <type_traits>
 #include "codac2_CtcWrapper.h"
 #include "codac2_Collection.h"
@@ -42,40 +43,68 @@ namespace codac2
         assert_release(all_same_size(c...));
       }
 
-      template<typename X_> // single type
-      void contract_impl(X_& x) const
+      CtcUnion(const Collection<CtcBase<X...>>& ctcs)
+        : Ctc<CtcUnion<X...>,X...>(ctcs.front()->size()), _ctcs(ctcs)
       {
-        auto result = x;
-        result.set_empty();
-
         for(const auto& ci : _ctcs)
         {
-          auto saved_x = x;
-          ci->contract(saved_x);
-          result |= saved_x;
+          (void)ci;
+          assert_release(ci->size() == this->size());
         }
+      }
+      
+      template<typename C>
+        requires IsCtcBaseOrPtr<C,X...>
+      CtcUnion(std::initializer_list<C> ctcs)
+        : CtcUnion(Collection<CtcBase<X...>>(ctcs))
+      { }
 
-        x = result;
+      size_t nb() const
+      {
+        return _ctcs.size();
       }
 
       void contract(X&... x) const
       {
-        // contract_impl(..) method for multiple types is not yet implemented
-        contract_impl(x...);
+        const auto input = std::tuple<X...>(x...);
+
+        auto result = input;
+        std::apply([](auto&... xi)
+        {
+          (xi.set_empty(), ...);
+        }, result);
+
+        auto accumulate_union = [&]<std::size_t... I>(const std::tuple<X...>& y, std::index_sequence<I...>)
+        {
+          ((std::get<I>(result) |= std::get<I>(y)), ...);
+        };
+
+        for(const auto& ci : _ctcs)
+        {
+          auto saved = input;
+
+          std::apply([&](auto&... xi)
+          {
+            ci->contract(xi...);
+          }, saved);
+
+          accumulate_union(saved, std::index_sequence_for<X...>{});
+
+          // Each contractor is contractant, hence every remaining branch
+          // can only return a subset of input. Once the accumulated union
+          // has reached input, the final result is already known.
+          if(result == input)
+            return;
+        }
+
+        std::tie(x...) = result;
       }
 
       template<typename C>
-        requires std::is_base_of_v<CtcBase<X...>,C>
+        requires IsCtcBaseOrPtr<C,X...>
       CtcUnion<X...>& operator|=(const C& c)
       {
-        assert_release(c.size() == this->size());
-        _ctcs.push_back(c);
-        return *this;
-      }
-
-      CtcUnion<X...>& operator|=(const std::shared_ptr<CtcBase<X...>>& c)
-      {
-        assert_release(c->size() == this->size());
+        assert_release(size_of(c) == this->size());
         _ctcs.push_back(c);
         return *this;
       }
@@ -139,4 +168,11 @@ namespace codac2
 
   // Template deduction guides
   CtcUnion(Index) -> CtcUnion<IntervalVector>;
+
+  template<typename... C>
+    requires (IsCtcBaseOrPtr<C,IntervalVector> && ...)
+  CtcUnion(const C&...) -> CtcUnion<IntervalVector>;
+
+  template<typename C>
+  CtcUnion(std::initializer_list<C>) -> CtcUnion<IntervalVector>;
 }

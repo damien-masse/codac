@@ -18,9 +18,11 @@
 #include <codac2_Parallelepiped.h>
 #include <codac2_AnalyticFunction.h>
 #include <codac2_analytic_variables.h>
+#include <codac2_analytic_flat_input_layout.h>
 #include "codac2_py_AnalyticFunction_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_AnalyticFunction_impl_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_FunctionBase_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
+#include "codac2_py_analytic_flat_input_layout_docs.h" // Generated file from Doxygen XML (doxygen2docstring.py)
 #include "codac2_py_AnalyticExprWrapper.h"
 #include "codac2_py_cast.h"
 
@@ -154,7 +156,7 @@ using namespace pybind11::literals;
 
 inline FunctionArgsList create_FunctionArgsList(const std::vector<py::object>& l)
 {
-  FunctionArgsList args {};
+  std::vector<std::shared_ptr<VarBase>> v_args;
   Index i = 0;
 
   for(const auto& li : l)
@@ -162,20 +164,19 @@ inline FunctionArgsList create_FunctionArgsList(const std::vector<py::object>& l
     i++;
 
     if(py::isinstance<ScalarVar>(li))
-      args.push_back(li.cast<ScalarVar>().arg_copy());
+      v_args.push_back(li.cast<ScalarVar>().arg_copy());
 
     else if(py::isinstance<VectorVar>(li))
-      args.push_back(li.cast<VectorVar>().arg_copy());
+      v_args.push_back(li.cast<VectorVar>().arg_copy());
 
     else if(py::isinstance<MatrixVar>(li))
-      args.push_back(li.cast<MatrixVar>().arg_copy());
+      v_args.push_back(li.cast<MatrixVar>().arg_copy());
 
     else
       throw std::invalid_argument("Argument " + std::to_string(i) + " is invalid. Only variables are accepted.");
   }
-
-  args.compute_unique_arg_names();
-  return args;
+  
+  return { v_args };
 }
 
 template<typename T>
@@ -338,16 +339,71 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
   {
     exported
 
-      .def("tube_eval", [](const AnalyticFunction<T>& f, const py::object& x1) {
+      // Mixed input types are not supported yet
 
-            if(!is_instance<SlicedTube<typename T::Domain>>(x1)) {
-              assert_release("tube_eval: invalid tube type");
-            }
+      // All scalar inputs
 
-            return f.tube_eval(cast<SlicedTube<typename T::Domain>>(x1));
-          },
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<Interval>&
+          ) const) &AnalyticFunction<T>::tube_eval,
         AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
         "x1"_a)
+
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<Interval>&, const SlicedTube<Interval>&
+          ) const) &AnalyticFunction<T>::tube_eval,
+        AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
+        "x1"_a, "x2"_a)
+
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<Interval>&, const SlicedTube<Interval>&, const SlicedTube<Interval>&
+          ) const) &AnalyticFunction<T>::tube_eval,
+        AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
+        "x1"_a, "x2"_a, "x3"_a)
+
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<Interval>&, const SlicedTube<Interval>&, const SlicedTube<Interval>&, const SlicedTube<Interval>&
+          ) const) &AnalyticFunction<T>::tube_eval,
+        AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
+        "x1"_a, "x2"_a, "x3"_a, "x4"_a)
+
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<Interval>&, const SlicedTube<Interval>&, const SlicedTube<Interval>&, const SlicedTube<Interval>&, const SlicedTube<Interval>&
+          ) const) &AnalyticFunction<T>::tube_eval,
+        AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
+        "x1"_a, "x2"_a, "x3"_a, "x4"_a, "x5"_a)
+
+      // All vector inputs
+
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<IntervalVector>&
+          ) const) &AnalyticFunction<T>::tube_eval,
+        AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
+        "x1"_a)
+
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&
+          ) const) &AnalyticFunction<T>::tube_eval,
+        AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
+        "x1"_a, "x2"_a)
+
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&
+          ) const) &AnalyticFunction<T>::tube_eval,
+        AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
+        "x1"_a, "x2"_a, "x3"_a)
+
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&
+          ) const) &AnalyticFunction<T>::tube_eval,
+        AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
+        "x1"_a, "x2"_a, "x3"_a, "x4"_a)
+
+      .def("tube_eval", (SlicedTube<typename T::Domain> (AnalyticFunction<T>::*) (
+            const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&, const SlicedTube<IntervalVector>&
+          ) const) &AnalyticFunction<T>::tube_eval,
+        AUTO_ANALYTICFUNCTION_T_TUBE_EVAL_CONST_SLICEDTUBE_ARGS_REF_VARIADIC_CONST,
+        "x1"_a, "x2"_a, "x3"_a, "x4"_a, "x5"_a)
     ;
   }
 
@@ -358,11 +414,72 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
 
   exported
 
-    .def("traj_eval", [](const AnalyticFunction<T>& f, const SampledTraj<typename T::Scalar>& x1) {
-          return f.traj_eval(x1);
-        },
+    // Mixed input types are not supported yet
+
+    // All scalar inputs
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<double>&
+        ) const) &AnalyticFunction<T>::traj_eval,
       AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
       "x1"_a)
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<double>&, const SampledTraj<double>&
+        ) const) &AnalyticFunction<T>::traj_eval,
+      AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
+      "x1"_a, "x2"_a)
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<double>&, const SampledTraj<double>&, const SampledTraj<double>&
+        ) const) &AnalyticFunction<T>::traj_eval,
+      AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
+      "x1"_a, "x2"_a, "x3"_a)
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<double>&, const SampledTraj<double>&, const SampledTraj<double>&, const SampledTraj<double>&
+        ) const) &AnalyticFunction<T>::traj_eval,
+      AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
+      "x1"_a, "x2"_a, "x3"_a, "x4"_a)
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<double>&, const SampledTraj<double>&, const SampledTraj<double>&, const SampledTraj<double>&, const SampledTraj<double>&
+        ) const) &AnalyticFunction<T>::traj_eval,
+      AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
+      "x1"_a, "x2"_a, "x3"_a, "x4"_a, "x5"_a)
+
+    // All vector inputs
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<Vector>&
+        ) const) &AnalyticFunction<T>::traj_eval,
+      AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
+      "x1"_a)
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<Vector>&, const SampledTraj<Vector>&
+        ) const) &AnalyticFunction<T>::traj_eval,
+      AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
+      "x1"_a, "x2"_a)
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<Vector>&, const SampledTraj<Vector>&, const SampledTraj<Vector>&
+        ) const) &AnalyticFunction<T>::traj_eval,
+      AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
+      "x1"_a, "x2"_a, "x3"_a)
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<Vector>&, const SampledTraj<Vector>&, const SampledTraj<Vector>&, const SampledTraj<Vector>&
+        ) const) &AnalyticFunction<T>::traj_eval,
+      AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
+      "x1"_a, "x2"_a, "x3"_a, "x4"_a)
+
+    .def("traj_eval", (SampledTraj<typename T::Scalar> (AnalyticFunction<T>::*) (
+          const SampledTraj<Vector>&, const SampledTraj<Vector>&, const SampledTraj<Vector>&, const SampledTraj<Vector>&, const SampledTraj<Vector>&
+        ) const) &AnalyticFunction<T>::traj_eval,
+      AUTO_ANALYTICFUNCTION_T_TRAJ_EVAL_CONST_SAMPLEDTRAJ_ARGS_REF_VARIADIC_CONST,
+      "x1"_a, "x2"_a, "x3"_a, "x4"_a, "x5"_a)
+
 
     .def("__repr__", [](const AnalyticFunction<T>& f) {
           std::ostringstream stream;
@@ -371,4 +488,12 @@ void export_AnalyticFunction(py::module& m, const std::string& export_name)
         },
       OSTREAM_REF_OPERATOROUT_OSTREAM_REF_CONST_ANALYTICFUNCTION_U_REF)
   ;
+
+
+  m.def("unaryize_function", (AnalyticFunction<ScalarType> (*)(const AnalyticFunction<ScalarType>&))&codac2::unaryize_function,
+    ANALYTICFUNCTION_T_UNARYIZE_FUNCTION_CONST_ANALYTICFUNCTION_T_REF,
+    "f"_a);
+  m.def("unaryize_function", (AnalyticFunction<VectorType> (*)(const AnalyticFunction<VectorType>&))&codac2::unaryize_function,
+    ANALYTICFUNCTION_T_UNARYIZE_FUNCTION_CONST_ANALYTICFUNCTION_T_REF,
+    "f"_a);
 }

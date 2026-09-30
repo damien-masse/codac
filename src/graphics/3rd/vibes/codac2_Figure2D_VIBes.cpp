@@ -44,14 +44,28 @@ void Figure2D_VIBes::update_axes()
 
 void Figure2D_VIBes::update_drawing_properties(const StyleProperties& style)
 {
-  if ((std::find(_layers.begin(), _layers.end(), style.layer) == _layers.end()) && !(style.layer == "alpha"))
+  if ((std::find(_layers.begin(), _layers.end(), style.layer) == _layers.end()))
+  {
+    if (style.layer == "inside")
     {
-      vibes::newGroup(style.layer,vibesParams("figure", _fig.name()));
+      vibes::newGroup("inside", vibesParams("figure", _fig.name(), "ZValue", -1));
       _layers.push_back(style.layer);
     }
+    else if (style.layer == "outside")
+    {
+      vibes::newGroup("outside", vibesParams("figure", _fig.name(), "ZValue", -3));
+      _layers.push_back(style.layer);
+    }
+    else if (style.layer == "boundary")
+    {
+      vibes::newGroup("boundary", vibesParams("figure", _fig.name(), "ZValue", -2));
+      _layers.push_back(style.layer);
+    }
+  }
 
   _params["LineStyle"] = style.line_style;
   _params["LineWidth"] = std::to_string(style.line_width);
+  _params["ZValue"] = style.z_value;
   if (style.layer != "alpha")
     _params["group"] = style.layer;
   else
@@ -77,6 +91,11 @@ void Figure2D_VIBes::clear()
   vibes::clearFigure(_fig.name());
   _params = vibesParams("figure", _fig.name(), "LineStyle", "-");
   _layers.clear();
+}
+
+void Figure2D_VIBes::save(const std::string& filename)
+{
+  vibes::saveImage(filename, _fig.name());
 }
 
 void Figure2D_VIBes::draw_point(const Vector& c, const StyleProperties& style)

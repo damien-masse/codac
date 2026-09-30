@@ -134,7 +134,7 @@ namespace codac2
             // If the centered form is not available for this expression...
             if(x_.da.size() == 0 // .. because some parts have not yet been implemented,
               || !x_.def_domain) // .. or due to restrictions in the derivative definition domain
-              return eval(EvalMode::NATURAL, x...);
+              return x_.a; // natural evaluation
 
             else
             {
@@ -159,6 +159,18 @@ namespace codac2
             }
           }
         }
+      }
+
+      template<typename... X>
+      typename T::Domain eval_default_codomain() const
+      {
+        static_assert(sizeof...(X) > 0);
+        assert_release(this->args().size() == sizeof...(X)
+          && "eval_default_codomain: function arity does not match contractor signature");
+
+        return eval_default_codomain_impl<X...>(
+          std::index_sequence_for<X...>{}
+        );
       }
 
       template<typename... Args>
@@ -209,17 +221,17 @@ namespace codac2
                     "Parallelepiped evaluation requires at least one input.");
 
         IntervalVector Y = this->eval(((typename Wrapper<Args>::Domain)(x)).mid()...);
-        Vector z = Y.mid();
+        Vector c = Y.mid();
 
         Matrix A = this->diff(((typename Wrapper<Args>::Domain)(x)).mid()...).mid();
 
         // Maximum error computation
-        double rho = error_peibos(Y, z, this->diff(x...), A, cart_prod(x...));
+        double rho = error_peibos(Y, c, this->diff(x...), A, cart_prod(x...));
 
         // Inflation of the parallelepiped
         Matrix A_inf = inflate_flat_parallelepiped(A, (cart_prod(x...).template cast<Interval>()).rad(), rho);
 
-        return Parallelepiped(z, A_inf);
+        return Parallelepiped(c, A_inf);
       }
 
       template<typename... Args>
@@ -287,7 +299,7 @@ namespace codac2
         os << "(";
         for(size_t i = 0 ; i < f.args().size() ; i++)
           os << (i!=0 ? "," : "") << f.args()[i]->name();
-        os << ") ↦ " << f.expr()->str();
+        os << ") -> " << f.expr()->str();
         return os;
       }
 
@@ -354,7 +366,7 @@ namespace codac2
         else
         {
           fill_from_args(v, x...);
-          return this->expr()->fwd_eval(v, cart_prod(x...).size(), NATURAL_EVAL); // todo: improve size computation
+          return this->expr()->fwd_eval(v, this->input_size(), NATURAL_EVAL);
         }
       }
 
@@ -373,6 +385,26 @@ namespace codac2
         for(const auto& v : this->_args) // variable names are automatically computed in FunctionArgsList,
           // so we propagate them to the expression
           this->_y->replace_arg(v->unique_id(), std::dynamic_pointer_cast<ExprBase>(v));
+      }
+
+      template<typename X>
+      static X default_eval_input(const std::shared_ptr<VarBase>& arg)
+      {
+        if constexpr(std::is_same_v<X,Interval>)
+          return Interval();
+        else if constexpr(std::is_same_v<X,IntervalVector>)
+          return IntervalVector(arg->size());
+        else
+        {
+          static_assert(!std::is_same_v<X,X>,
+            "default_eval_input: unsupported input type");
+        }
+      }
+
+      template<typename... X, std::size_t... I>
+      typename T::Domain eval_default_codomain_impl(std::index_sequence<I...>) const
+      {
+        return this->eval(default_eval_input<X>(this->args()[I])...);
       }
   };
 
