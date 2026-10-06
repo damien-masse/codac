@@ -463,9 +463,9 @@ IntervalMatrix IntvFullPivLU::kernel() const {
           generating[c]=false;
           continue;
       }
-      IntervalMatrix vect = IntervalVector::Zero(matrixLU_.cols(),1);
-      vect(c,0)=1.0;
 #if 0
+      IntervalMatrix vect = IntervalMatrix::Zero(matrixLU_.cols(),1);
+      vect(c,0)=1.0;
       for (Index c1=c-1;c1>=0;c1--) {
          if (!generating[c1]) vect(c1,0)=Interval();
       }
@@ -474,6 +474,8 @@ IntervalMatrix IntvFullPivLU::kernel() const {
       kernel.push_back(_LU.permutationQ()*vect.reshaped());
 #else /* a bit faster, same precision 
 	 although we would have to check the last statement (?) */
+      IntervalVector vect = IntervalVector::Zero(matrixLU_.cols());
+      vect[c]=1.0;
       for (Index c1=c-1;c1>=0;c1--) {
          if (c1>=matrixLU_.rows())  {
              /* we will consider two cases :
