@@ -16,6 +16,7 @@
 #include <codac2_Interval.h>
 #include <codac2_Approx.h>
 #include <limits>
+#include <stdexcept>
 
 using namespace std;
 using namespace codac2;
@@ -52,6 +53,19 @@ TEST_CASE("Interval - tests from IBEX")
   CHECK(-3._i == Interval(-3.));
 
   Interval x, y, z;
+
+  // An interval is a point or a pair of bounds; any other list length is a
+  // caller error and is reported through the assertion layer. A FAST_RELEASE
+  // build compiles that layer out, which is the one configuration where
+  // nothing is raised -- the guard mirrors the one in codac2_assert.h.
+#if !(defined(FAST_RELEASE) && defined(NDEBUG))
+  {
+    Interval from_list(0.,1.);
+    CHECK_THROWS_AS(from_list.init_from_list({1.,2.,3.}), std::invalid_argument);
+    CHECK_THROWS_AS(from_list.init_from_list({}), std::invalid_argument);
+    CHECK_THROWS_AS(Interval({1.,2.,3.}), std::invalid_argument);
+  }
+#endif
 
   x = Interval(0,1); x.set_empty();
   CHECK(x == Interval::empty());
@@ -279,6 +293,27 @@ TEST_CASE("Interval - other tests")
   a = x.bisect(0.2);
   CHECK(Approx(a.first,1e-7) == Interval(0,2));
   CHECK(Approx(a.second,1e-7) == Interval(2,10));
+}
+
+TEST_CASE("Interval - comparison")
+{
+  CHECK((Interval(0,1) < Interval(2,3)) == BoolInterval::TRUE);
+  CHECK((Interval(0,1) < Interval(1,2)) == BoolInterval::UNKNOWN);
+  CHECK((Interval(0,1) < Interval(0,1)) == BoolInterval::UNKNOWN);
+  CHECK((Interval(2,3) < Interval(0,1)) == BoolInterval::FALSE);
+  CHECK((Interval(2,3) < Interval(-oo,2)) == BoolInterval::FALSE);
+  CHECK((Interval(-oo,2) < Interval(3,oo)) == BoolInterval::TRUE);
+  CHECK((Interval::empty() < Interval(0,1)) == BoolInterval::EMPTY);
+  CHECK((Interval(0,1) < Interval::empty()) == BoolInterval::EMPTY);
+
+  CHECK((Interval(2,3) > Interval(0,1)) == BoolInterval::TRUE);
+  CHECK((Interval(1,2) > Interval(0,1)) == BoolInterval::UNKNOWN);
+  CHECK((Interval(0,1) > Interval(0,1)) == BoolInterval::UNKNOWN);
+  CHECK((Interval(0,1) > Interval(2,3)) == BoolInterval::FALSE);
+  CHECK((Interval(-oo,2) > Interval(2,3)) == BoolInterval::FALSE);
+  CHECK((Interval(3,oo) > Interval(-oo,2)) == BoolInterval::TRUE);
+  CHECK((Interval::empty() > Interval(0,1)) == BoolInterval::EMPTY);
+  CHECK((Interval(0,1) > Interval::empty()) == BoolInterval::EMPTY);
 }
 
 #if 0

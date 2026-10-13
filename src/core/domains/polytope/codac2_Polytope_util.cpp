@@ -104,41 +104,39 @@ std::vector<Vector> read_extFile(const char *filename) {
    fct = -1 : any facet */
 Index fill_3Dfacet(const DDbuildF2V &build, 
 	std::vector<Vector> &tofill, Index fct, double bound) {
-    const std::forward_list<DDvertex> &vertices=build.get_vertices();
-    std::forward_list<DDvertex>::const_iterator it=vertices.begin();
+    const std::forward_list<std::shared_ptr<DDvertex>> 
+			&vertices=build.get_vertices();
+    std::forward_list<std::shared_ptr<DDvertex>>::const_iterator it=vertices.begin();
     while (it != vertices.end()) {
-        if (it->vertex[0]!=0.0 && 
-		(fct==-1 || std::find(it->fcts.begin(),
-			it->fcts.end(),fct)!=it->fcts.end()))
+        if ((*it)->vertex[0]!=0.0 && 
+		(fct==-1 || (*it)->facets.has(fct)))
         break;
         ++it;
     }
     if (it==vertices.end()) return 0;
     
-    std::vector<std::forward_list<DDvertex>::const_iterator> used;
-    used.push_back(it);
-    Vector vt = build.compute_vertex(it->vertex).mid();
+    const DDvertex *parcours=(*it).get();
+    std::vector<const DDvertex *> used;
+    used.push_back(parcours);
+    Vector vt = build.compute_vertex(parcours->vertex).mid();
     tofill.push_back(vt);
-    while (it != vertices.end()) {
-       std::forward_list<DDvertex>::const_iterator it2;
-       Index i=0;
-       while (i<(Index)it->links.size()) {
-          it2 = it->links[i];
-          if ((fct==-1 ||
-		std::find(it2->fcts.begin(),
-                        it2->fcts.end(),fct)!=it2->fcts.end())
-	      && (std::find(used.begin(),used.end(),it2)==used.end())) break;
-          i++;
+    while (1) { /* useless test */
+       std::unordered_set<DDvertex*>::const_iterator 
+			it2=parcours->links.begin();
+       while (it2!=parcours->links.end()) {
+          if ((fct==-1 || (*it2)->facets.has(fct))
+	      && (std::find(used.begin(),used.end(),(*it2))==used.end())) break;
+          it2++;
        }
-       if (i==(Index)it->links.size()) break;
-       it=it2;
-       if (it->vertex[0]==0.0) /* ray */  {
-          vt += bound*build.compute_vertex(it->vertex).mid();
+       if (it2==parcours->links.end()) break;
+       parcours=(*it2);
+       if (parcours->vertex[0]==0.0) /* ray */  {
+          vt += bound*build.compute_vertex(parcours->vertex).mid();
        } else {
-          vt = build.compute_vertex(it->vertex).mid();
+          vt = build.compute_vertex(parcours->vertex).mid();
        }
        tofill.push_back(vt);
-       used.push_back(it);
+       used.push_back(parcours);
 //       std::cout << "add vert : " << it->Id << "\n";
     }
     return (Index)tofill.size();

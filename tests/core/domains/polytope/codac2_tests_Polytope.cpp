@@ -34,7 +34,9 @@ TEST_CASE("Polytope")
 
   SECTION("Definition, box, contains")
   {
+    std::cout << "avant !\n";
     Polytope p(IntervalVector({{-4,4},{-4,4},{-4,4}}), facets, true);
+    std::cout << "apres !\n";
 
     CHECK(!p.is_empty());
     CHECK(!p.is_flat());

@@ -24,6 +24,7 @@
 .cproject
 .settings
 .project
+.pydevproject
 
 # waf generated stuff
 .waf*
@@ -56,6 +57,7 @@ doc/doxygen/xml/*
 build/
 build_*/
 build-*/
+CMakePresets.json
 
 # Latex files
 *.aux
@@ -69,6 +71,10 @@ wheelhouse/
 
 # Graphics files
 examples/**/*.xml
+examples/**/*.bmp
+examples/**/*.png
+examples/**/*.jpg
+examples/**/*.svg
 *.ipe
 
 # Matlab files

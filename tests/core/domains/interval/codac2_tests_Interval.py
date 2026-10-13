@@ -45,6 +45,21 @@ class TestInterval(unittest.TestCase):
     self.assertTrue(Interval([-oo,oo]) == Interval(-oo,oo));
     self.assertTrue(Interval([oo,-oo]) == Interval.empty());
 
+    # An interval is a point or a pair of bounds; any other list length is a
+    # caller error, reported by the C++ assertion layer as a
+    # std::invalid_argument, which pybind11 surfaces as a ValueError. A
+    # FAST_RELEASE build compiles that layer out and leaves the interval
+    # untouched instead; Python cannot see that switch, so both outcomes are
+    # accepted here and only the one that actually happened is checked.
+    for bad_list in ([1.,2.,3.], []):
+      x = Interval(0.,1.)
+      try:
+        x.init_from_list(bad_list)
+      except ValueError:
+        pass
+      else:
+        self.assertTrue(x == Interval(0.,1.))
+
     x = Interval() ; y = Interval() ; z = Interval()
 
     x = Interval(0,1); x.set_empty()
@@ -249,6 +264,26 @@ class TestInterval(unittest.TestCase):
     b = Interval(1,3) & Interval(6,7) # [b] is empty
     c = a+b
     self.assertTrue(c.is_empty())
+
+    # Comparisons
+
+    self.assertTrue((Interval(0,1) < Interval(2,3)) == BoolInterval.TRUE)
+    self.assertTrue((Interval(0,1) < Interval(1,2)) == BoolInterval.UNKNOWN)
+    self.assertTrue((Interval(0,1) < Interval(0,1)) == BoolInterval.UNKNOWN)
+    self.assertTrue((Interval(2,3) < Interval(0,1)) == BoolInterval.FALSE)
+    self.assertTrue((Interval(2,3) < Interval(-oo,2)) == BoolInterval.FALSE)
+    self.assertTrue((Interval(-oo,2) < Interval(3,oo)) == BoolInterval.TRUE)
+    self.assertTrue((Interval.empty() < Interval(0,1)) == BoolInterval.EMPTY)
+    self.assertTrue((Interval(0,1) < Interval.empty()) == BoolInterval.EMPTY)
+
+    self.assertTrue((Interval(2,3) > Interval(0,1)) == BoolInterval.TRUE)
+    self.assertTrue((Interval(1,2) > Interval(0,1)) == BoolInterval.UNKNOWN)
+    self.assertTrue((Interval(0,1) > Interval(0,1)) == BoolInterval.UNKNOWN)
+    self.assertTrue((Interval(0,1) > Interval(2,3)) == BoolInterval.FALSE)
+    self.assertTrue((Interval(-oo,2) > Interval(2,3)) == BoolInterval.FALSE)
+    self.assertTrue((Interval(3,oo) > Interval(-oo,2)) == BoolInterval.TRUE)
+    self.assertTrue((Interval.empty() > Interval(0,1)) == BoolInterval.EMPTY)
+    self.assertTrue((Interval(0,1) > Interval.empty()) == BoolInterval.EMPTY)
       
 if __name__ ==  '__main__':
   unittest.main()

@@ -75,7 +75,7 @@ namespace codac2
 
     else
     {
-      assert_release("'Interval' can only be defined by one or two 'double' values.");
+      assert_release_unreachable("'Interval' can only be defined by one or two 'double' values.");
     }
 
     return *this;
@@ -107,6 +107,22 @@ namespace codac2
     return !(*this == x);
   }
 
+  inline BoolInterval Interval::operator<(const Interval& x) const
+  {
+    if(is_empty() || x.is_empty())
+      return BoolInterval::EMPTY;
+    if(this->ub() < x.lb())
+      return BoolInterval::TRUE;
+    if(x.ub() <= this->lb())
+      return BoolInterval::FALSE;
+    return BoolInterval::UNKNOWN;
+  }
+
+  inline BoolInterval Interval::operator>(const Interval& x) const
+  {
+    return x < *this;
+  }
+
   inline double Interval::lb() const
   {
     return gaol::interval::left();
@@ -136,7 +152,7 @@ namespace codac2
 
   inline double Interval::smag() const
   {
-    return (abs(lb()) > abs(ub())) ? lb() : ub();
+    return (std::abs(lb()) > std::abs(ub())) ? lb() : ub();
   }
 
   inline double Interval::smig() const

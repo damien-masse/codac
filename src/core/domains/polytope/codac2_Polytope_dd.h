@@ -28,62 +28,19 @@
 #include "codac2_Vector.h"
 #include "codac2_Row.h"
 #include "codac2_Facet.h"
+#include "codac2_PosetMax.h"
+#include "codac2_Polytope_vert.h"
 
 
 namespace codac2 {
 
 
-/** \brief multiply a vector by a power of 2 (without rounding)
- *  such that 2^(-5) <= norm(vec) <= 2^5
- *  \param vec the vector (modified)
- *  \return the multiplying factor */
-inline double reduce_vector_without_rounding(IntervalVector &vec) {
-      int fx;
-      if (frexp(vec[0].mag(),&fx)==0.0) fx=INT_MIN;
-      for (Index i=1;i<vec.size();i++) {
-         int fx2;
-         if (frexp(vec[i].mag(),&fx2)==0.0) continue;
-         if (fx2>fx) fx=fx2;
-      }
-      assert_release (fx!=INT_MIN);
-      if (std::abs(fx)<5) return 1.0;
-      double mult=exp2(-fx);
-      for (Index i=0;i<vec.size();i++) {
-//           vec[i] = Interval(ldexp(vec[i].lb(),-fx),ldexp(vec[i].ub(),-fx));
-         vec[i] *= mult;
-      }
-      return mult;
-}
-
-/** \brief multiply a row by a power of 2 (without rounding)
- *  such that 2^(-5) <= norm(vec) <= 2^5
- *  \param vec the row (modified)
- *  \return the multiplying factor */
-inline double reduce_row_without_rounding(Row &vec) {
-      int fx;
-      if (frexp(vec[0],&fx)==0.0) fx=INT_MIN;
-      for (Index i=1;i<vec.size();i++) {
-         int fx2;
-         if (frexp(vec[i],&fx2)==0.0) continue;
-         if (fx2>fx) fx=fx2;
-      }
-      assert_release (fx!=INT_MIN);
-      if (std::abs(fx)<5) return 1.0;
-      double mult=exp2(-fx);
-      for (Index i=0;i<vec.size();i++) {
-//           vec[i] = ldexp(vec[i],-fx);
-         vec[i] *= mult;
-      }
-      return mult;
-}
-
-
 /** \brief structure for vertices in BuildF2V */
-struct DDvertex {
+struct DDvertex : DDvertex_base {
    Index Id;
-   IntervalVector vertex;
-   Interval lambda;
-   std::vector<Index> fcts; 
+
+   std::unordered_set<DDvertex*> links; /* bonne méthode ? */
+   PosetElem facets;
 	/* note : double redirection here, a ``real'' facet may have several
            Ids */
    
@@ -94,25 +51,22 @@ struct DDvertex {
      VERTEXGE, /* = and possible small >
 		  keep the vertex. no change with (GT,GE) */
      VERTEXGT, /* vertex GT, untreated and not in stack */
-     VERTEXSTACK, /* vertex in stack for later treatment */
      VERTEXREM /* vertex GT treated, to be removed */
    };
    ddvertexstatus status;
 
-   std::vector<std::forward_list<DDvertex>::iterator> links;
- 
-   DDvertex(const IntervalVector &v, Index Id) : Id(Id), 
-	 vertex(v), status(VERTEXNEW) {
-	reduce_vector();
-   }
+   /* constructor */
+   DDvertex(Index id, Index dim) : DDvertex_base(dim), Id(id), status(VERTEXNEW) { }
+   DDvertex(Index id, const IntervalVector &v, Index vdim, const IntervalMatrix *proj) : DDvertex_base(vdim,v,proj), Id(id), status(VERTEXNEW) { }
+   DDvertex(Index id, const DDvertex &v1, DDvertex &v2, const IntervalRow &facet) : DDvertex_base(v1,v2,facet), Id(id), facets(v1.facets & v2.facets),
+    status(VERTEXNEW) { }  /* links are added after */
 
-   DDvertex(IntervalVector &&v, Index Id, 
-		std::vector<std::forward_list<DDvertex>::iterator> &nlinks) :
-	 Id(Id), 
-	 vertex(v), status(VERTEXNEW) {
-         this->links.swap(nlinks);
-	 reduce_vector();
-   }
+   /* should not be copyable */
+   DDvertex(const DDvertex &v) = delete;
+   DDvertex &operator=(const DDvertex &v) = delete;
+
+   /* possibility of extension along the cone ? */
+   bool try_extend(const IntervalRow &facet);
 
    inline void reduce_vector() {
       reduce_vector_without_rounding(vertex);
@@ -122,44 +76,27 @@ struct DDvertex {
       return (this->vertex[0].lb()<=0.0);
    }
 
-   inline bool addLnk(const std::forward_list<DDvertex>::iterator &a,
-		 bool check=false) {
-      if (check) {
-         for (auto b : links) {
-            if (a==b) return false;
-         } 
-      }
-      this->links.push_back(a);
-      return true;
+   inline bool add_link(DDvertex *a) {
+      return links.insert(a).second;
    }
 
 //   void addLnkVertex(const std::forward_list<DDvertex>::iterator &V1);
 
-   inline void removeLnk(const std::forward_list<DDvertex>::iterator &a) {
-      for (Index i=0;i<(Index)links.size();i++) {
-         if (links[i]==a) { 
-	    links[i]=links[links.size()-1]; 
-	    links.pop_back();
-            return;
-         }
-      }
+   inline bool remove_link(DDvertex *a) {
+      return links.erase(a)==1;
    }
 
-   inline void changeLnk(const std::forward_list<DDvertex>::iterator &a,
-		const std::forward_list<DDvertex>::iterator &b) {
-      for (Index i=0;i<(Index)links.size();i++) {
-         if (links[i]==a) { links[i]=b; return; }
-      }
-      /* should not happen */
-      links.push_back(b);
+   inline void change_link(DDvertex *a, DDvertex *b) {
+      links.erase(a);
+      links.insert(b);
    }
 
-   inline bool addFct(Index a) {
-      auto rev_it = this->fcts.rbegin();
-      while (rev_it != this->fcts.rend() && (*rev_it)>a) rev_it++;
-      if (rev_it!=this->fcts.rend() && (*rev_it)==a) return false;
-      this->fcts.insert(rev_it.base(),a);
-      return true;
+   inline bool add_facet(Index a) {
+      return facets.add(a);
+   }
+
+   inline const PosetElem& get_facets() const {
+      return this->facets;
    }
  
 };
@@ -200,7 +137,7 @@ class DDbuildF2V {
      IntervalVector build_bbox() const;
 
      const std::vector<IntervalVector> &get_lines() const;
-     const std::forward_list<DDvertex> &get_vertices() const;
+     const std::forward_list<std::shared_ptr<DDvertex>> &get_vertices() const;
      const std::vector<Index> &get_reffacets() const;
 
      friend std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build);
@@ -209,17 +146,22 @@ class DDbuildF2V {
 
   private:
      int add_facet(Index idFacet, const IntervalRow &facet);
-     bool addDDlink(const std::forward_list<DDvertex>::iterator& V1,
-   		      const std::forward_list<DDvertex>::iterator& V2);
+     int add_facet_internal(Index idFacet, const IntervalRow &facet);
+     int add_facet_new_dimension(Index idFacet, const IntervalRow &facet, Index bestline);
+     static bool add_link(DDvertex *V1, DDvertex *V2);
+     void add_zero(const IntervalRow &facet);
+     static bool find_path(DDvertex *v1, DDvertex *v2, 
+			const PosetElem &fcts);
 
-     std::forward_list<DDvertex>::iterator addDDvertex(const IntervalVector &v);
-     std::forward_list<DDvertex>::iterator addDDvertex(IntervalVector &&v);
-/*     std::map<Index,DDvertex>::iterator addVertexSon(const DDvertex &p1,
-		 DDvertex &p2, double rhs, Index idFacet);  */
+     DDvertex* addDDvertex(Index fdim);
+     DDvertex* addDDvertex(const IntervalVector &v, Index vdim); 
+     DDvertex* addVertexSon(const DDvertex &p1,
+		 DDvertex &p2, const IntervalRow &facet, Index idFacet); 
 /*     void removeVertex(Index Id, bool removeLnks); */
 
      Index dim;
      Index fdim; /* dimension - nb independant equalities constraints */
+     Index vdim; /* actual dimension without the lines */
      IntervalVector bbox;
 
      std::shared_ptr<CollectFacets> facetsptr;
@@ -234,11 +176,11 @@ class DDbuildF2V {
 
      std::vector<IntervalVector> lines; /* lines (for unbounded polyhedron) */
                /* rays can be handled as classical vertices */
+     std::vector<IntervalMatrix> projection_rays; 
+	/* projection matrices for the extension cones of rays 
+	   each matrix is orthogonal */
 
-     std::forward_list<DDvertex> vertices;
-#if 0
-     std::forward_list<DDlink> total_links;
-#endif
+     std::forward_list<std::shared_ptr<DDvertex>> vertices;
      std::vector<Index> reffacets; /* indirection for facets */
 
      bool empty, flat;
@@ -251,7 +193,7 @@ inline bool DDbuildF2V::is_empty() const { return this->empty; }
 inline const IntervalMatrix &DDbuildF2V::get_M_EQ() const { return this->M_EQ; }
 inline const std::vector<IntervalVector> &DDbuildF2V::get_lines() const 
 	{ return this->lines; }
-inline const std::forward_list<DDvertex> &DDbuildF2V::get_vertices() const 
+inline const std::forward_list<std::shared_ptr<DDvertex>> &DDbuildF2V::get_vertices() const 
 	{ return this->vertices; }
 inline const std::vector<Index> &DDbuildF2V::get_reffacets() const 
 	{ return this->reffacets; }
@@ -272,16 +214,16 @@ struct DDfacet {
    ddfacetstatus status;
 
    std::vector<std::forward_list<DDfacet>::iterator> links;
-   std::vector<Index> vtx;
+   PosetElem vtx;
  
    DDfacet(CollectFacets::mapIterator facetIt,
 		std::vector<std::forward_list<DDfacet>::iterator> &nlinks,
-		std::vector<Index> &nvtx) : facetIt(facetIt), status(FACETNEW) {
+		PosetElem &nvtx) : facetIt(facetIt), status(FACETNEW) {
          this->links.swap(nlinks);
          this->vtx.swap(nvtx);
    }
 
-   bool addLnk(std::forward_list<DDfacet>::iterator a, bool check=false) {
+   bool add_link(std::forward_list<DDfacet>::iterator a, bool check=false) {
       if (check) {
          for (auto b : links) {
             if (a==b) return false;
@@ -291,7 +233,7 @@ struct DDfacet {
       return true;
    }
 
-   void removeLnk(const std::forward_list<DDfacet>::iterator &a) {
+   void remove_link(const std::forward_list<DDfacet>::iterator &a) {
       for (Index i=0;i<(Index)links.size();i++) {
          if (links[i]==a) { 
 	    links[i]=links[links.size()-1]; 
@@ -301,7 +243,7 @@ struct DDfacet {
       }
    }
 
-   void changeLnk(const std::forward_list<DDfacet>::iterator &a,
+   void change_link(const std::forward_list<DDfacet>::iterator &a,
 		const std::forward_list<DDfacet>::iterator &b) {
       for (Index i=0;i<(Index)links.size();i++) {
          if (links[i]==a) { links[i]=b; return; }
@@ -310,11 +252,8 @@ struct DDfacet {
       links.push_back(b);
    }
 
-   void addVtx(Index a) {
-      auto it = this->vtx.begin();
-      while (it != this->vtx.end() && (*it)<a) it++;
-      if (it!=this->vtx.end() && (*it)==a) return;
-      this->vtx.insert(it,a);
+   void add_vertex(Index a) {
+      this->vtx.add(a);
    }
 
 };
@@ -338,17 +277,17 @@ class DDbuildV2F {
      std::forward_list<DDfacet>::iterator addDDfacet(
 		const CollectFacets::mapIterator &it,
 		std::vector<std::forward_list<DDfacet>::iterator> &links,
-		std::vector<Index> &vtx);
+		PosetElem &vtx);
      /* can return facets.end() if insertion failed */
      std::forward_list<DDfacet>::iterator addDDfacet(
 		std::pair<Row,double> &&row_rhs,
 		std::vector<std::forward_list<DDfacet>::iterator> &links,
-		std::vector<Index> &vtx);
+		PosetElem &vtx);
      /* can return facets.end() if insertion failed */
      std::forward_list<DDfacet>::iterator addDDfacet(
  		const std::pair<Row,double> &row_rhs,
 		std::vector<std::forward_list<DDfacet>::iterator> &links,
-		std::vector<Index> &vtx);
+		PosetElem &vtx);
      /* can return facets.end() if insertion failed */
      std::forward_list<DDfacet>::iterator
 	 addFacetSon(const std::forward_list<DDfacet>::iterator &It1, 
@@ -365,7 +304,7 @@ class DDbuildV2F {
      
      std::shared_ptr<CollectFacets> facetsptr;
      std::forward_list<DDfacet> facets;
-     std::vector<Index> idVertices; /* list of vertices entered, useful as
+     PosetElem idVertices; /* list of vertices entered, useful as
                 long as there are eqfacets */
      Index nbIn=0;
      double tolerance =1e-8;

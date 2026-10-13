@@ -215,23 +215,23 @@ namespace codac2
       Parallelepiped parallelepiped_eval(const Args&... x) const
       {
         this->check_valid_inputs(x...);
-        assert_release(this->input_size() < this->output_size() &&
-                      "Parallelepiped evaluation requires more outputs than inputs.");
+        assert_release(this->input_size() <= this->output_size() &&
+                      "Parallelepiped evaluation can not take more input than output.");
         assert_release(this->input_size() > 0 &&
                     "Parallelepiped evaluation requires at least one input.");
 
         IntervalVector Y = this->eval(((typename Wrapper<Args>::Domain)(x)).mid()...);
-        Vector z = Y.mid();
+        Vector c = Y.mid();
 
         Matrix A = this->diff(((typename Wrapper<Args>::Domain)(x)).mid()...).mid();
 
         // Maximum error computation
-        double rho = error_peibos(Y, z, this->diff(x...), A, cart_prod(x...));
+        double rho = error_peibos(Y, c, this->diff(x...), A, cart_prod(x...));
 
         // Inflation of the parallelepiped
         Matrix A_inf = inflate_flat_parallelepiped(A, (cart_prod(x...).template cast<Interval>()).rad(), rho);
 
-        return Parallelepiped(z, A_inf);
+        return Parallelepiped(c, A_inf);
       }
 
       template<typename... Args>

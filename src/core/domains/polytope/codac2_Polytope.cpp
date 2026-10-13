@@ -155,19 +155,19 @@ Polytope::Polytope(const Parallelepiped &par) :
    IntervalMatrix u = inverse_enclosure(par.A);
    for (Index i=0;i<u.rows();i++) {
       this->add_constraint_band(IntervalRow(u.row(i)),
-			u.row(i).dot(par.z)+Interval(-1.0,1.0),0.0);
+			u.row(i).dot(par.c)+Interval(-1.0,1.0),0.0);
    }   
    IntervalVector range = IntervalVector::constant(par.A.cols(),
 					Interval(-1.0,1.0));
-   _box = par.z+par.A*range; /* FIXME : use box */
+   _box = par.c+par.A*range; /* FIXME : use box */
 }
 
 Polytope::Polytope(const Zonotope &zon) :
 	Polytope() {
-   _dim=zon.z.size();
+   _dim=zon.c.size();
    /* we use the vertices (note : can do better) */
    IntervalVector v = IntervalVector::constant(zon.A.cols(),-1.0);
-   this->_DDbuildV2F = std::make_unique<DDbuildV2F>(1,(zon.z+zon.A*v).mid());
+   this->_DDbuildV2F = std::make_unique<DDbuildV2F>(1,(zon.c+zon.A*v).mid());
    Index idV = 2;
    Index a = 0;
    while (a<v.size()) {
@@ -177,15 +177,15 @@ Polytope::Polytope(const Zonotope &zon) :
      } 
      if (a<v.size()) {
        v[a]=1.0; a=0;
-       this->_DDbuildV2F->add_vertex(idV++,IntervalVector(zon.z+zon.A*v));
+       this->_DDbuildV2F->add_vertex(idV++,IntervalVector(zon.c+zon.A*v));
      }
    }
    /* get the CollectFacets */
    _facets=_DDbuildV2F->getFacets();
    IntervalVector range = IntervalVector::constant(zon.A.cols(),
 					Interval(-1.0,1.0));
-   _box = zon.z+zon.A*range; /* FIXME : use box */
-   _facets->encompass_zonotope(IntervalVector(zon.z), 
+   _box = zon.c+zon.A*range; /* FIXME : use box */
+   _facets->encompass_zonotope(IntervalVector(zon.c), 
 		IntervalMatrix(zon.A), range, true);
    _DDbuildV2F.reset(); /* encompass may have added constraints */
    state = pol_state_init;
@@ -260,9 +260,9 @@ Interval Polytope::fast_bound(const FacetBase &base) const {
    }
    /* check the vertices if _buildF2V is up-to-date */
    if (state[F2VFORM]) {
-       const std::forward_list<DDvertex> &vertices=_DDbuildF2V->get_vertices();
-       for (const DDvertex &vt : vertices) {
-            IntervalVector vtB = _DDbuildF2V->compute_vertex(vt.vertex);
+       const std::forward_list<std::shared_ptr<DDvertex>> &vertices=_DDbuildF2V->get_vertices();
+       for (const std::shared_ptr<DDvertex> &vt : vertices) {
+            IntervalVector vtB = _DDbuildF2V->compute_vertex(vt->vertex);
             Interval a = base.row.dot(vtB);
             if (a.ub()<res.ub()) res=a;
        }
@@ -277,9 +277,9 @@ double Polytope::bound_row(const Row &r) const {
    this->build_DDbuildF2V();
    double a = -oo;
    if (state[EMPTY]) return a;
-   const std::forward_list<DDvertex> &vertices=_DDbuildF2V->get_vertices();
-   for (const DDvertex &vt : vertices) {
-        IntervalVector vtB = _DDbuildF2V->compute_vertex(vt.vertex);
+   const std::forward_list<std::shared_ptr<DDvertex>> &vertices=_DDbuildF2V->get_vertices();
+   for (const std::shared_ptr<DDvertex> &vt : vertices) {
+        IntervalVector vtB = _DDbuildF2V->compute_vertex(vt->vertex);
         Interval b = r.dot(vtB);
         a = std::max(a,b.ub());
    }
@@ -294,10 +294,13 @@ void Polytope::build_DDbuildF2V() const {
    }
    /* TODO : insert box progressively ? */
    _DDbuildF2V = std::make_unique<DDbuildF2V>(_dim,_box,_facets,true);
+   std::cout << "ETAT:" << (*_DDbuildF2V) << "\n";
    for (CollectFacets::mapCIterator it = _facets->get_map().begin();
 		it!=_facets->get_map().end(); ++it) {
       if ((*it).second.eqcst) continue;
+      std::cout << "ADD FACET: " << (*it) << "\n";
       _DDbuildF2V->add_facet(it);
+      std::cout << "ETAT:" << (*_DDbuildF2V) << "\n";
       if (_DDbuildF2V->is_empty()) { 
          this->set_empty_private();
          return;
@@ -308,6 +311,7 @@ void Polytope::build_DDbuildF2V() const {
 }
 
 void Polytope::minimize_constraints() const { 
+   std::cout << "minimize.\n";
    if (state[MINIMIZED]) return;
    if (state[EMPTY]) return;
    this->build_DDbuildF2V();
@@ -960,9 +964,9 @@ Polytope Polytope::direct_affine_transform(const IntervalMatrix &M,
    IntervalVector nBox = M*this->box()+P;
    std::vector<IntervalVector> resultat;
    if (state[EMPTY]) return Polytope(*this);
-   const std::forward_list<DDvertex> &vertices=_DDbuildF2V->get_vertices();
-   for (const DDvertex &vt : vertices) {
-        IntervalVector a = M*_DDbuildF2V->compute_vertex(vt.vertex)+P;
+   const std::forward_list<std::shared_ptr<DDvertex>> &vertices=_DDbuildF2V->get_vertices();
+   for (const std::shared_ptr<DDvertex> &vt : vertices) {
+        IntervalVector a = M*_DDbuildF2V->compute_vertex(vt->vertex)+P;
         resultat.push_back(a);
    }
    Polytope res(resultat);
@@ -975,9 +979,9 @@ Polytope Polytope::time_elapse(const IntervalVector &P,
    IntervalVector nBox = this->box()+T*P;
    std::vector<IntervalVector> resultat;
    if (state[EMPTY]) return Polytope(*this);
-   const std::forward_list<DDvertex> &vertices=_DDbuildF2V->get_vertices();
-   for (const DDvertex &vt : vertices) {
-        IntervalVector vert = _DDbuildF2V->compute_vertex(vt.vertex);
+   const std::forward_list<std::shared_ptr<DDvertex>> &vertices=_DDbuildF2V->get_vertices();
+   for (const std::shared_ptr<DDvertex> &vt : vertices) {
+        IntervalVector vert = _DDbuildF2V->compute_vertex(vt->vertex);
         resultat.push_back(vert+T.lb()*P);
         resultat.push_back(vert+T.ub()*P);
    }
@@ -1229,8 +1233,8 @@ std::vector<IntervalVector> Polytope::vertices() const {
    std::cout << *_DDbuildF2V << "\n";
    if (state[EMPTY]) return std::vector<IntervalVector>();
    std::vector<IntervalVector> ret;
-   for (const DDvertex &vtx : _DDbuildF2V->get_vertices()) {
-       ret.push_back(_DDbuildF2V->compute_vertex(vtx.vertex));
+   for (const std::shared_ptr<DDvertex> &vtx : _DDbuildF2V->get_vertices()) {
+       ret.push_back(_DDbuildF2V->compute_vertex(vtx->vertex));
    }
    return ret;
 }
