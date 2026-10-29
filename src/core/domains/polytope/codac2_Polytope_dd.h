@@ -57,8 +57,8 @@ struct DDvertex : DDvertex_base {
 
    /* constructor */
    DDvertex(Index id, Index dim) : DDvertex_base(dim), Id(id), status(VERTEXNEW) { }
-   DDvertex(Index id, const IntervalVector &v, Index vdim, const IntervalMatrix *proj) : DDvertex_base(vdim,v,proj), Id(id), status(VERTEXNEW) { }
-   DDvertex(Index id, const DDvertex &v1, DDvertex &v2, const IntervalRow &facet) : DDvertex_base(v1,v2,facet), Id(id), facets(v1.facets & v2.facets),
+   DDvertex(Index id, const IntervalVector &v) : DDvertex_base(v), Id(id), status(VERTEXNEW) { }
+   DDvertex(Index id, const DDvertex &v1, DDvertex &v2) : DDvertex_base(v1,v2), Id(id), facets(v1.facets & v2.facets),
     status(VERTEXNEW) { }  /* links are added after */
 
    /* should not be copyable */
@@ -66,7 +66,7 @@ struct DDvertex : DDvertex_base {
    DDvertex &operator=(const DDvertex &v) = delete;
 
    /* possibility of extension along the cone ? */
-   bool try_extend(const IntervalRow &facet);
+   bool try_extend(const IntervalRow &facet, const IntervalVector &intP);
 
    inline void reduce_vector() {
       reduce_vector_without_rounding(vertex);
@@ -145,8 +145,7 @@ class DDbuildF2V {
      static double tolerance;
 
   private:
-     int add_facet(Index idFacet, const IntervalRow &facet);
-     int add_facet_internal(Index idFacet, const IntervalRow &facet);
+     int add_facet_internal(Index idFacet, IntervalRow &facet);
      int add_facet_new_dimension(Index idFacet, const IntervalRow &facet, Index bestline);
      static bool add_link(DDvertex *V1, DDvertex *V2);
      void add_zero(const IntervalRow &facet);
@@ -154,7 +153,7 @@ class DDbuildF2V {
 			const PosetElem &fcts);
 
      DDvertex* addDDvertex(Index fdim);
-     DDvertex* addDDvertex(const IntervalVector &v, Index vdim); 
+     DDvertex* addDDvertex(const IntervalVector &v); 
      DDvertex* addVertexSon(const DDvertex &p1,
 		 DDvertex &p2, const IntervalRow &facet, Index idFacet); 
 /*     void removeVertex(Index Id, bool removeLnks); */
@@ -176,9 +175,8 @@ class DDbuildF2V {
 
      std::vector<IntervalVector> lines; /* lines (for unbounded polyhedron) */
                /* rays can be handled as classical vertices */
-     std::vector<IntervalMatrix> projection_rays; 
-	/* projection matrices for the extension cones of rays 
-	   each matrix is orthogonal */
+
+     IntervalVector intPoint; /* interior point/ray, if available */
 
      std::forward_list<std::shared_ptr<DDvertex>> vertices;
      std::vector<Index> reffacets; /* indirection for facets */

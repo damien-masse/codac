@@ -21,6 +21,7 @@
 #include <memory>
 
 #include "codac2_Index.h"
+#include "codac2_assert.h"
 
 //class DDvertex;
 
@@ -37,17 +38,19 @@ const std::size_t poset_size_bitset =
 		std::numeric_limits<unsigned long long>::digits;
 using poset_bitset = std::bitset<poset_size_bitset>;
 struct SetBitset_unit : std::pair<int64_t,poset_bitset> {
+   SetBitset_unit() :
+         std::pair<int64_t,poset_bitset>(0,0) { }
 
    SetBitset_unit(Index b,poset_bitset s) :
          std::pair<int64_t,poset_bitset>(b,s) { }
 
    static inline size_t base_offset(Index n, int64_t &cbase) {
-     if (n>=0) { cbase=n/poset_size_bitset; return n%poset_size_bitset; }
-     cbase = (n-(poset_size_bitset-1))/poset_size_bitset;
-     return n-(cbase/poset_size_bitset);
+     if (n>=0) { cbase=n/(int64_t)poset_size_bitset; return n%(int64_t)poset_size_bitset; }
+     cbase = (n-((int64_t)poset_size_bitset-1))/(int64_t)poset_size_bitset;
+     return n-(cbase*poset_size_bitset);
    }
    static inline Index value(int64_t cbase, size_t offset) {
-     return cbase*poset_size_bitset+offset;
+     return cbase*(int64_t)poset_size_bitset+offset;
    }
 };
 
@@ -63,10 +66,23 @@ struct PosetElem {
    /** \brief empty element */
    PosetElem() : nb_elems(0) {}
 
+   /** \brief copy */
+   PosetElem(const PosetElem &p1) = default;
+   PosetElem &operator=(const PosetElem &p1) = default;
+
    /** \brief build an element (e1 inter e2)
     *  \param e1 ordered set
     *  \param e2 ordered set */
    PosetElem(const PosetElem &p1, const PosetElem &p2);
+
+   /** \brief try to put the intersection of p1 and p2 in
+    *  *this, with a minimum of elements. returns false if the
+    *  minimum is not reached. Inlined for more speed.
+    *  note: the vector elems is supposed to have enough size
+    *  (starting from a copy of p1), but the size is reduced if
+    *  returns true) */
+   bool try_intersect(const PosetElem &p1, const PosetElem &p2, 
+			Index min_nb);
 
    /** \brief build an element (e1 inter e2)
     *  \param e1 ordered set
@@ -131,6 +147,40 @@ struct PosetElem {
    friend std::ostream& operator<<(std::ostream &out, const PosetElem &p);
 };
 
+inline bool PosetElem::try_intersect(const PosetElem &p1, const PosetElem &p2, 
+			Index min_nb) {
+   std::vector<SetBitset_unit>::size_type i=0,j=0,k=0;
+   this->nb_elems=0;
+   Index reste1 = p1.nb_elems;
+   Index reste2 = p2.nb_elems;
+   while(i<p1.elems.size() && j<p2.elems.size()) {
+      if (p1.elems[i].first==p2.elems[j].first) {
+          poset_bitset &place = this->elems[k].second;
+          place = p1.elems[i].second & p2.elems[j].second;
+          if (place.any()) {
+             this->nb_elems += this->elems[k].second.count();
+             this->elems[k].first=p1.elems[i].first;
+	     k++;
+          }
+	  reste1 -= p1.elems[i].second.count();
+	  reste2 -= p2.elems[j].second.count();
+          if (this->nb_elems+std::min(reste1,reste2)<min_nb) return false;
+          i++; j++;
+      } else if (p1.elems[i].first<p2.elems[j].first) {
+	  reste1 -= p1.elems[i].second.count();
+          if (this->nb_elems+reste1<min_nb) return false;
+          i++;
+      } else {
+	  reste2 -= p2.elems[j].second.count();
+          if (this->nb_elems+reste2<min_nb) return false;
+          j++;
+      }
+   }
+   assert_release(this->nb_elems>=min_nb);
+   this->elems.resize(k);
+   return true;
+}
+
 /* comparisons of PosetElem for map. Note: we give a priority order, i.e.
    bigger sets are first */
 struct PosetElemCmp
@@ -138,7 +188,7 @@ struct PosetElemCmp
    bool operator()(const PosetElem &e1, const PosetElem &e2) const {
       if (e1.nb_elems>e2.nb_elems) return true;
       if (e1.nb_elems<e2.nb_elems) return false;
-      std::vector<long int>::size_type i=0,j=0;
+      std::vector<SetBitset_unit>::size_type i=0,j=0;
       while(i<e1.elems.size() && j<e2.elems.size()) {
         if (e1.elems[i].first<e2.elems[j].first)
           return true;

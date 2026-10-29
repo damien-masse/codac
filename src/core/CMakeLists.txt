@@ -90,6 +90,7 @@
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Facet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_PosetMax.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_PosetMax.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope_vert.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope_util.h
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope_util.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/domains/polytope/codac2_Polytope_dd.h

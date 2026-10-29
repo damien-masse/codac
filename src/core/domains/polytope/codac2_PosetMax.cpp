@@ -16,6 +16,7 @@
 
 #include "codac2_Index.h"
 #include "codac2_PosetMax.h"
+#include "codac2_assert.h"
 
 using namespace codac2;
 
@@ -62,7 +63,7 @@ bool PosetElem::add(Index e) {
          ++it;
      }
      if (it==elems.rend() || it->first<n) {
-         elems.emplace(it.base(),n,(1<<a));
+         elems.emplace(it.base(),n,((uint64_t)1<<a));
          this->nb_elems++;
          return true;
      } 
@@ -133,27 +134,31 @@ int PosetElem::comp(const PosetElem &pm) const {
              if (!geq || same_length) return 2;
              leq=false;
           }
-          inter = (~e1[i].second) & e1[j].second;
+          inter = (~e1[i].second) & e2[j].second;
           if (inter.any()) {
              if (!leq || same_length) return 2;
              geq=false;
           }
           i++; j++;
        } else if (e1[i].first<e2[j].first) {
+          assert_release(e1[i].second.any());
           if (!geq || same_length) return 2;
           leq=false;
           i++;
        } else {
+          assert_release(e2[j].second.any());
           if (!leq || same_length) return 2;
           geq=false;
           j++;
        }
      }
      if (i<e1.size()) {
+        assert_release(e1[i].second.any());
         if (!geq) return 2;
-        leq=false;
+	return 1;
      }
      if (j<e2.size() || !geq) {
+        assert_release(!geq || e2[j].second.any());
         if (!leq) return 2;
         return -1;
      }
