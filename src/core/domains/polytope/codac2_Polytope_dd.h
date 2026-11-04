@@ -80,8 +80,6 @@ struct DDvertex : DDvertex_base {
       return links.insert(a).second;
    }
 
-//   void addLnkVertex(const std::forward_list<DDvertex>::iterator &V1);
-
    inline bool remove_link(DDvertex *a) {
       return links.erase(a)==1;
    }
@@ -199,67 +197,59 @@ inline const std::vector<Index> &DDbuildF2V::get_reffacets() const
 
 /** \brief structure for facets in BuildF2V */
 struct DDfacet {
-   CollectFacets::mapIterator facetIt;
+   CollectFacets::mapIterator facetIt; /* contains the Row, the Id */
    double lambda;
    
    enum ddfacetstatus {
      FACETNEW,
-     FACETIN,
+     FACETLT,
      FACETON,
-     FACETOUT,
+     FACETGT,
      FACETREM
    };
    ddfacetstatus status;
 
-   std::vector<std::forward_list<DDfacet>::iterator> links;
-   PosetElem vtx;
+   std::unordered_set<DDfacet*> links; 
+   PosetElem vertices;
  
-   DDfacet(CollectFacets::mapIterator facetIt,
-		std::vector<std::forward_list<DDfacet>::iterator> &nlinks,
-		PosetElem &nvtx) : facetIt(facetIt), status(FACETNEW) {
-         this->links.swap(nlinks);
-         this->vtx.swap(nvtx);
+   inline DDfacet(CollectFacets::mapIterator facetIt) :
+			 facetIt(facetIt), status(FACETNEW) {
    }
 
-   bool add_link(std::forward_list<DDfacet>::iterator a, bool check=false) {
-      if (check) {
-         for (auto b : links) {
-            if (a==b) return false;
-         } 
-      }
-      this->links.push_back(a);
-      return true;
+   inline DDfacet(CollectFacets::mapIterator facetIt,
+		std::unordered_set<DDfacet*> &&nlinks,
+		PosetElem &nvtces) : facetIt(facetIt), status(FACETNEW), 
+		links(nlinks) {
+         this->vertices.swap(nvtces);
    }
 
-   void remove_link(const std::forward_list<DDfacet>::iterator &a) {
-      for (Index i=0;i<(Index)links.size();i++) {
-         if (links[i]==a) { 
-	    links[i]=links[links.size()-1]; 
-	    links.pop_back();
-            return;
-         }
-      }
+   inline bool add_link(DDfacet* a) {
+      return links.insert(a).second;
    }
 
-   void change_link(const std::forward_list<DDfacet>::iterator &a,
-		const std::forward_list<DDfacet>::iterator &b) {
-      for (Index i=0;i<(Index)links.size();i++) {
-         if (links[i]==a) { links[i]=b; return; }
-      }
-      /* should not happen */
-      links.push_back(b);
+   inline bool remove_link(DDfacet *a) {
+      return links.erase(a)==1;
    }
 
-   void add_vertex(Index a) {
-      this->vtx.add(a);
+   inline void change_link(DDfacet *a, DDfacet *b) {
+      links.erase(a);
+      links.insert(b);
    }
 
+   inline void add_vertex(Index a) {
+      this->vertices.add(a);
+   }
+
+   inline const PosetElem& get_vertices() const {
+      return this->vertices;
+   }
 };
 
 /** \brief construction of an (approximate) set of facets from a
  *  a set of vertices */
 class DDbuildV2F {
   public:
+     /* create with the initial vertex */
      DDbuildV2F(Index idVertex, const Vector &vertex);
    
      int add_vertex(Index idVertex, const Vector& vertex);
@@ -271,27 +261,16 @@ class DDbuildV2F {
 
 
   private:
-     /* can NOT return facets.end() */
-     std::forward_list<DDfacet>::iterator addDDfacet(
-		const CollectFacets::mapIterator &it,
-		std::vector<std::forward_list<DDfacet>::iterator> &links,
+     /* can NOT return nullptr */
+     DDfacet *addDDfacet(
+		CollectFacets::mapIterator it,
+		std::unordered_set<DDfacet*> &&links,
 		PosetElem &vtx);
      /* can return facets.end() if insertion failed */
-     std::forward_list<DDfacet>::iterator addDDfacet(
-		std::pair<Row,double> &&row_rhs,
-		std::vector<std::forward_list<DDfacet>::iterator> &links,
-		PosetElem &vtx);
-     /* can return facets.end() if insertion failed */
-     std::forward_list<DDfacet>::iterator addDDfacet(
- 		const std::pair<Row,double> &row_rhs,
-		std::vector<std::forward_list<DDfacet>::iterator> &links,
-		PosetElem &vtx);
-     /* can return facets.end() if insertion failed */
-     std::forward_list<DDfacet>::iterator
-	 addFacetSon(const std::forward_list<DDfacet>::iterator &It1, 
-		std::forward_list<DDfacet>::iterator &It2, Index idVertex); 
-     void removeFacet(std::forward_list<DDfacet>::iterator It,
-			 bool removeLnks);
+     DDfacet *addDDfacet(std::pair<Row,double> &&row_rhs);
+     /* can return nullptr if insertion failed */
+     DDfacet *addFacetSon(const DDfacet &Fc1, DDfacet &Fc2, Index idVertex); 
+     void removeFacet(DDfacet *It, bool removeLnks);
 
      inline std::pair<Row,double> reduce_facet(const Row &row, double rhs) {
         std::pair<Row,double> ret(row,rhs);
@@ -301,7 +280,7 @@ class DDbuildV2F {
      }
      
      std::shared_ptr<CollectFacets> facetsptr;
-     std::forward_list<DDfacet> facets;
+     std::forward_list<std::shared_ptr<DDfacet>> facets;
      PosetElem idVertices; /* list of vertices entered, useful as
                 long as there are eqfacets */
      Index nbIn=0;

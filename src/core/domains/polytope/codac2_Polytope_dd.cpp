@@ -206,46 +206,6 @@ DDvertex* DDbuildF2V::addVertexSon(const DDvertex &p1,DDvertex &p2,
     return ret.get();
 }
 
-#if 0
-Index DDbuildF2V::addVertexSon(const DDvertex &p1, DDvertex &p2, double rhs,
-        Index idFacet) {
-    Interval lambdaP1=p1.lambda.lb();
-    Interval lambdaP2=p2.lambda.lb();
-    IntervalVector newV = ((lambdaP1-rhs)*p2.vertex
-          + (rhs-lambdaP2)*p1.vertex)/(lambdaP1-lambdaP2);
-#if 0
-    Interval ratio2=1.0/(1.0-p1.lambda/p2.lambda); /* maximize ratio */
-    ratio2 &= Interval(0.0,1.0);
-    IntervalVector newV = ratio2.ub()*p1.vertex + 
-		(Interval(1.0)-ratio2.ub())*p2.vertex;
-#endif
-    /* computation of facets */
-    std::vector<Index> nfcts;
-    Index a1=0; Index a2=0;
-    bool idFacetAdded=false;
-    while (a1<(Index)p1.fcts.size() && a2<(Index)p2.fcts.size()) {
-       if (p1.fcts[a1]<p2.fcts[a2]) {
-          a1++; if (a1==(Index)p1.fcts.size()) break;
-       } else if (p2.fcts[a2]<p1.fcts[a1]) {
-          a2++; if (a2==(Index)p2.fcts.size()) break;
-       } else {
-         if (p1.fcts[a1]>idFacet && !idFacetAdded) {
-            nfcts.push_back(idFacet);
-            idFacetAdded=true;
-         }
-         nfcts.push_back(p1.fcts[a1]);
-         a1++; a2++;
-       }
-    }
-    if (!idFacetAdded) nfcts.push_back(idFacet);
-    std::set<Index> lnks;
-    lnks.insert(p2.Id);
-    Index newId=this->addDDvertex(newV,lnks,nfcts);
-    p2.replaceLnks(p1.Id,newId);
-    return newId;
-}
-#endif
-
 IntervalVector DDbuildF2V::compute_vertex(const IntervalVector &vect) const {
    /* FIXME : does not handle "hybrid" vertices correctly */
    if (!flat) {
@@ -256,15 +216,6 @@ IntervalVector DDbuildF2V::compute_vertex(const IntervalVector &vect) const {
    return this->M_EQ*(vect/vect[0]);
 }
 
-
-#if 0  /* useful ? */
-struct CmpDD {
-   bool operator()(const std::forward_list<DDvertex>::iterator &a,
-		const std::forward_list<DDvertex>::iterator &b) {
-       return (b->vertex[0].lb()*a->lambda.lb()<=a->vertex[0].lb()*b->lambda.lb());
-   }
-};
-#endif
 
 bool DDbuildF2V::add_link(DDvertex *V1,
                       DDvertex *V2) {
@@ -379,7 +330,6 @@ int DDbuildF2V::add_facet_internal(Index idFacet, IntervalRow &facet) {
    if (bestline!=-1) {
       return add_facet_new_dimension(idFacet,facet,bestline);
    }
-   std::cout << "Step 1\n";
    /* end of line treatments , the following 
       is when no line is available */
    int nbLT=0;
@@ -389,30 +339,37 @@ int DDbuildF2V::add_facet_internal(Index idFacet, IntervalRow &facet) {
    bool notempty=false;
    std::vector<std::shared_ptr<DDvertex>> onvector;
    std::vector<std::shared_ptr<DDvertex>> gtvector;
-   IntervalVector *bestLT = nullptr;
-   Interval bestlambda;
-   while (1) {
+   {
+     std::shared_ptr<DDvertex> bestLT = nullptr;
+     Interval bestlambda;
+     double normFacet = facet.tail(fdim-1).mag().maxCoeff();
    /* looking for the "best" LT vertex */
      for (auto &vt_ptr : vertices) {
         DDvertex &vt = (*vt_ptr);
         vt.lambda = facet.dot(vt.vertex);
+        Interval lambda_normalised;
+        if (vt.is_ray()) {
+           lambda_normalised = vt.lambda/(normFacet*vt.vertex.norm());
+        } else {
+           lambda_normalised = vt.lambda/(normFacet*vt.vertex[0]);
+        }
         notempty |= (vt.lambda.lb()<=0.0);
         nbTot++;
-        if (vt.lambda.ub()< -this->tolerance) {
+        if (lambda_normalised.ub()< -this->tolerance) {
            vt.status = DDvertex::VERTEXLT;
   	   nbLT++;
-           if (bestLT==nullptr ||
-	  	(vt.is_ray() && (*bestLT)[0].lb()>0.0) 
-		|| ((vt.is_ray() || (*bestLT)[0].lb()>0.0) &&
+           if (bestLT==nullptr || bestLT->status!=DDvertex::VERTEXLT ||
+	  	(vt.is_ray() && !bestLT->is_ray()>0.0) 
+		|| ((vt.is_ray() || !bestLT->is_ray()) &&
 			vt.lambda.ub()<bestlambda.ub())) {
-		bestLT=&vt.vertex;
+		bestLT=vt_ptr;
                 bestlambda = vt.lambda;
            }
            continue;
         }
         if (vt.lambda.lb()>=0.0) {
            nbGE++;
-           if (vt.lambda.lb()>this->tolerance) {
+           if (lambda_normalised.lb()>this->tolerance) {
               nbGT++;
               vt.status=DDvertex::VERTEXGT;
 	      gtvector.push_back(vt_ptr);
@@ -420,57 +377,84 @@ int DDbuildF2V::add_facet_internal(Index idFacet, IntervalRow &facet) {
            }
            vt.status=DDvertex::VERTEXGE;
         } else vt.status=DDvertex::VERTEXON;
+        if (vt.lambda.lb()<=0.0)
+            if (bestLT==nullptr || 
+		   (bestLT->status!=DDvertex::VERTEXLT &&
+	                ((vt.is_ray() && !bestLT->is_ray())
+		  || ((vt.is_ray() || !bestLT->is_ray()) &&
+                        vt.lambda.ub()<bestlambda.ub())))) {
+		bestLT=vt_ptr;
+                bestlambda = vt.lambda;
+        }
         onvector.push_back(vt_ptr);
      }
      if (!notempty) { this->empty=true; vertices.clear(); return -1; }
      if (nbGT==0) return 0;
-     if (nbLT!=0) break;
+     if (nbLT==0) {
      /* with nbLT==0, we have a (almost) flat polyhedron. A very basic
-        solution would be to extend the facet and try again ? That's NOT
-        a very good solution but possibly the least worst one.
-        (also, see the problem with rays: if the ray-polyhedron is flat,
-         it means changing the lhs of the facet */ 
-     nbGT=0; nbGE=0; nbTot=0;
-     onvector.clear();
-     gtvector.clear();
-     facet[0] -= this->tolerance; 
-   }
-   /* work on interior point */
-   {
-       Interval facetPoint = facet.dot(this->intPoint);
-     
-       if (facetPoint.ub()>bestlambda.ub()/(this->vdim+1)) {
-          /* I' = alpha I + (1-alpha) bestLT
-             s.t. facet I' <= bestlambda.ub()/(this->vdim+1)
-             alpha facetpoint + (1-alpha) bestlambda 
-				<= bestlambda/(this->vdim+1)
-             alpha <= -bestlambda*vdim/((1+vdim)*(facetpoint.up-bestlambda))
-          */
-          Interval alpha = (-bestlambda*this->vdim)/
-			((1+this->vdim)*(facetPoint.ub()-bestlambda));
-          this->intPoint = alpha.lb()*this->intPoint + 
-			(Interval(1.0)-alpha.lb())*(*bestLT);
+        solution would be to extend the facet and try again. Another
+        one is to slightly move a vertex (preferably not a ray) so that the
+        polyhedron is no longer flat. */
+       assert_release(bestLT!=nullptr);
+       Interval goal;
+       if (bestLT->is_ray()) {
+          goal = -2.0*this->tolerance*(normFacet*bestLT->vertex.norm());
+       } else {
+          goal = -2.0*this->tolerance*(normFacet*bestLT->vertex[0]);
        }
+       Interval alpha = (goal-bestLT->lambda)/
+  			(facet.dot(this->intPoint)-bestLT->lambda);
+       if (alpha.lb()<0.0) {
+          alpha=alpha.lb();
+          bestLT->vertex = alpha*this->intPoint +
+  			(1.0-alpha)*bestLT->vertex;
+          bestLT->lambda = facet.dot(bestLT->vertex);
+          bestlambda = bestLT->lambda;
+          assert_release(bestLT->lambda.lb()<=goal.ub());
+          bestLT->status=DDvertex::VERTEXLT;
+       }
+     } else 
+   /* work on interior point */
+     {
+         Interval facetPoint = facet.dot(this->intPoint);
+       
+         if (facetPoint.ub()>bestlambda.ub()/(this->vdim+1)) {
+            /* I' = alpha I + (1-alpha) bestLT
+               s.t. facet I' <= bestlambda.ub()/(this->vdim+1)
+               alpha facetpoint + (1-alpha) bestlambda 
+  				<= bestlambda/(this->vdim+1)
+               alpha <= -bestlambda*vdim/((1+vdim)*(facetpoint.up-bestlambda))
+            */
+            Interval alpha = (-bestlambda*this->vdim)/
+  			((1+this->vdim)*(facetPoint.ub()-bestlambda));
+            this->intPoint = alpha.lb()*this->intPoint + 
+  			(Interval(1.0)-alpha.lb())*(bestLT->vertex);
+  	  reduce_vector_without_rounding(this->intPoint);
+         }
+     }
    }
-
 
    Index codeFacet = reffacets.size();
    reffacets.push_back(idFacet);
    std::vector<DDvertex *> newlist;
    for (auto &vt_ptr : onvector) {
       DDvertex &vt = (*vt_ptr);
+      if (vt.status==DDvertex::VERTEXLT) continue; 
+		/* in case this specific vertex was changed */
       if (vt.try_extend(facet,this->intPoint)) { 
          nbGE++;
          vt.status = DDvertex::VERTEXGE;
       }
       if (vt.status==DDvertex::VERTEXGE) {
 	vt.add_facet(codeFacet);
-        newlist.push_back(&(*vt_ptr));
+        newlist.push_back(vt_ptr.get());
       } else vt.status = DDvertex::VERTEXLT; 
 			/* ON should not exist: it's GT, GE or LT */
    }
 
+#ifdef DEBUG_CODAC2_DD
    std::cout << "Step 2 GT " << nbGT << " GE " << nbGE << " LT " << nbLT << "\n";
+#endif
    Index gtZero=0;
 
    for (std::shared_ptr<DDvertex> &actVertex : gtvector) {
@@ -515,7 +499,9 @@ int DDbuildF2V::add_facet_internal(Index idFacet, IntervalRow &facet) {
        }
        if (added) gtZero++;
    }
+#ifdef DEBUG_CODAC2_DD
    std::cout << "Step 3 newlist " << newlist.size() << " " << "gtZero " << gtZero << "\n";
+#endif
    /* travail sur les liens */
    PosetElemMap<std::pair<DDvertex*, DDvertex*>> mapFcts;
    for (auto it1=newlist.begin();it1!=newlist.end();++it1) {
@@ -530,9 +516,8 @@ int DDbuildF2V::add_facet_internal(Index idFacet, IntervalRow &facet) {
           }
        }
    }
-   std::cout << "Step 4 mapFcts " << mapFcts.size() << "\n";
 #ifdef DEBUG_CODAC2_DD
-   std::cout << " size mapFcts " << mapFcts.size() << "\n";
+   std::cout << "Step 4 size mapFcts " << mapFcts.size() << "\n";
 #endif
    Index nb_added=0;
    for (auto mapIt = mapFcts.begin();
@@ -557,9 +542,8 @@ int DDbuildF2V::add_facet_internal(Index idFacet, IntervalRow &facet) {
 #endif
    }
 #ifdef DEBUG_CODAC2_DD
-   std::cout << " liens ajoutés " << nb_added << "\n";
+   std::cout << "Step 5 liens ajoutés " << nb_added << "\n";
 #endif
-   std::cout << "Step 5 " << nb_added << "\n";
    vertices.remove_if([](const std::shared_ptr<DDvertex> &v) 
 			{ return v->status==DDvertex::VERTEXREM; });
    return 1;
@@ -664,6 +648,7 @@ IntervalVector normalise(const IntervalVector &v) {
    return res/res[0].lb();
 }
 
+/* debug printing */
 std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build) {
    os << "DDbuildF2V (" << /*build.vertices.size() <<*/ " vtx) : " << std::endl;
    os << "   " << build.lines.size() << " lines : " << std::endl;
@@ -697,56 +682,6 @@ std::ostream& operator<<(std::ostream& os, const DDbuildF2V& build) {
 }
 
 /*****************************/
-/*** DDbuildF2V::EqFacet *****/
-/*****************************/
-/* management of the equality constraints for DDbuildF2V */
-#if 0
-void DDbuildF2V::EqFacet::adapt_eqconstraint(const IntervalVector &bbox,
-                                Row &cst, Interval &rhs) const {
-           Interval alpha(cst[dim]); cst[dim]=0.0;
-           IntervalRow newcst = cst + alpha*this->eqcst;
-           cst = newcst.mid();
-           rhs += (newcst-cst).dot(bbox)-alpha*valcst;
-}
-void DDbuildF2V::EqFacet::adapt_ineqconstraint(IntervalRow &cst, double &rhs)
-	 const {
-           Interval alpha(cst[dim]); cst[dim]=0.0;
-           cst = cst + alpha*this->eqcst;
-           rhs = (rhs-alpha*valcst).ub();
-}
-DDbuildF2V::EqFacet 
-	DDbuildF2V::EqFacet::build_EqFacet(const IntervalVector &bbox,
-                        const Row &cst, Interval &rhs) {
-            /* identification of the dimension */
-            Index dim = -1;
-            double val=0;
-            for (Index i=0;i<cst.size();i++) {
-                double v2 = std::abs(cst[i]);
-                if (v2>val) {
-                   dim=i;
-                   val = v2;
-                }
-            }
-            if (dim==-1) throw 
-			std::domain_error("zero vector in build_EqFacet");
-            IntervalRow newcst(cst);
-            val=cst[dim];
-            newcst[dim]=0.0;
-            newcst = newcst/val;
-            rhs = rhs/val - (newcst-newcst.mid()).dot(bbox);
-            return EqFacet(dim,-newcst.mid(),rhs);
-}
-
-void DDbuildF2V::EqFacet::adapt_box(IntervalVector &bbox) const {
-    Interval eval = this->eqcst.dot(bbox) + valcst;
-    if ((bbox[this->dim] & eval).is_empty()) {
-       bbox.set_empty();
-    }
-    bbox[this->dim]=0;
-}
-#endif
-
-/*****************************/
 /*** DDbuildV2F::EqFacet *****/
 /*****************************/
 
@@ -761,30 +696,27 @@ DDbuildV2F::DDbuildV2F(Index idVertex, const Vector &vertex) :
    idVertices.add(idVertex);
 }
 
-std::forward_list<DDfacet>::iterator DDbuildV2F::addFacetSon(
-		const std::forward_list<DDfacet>::iterator &It1, 
-                std::forward_list<DDfacet>::iterator &It2, Index idVertex) {
-    const CollectFacets::mapIterator &p1 = It1->facetIt;
-    const CollectFacets::mapIterator &p2 = It2->facetIt;
+DDfacet* DDbuildV2F::addFacetSon(
+		const DDfacet &Fc1, 
+                DDfacet &Fc2, Index idVertex) {
+    const CollectFacets::mapIterator &p1 = Fc1.facetIt;
+    const CollectFacets::mapIterator &p2 = Fc2.facetIt;
 #ifdef DEBUG_CODAC2_DD
     std::cout << " p1.facet.row " <<  p1->first.row << std::endl;
     std::cout << " p2.facet.row " <<  p2->first.row << std::endl;
 #endif
-    Row newV = - It2->lambda*p1->first.row + It1->lambda*p2->first.row;
-    double newRhs = - It2->lambda*p1->second.rhs + It1->lambda*p2->second.rhs;
+    Row newV = -Fc2.lambda*p1->first.row + Fc1.lambda*p2->first.row;
+    double newRhs = -Fc2.lambda*p1->second.rhs + Fc1.lambda*p2->second.rhs;
 #ifdef DEBUG_CODAC2_DD
     std::cout << " newV " << newV << std::endl;
     std::cout << " newRhs " << newRhs << std::endl;
 #endif
     /* computation of vertices */
-    PosetElem nvtx(It1->vtx,It2->vtx);
-    nvtx.add(idVertex);
-    std::vector<std::forward_list<DDfacet>::iterator> lnks;
-    lnks.push_back(It2);
-    std::forward_list<DDfacet>::iterator
-	 newF=this->addDDfacet(reduce_facet(newV,newRhs),lnks,nvtx); 
-    if (newF!=facets.end()) It2->change_link(It1,newF);
-	else It2->remove_link(It1);
+    DDfacet *newF=this->addDDfacet(reduce_facet(newV,newRhs)); 
+    if (newF!=nullptr) {
+        newF->vertices = PosetElem(Fc1.vertices,Fc2.vertices);
+        newF->add_vertex(idVertex);
+    }
     return newF;
 }
 
@@ -822,7 +754,7 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
       if (eqViolated!=-1) {
          if (facets.empty()) {
             this->nbIn=0;
-            std::vector<std::forward_list<DDfacet>::iterator> lnk;
+            std::unordered_set<DDfacet*> lnk;
             PosetElem vtx; 
             vtx.add(idVertex);
             Interval nrhsI = eqViolatedIt->first.row.dot(vertex);
@@ -831,26 +763,25 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
 		facetsptr->dissociate_eqFacet(eqViolated,nrhs);
 	    assert_release(newIt!=facetsptr->endFacet());
             if (delta.lb()>0.0) {
-               auto a = this->addDDfacet(eqViolatedIt,lnk,vtx);
+               auto a = this->addDDfacet(eqViolatedIt,std::move(lnk),vtx);
                vtx = idVertices;
                lnk = { a };
-               auto b = this->addDDfacet(newIt,lnk,vtx);
-	       a->add_link(b,false);
+               auto b = this->addDDfacet(newIt,std::move(lnk),vtx);
+	       a->add_link(b);
             } else {
-               auto a = this->addDDfacet(newIt,lnk,vtx);
+               auto a = this->addDDfacet(newIt,std::move(lnk),vtx);
                vtx = idVertices;
                lnk = { a };
-               auto b = this->addDDfacet(eqViolatedIt,lnk,vtx);
-	       a->add_link(b,false);
+               auto b = this->addDDfacet(eqViolatedIt,std::move(lnk),vtx);
+	       a->add_link(b);
            }
            cnt=2;
          } else {
            /* add the remaining inequality, linked with all existing facets */
-           std::vector<std::forward_list<DDfacet>::iterator> lnk;
-           for (std::forward_list<DDfacet>::iterator it =
-			facets.begin(); it!=facets.end(); ++it) {
-                 it->status=DDfacet::FACETOUT; /* to remove FACETNEW */
-		 lnk.push_back(it);
+           std::unordered_set<DDfacet*> lnk;
+           for (auto fct : facets) {
+                 fct->status=DDfacet::FACETON; /* to remove FACETNEW */
+		 lnk.insert(fct.get());
            } 
            Row saveEqrow = eqViolatedIt->first.row;
            double saveRhs = eqViolatedIt->second.rhs;
@@ -863,158 +794,149 @@ int DDbuildV2F::add_vertex(Index idVertex, const IntervalVector& vertex) {
 			        is not treated, as it should not happen */
            PosetElem vtx = idVertices;
            
-           std::forward_list<DDfacet>::iterator u = 
+           DDfacet *u = 
 		(eqViolatedIt != facetsptr->endFacet() ? 
-			this->addDDfacet(eqViolatedIt,lnk,vtx) :
-			facets.end());
+			this->addDDfacet(eqViolatedIt,std::move(lnk),vtx) :
+			nullptr);
            /* change all existing facets to take the new vertex into account */
            /* no facet should be removed, theoretically, but we
 	    * nevertheless consider this possibility */
-           std::forward_list<DDfacet>::iterator it_f=facets.before_begin();
-           std::forward_list<DDfacet>::iterator nxt = facets.begin();
+           std::forward_list<std::shared_ptr<DDfacet>>::iterator 
+			it_f=facets.before_begin();
+           std::forward_list<std::shared_ptr<DDfacet>>::iterator
+		        nxt = facets.begin();
            while (nxt!=facets.end()) {
-               DDfacet &f = (*nxt);
-               if (f.status!=DDfacet::FACETOUT) { it_f=nxt; ++nxt; continue; }
+               DDfacet &f = (*(*nxt));
+               if (f.status!=DDfacet::FACETON) { it_f=nxt; ++nxt; continue; }
                Interval q = f.facetIt->second.rhs-
 				f.facetIt->first.row.dot(vertex);
 	       double correction = (q/delta).mid();
-               if (u!=facets.end()) f.add_link(u);
+               if (u!=nullptr) f.add_link(u);
                f.add_vertex(idVertex);
  	       bool success;
                std::tie(f.facetIt, success) =
 		   facetsptr->change_ineqFacet(f.facetIt->second.Id,
 			    f.facetIt->first.row + correction*saveEqrow,
 			    f.facetIt->second.rhs + correction*saveRhs);
-	       if (!success) { this->removeFacet(nxt,true); 
+	       if (!success) { this->removeFacet(nxt->get(),true); 
 			       facets.erase_after(it_f); 
 			       nxt=it_f; ++nxt; continue; }
                it_f=nxt; ++nxt;
            }
-           cnt=(u!=facets.end() ? 1 : 0);
+           cnt=(u!=nullptr ? 1 : 0);
          }
          if (facetsptr->nbeqfcts()>0) idVertices.add(idVertex);
          return cnt;
       } else idVertices.add(idVertex); /* and follows */
    }
    /* no equalities removed */
-   for (DDfacet &d : facets) {
-       if (d.status==DDfacet::FACETREM) continue;
-       Interval calc = d.facetIt->first.row.dot(vertex)-d.facetIt->second.rhs;
-       d.lambda = calc.lb();
-       if (calc.mig()<this->tolerance) { d.status=DDfacet::FACETON; }
-       else if (calc.lb()>0.0) { d.status=DDfacet::FACETOUT; }
-       else { d.status=DDfacet::FACETIN; }
+   for (std::shared_ptr<DDfacet> &d : facets) {
+       if (d->status==DDfacet::FACETREM) continue;
+       Interval calc = d->facetIt->first.row.dot(vertex)-d->facetIt->second.rhs;
+       d->lambda = calc.lb();
+       if (calc.mig()<this->tolerance) { d->status=DDfacet::FACETON; }
+       else if (calc.lb()>0.0) { d->status=DDfacet::FACETGT; }
+       else { d->status=DDfacet::FACETLT; }
    } 
-   for (std::forward_list<DDfacet>::iterator it = facets.begin();
-                  it!=facets.end();++it) {
+   std::vector<DDfacet *> newlist;
+   for (std::shared_ptr<DDfacet> &it : facets) {
      DDfacet &d = (*it);
      if (d.status==DDfacet::FACETON) {
         d.add_vertex(idVertex);
+        newlist.push_back(it.get());
         continue;
      }
-     if (d.status==DDfacet::FACETIN || d.status==DDfacet::FACETNEW) continue;
+     if (d.status==DDfacet::FACETLT || d.status==DDfacet::FACETNEW) continue;
      if (d.links.empty()) { /* not supposed to happen */
         /* very specific case of a 1-dimension polyhedra */
-        d.vtx.clear();
-        d.vtx.add(idVertex);
+        d.vertices.clear();
+        d.vertices.add(idVertex);
         facetsptr->change_ineqFacet_rhs(d.facetIt, 
 			d.facetIt->first.row.dot(vertex).ub());
         continue;
      }
-     for (std::forward_list<DDfacet>::iterator idL : d.links) {
-        if (idL==facets.end()) continue; /* can it happen ? */
+     for (DDfacet* idL : d.links) {
         DDfacet &d2 = (*idL);
         if (d2.status==DDfacet::FACETON) {
-           d2.remove_link(it);
+           d2.remove_link(it.get());
            continue;
         }
-        if (d2.status!=DDfacet::FACETIN) { 
+        if (d2.status!=DDfacet::FACETLT) { 
 	   continue; /* do nothing for out */
         }
 #ifdef DEBUG_CODAC2_DD
         std::cout << "    addFacet " << d.facetIt->second.Id << " " << d2.facetIt->second.Id << " " << d.status << " " << d2.status << std::endl;
         std::cout << "    (" << d.lambda << " " << d2.lambda << ")    " << std::endl;
 #endif
-        [[maybe_unused]]  std::forward_list<DDfacet>::iterator 
-		newIt = this->addFacetSon(it,idL,idVertex);
+        DDfacet* newIt = this->addFacetSon((*it),(*idL),idVertex);
+        if (newIt!=nullptr) {
+          d2.change_link(it.get(),newIt);
+          newIt->add_link(idL);
+          newlist.push_back(newIt);
 #ifdef DEBUG_CODAC2_DD
-        if (newIt==facets.end()) 
-	  std::cout << " ... FAILED! " << std::endl;
-        else 
           std::cout << " ... done " << newIt->facetIt->second.Id << std::endl;
 #endif
+        } else {
+          d2.remove_link(it.get());
+#ifdef DEBUG_CODAC2_DD
+	  std::cout << " ... FAILED! " << std::endl;
+#endif
+        }
         cnt++;
      }
      facetsptr->removeFacetById(it->facetIt->second.Id);
-     this->removeFacet(it,false);
+     this->removeFacet(it.get(),false); // it->status=DDfacet::FACETREM;
    }
-   /*construction of new links for the eq facets */
-   PosetElemMaxSet<std::pair<std::forward_list<DDfacet>::iterator,
-			std::forward_list<DDfacet>::iterator>> maxset;
-   for (std::forward_list<DDfacet>::iterator it = facets.begin();
-                  it!=facets.end();++it) {
-      DDfacet &d = (*it);
-      if (d.status==DDfacet::FACETON || d.status==DDfacet::FACETNEW) {
-         for (std::forward_list<DDfacet>::iterator it2 = next(it);
-		it2!=facets.end(); ++it2) {
-            DDfacet &d2 = (*it2);
-            if (d2.status==DDfacet::FACETON || d2.status==DDfacet::FACETNEW) {
-	       maxset.addElement(
-			std::make_pair(std::pair(it,it2),d.vtx & d2.vtx));
-            }
-         }
-      }
+   /*construction of new links for the new facets */
+   PosetElemMaxSet<std::pair<DDfacet*,DDfacet*>> maxset;
+   for (auto it1=newlist.begin();it1!=newlist.end();++it1) {
+       PosetElem p((*it1)->get_vertices());
+       for (auto it2 = (it1+1);it2!=newlist.end();++it2) {
+          if (p.try_intersect((*it1)->get_vertices(),(*it2)->get_vertices(),
+                        facetsptr->getDim()-1-facetsptr->nbeqfcts())) {
+             maxset.addElement(std::make_pair(
+		std::make_pair(*it1,*it2), std::move(p)));
+             p=(*it1)->get_vertices();
+          }
+       }
    }
    for (const auto &pm : maxset) {
 //      std::cout << " maxset : " << pm.a << " " << pm.b << std::endl;
       pm.first.first->add_link(pm.first.second);
       pm.first.second->add_link(pm.first.first);
    }
-   facets.remove_if([](const DDfacet &v) 
-			{ return v.status==DDfacet::FACETREM; });
+   facets.remove_if([](const std::shared_ptr<DDfacet> &v) 
+			{ return v->status==DDfacet::FACETREM; });
    facetsptr->renumber();
+//   std::cout << "Etat: " << (*this) << "\n";
    return cnt;
 }
 
-std::forward_list<DDfacet>::iterator 
-	DDbuildV2F::addDDfacet(const CollectFacets::mapIterator &it,
-		 std::vector<std::forward_list<DDfacet>::iterator> &links,
+DDfacet *DDbuildV2F::addDDfacet(CollectFacets::mapIterator it,
+		 std::unordered_set<DDfacet*> &&links,
 		 PosetElem &vtx) {
-    facets.emplace_front(it,links,vtx);
-    return facets.begin();
+    std::shared_ptr<DDfacet> ret =
+                std::make_shared<DDfacet>(it,std::move(links), vtx);
+    facets.push_front(ret);
+    return ret.get();
 }
 
-std::forward_list<DDfacet>::iterator 
-	DDbuildV2F::addDDfacet(const std::pair<Row, double> &row_rhs,
-		 std::vector<std::forward_list<DDfacet>::iterator> &links,
-		 PosetElem &vtx) {
+DDfacet *DDbuildV2F::addDDfacet(std::pair<Row, double> &&row_rhs) {
     std::pair<Index,bool> result =
 	 facetsptr->insert_facet(row_rhs.first,row_rhs.second,false);
     if (!result.second) {
-       return facets.end();
+       return nullptr;
     }
-    facets.emplace_front((*facetsptr)[result.first-1],links,vtx);
-    return facets.begin();
+    std::shared_ptr<DDfacet> ret = 
+		std::make_shared<DDfacet>((*facetsptr)[result.first-1]);
+    facets.push_front(ret);
+    return ret.get();
 }
 
-std::forward_list<DDfacet>::iterator 
-	DDbuildV2F::addDDfacet(std::pair<Row,double> &&row_rhs,
-		 std::vector<std::forward_list<DDfacet>::iterator> &links,
-		 PosetElem &vtx) {
-    std::pair<Index,bool> result  =
-	 facetsptr->insert_facet(row_rhs.first,row_rhs.second,false);
-    if (!result.second) {
-       return facets.end();
-    }
-    facets.emplace_front((*facetsptr)[result.first-1],links,vtx);
-    return facets.begin();
-}
-
-void DDbuildV2F::removeFacet(std::forward_list<DDfacet>::iterator It,
-		 bool removeLnks) {
-   DDfacet &d = (*It);
+void DDbuildV2F::removeFacet(DDfacet *It, bool removeLnks) {
+   DDfacet &d = *It;
    if (removeLnks) {
-      for (std::forward_list<DDfacet>::iterator it : d.links) {
+      for (auto &it : d.links) {
          it->remove_link(It);
       }
    }
@@ -1030,13 +952,13 @@ std::ostream& operator<<(std::ostream& os, const DDbuildV2F& build) {
       os << eqf.first.get_row() << " = " << eqf.second.get_rhs() << std::endl;
    }
    for (const auto &ifacet : build.facets) {
-      auto &ieqf = *(ifacet.facetIt);
+      auto &ieqf = *(ifacet->facetIt);
       os << ieqf.second.get_Id() << " : " << ieqf.first.get_row() << " <= " << ieqf.second.get_rhs() << std::endl;
       os << " vtx: (";
-      os << ifacet.vtx;
+      os << ifacet->vertices;
       os << ")" << std::endl;
       os << " lnks: (";
-      for (std::forward_list<DDfacet>::iterator a : ifacet.links) {
+      for (auto a : ifacet->links) {
          os << a->facetIt->second.get_Id() << ",";
       }
       os << ")" << std::endl;

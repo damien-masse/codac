@@ -294,13 +294,13 @@ void Polytope::build_DDbuildF2V() const {
    }
    /* TODO : insert box progressively ? */
    _DDbuildF2V = std::make_unique<DDbuildF2V>(_dim,_box,_facets,true);
-   std::cout << "ETAT:" << (*_DDbuildF2V) << "\n";
+//   std::cout << "ETAT:" << (*_DDbuildF2V) << "\n";
    for (CollectFacets::mapCIterator it = _facets->get_map().begin();
 		it!=_facets->get_map().end(); ++it) {
       if ((*it).second.eqcst) continue;
-      std::cout << "ADD FACET: " << (*it) << "\n";
+//      std::cout << "ADD FACET: " << (*it) << "\n";
       _DDbuildF2V->add_facet(it);
-      std::cout << "ETAT:" << (*_DDbuildF2V) << "\n";
+//      std::cout << "ETAT:" << (*_DDbuildF2V) << "\n";
       if (_DDbuildF2V->is_empty()) { 
          this->set_empty_private();
          return;
@@ -311,7 +311,7 @@ void Polytope::build_DDbuildF2V() const {
 }
 
 void Polytope::minimize_constraints() const { 
-   std::cout << "minimize.\n";
+//   std::cout << "minimize.\n";
    if (state[MINIMIZED]) return;
    if (state[EMPTY]) return;
    this->build_DDbuildF2V();
