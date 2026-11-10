@@ -159,7 +159,7 @@ Polytope::Polytope(const Parallelepiped &par) :
    }   
    IntervalVector range = IntervalVector::constant(par.A.cols(),
 					Interval(-1.0,1.0));
-   _box = par.c+par.A*range; /* FIXME : use box */
+   _box = par.box();
 }
 
 Polytope::Polytope(const Zonotope &zon) :
@@ -184,7 +184,7 @@ Polytope::Polytope(const Zonotope &zon) :
    _facets=_DDbuildV2F->getFacets();
    IntervalVector range = IntervalVector::constant(zon.A.cols(),
 					Interval(-1.0,1.0));
-   _box = zon.c+zon.A*range; /* FIXME : use box */
+   _box = par.box();
    _facets->encompass_zonotope(IntervalVector(zon.c), 
 		IntervalMatrix(zon.A), range, true);
    _DDbuildV2F.reset(); /* encompass may have added constraints */
