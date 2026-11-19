@@ -12,9 +12,11 @@
 #include <string>
 #include <memory>
 #include <fstream>
+#include <functional>
+#include <utility>
+#include <vector>
 #include "codac2_StyleProperties.h"
 #include "codac2_IntervalVector.h"
-#include "codac2_Paving.h"
 #include "codac2_Vector.h"
 #include "codac2_Matrix.h"
 #include "codac2_IntervalMatrix.h"
@@ -24,6 +26,12 @@
 
 namespace codac2
 {
+  class Ellipsoid;
+  class Parallelepiped;
+  class Zonotope;
+  class PavingOut;
+  class PavingInOut;
+  template<typename P> class Subpaving;
 
   /**
    * \class Figure3D
@@ -53,6 +61,12 @@ namespace codac2
        * \return The name of the figure
        */
       const std::string& name() const;
+
+      /**
+       * \brief Defines an optional coordinate projection applied to OBJ vertices.
+       * Pass an empty projection to restore the original drawing behavior.
+       */
+      Figure3D& set_projection(std::function<Vector(const Vector&)> projection);
 
 
       // Geometric shapes
@@ -284,6 +298,7 @@ namespace codac2
 
       const std::string _name;
       std::ofstream _file;
+      std::function<Vector(const Vector&)> _projection;
       size_t vertex_count = 0;
       bool lock_style=false;
   };
