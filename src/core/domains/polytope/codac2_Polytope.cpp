@@ -184,7 +184,7 @@ Polytope::Polytope(const Zonotope &zon) :
    _facets=_DDbuildV2F->getFacets();
    IntervalVector range = IntervalVector::constant(zon.A.cols(),
 					Interval(-1.0,1.0));
-   _box = par.box();
+   _box = zon.box();
    _facets->encompass_zonotope(IntervalVector(zon.c), 
 		IntervalMatrix(zon.A), range, true);
    _DDbuildV2F.reset(); /* encompass may have added constraints */
