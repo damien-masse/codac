@@ -40,6 +40,17 @@ void CHECK_bwd_pow(const Interval& y, const Interval& x, const Interval& expecte
   _x = -x; PowOp::bwd((p%2 == 0) ? y : -y,_x,p); CHECK(Approx(_x,1e-5) == -expected_x);
 }
 
+void CHECK_bwd_pow(const Interval& y, const Interval& x, const Interval &p, const Interval& expected_x, const Interval& expected_p)
+{
+  Interval _x, _p;
+  _x = x; _p = p; PowOp::bwd(y,_x,_p); 
+         CHECK(Approx(_x,1e-5) == expected_x);
+	 CHECK(Approx(_p,1e-5) == expected_p);
+  _x = x; _p = -p; PowOp::bwd(1.0/y,_x,_p); 
+         CHECK(Approx(_x,1e-5) == expected_x);
+	 CHECK(Approx(_p,1e-5) == -expected_p);
+}
+
 void CHECK_bwd_mul(const Interval& y,
   const Interval& x1, const Interval& x2, const Interval& expected_x1, const Interval& expected_x2)
 {
@@ -227,6 +238,18 @@ TEST_CASE("Interval bwd operations")
   CHECK_bwd_pow(Interval(-27,-8), Interval(-1,-1),  Interval::empty(), 3);
   CHECK_bwd_pow(Interval(-27,-8), Interval(-4,-4),  Interval::empty(), 3);
   CHECK_bwd_pow(Interval(0,1),    Interval(-10,10), Interval(-10,10), -2);
+  CHECK_bwd_pow(Interval(32,81),  Interval(1,4),    Interval(2,5),
+			Interval(2,4), Interval(2.5,5.0));
+  CHECK_bwd_pow(Interval(16,81),  Interval(4,4),    Interval(1,6),
+			Interval(4,4), Interval(2,3.16993));
+  CHECK_bwd_pow(Interval(0,0.25),  Interval(0.5,0.75),  Interval(-4,4),
+			Interval(0.5,0.707107), Interval(2,4));
+  CHECK_bwd_pow(Interval(16,81),  Interval(1,1),    Interval(0,20),
+			Interval::empty(), Interval::empty());
+  CHECK_bwd_pow(Interval(16,81),  Interval(0.25,1.25),    Interval(0,10),
+			Interval::empty(), Interval::empty());
+  CHECK_bwd_pow(Interval(1,81),  Interval(0.25,1.25),    Interval(0,10),
+			Interval(0.25,1.25), Interval(0,10));
 
   CHECK_bwd_mul(Interval(1,2),Interval(0.1,2.0),Interval(-10,2),Interval(0.5,2.0),Interval(0.5,2));
   CHECK_bwd_mul(Interval::empty(),Interval(0.1,2.0),Interval(-10,2),Interval::empty(),Interval::empty());

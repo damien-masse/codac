@@ -137,8 +137,26 @@ namespace codac2
 
   inline void PowOp::bwd(const Interval& y, Interval& x1, Interval& x2)
   {
-    assert_release(x2.is_degenerated() && "PowOp::bwd(y,x1,x2) (with x1 and x2 intervals) not implemented yet with Gaol");
-    assert_release(x2 == (int)(x2.mid()) && "PowOp::bwd(y,x1,x2) (x2 not integer) not implemented yet with Gaol");
-    PowOp::bwd(y, x1, (int)(x2.mid()));
+    if (x2.is_degenerated() && x2 == (int)(x2.mid())) {
+       if (x2.mid()==0.0) {
+         if (y.contains(1.0)) return;
+         x1.set_empty(); x2.set_empty();
+         return;
+       }
+       PowOp::bwd(y, x1, (int)(x2.mid()));
+       if (x1.is_empty()) x2.set_empty();
+    } else {
+       assert_release(x1.lb()>0.0 && "PowOp::bwd(y,x1,x2) (with x1 not positive and x2 interval) not implemented yet with Gaol");
+       Interval ly = log(y);
+       Interval lx = log(x1);
+       Interval x2p = x2 & (ly / (lx & Interval(-oo,0.0)));
+       Interval x1p = (x2p.is_empty() ? Interval::empty() :
+			(x1 & exp(ly/x2p)));
+       Interval x2n = x2 & (ly / (lx & Interval(0.0,+oo)));
+       Interval x1n = (x2n.is_empty() ? Interval::empty() :
+			(x1 & exp(ly/x2n)));
+       x2 = x2p | x2n;
+       x1 = x1p | x1n;
+    }         
   }
 }
