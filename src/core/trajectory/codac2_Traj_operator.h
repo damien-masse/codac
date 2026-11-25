@@ -40,8 +40,8 @@ namespace codac2
     static typename TR::Type fwd_natural(const TR& x1, const ScalarType& x2)
     {
       return {
-        fwd(x1,x2.a),
-        x2.def_domain && x1.tdomain().is_superset(x2.a)
+        fwd(x1,x2.get_a()),
+        x2.def_domain && x1.tdomain().is_superset(x2.get_a())
       };
     }
 
@@ -66,13 +66,12 @@ namespace codac2
       //       d(i,j) = dx1[i];
       // }
 
-      // Note: I don't even try to understand there [-- Damien]
-
       return {
         fwd(x1,x2.m),
-        fwd(x1,x2.get_a()),
+        vector_map<Interval,typename TR::Type::Domain>
+		(x2.a,[x1](const Interval &u) { return fwd(x1,u); }),
         d,
-        x2.def_domain && x1.tdomain().is_superset(x2.a)
+        x2.def_domain && x1.tdomain().is_superset(x2.get_a())
       };
     }
 
@@ -113,7 +112,7 @@ namespace codac2
         return OperationExprBase<AnalyticExpr<ScalarType>>::replace_arg(old_arg_id, new_expr);
       }
       
-      T fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval, bool mixed_diff) const
+      const T& fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval, bool mixed_diff) const
       {
         if(natural_eval)
           return AnalyticExpr<T>::init_value(

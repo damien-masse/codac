@@ -163,26 +163,26 @@ namespace codac2
             replace_vector_child(x, old_arg_id, new_expr);
         }
 
-        MatrixType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval, bool mixed_diff) const override
+        const MatrixType& fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval, bool mixed_diff) const override
         {
           if(natural_eval)
             return this->init_value(v, natural_fwd(v, total_input_size));
 
-          std::vector<VectorType> vals;
+          std::vector<const VectorType*> vals;
           vals.reserve(_xs.size());
           bool centered_available = true;
           for(const auto& x : _xs)
           {
-            vals.push_back(x->fwd_eval(v, total_input_size, false, mixed_diff));
-            centered_available &= (vals.back().da.size() != 0);
+            vals.push_back(&x->fwd_eval(v, total_input_size, false, mixed_diff));
+            centered_available &= (vals.back()->da.size() != 0);
           }
 
           if(!centered_available)
             return this->init_value(v, natural_fwd(v, total_input_size));
 
           const Index cols = static_cast<Index>(_xs.size());
-          const Index rows = vals.empty() ? 0 : vals.front().get_a().size();
-          const Index input_cols = vals.empty() ? total_input_size : vals.front().da.cols();
+          const Index rows = vals.empty() ? 0 : vals.front()->get_a().size();
+          const Index input_cols = vals.empty() ? total_input_size : vals.front()->da.cols();
           IntervalMatrix m(rows, cols), da(rows*cols, input_cols);
           std::vector<IntervalMatrix> 
 		a(vals.empty() ? 0 : (mixed_diff ? input_cols : 1),
@@ -192,7 +192,7 @@ namespace codac2
 
           for(Index j = 0 ; j < cols ; ++j)
           {
-            const auto& xj = vals[static_cast<std::size_t>(j)];
+            const auto& xj = *vals[static_cast<std::size_t>(j)];
             m.col(j) = xj.m;
             for (size_t i=0;i<a.size();i++) {
                a[i].col(j) = xj.get_a(mixed_diff,i);
@@ -270,7 +270,7 @@ namespace codac2
 
           for(Index j = 0 ; j < cols ; ++j)
           {
-            auto xj = _xs[static_cast<std::size_t>(j)]->fwd_eval(v, total_input_size, true, false);
+            const auto& xj = _xs[static_cast<std::size_t>(j)]->fwd_eval(v, total_input_size, true, false);
             a.col(j) = xj.get_a();
             def_domain &= xj.def_domain;
           }

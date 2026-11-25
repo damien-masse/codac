@@ -33,7 +33,7 @@ namespace codac2
         return std::make_shared<ConstValueExpr<T>>(*this);
       }
 
-      T fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval,[[maybe_unused]] bool mixed_diff) const override
+      const T& fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval, [[maybe_unused]] bool mixed_diff) const override
       {
         if(natural_eval)
           return AnalyticExpr<T>::init_value(v, T(

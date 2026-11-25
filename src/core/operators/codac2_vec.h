@@ -146,25 +146,25 @@ namespace codac2
             replace_scalar_child(x, old_arg_id, new_expr);
         }
 
-        VectorType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval,bool mixed_diff) const override
+        const VectorType& fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval, bool mixed_diff) const override
         {
           if(natural_eval)
             return this->init_value(v, natural_fwd(v, total_input_size));
 
-          std::vector<ScalarType> vals;
+          std::vector<const ScalarType*> vals;
           vals.reserve(_xs.size());
           bool centered_available = true;
           for(const auto& x : _xs)
           {
-            vals.push_back(x->fwd_eval(v, total_input_size, false,mixed_diff));
-            centered_available &= (vals.back().da.size() != 0);
+            vals.push_back(&x->fwd_eval(v, total_input_size, false,mixed_diff));
+            centered_available &= (vals.back()->da.size() != 0);
           }
 
           if(!centered_available)
             return this->init_value(v, natural_fwd(v, total_input_size));
 
           const Index n = static_cast<Index>(_xs.size());
-          const Index input_cols = vals.empty() ? total_input_size : vals.front().da.cols();
+          const Index input_cols = vals.empty() ? total_input_size : vals.front()->da.cols();
           IntervalVector m(n);
           std::vector<IntervalVector> a(vals.empty() ? 0 : 
 		(mixed_diff ? input_cols : 1));
@@ -173,7 +173,7 @@ namespace codac2
 
           for(Index i = 0 ; i < n ; ++i)
           {
-            const auto& xi = vals[static_cast<std::size_t>(i)];
+            const auto& xi = *vals[static_cast<std::size_t>(i)];
             m[i] = xi.m;
             for (size_t j=0;j<a.size();j++) {
                a[j][i] = xi.get_a(mixed_diff,j);
@@ -242,7 +242,7 @@ namespace codac2
           bool def_domain = true;
           for(Index i = 0 ; i < n ; ++i)
           {
-            auto xi = _xs[static_cast<std::size_t>(i)]->fwd_eval(v, total_input_size, true,false);
+            const auto& xi = _xs[static_cast<std::size_t>(i)]->fwd_eval(v, total_input_size, true, false);
             a[i] = xi.get_a();
             def_domain &= xi.def_domain;
           }

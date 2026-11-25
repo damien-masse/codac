@@ -88,7 +88,7 @@ namespace codac2
         return OperationExprBase<AnalyticExpr<VectorType>>::replace_arg(old_arg_id, new_expr);
       }
       
-      VectorType fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval,bool mixed_diff) const
+      const VectorType& fwd_eval(ValuesMap& v, Index total_input_size, bool natural_eval, bool mixed_diff) const
       {
         if(natural_eval)
           return AnalyticExpr<VectorType>::init_value(
